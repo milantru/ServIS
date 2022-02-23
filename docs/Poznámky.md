@@ -62,7 +62,7 @@
     - Neočakávam milióny údajov, takže joiny snáď až tak vadiť nebudú, ak by bolo údajov veľa, znamenalo by to, že ak by sme vybrali inú databázu, museli by sme platiť viac (za úložný priestor), ale ujo nechce platiť veľa -existuje hranica- a ak sa hranica prekročí, čo potom? Takže som za MySQL, pretože je zdarma bez obmedzenia úložného priestororu, a tiež preto lebo som s relačnou už pracoval.
   - *NoSQL* vraj dobré ak sa veľa číta, málo updatuje (lebo duplicitné dáta sú a všade ich potom musíš meniť).
 
-- Static class **PrihláseníUžívatelia** bude obsahovať zoznam všetkých užívateľov, takže keď s aniektorí z užívateľov bude snažiť prihlásiť, skontroluje sa či už prihlásený je, ak áno, nájde sa v tomto zozname jeho inštancia a vráti sa mu jeho model, takto sa nebudeme musiet vždy dotazovať priamo z databázy a zároveň môže byť užívateľ prihlásený na viacerých PC. Ak by sa v zozname nenašiel, tak sa naťahajú dáta z databazy a vytvorí nová inštancia modelu.
+- Static class **PrihláseníUžívatelia** bude obsahovať zoznam všetkých užívateľov, takže keď sa niektorí z užívateľov bude snažiť prihlásiť, skontroluje sa či už prihlásený je, ak áno, nájde sa v tomto zozname jeho inštancia a vráti sa mu jeho model, takto sa nebudeme musiet vždy dotazovať priamo z databázy a zároveň môže byť užívateľ prihlásený na viacerých PC. Ak by sa v zozname nenašiel, tak sa naťahajú dáta z databázy a vytvorí sa nová inštancia modelu.
 
 **!!! Veľký UPDATE: !!!** 
 - <u>Zrušili sa Objednávky</u> (kúpa stroja, prídavných zariadení, zemné práce, oprava stroja) ako entinty. Existovala myšlienka, že užívateľ si v profile bude môcť objednávky vylistovať a mal by o nich nejaké info.  
@@ -83,7 +83,7 @@ Ide o to že to nefunguje ako nejaký eshop, kde si dám niečo do košíka zapl
       - Nie: 
         - Chyba- Užívateľ existuje a má učet. Prosím, prihláste sa.
   - Nie:
-    - Vytvorí sa záznam v tabuľke Zákazník, a tiež v UžívateľAukčnáPonuka (Uchádzač).  
+    - Vytvorí sa záznam v tabuľke Zákazník, a tiež v UžívateľAukčnáPonuka (Uchádzači).  
 
 **NOVÉ POŽIADAVKY (AUKCIA):**
 - Minimálny vklad musí byť aspoň 100€ (napr.). Hodnota je fixná pre všetky aukčné ponuky. Aby nenavyšovali po centoch. -> Vyriešilo sa pridaním položky MinimálneNavýšenie do ~~AukcnaPonukaStrojaPage~~ AukčnáPonuka (klasická trieda).
@@ -108,12 +108,11 @@ Ide o to že to nefunguje ako nejaký eshop, kde si dám niečo do košíka zapl
 
 - **AlertYesNoComponent:** Bude brať text ako parameter.
 
-- **GlobálnePremenné:** Bude obsahovať static položky, to budú nejaké všeobecné nastavenia pre všetkých rovnaké. Ale zároveň potrebujem nejaké instančné položky pre každého užívateľa iné (napr. si tam chcem uložiť inštanciu prihláseného užívateľa). Preto som sa rozhodol ju naimplementovať ako sigleton, 1 inštancia na užívateľa.
+- **GlobálnePremenné:** Bude obsahovať static položky, to budú nejaké všeobecné nastavenia pre všetkých rovnaké. Ale zároveň potrebujem nejaké instančné položky pre každého užívateľa iné (napr. si tam chcem uložiť inštanciu prihláseného užívateľa). <del>Preto som sa rozhodol ju naimplementovať ako sigleton, 1 inštancia na užívateľa.</del>
 
 ---
 
 # Otázky:
 
-- Zákazník.JeDočasný je v pohode? Ako ináč??
 - Titulnú fotku stroja dať osobitne do tabuľky Stroje alebo môže to fungovat tak, že v tabuľke FotkyStrojov prvá nájdená sa dá ako titulná? (Nemení sa poradie v tabuľke/databázi, nie??)
 - Je v poriadku mať globálnu premennú, kde si uložím inštanciu užívateľa s odkazom na "databázove veci" (myslím objekty z Entity Frameworku)?
