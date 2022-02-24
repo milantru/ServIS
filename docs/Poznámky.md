@@ -89,11 +89,16 @@ Ide o to že to nefunguje ako nejaký eshop, kde si dám niečo do košíka zapl
 - Minimálny vklad musí byť aspoň 100€ (napr.). Hodnota je fixná pre všetky aukčné ponuky. Aby nenavyšovali po centoch. -> Vyriešilo sa pridaním položky MinimálneNavýšenie do ~~AukcnaPonukaStrojaPage~~ AukčnáPonuka (klasická trieda).
 - Do aukcie sa môže pridať aj typ stroju, ktorý neni medzi "novými". -> Vyriešilo sa pridaním Boolu do tabuľky Stroje (zatiaľ som ten stĺpec nazval JeNový).
 
-*Čas aukčnej ponuky vypršal:*
+*Čas aukčnej ponuky vypršal:*  
+Ak máme záujemcov:
 1. Nájde sa riadok s najvyššou CenovouPonukou v tabuľke UžívateľAukčnáPonuka (Uchádzač)- to je výherca.
 2. Máme výhercove ID (z predch. kroku), nájdeme ho v tabuľke Zákazník a pošleme mail.
 3. Každý Zákazník, ktorý je dočasný a má len jediný výskyt v tabuľke UžívateľAukčnáPonuka (Uchádzač) musí byť z tabuľky Zákazník odstránený.
-4. Všetky riadky s ID končiacej sa aukčnej ponuky sa musia vymazať z tabuľky UžívateľAukčnáPonuka (Uchádzač).
+4. Všetky riadky s ID končiacej sa aukčnej ponuky sa musia vymazať z tabuľky UžívateľAukčnáPonuka (Uchádzač).  
+
+Ak nemáme záujemcov:
+1. Prvý krok je rovnaký, ale ak sa výherca nenájde, tak potom...
+2. Ku aktuálnemu času (čas skončenia ponuky) sa pripočíta timespan z triedy AukčnáPonuka a vytvorí sa tak nový dátum konca ponuky, a ten sa uloží do datbázy. Takto sa resetne ponuka.
 
 (*Takto sa vyhneme problému, kedy by sa niekto snažil zaplniť celú tabuľku s dočasnými užívateľmi, lebo nevytvára sa vždy nový záznam, ale kontroluje sa či už taký existuje a ak áno tak sa iba upravuje)
 
