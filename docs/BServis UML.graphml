@@ -1057,7 +1057,7 @@ JeDočasný<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
     <node id="n52">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
-          <y:Geometry height="121.1333097236469" width="150.67271719495056" x="1956.9815434119869" y="742.8456657460604"/>
+          <y:Geometry height="121.1333097236469" width="150.67271719495056" x="1956.9815434119869" y="738.853606025892"/>
           <y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" backgroundColor="#B7C9E3" configuration="com.yworks.entityRelationship.label.name" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasLineColor="false" height="18.701171875" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="t" textColor="#000000" verticalTextPosition="bottom" visible="true" width="84.05078125" x="33.31096797247528" xml:space="preserve" y="4.0">AukčnéPonuky</y:NodeLabel>
