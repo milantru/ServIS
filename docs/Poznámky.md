@@ -62,7 +62,7 @@
     - Neočakávam milióny údajov, takže joiny snáď až tak vadiť nebudú, ak by bolo údajov veľa, znamenalo by to, že ak by sme vybrali inú databázu, museli by sme platiť viac (za úložný priestor), ale ujo nechce platiť veľa -existuje hranica- a ak sa hranica prekročí, čo potom? Takže som za MySQL, pretože je zdarma bez obmedzenia úložného priestororu, a tiež preto lebo som s relačnou už pracoval.
   - *NoSQL* vraj dobré ak sa veľa číta, málo updatuje (lebo duplicitné dáta sú a všade ich potom musíš meniť).
 
-- Static class **PrihláseníUžívatelia** bude obsahovať zoznam všetkých užívateľov, takže keď sa niektorí z užívateľov bude snažiť prihlásiť, skontroluje sa či už prihlásený je, ak áno, nájde sa v tomto zozname jeho inštancia a vráti sa mu jeho model, takto sa nebudeme musiet vždy dotazovať priamo z databázy a zároveň môže byť užívateľ prihlásený na viacerých PC. Ak by sa v zozname nenašiel, tak sa naťahajú dáta z databázy a vytvorí sa nová inštancia modelu.
+- ~~Static class **PrihláseníUžívatelia** bude obsahovať zoznam všetkých užívateľov, takže keď sa niektorí z užívateľov bude snažiť prihlásiť, skontroluje sa či už prihlásený je, ak áno, nájde sa v tomto zozname jeho inštancia a vráti sa mu jeho model, takto sa nebudeme musiet vždy dotazovať priamo z databázy a zároveň môže byť užívateľ prihlásený na viacerých PC. Ak by sa v zozname nenašiel, tak sa naťahajú dáta z databázy a vytvorí sa nová inštancia modelu.~~ DBContext nie je thread-safe, musí sa dať ináč...
 
 **!!! Veľký UPDATE: !!!** 
 - <u>Zrušili sa Objednávky</u> (kúpa stroja, prídavných zariadení, zemné práce, oprava stroja) ako entinty. Existovala myšlienka, že užívateľ si v profile bude môcť objednávky vylistovať a mal by o nich nejaké info.  
@@ -75,6 +75,7 @@ Ide o to že to nefunguje ako nejaký eshop, kde si dám niečo do košíka zapl
 
 **Akcie (queries) pre neprihláseného užívateľa v aukcii:**  
 *Užívateľ má záujem o stroj:*
+
 - Je zákazník v tabuľke? (kontroluje sa na vš. položky: meno, priezvisko...; stačilo by kontrolovať iba dočasných, ale to by bolo trochu čudné, lebo môhli by sme mať 2 rovnakých užívateľov, ktorí sú jeden dočasný a druhý nie):
   - Áno:
     - Je Dočasný?
