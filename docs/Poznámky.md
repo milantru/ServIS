@@ -119,6 +119,4 @@ Ide o to že to nefunguje ako nejaký eshop, kde si dám niečo do košíka zapl
 
 # Otázky:
 
-- Titulnú fotku stroja dať osobitne do tabuľky Stroje alebo môže to fungovat tak, že v tabuľke FotkyStrojov prvá nájdená sa dá ako titulná? (Nemení sa poradie v tabuľke/databázi, nie??)
-- Je v poriadku mať globálnu premennú, kde si uložím inštanciu užívateľa s odkazom na "databázove veci" (myslím objekty z Entity Frameworku)?
-- Tabuľky UžívateliaAukčnéPonuky (Uchádzači) a AukčnéPonuky vyzerá že už nepotrebujem mať v databázi, mám to vyhodiť a budú iba ako runtime triedy? (Potrebujem ich len kým sú aktívne. Po predaní môžu zaniknúť.)
+- ~~Je v poriadku mať globálnu premennú, kde si uložím inštanciu užívateľa s odkazom na "databázove veci" (myslím objekty z Entity Frameworku)?~~ EDIT: DBContext nie je thread-safe, takže skôr by som asi spravil pre každé spojenie nový DBContext, ktorý by bol obalený ešte mojou triedou a volania komunikujúce s DB by boli "obalené" mutexami alebo niečim... JE aj lepšie riešenie?
