@@ -76,7 +76,7 @@ Ide o to že to nefunguje ako nejaký eshop, kde si dám niečo do košíka zapl
 **Akcie (queries) pre neprihláseného užívateľa v aukcii:**  
 *Užívateľ má záujem o stroj:*
 
-- Je zákazník v tabuľke? (kontroluje sa na vš. položky: meno, priezvisko...; stačilo by kontrolovať iba dočasných, ale to by bolo trochu čudné, lebo môhli by sme mať 2 rovnakých užívateľov, ktorí sú jeden dočasný a druhý nie):
+- Je zákazník v tabuľke? (~~kontroluje sa na vš. položky: meno, priezvisko...; stačilo by kontrolovať iba dočasných, ale to by bolo trochu čudné, lebo môhli by sme mať 2 rovnakých užívateľov, ktorí sú jeden dočasný a druhý nie~~ EDIT: prečo by to bolo čudné? Aj tak sa po skončení budú mazať alebo nie? Myslím, že by som sa mohol ku každému neprihlásenému užívateľovi správať ako k novému... PK v tabuľke je predsa ID, nie stĺpce ako meno, email atď. Zrejme bude treba toto trochu upraviť až budem implementovať.):
   - Áno:
     - Je Dočasný?
       - Áno:
@@ -122,4 +122,3 @@ Ide o to že to nefunguje ako nejaký eshop, kde si dám niečo do košíka zapl
 
 - ~~Je v poriadku mať globálnu premennú, kde si uložím inštanciu užívateľa s odkazom na "databázove veci" (myslím objekty z Entity Frameworku)?~~ EDIT: DBContext nie je thread-safe, takže skôr by som asi spravil pre každé spojenie nový DBContext, ktorý by bol obalený ešte mojou triedou a volania komunikujúce s DB by boli "obalené" mutexami alebo niečim... JE aj lepšie riešenie?
   *Odpoveď:* Vraj sa zvykne pre každé spojenie s DB vytvárať nový DBContext, pretože aj keby sa medzitým keď ho máme vytvorený zmení stav v DB, tak to ten vytvorený objekt DBContextu nepozná... Overhead jeho vytvárania nie je taký veľký takže je v poriadku ho vytvárať častejšie.
-  
