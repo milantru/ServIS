@@ -154,10 +154,8 @@ Využíva tabuľky:
           <y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" backgroundColor="#B7C9E3" configuration="com.yworks.entityRelationship.label.name" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasLineColor="false" height="18.701171875" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="t" textColor="#000000" verticalTextPosition="bottom" visible="true" width="107.400390625" x="90.90917240416911" xml:space="preserve" y="4.0">GlobálnePremenné</y:NodeLabel>
-          <y:NodeLabel alignment="left" autoSizePolicy="content" configuration="com.yworks.entityRelationship.label.attributes" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="62.8046875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="top" visible="true" width="194.08984375" x="2.0" xml:space="preserve" y="30.701171875">Configy, Cesty, napr ImagesRoute, 
-email a email credentials (??)...
-
-(Užívateľ) PrihlásenýUžívateľ?<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:ModelParameter><y:ErdAttributesNodeLabelModelParameter/></y:ModelParameter></y:NodeLabel>
+          <y:NodeLabel alignment="left" autoSizePolicy="content" configuration="com.yworks.entityRelationship.label.attributes" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.40234375" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="top" visible="true" width="194.08984375" x="2.0" xml:space="preserve" y="30.701171875">Configy, Cesty, napr ImagesRoute, 
+email a email credentials (??)...<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:ModelParameter><y:ErdAttributesNodeLabelModelParameter/></y:ModelParameter></y:NodeLabel>
           <y:StyleProperties>
             <y:Property class="java.lang.Boolean" name="y.view.ShadowNodePainter.SHADOW_PAINTING" value="true"/>
           </y:StyleProperties>
@@ -676,7 +674,9 @@ prihlásený */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:M
           <y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" backgroundColor="#B7C9E3" configuration="com.yworks.entityRelationship.label.name" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasLineColor="false" height="18.701171875" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="t" textColor="#000000" verticalTextPosition="bottom" visible="true" width="96.05078125" x="57.35446014638865" xml:space="preserve" y="4.0">KartyAukciaPage</y:NodeLabel>
-          <y:NodeLabel alignment="left" autoSizePolicy="content" configuration="com.yworks.entityRelationship.label.attributes" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="62.8046875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="top" visible="true" width="208.087890625" x="2.0" xml:space="preserve" y="30.701171875">Využíva tabuľky:
+          <y:NodeLabel alignment="left" autoSizePolicy="content" configuration="com.yworks.entityRelationship.label.attributes" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="92.20703125" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="top" visible="true" width="208.087890625" x="2.0" xml:space="preserve" y="30.701171875">AukčnéPonuky[] // klasických tried
+
+Využíva tabuľky:
 -AukčnéPonuky
 -UžívateliaAukčnéPonuky (Uchádzači)
 -FotkyStrojov<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:ModelParameter><y:ErdAttributesNodeLabelModelParameter/></y:ModelParameter></y:NodeLabel>
@@ -752,11 +752,12 @@ prihlásený */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:M
     <node id="n37">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
-          <y:Geometry height="170.6644331857501" width="218.7173161290326" x="-651.923994517842" y="-1888.9809160035136"/>
+          <y:Geometry height="184.58692676218766" width="218.7173161290326" x="-651.923994517842" y="-1895.1958695380822"/>
           <y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" backgroundColor="#B7C9E3" configuration="com.yworks.entityRelationship.label.name" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasLineColor="false" height="18.701171875" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="t" textColor="#000000" verticalTextPosition="bottom" visible="true" width="144.09765625" x="37.30982993951625" xml:space="preserve" y="4.0">AukcnaPonukaStrojaPage</y:NodeLabel>
-          <y:NodeLabel alignment="left" autoSizePolicy="content" configuration="com.yworks.entityRelationship.label.attributes" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="136.310546875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="top" visible="true" width="208.087890625" x="2.0" xml:space="preserve" y="30.701171875">MinimálneNavýšenie
+          <y:NodeLabel alignment="left" autoSizePolicy="content" configuration="com.yworks.entityRelationship.label.attributes" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="151.01171875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="top" visible="true" width="208.087890625" x="2.0" xml:space="preserve" y="30.701171875">AukčnáPonuka // klasická trieda
+MinimálneNavýšenie
 Timer
 Timespan // ako dlho má trvať
 
@@ -1936,7 +1937,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="-22.666629437284655" sy="-20.910918976363973" tx="0.0" ty="0.0"/>
+          <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="diamond" target="none"/>
           <y:BendStyle smoothed="false"/>
@@ -1975,7 +1976,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="0.0" tx="33.023344868465756" ty="-20.910918976363973">
+          <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
             <y:Point x="-395.97993732550685" y="-897.5793821081814"/>
             <y:Point x="-395.97993732550685" y="-1824.5596183870025"/>
           </y:Path>
@@ -2375,7 +2376,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="-56.394708633324115" sy="-17.127032936002482" tx="0.0" ty="0.0">
+          <y:Path sx="-56.394708633324115" sy="-18.524225084265737" tx="0.0" ty="0.0">
             <y:Point x="-598.9600450866498" y="-1930.6221772724477"/>
             <y:Point x="-1253.075964076832" y="-1930.6221772724477"/>
             <y:Point x="-1253.075964076832" y="-1031.4106855793757"/>
