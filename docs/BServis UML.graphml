@@ -65,24 +65,6 @@
     <node id="n3">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
-          <y:Geometry height="111.27862000561026" width="322.2657943548387" x="2.11079648970167" y="61.11352730434794"/>
-          <y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/>
-          <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" backgroundColor="#B7C9E3" configuration="com.yworks.entityRelationship.label.name" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasLineColor="false" height="18.701171875" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="t" textColor="#000000" verticalTextPosition="bottom" visible="true" width="84.724609375" x="118.77059248991935" xml:space="preserve" y="4.0">AukčnáPonuka</y:NodeLabel>
-          <y:NodeLabel alignment="left" autoSizePolicy="content" configuration="com.yworks.entityRelationship.label.attributes" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="77.505859375" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="top" visible="true" width="316.005859375" x="2.0" xml:space="preserve" y="30.701171875">AukčnáPonuka // z EntityFrameworku, "databázový objekt"
-
-MinimálneNavýšenie
-Timer
-Timespan // ako dlho má trvať<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:ModelParameter><y:ErdAttributesNodeLabelModelParameter/></y:ModelParameter></y:NodeLabel>
-          <y:StyleProperties>
-            <y:Property class="java.lang.Boolean" name="y.view.ShadowNodePainter.SHADOW_PAINTING" value="true"/>
-          </y:StyleProperties>
-        </y:GenericNode>
-      </data>
-    </node>
-    <node id="n4">
-      <data key="d6">
-        <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="90.0" width="80.0" x="156.1826745468668" y="1228.3029699408603"/>
           <y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
@@ -101,7 +83,7 @@ Timespan // ako dlho má trvať<y:LabelModel><y:ErdAttributesNodeLabelModel/></y
         </y:GenericNode>
       </data>
     </node>
-    <node id="n5">
+    <node id="n4">
       <data key="d6">
         <y:ShapeNode>
           <y:Geometry height="24.0" width="26.0" x="112.29031941893368" y="1294.3029699408603"/>
@@ -112,7 +94,7 @@ Timespan // ako dlho má trvať<y:LabelModel><y:ErdAttributesNodeLabelModel/></y
         </y:ShapeNode>
       </data>
     </node>
-    <node id="n6">
+    <node id="n5">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="262.1861193531884" width="357.2524544179523" x="-110.435438124043" y="-1323.076661300874"/>
@@ -140,7 +122,7 @@ Využíva tabuľky:
         </y:GenericNode>
       </data>
     </node>
-    <node id="n7">
+    <node id="n6">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="216.0319547529079" width="349.0085461991582" x="288.9449801684739" y="-1299.9995790007338"/>
@@ -165,7 +147,7 @@ Využíva tabuľky:
         </y:GenericNode>
       </data>
     </node>
-    <node id="n8">
+    <node id="n7">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="198.3153221598884" width="289.21873543333845" x="1066.147684940796" y="-149.00212919313617"/>
@@ -182,7 +164,7 @@ email a email credentials (??)...
         </y:GenericNode>
       </data>
     </node>
-    <node id="n9">
+    <node id="n8">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="226.64392711360438" width="298.57256899931554" x="13.957409167463254" y="197.61757855820508"/>
@@ -208,7 +190,7 @@ GlobálnePremenné */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelMode
         </y:GenericNode>
       </data>
     </node>
-    <node id="n10">
+    <node id="n9">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="90.0" width="113.0" x="11.690789084932987" y="-803.9502384291726"/>
@@ -229,7 +211,7 @@ GlobálnePremenné */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelMode
         </y:GenericNode>
       </data>
     </node>
-    <node id="n11">
+    <node id="n10">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="90.0" width="167.68462237795345" x="-195.73048933156298" y="-665.3210947501638"/>
@@ -250,7 +232,7 @@ GlobálnePremenné */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelMode
         </y:GenericNode>
       </data>
     </node>
-    <node id="n12">
+    <node id="n11">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="90.0" width="138.90514644818677" x="-612.0179096774192" y="-217.23917855624143"/>
@@ -271,7 +253,7 @@ GlobálnePremenné */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelMode
         </y:GenericNode>
       </data>
     </node>
-    <node id="n13">
+    <node id="n12">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="90.0" width="142.89593267882185" x="-3.257177254477938" y="-665.3210947501638"/>
@@ -292,7 +274,7 @@ GlobálnePremenné */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelMode
         </y:GenericNode>
       </data>
     </node>
-    <node id="n14">
+    <node id="n13">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="90.0" width="127.94796633941093" x="4.216805915227525" y="-534.742630454044"/>
@@ -313,7 +295,7 @@ GlobálnePremenné */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelMode
         </y:GenericNode>
       </data>
     </node>
-    <node id="n15">
+    <node id="n14">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="90.0" width="99.76729312762961" x="18.30714252111818" y="-942.5793821081814"/>
@@ -327,7 +309,7 @@ GlobálnePremenné */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelMode
         </y:GenericNode>
       </data>
     </node>
-    <node id="n16">
+    <node id="n15">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="90.0" width="113.0" x="-599.0653364533258" y="-324.86934551715774"/>
@@ -343,7 +325,7 @@ GlobálnePremenné */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelMode
         </y:GenericNode>
       </data>
     </node>
-    <node id="n17">
+    <node id="n16">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="90.0" width="119.11144800224406" x="-602.1210604544478" y="-444.86934551715774"/>
@@ -359,7 +341,7 @@ GlobálnePremenné */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelMode
         </y:GenericNode>
       </data>
     </node>
-    <node id="n18">
+    <node id="n17">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="90.0" width="168.19806788218796" x="-813.2138936031066" y="-217.23917855624143"/>
@@ -380,7 +362,7 @@ GlobálnePremenné */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelMode
         </y:GenericNode>
       </data>
     </node>
-    <node id="n19">
+    <node id="n18">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="90.0" width="132.05833224881394" x="-795.1440257864195" y="-324.86934551715774"/>
@@ -401,7 +383,7 @@ GlobálnePremenné */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelMode
         </y:GenericNode>
       </data>
     </node>
-    <node id="n20">
+    <node id="n19">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="90.0" width="142.89593267882185" x="-800.5628260014234" y="-444.86934551715774"/>
@@ -422,7 +404,7 @@ GlobálnePremenné */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelMode
         </y:GenericNode>
       </data>
     </node>
-    <node id="n21">
+    <node id="n20">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="107.63016696091631" width="125.95257322409338" x="-605.5416230653725" y="-885.5236388801778"/>
@@ -440,7 +422,7 @@ GlobálnePremenné */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelMode
         </y:GenericNode>
       </data>
     </node>
-    <node id="n22">
+    <node id="n21">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="90.0" width="168.19806788218796" x="-1186.8365520202562" y="-980.5808407337074"/>
@@ -461,7 +443,7 @@ GlobálnePremenné */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelMode
         </y:GenericNode>
       </data>
     </node>
-    <node id="n23">
+    <node id="n22">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="90.0" width="193.83318290478195" x="164.4274451234755" y="-665.3210947501638"/>
@@ -482,7 +464,7 @@ GlobálnePremenné */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelMode
         </y:GenericNode>
       </data>
     </node>
-    <node id="n24">
+    <node id="n23">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="90.0" width="168.19806788218796" x="-1293.9890896605148" y="-871.65135354619"/>
@@ -503,7 +485,7 @@ GlobálnePremenné */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelMode
         </y:GenericNode>
       </data>
     </node>
-    <node id="n25">
+    <node id="n24">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="90.0" width="168.19806788218796" x="-1194.7938928786014" y="-434.75494181009833"/>
@@ -524,7 +506,7 @@ GlobálnePremenné */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelMode
         </y:GenericNode>
       </data>
     </node>
-    <node id="n26">
+    <node id="n25">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="90.0" width="154.40349396914462" x="-1478.3925836296592" y="-871.65135354619"/>
@@ -540,7 +522,7 @@ prihlásený */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:M
         </y:GenericNode>
       </data>
     </node>
-    <node id="n27">
+    <node id="n26">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="90.0" width="106.0994176718093" x="-595.6150452892304" y="-988.1666435140019"/>
@@ -561,7 +543,7 @@ prihlásený */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:M
         </y:GenericNode>
       </data>
     </node>
-    <node id="n28">
+    <node id="n27">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="90.0" width="137.1487427769987" x="-797.6892310505119" y="-988.1666435140019"/>
@@ -582,7 +564,7 @@ prihlásený */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:M
         </y:GenericNode>
       </data>
     </node>
-    <node id="n29">
+    <node id="n28">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="90.0" width="106.0994176718093" x="-595.6150452892304" y="-1090.809648147826"/>
@@ -603,7 +585,7 @@ prihlásený */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:M
         </y:GenericNode>
       </data>
     </node>
-    <node id="n30">
+    <node id="n29">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="90.0" width="106.0994176718093" x="-595.6150452892304" y="-1210.809648147826"/>
@@ -624,7 +606,7 @@ prihlásený */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:M
         </y:GenericNode>
       </data>
     </node>
-    <node id="n31">
+    <node id="n30">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="90.0" width="106.0994176718093" x="-595.6150452892304" y="-1342.746070027209"/>
@@ -645,7 +627,7 @@ prihlásený */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:M
         </y:GenericNode>
       </data>
     </node>
-    <node id="n32">
+    <node id="n31">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="90.0" width="168.19806788218796" x="-813.2138936031066" y="-1411.7248778043004"/>
@@ -666,7 +648,7 @@ prihlásený */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:M
         </y:GenericNode>
       </data>
     </node>
-    <node id="n33">
+    <node id="n32">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="90.0" width="106.0994176718093" x="-782.1645684979173" y="-1251.2672629760632"/>
@@ -687,16 +669,14 @@ prihlásený */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:M
         </y:GenericNode>
       </data>
     </node>
-    <node id="n34">
+    <node id="n33">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="121.1158023538103" width="210.75970154277718" x="-647.9451872247143" y="-1547.2827789812056"/>
           <y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" backgroundColor="#B7C9E3" configuration="com.yworks.entityRelationship.label.name" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasLineColor="false" height="18.701171875" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="t" textColor="#000000" verticalTextPosition="bottom" visible="true" width="96.05078125" x="57.35446014638865" xml:space="preserve" y="4.0">KartyAukciaPage</y:NodeLabel>
-          <y:NodeLabel alignment="left" autoSizePolicy="content" configuration="com.yworks.entityRelationship.label.attributes" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="92.20703125" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="top" visible="true" width="208.087890625" x="2.0" xml:space="preserve" y="30.701171875">AukčnéPonuky[] // klasických tried
-
-Využíva tabuľky:
+          <y:NodeLabel alignment="left" autoSizePolicy="content" configuration="com.yworks.entityRelationship.label.attributes" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="62.8046875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="top" visible="true" width="208.087890625" x="2.0" xml:space="preserve" y="30.701171875">Využíva tabuľky:
 -AukčnéPonuky
 -UžívateliaAukčnéPonuky (Uchádzači)
 -FotkyStrojov<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:ModelParameter><y:ErdAttributesNodeLabelModelParameter/></y:ModelParameter></y:NodeLabel>
@@ -706,7 +686,7 @@ Využíva tabuľky:
         </y:GenericNode>
       </data>
     </node>
-    <node id="n35">
+    <node id="n34">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="90.0" width="135.26870637839227" x="-813.2138936031067" y="-1537.70802614844"/>
@@ -727,7 +707,7 @@ Využíva tabuľky:
         </y:GenericNode>
       </data>
     </node>
-    <node id="n36">
+    <node id="n35">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="90.0" width="132.05833224881394" x="-608.5945025777327" y="-1677.7996308994846"/>
@@ -748,7 +728,7 @@ Využíva tabuľky:
         </y:GenericNode>
       </data>
     </node>
-    <node id="n37">
+    <node id="n36">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="46.72372061711076" width="142.89593267882185" x="-810.0035194735283" y="-1675.84627021106"/>
@@ -769,14 +749,16 @@ Využíva tabuľky:
         </y:GenericNode>
       </data>
     </node>
-    <node id="n38">
+    <node id="n37">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
-          <y:Geometry height="141.27250230215964" width="218.7173161290326" x="-651.923994517842" y="-1862.4094539964826"/>
+          <y:Geometry height="170.6644331857501" width="218.7173161290326" x="-651.923994517842" y="-1888.9809160035136"/>
           <y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" backgroundColor="#B7C9E3" configuration="com.yworks.entityRelationship.label.name" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasLineColor="false" height="18.701171875" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="t" textColor="#000000" verticalTextPosition="bottom" visible="true" width="144.09765625" x="37.30982993951625" xml:space="preserve" y="4.0">AukcnaPonukaStrojaPage</y:NodeLabel>
-          <y:NodeLabel alignment="left" autoSizePolicy="content" configuration="com.yworks.entityRelationship.label.attributes" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="106.908203125" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="top" visible="true" width="208.087890625" x="2.0" xml:space="preserve" y="30.701171875">AukčnáPonuka // klasická trieda
+          <y:NodeLabel alignment="left" autoSizePolicy="content" configuration="com.yworks.entityRelationship.label.attributes" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="136.310546875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="top" visible="true" width="208.087890625" x="2.0" xml:space="preserve" y="30.701171875">MinimálneNavýšenie
+Timer
+Timespan // ako dlho má trvať
 
 Využíva tabuľky:
 -AukčnéPonuky
@@ -789,10 +771,10 @@ Využíva tabuľky:
         </y:GenericNode>
       </data>
     </node>
-    <node id="n39">
+    <node id="n38">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
-          <y:Geometry height="90.0" width="210.75970154277718" x="-901.5561558063443" y="-1836.773202845403"/>
+          <y:Geometry height="90.0" width="210.75970154277718" x="-901.5561558063443" y="-1869.5596183870025"/>
           <y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" backgroundColor="#B7C9E3" configuration="com.yworks.entityRelationship.label.name" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasLineColor="false" height="18.701171875" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="t" textColor="#000000" verticalTextPosition="bottom" visible="true" width="206.107421875" x="2.3261398338886465" xml:space="preserve" y="4.0">FormAukcnaPonukaStrojaComponent</y:NodeLabel>
@@ -810,7 +792,7 @@ Využíva tabuľky:
         </y:GenericNode>
       </data>
     </node>
-    <node id="n40">
+    <node id="n39">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="90.0" width="227.00437587657802" x="-347.9501665952915" y="-404.16416615792434"/>
@@ -831,7 +813,7 @@ Využíva tabuľky:
         </y:GenericNode>
       </data>
     </node>
-    <node id="n41">
+    <node id="n40">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="90.0" width="227.00437587657802" x="-100.64199786233834" y="-404.16416615792434"/>
@@ -852,7 +834,7 @@ Využíva tabuľky:
         </y:GenericNode>
       </data>
     </node>
-    <node id="n42">
+    <node id="n41">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="53.322021736419174" width="131.5293798687237" x="-987.3943410735135" y="-1203.6370960151467"/>
@@ -873,7 +855,7 @@ Využíva tabuľky:
         </y:GenericNode>
       </data>
     </node>
-    <node id="n43">
+    <node id="n42">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="53.322021736419174" width="131.5293798687237" x="-987.3943410735135" y="-1274.5892847124824"/>
@@ -894,7 +876,7 @@ Využíva tabuľky:
         </y:GenericNode>
       </data>
     </node>
-    <node id="n44">
+    <node id="n43">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="100.74430901299672" width="216.10548171220194" x="494.17836377152105" y="-947.9515366146799"/>
@@ -911,7 +893,7 @@ Využíva tabuľky:
         </y:GenericNode>
       </data>
     </node>
-    <node id="n45">
+    <node id="n44">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="253.96745727461428" width="168.38995657783948" x="844.1426716376081" y="615.9290216215161"/>
@@ -940,7 +922,7 @@ Maximálna rýchlosť
         </y:GenericNode>
       </data>
     </node>
-    <node id="n46">
+    <node id="n45">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="90.0" width="101.33550676016785" x="703.091846342599" y="899.8964788961302"/>
@@ -956,7 +938,7 @@ Názov<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:ModelParam
         </y:GenericNode>
       </data>
     </node>
-    <node id="n47">
+    <node id="n46">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="331.09598877980375" width="636.2471405329593" x="993.8807205828473" y="1075.7239526886692"/>
@@ -985,7 +967,7 @@ Názov<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:ModelParam
         </y:GenericNode>
       </data>
     </node>
-    <node id="n48">
+    <node id="n47">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="121.1333097236469" width="136.38669643758658" x="1243.8109426305336" y="732.97333848031"/>
@@ -1004,7 +986,7 @@ Cena<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:ModelParamet
         </y:GenericNode>
       </data>
     </node>
-    <node id="n49">
+    <node id="n48">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="99.14378861150044" width="136.38669643758658" x="1476.3980126095898" y="689.752141953634"/>
@@ -1020,7 +1002,7 @@ Heslo<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:ModelParame
         </y:GenericNode>
       </data>
     </node>
-    <node id="n50">
+    <node id="n49">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="90.0" width="101.33550676016785" x="1420.500437678188" y="818.8959305651344"/>
@@ -1034,7 +1016,7 @@ Heslo<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:ModelParame
         </y:GenericNode>
       </data>
     </node>
-    <node id="n51">
+    <node id="n50">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="143.96139323422176" width="94.4874083814866" x="1561.3363808718213" y="818.8959305651344"/>
@@ -1054,7 +1036,7 @@ JeDočasný<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:GenericNode>
       </data>
     </node>
-    <node id="n52">
+    <node id="n51">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="121.1333097236469" width="150.67271719495056" x="1956.9815434119869" y="738.853606025892"/>
@@ -1073,7 +1055,7 @@ DátumAČasKoncaPonuky
         </y:GenericNode>
       </data>
     </node>
-    <node id="n53">
+    <node id="n52">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="90.0" width="130.84724737867032" x="862.914026237192" y="899.8964788961304"/>
@@ -1088,7 +1070,7 @@ NáhradnéDiely.ID (PK)<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelMo
         </y:GenericNode>
       </data>
     </node>
-    <node id="n54">
+    <node id="n53">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="90.0" width="214.7871748023531" x="1691.5045706853698" y="754.4202608877155"/>
@@ -1104,7 +1086,7 @@ CenováPonuka<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Mod
         </y:GenericNode>
       </data>
     </node>
-    <node id="n55">
+    <node id="n54">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="99.14378861150044" width="101.33550676016785" x="703.091846342599" y="718.7150568583185"/>
@@ -1121,7 +1103,7 @@ JeTitulna<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:ModelPa
         </y:GenericNode>
       </data>
     </node>
-    <node id="n56">
+    <node id="n55">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="90.0" width="150.67271719495056" x="1052.8354268255152" y="748.5399933421334"/>
@@ -1137,7 +1119,7 @@ Fotka<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:ModelParame
         </y:GenericNode>
       </data>
     </node>
-    <node id="n57">
+    <node id="n56">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="90.0" width="106.0994176718093" x="-164.9378869784909" y="-803.9502384291726"/>
@@ -1158,7 +1140,7 @@ Fotka<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:ModelParame
         </y:GenericNode>
       </data>
     </node>
-    <node id="n58">
+    <node id="n57">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="90.0" width="106.0994176718093" x="208.29432773996183" y="-803.9502384291726"/>
@@ -1179,7 +1161,7 @@ Fotka<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:ModelParame
         </y:GenericNode>
       </data>
     </node>
-    <node id="n59">
+    <node id="n58">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="90.0" width="154.40349396914462" x="-996.5958249964134" y="-312.49951247807405"/>
@@ -1200,7 +1182,7 @@ Fotka<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:ModelParame
         </y:GenericNode>
       </data>
     </node>
-    <node id="n60">
+    <node id="n59">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="90.0" width="183.62239326788222" x="-1211.8421981194506" y="-312.49951247807405"/>
@@ -1221,7 +1203,7 @@ Fotka<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:ModelParame
         </y:GenericNode>
       </data>
     </node>
-    <node id="n61">
+    <node id="n60">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="90.0" width="168.19806788218796" x="-1003.4931119529351" y="-434.75494181009833"/>
@@ -1242,7 +1224,7 @@ Fotka<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:ModelParame
         </y:GenericNode>
       </data>
     </node>
-    <node id="n62">
+    <node id="n61">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="35.88822081346427" width="168.19806788218796" x="-995.8872989326999" y="-953.5249511404395"/>
@@ -1263,7 +1245,7 @@ Fotka<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:ModelParame
         </y:GenericNode>
       </data>
     </node>
-    <node id="n63">
+    <node id="n62">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="107.63016696091631" width="167.68462237795347" x="-627.6668933226016" y="-572.14343922657"/>
@@ -1279,7 +1261,7 @@ Fotka<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:ModelParame
         </y:GenericNode>
       </data>
     </node>
-    <node id="n64">
+    <node id="n63">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="90.0" width="168.19806788218796" x="-998.7608938836115" y="-1411.7248778043004"/>
@@ -1300,7 +1282,7 @@ Fotka<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:ModelParame
         </y:GenericNode>
       </data>
     </node>
-    <node id="n65">
+    <node id="n64">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="90.0" width="168.19806788218796" x="-1184.3078941641163" y="-1411.7248778043004"/>
@@ -1321,7 +1303,7 @@ Fotka<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:ModelParame
         </y:GenericNode>
       </data>
     </node>
-    <node id="n66">
+    <node id="n65">
       <data key="d6">
         <y:SVGNode>
           <y:Geometry height="46.887996673583984" width="39.527000427246094" x="1313.6417470040137" y="491.61435071908033"/>
@@ -1342,7 +1324,7 @@ Fotka<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:ModelParame
         </y:SVGNode>
       </data>
     </node>
-    <node id="n67">
+    <node id="n66">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="90.0" width="130.84724737867055" x="1267.9816235283015" y="371.61435071908033"/>
@@ -1363,7 +1345,7 @@ Fotka<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:ModelParame
         </y:GenericNode>
       </data>
     </node>
-    <node id="n68">
+    <node id="n67">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="46.72372061711076" width="142.89593267882185" x="-810.0035194735284" y="-1619.0041084042068"/>
@@ -1384,7 +1366,7 @@ Fotka<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:ModelParame
         </y:GenericNode>
       </data>
     </node>
-    <node id="n69">
+    <node id="n68">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="100.74430901299684" width="210.75970154277718" x="-1053.9735951458842" y="-1674.4354835055765"/>
@@ -1401,7 +1383,7 @@ Fotka<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:ModelParame
         </y:GenericNode>
       </data>
     </node>
-    <node id="n70">
+    <node id="n69">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="90.0" width="142.89593267882185" x="1139.3090863180541" y="-389.7888086956517"/>
@@ -1416,7 +1398,7 @@ ako parameter. */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y
         </y:GenericNode>
       </data>
     </node>
-    <node id="n71">
+    <node id="n70">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="90.0" width="142.89593267882185" x="786.6083581653353" y="-942.5793821081814"/>
@@ -1437,7 +1419,7 @@ ako parameter. */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y
         </y:GenericNode>
       </data>
     </node>
-    <node id="n72">
+    <node id="n71">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="90.0" width="123.79765767180936" x="796.1574956688415" y="-1067.9515366146798"/>
@@ -1458,7 +1440,7 @@ ako parameter. */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y
         </y:GenericNode>
       </data>
     </node>
-    <node id="n73">
+    <node id="n72">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="90.0" width="180.4168057159619" x="767.8479216467653" y="-817.2072276016831"/>
@@ -1473,7 +1455,7 @@ zákazníkovi len jeho */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:Label
         </y:GenericNode>
       </data>
     </node>
-    <node id="n74">
+    <node id="n73">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="90.0" width="137.1487427769987" x="-797.689231050512" y="-1090.809648147826"/>
@@ -1489,7 +1471,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:GenericNode>
       </data>
     </node>
-    <node id="n75">
+    <node id="n74">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="53.322021736419174" width="131.5293798687237" x="-987.3943410735135" y="-1132.684907317811"/>
@@ -1510,7 +1492,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:GenericNode>
       </data>
     </node>
-    <node id="n76">
+    <node id="n75">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="53.322021736419174" width="227.00437587657802" x="-842.6170476003016" y="-760.3771987212485"/>
@@ -1524,7 +1506,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:GenericNode>
       </data>
     </node>
-    <node id="n77">
+    <node id="n76">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="107.63016696091631" width="210.75970154277718" x="-888.7048887674918" y="-685.0478653752219"/>
@@ -1542,7 +1524,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:GenericNode>
       </data>
     </node>
-    <node id="n78">
+    <node id="n77">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="91.64479018013105" width="210.75970154277718" x="-649.2044329050135" y="-677.0551769848294"/>
@@ -1558,7 +1540,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:GenericNode>
       </data>
     </node>
-    <node id="n79">
+    <node id="n78">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="53.322021736419174" width="154.40349396914473" x="-1025.795491359068" y="-1537.70802614844"/>
@@ -1601,7 +1583,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e2" source="n7" target="n1">
+    <edge id="e2" source="n6" target="n1">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -1616,7 +1598,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e3" source="n10" target="n11">
+    <edge id="e3" source="n9" target="n10">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -1627,7 +1609,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e4" source="n10" target="n13">
+    <edge id="e4" source="n9" target="n12">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -1638,7 +1620,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e5" source="n13" target="n14">
+    <edge id="e5" source="n12" target="n13">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -1649,7 +1631,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e6" source="n10" target="n15">
+    <edge id="e6" source="n9" target="n14">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -1660,7 +1642,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e7" source="n15" target="n12">
+    <edge id="e7" source="n14" target="n11">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -1674,7 +1656,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e8" source="n15" target="n16">
+    <edge id="e8" source="n14" target="n15">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -1688,7 +1670,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e9" source="n15" target="n17">
+    <edge id="e9" source="n14" target="n16">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -1702,7 +1684,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e10" source="n12" target="n18">
+    <edge id="e10" source="n11" target="n17">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -1713,7 +1695,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e11" source="n16" target="n19">
+    <edge id="e11" source="n15" target="n18">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -1724,7 +1706,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e12" source="n17" target="n20">
+    <edge id="e12" source="n16" target="n19">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -1735,7 +1717,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e13" source="n15" target="n21">
+    <edge id="e13" source="n14" target="n20">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -1749,7 +1731,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e14" source="n10" target="n23">
+    <edge id="e14" source="n9" target="n22">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -1760,7 +1742,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e15" source="n21" target="n22">
+    <edge id="e15" source="n20" target="n21">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -1773,7 +1755,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e16" source="n21" target="n24">
+    <edge id="e16" source="n20" target="n23">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -1786,7 +1768,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e17" source="n21" target="n25">
+    <edge id="e17" source="n20" target="n24">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -1799,7 +1781,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e18" source="n24" target="n26">
+    <edge id="e18" source="n23" target="n25">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -1810,7 +1792,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e19" source="n15" target="n27">
+    <edge id="e19" source="n14" target="n26">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -1824,7 +1806,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e20" source="n27" target="n28">
+    <edge id="e20" source="n26" target="n27">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -1835,7 +1817,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e21" source="n15" target="n29">
+    <edge id="e21" source="n14" target="n28">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -1849,7 +1831,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e22" source="n15" target="n30">
+    <edge id="e22" source="n14" target="n29">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -1863,7 +1845,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e23" source="n15" target="n31">
+    <edge id="e23" source="n14" target="n30">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -1877,7 +1859,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e24" source="n31" target="n32">
+    <edge id="e24" source="n30" target="n31">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -1888,7 +1870,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e25" source="n31" target="n33">
+    <edge id="e25" source="n30" target="n32">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -1899,7 +1881,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e26" source="n34" target="n35">
+    <edge id="e26" source="n33" target="n34">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -1910,7 +1892,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e27" source="n34" target="n36">
+    <edge id="e27" source="n33" target="n35">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -1921,7 +1903,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e28" source="n15" target="n34">
+    <edge id="e28" source="n14" target="n33">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -1935,7 +1917,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e29" source="n38" target="n22">
+    <edge id="e29" source="n37" target="n21">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -1950,23 +1932,23 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e30" source="n38" target="n39">
+    <edge id="e30" source="n37" target="n38">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
+          <y:Path sx="-22.666629437284655" sy="-20.910918976363973" tx="0.0" ty="0.0"/>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="diamond" target="none"/>
           <y:BendStyle smoothed="false"/>
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e31" source="n39" target="n26">
+    <edge id="e31" source="n38" target="n25">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
-            <y:Point x="-1401.1908366450868" y="-1791.773202845403"/>
+            <y:Point x="-1401.1908366450868" y="-1824.5596183870025"/>
           </y:Path>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="diamond" target="none"/>
@@ -1974,13 +1956,13 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e32" source="n38" target="n25">
+    <edge id="e32" source="n37" target="n24">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
-            <y:Point x="-542.5653364533257" y="-1918.0298442509795"/>
-            <y:Point x="-1522.979471201387" y="-1918.0298442509795"/>
+            <y:Point x="-542.5653364533257" y="-1950.816259792579"/>
+            <y:Point x="-1522.979471201387" y="-1950.816259792579"/>
             <y:Point x="-1522.9794712013868" y="-389.75494181009833"/>
           </y:Path>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
@@ -1989,13 +1971,13 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e33" source="n15" target="n38">
+    <edge id="e33" source="n14" target="n37">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
+          <y:Path sx="0.0" sy="0.0" tx="33.023344868465756" ty="-20.910918976363973">
             <y:Point x="-395.97993732550685" y="-897.5793821081814"/>
-            <y:Point x="-395.97993732550685" y="-1791.773202845403"/>
+            <y:Point x="-395.97993732550685" y="-1824.5596183870025"/>
           </y:Path>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="diamond" target="none"/>
@@ -2003,7 +1985,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e34" source="n15" target="n7">
+    <edge id="e34" source="n14" target="n6">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -2016,7 +1998,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e35" source="n15" target="n6">
+    <edge id="e35" source="n14" target="n5">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -2027,7 +2009,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e36" source="n11" target="n40">
+    <edge id="e36" source="n10" target="n39">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -2038,7 +2020,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e37" source="n11" target="n41">
+    <edge id="e37" source="n10" target="n40">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -2049,7 +2031,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e38" source="n6" target="n1">
+    <edge id="e38" source="n5" target="n1">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -2065,7 +2047,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e39" source="n44" target="n1">
+    <edge id="e39" source="n43" target="n1">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -2076,7 +2058,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e40" source="n50" target="n49">
+    <edge id="e40" source="n49" target="n48">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -2087,7 +2069,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e41" source="n51" target="n49">
+    <edge id="e41" source="n50" target="n48">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -2098,7 +2080,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e42" source="n10" target="n57">
+    <edge id="e42" source="n9" target="n56">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -2109,7 +2091,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e43" source="n10" target="n58">
+    <edge id="e43" source="n9" target="n57">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -2120,7 +2102,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e44" source="n59" target="n60">
+    <edge id="e44" source="n58" target="n59">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -2131,7 +2113,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e45" source="n15" target="n59">
+    <edge id="e45" source="n14" target="n58">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -2147,7 +2129,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e46" source="n21" target="n61">
+    <edge id="e46" source="n20" target="n60">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -2160,7 +2142,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e47" source="n21" target="n62">
+    <edge id="e47" source="n20" target="n61">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -2173,7 +2155,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e48" source="n15" target="n63">
+    <edge id="e48" source="n14" target="n62">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -2188,7 +2170,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e49" source="n63" target="n24">
+    <edge id="e49" source="n62" target="n23">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -2201,7 +2183,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e50" source="n32" target="n64">
+    <edge id="e50" source="n31" target="n63">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -2212,7 +2194,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e51" source="n64" target="n65">
+    <edge id="e51" source="n63" target="n64">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -2223,7 +2205,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e52" source="n35" target="n19">
+    <edge id="e52" source="n34" target="n18">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -2239,7 +2221,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e53" source="n66" target="n55">
+    <edge id="e53" source="n65" target="n54">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -2255,7 +2237,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e54" source="n66" target="n45">
+    <edge id="e54" source="n65" target="n44">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -2271,7 +2253,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e55" source="n66" target="n46">
+    <edge id="e55" source="n65" target="n45">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -2287,7 +2269,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e56" source="n66" target="n53">
+    <edge id="e56" source="n65" target="n52">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -2303,7 +2285,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e57" source="n66" target="n48">
+    <edge id="e57" source="n65" target="n47">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -2318,7 +2300,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e58" source="n66" target="n56">
+    <edge id="e58" source="n65" target="n55">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -2333,7 +2315,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e59" source="n66" target="n49">
+    <edge id="e59" source="n65" target="n48">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -2347,7 +2329,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e60" source="n66" target="n54">
+    <edge id="e60" source="n65" target="n53">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -2362,7 +2344,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e61" source="n66" target="n52">
+    <edge id="e61" source="n65" target="n51">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -2378,7 +2360,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e62" source="n67" target="n66">
+    <edge id="e62" source="n66" target="n65">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -2389,13 +2371,13 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e63" source="n38" target="n62">
+    <edge id="e63" source="n37" target="n61">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="-56.394708633324115" sy="-14.177405067446706" tx="0.0" ty="0.0">
-            <y:Point x="-598.9600450866498" y="-1897.8357617308482"/>
-            <y:Point x="-1253.075964076832" y="-1897.8357617308482"/>
+          <y:Path sx="-56.394708633324115" sy="-17.127032936002482" tx="0.0" ty="0.0">
+            <y:Point x="-598.9600450866498" y="-1930.6221772724477"/>
+            <y:Point x="-1253.075964076832" y="-1930.6221772724477"/>
             <y:Point x="-1253.075964076832" y="-1031.4106855793757"/>
             <y:Point x="-911.788264991606" y="-1031.4106855793757"/>
           </y:Path>
@@ -2405,7 +2387,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e64" source="n8" target="n1">
+    <edge id="e64" source="n7" target="n1">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -2416,7 +2398,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e65" source="n44" target="n71">
+    <edge id="e65" source="n43" target="n70">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -2427,7 +2409,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e66" source="n44" target="n72">
+    <edge id="e66" source="n43" target="n71">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -2438,7 +2420,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e67" source="n44" target="n73">
+    <edge id="e67" source="n43" target="n72">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -2449,7 +2431,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e68" source="n15" target="n44">
+    <edge id="e68" source="n14" target="n43">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -2462,7 +2444,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e69" source="n29" target="n74">
+    <edge id="e69" source="n28" target="n73">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -2473,7 +2455,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e70" source="n43" target="n24">
+    <edge id="e70" source="n42" target="n23">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -2486,7 +2468,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e71" source="n42" target="n24">
+    <edge id="e71" source="n41" target="n23">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -2499,7 +2481,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e72" source="n15" target="n43">
+    <edge id="e72" source="n14" target="n42">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -2515,7 +2497,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e73" source="n15" target="n42">
+    <edge id="e73" source="n14" target="n41">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -2531,7 +2513,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e74" source="n15" target="n75">
+    <edge id="e74" source="n14" target="n74">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -2545,7 +2527,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e75" source="n21" target="n76">
+    <edge id="e75" source="n20" target="n75">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -2558,7 +2540,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e76" source="n34" target="n76">
+    <edge id="e76" source="n33" target="n75">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -2573,7 +2555,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e77" source="n63" target="n76">
+    <edge id="e77" source="n62" target="n75">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -2587,7 +2569,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e78" source="n35" target="n79">
+    <edge id="e78" source="n34" target="n78">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -2598,37 +2580,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e79" source="n38" target="n3">
-      <data key="d8" xml:space="preserve"/>
-      <data key="d10">
-        <y:PolyLineEdge>
-          <y:Path sx="49.900465538212075" sy="7.144358982865924" tx="0.0" ty="0.0">
-            <y:Point x="-492.6648709151136" y="-1938.0298442509795"/>
-            <y:Point x="-495.7733141128697" y="-1938.0298442509795"/>
-            <y:Point x="-1683.198615655646" y="-1938.0298442509795"/>
-            <y:Point x="-1683.198615655646" y="116.75283730715307"/>
-          </y:Path>
-          <y:LineStyle color="#000000" type="line" width="1.0"/>
-          <y:Arrows source="diamond" target="none"/>
-          <y:BendStyle smoothed="false"/>
-        </y:PolyLineEdge>
-      </data>
-    </edge>
-    <edge id="e80" source="n34" target="n3">
-      <data key="d8" xml:space="preserve"/>
-      <data key="d10">
-        <y:PolyLineEdge>
-          <y:Path sx="-1.1202777324770068" sy="48.09856723232656" tx="0.0" ty="0.0">
-            <y:Point x="-1683.198615655646" y="-1438.6263105719738"/>
-            <y:Point x="-1683.198615655646" y="116.75283730715307"/>
-          </y:Path>
-          <y:LineStyle color="#000000" type="line" width="1.0"/>
-          <y:Arrows source="diamond" target="none"/>
-          <y:BendStyle smoothed="false"/>
-        </y:PolyLineEdge>
-      </data>
-    </edge>
-    <edge id="e81" source="n24" target="n9">
+    <edge id="e79" source="n23" target="n8">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -2641,7 +2593,7 @@ na karty */<y:LabelModel><y:ErdAttributesNodeLabelModel/></y:LabelModel><y:Model
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e82" source="n31" target="n24">
+    <edge id="e80" source="n30" target="n23">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
