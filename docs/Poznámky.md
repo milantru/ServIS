@@ -134,3 +134,5 @@ Funkcionality chatu:
   - odoslať/prijať textové správy
   - len pri prihlásených užívateľoch... admin má možnosť potvrdiť obchod
   - pri neprihlásených užívateľoch... správa príde do adminovskej schránky, ALE kedže admin nemá komu odpísať (lebo užívateľ nemá účet, a teda ani kontaktné info), musí existovať nejaké políčko pre email/telefón, aby užívateľa vedel admin spätne kontaktovať
+
+~~Stroje majú kategórie (pásové bagre, šmykom riadené...), každá kategória má vlastný typ tabuľky (info o strojoch). Rozhodol som sa do databázy dať iba <code>List\<string\></code>, ale v runtimu komponenta pri vytváraní ponuky nového stroja sa pozrie na kategóriu stroja a podľa toho poskytne form na vyplnenie tabuľky (podľa kategórie vieš, aký druh tabuľky potrebuješ).~~ EDIT: Prišlo mi to čudné, čo ak sa nejako zmenia properties v kóde (napr. poradie) a už by to nematchovalo na tabuľku alebo niečo... Radšej asi spravím ďalšie tabuľky pre šmykom riadené a pásové bagre, a tie budú dediť od tabuľky Stroje, a tam si môžem dať stĺpce podľa toho, čo potrebujem. Toto mi príde ako lepší nápad.
