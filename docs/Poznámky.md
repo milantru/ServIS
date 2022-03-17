@@ -65,10 +65,12 @@
 - ~~Static class **PrihláseníUžívatelia** bude obsahovať zoznam všetkých užívateľov, takže keď sa niektorí z užívateľov bude snažiť prihlásiť, skontroluje sa či už prihlásený je, ak áno, nájde sa v tomto zozname jeho inštancia a vráti sa mu jeho model, takto sa nebudeme musiet vždy dotazovať priamo z databázy a zároveň môže byť užívateľ prihlásený na viacerých PC. Ak by sa v zozname nenašiel, tak sa naťahajú dáta z databázy a vytvorí sa nová inštancia modelu.~~ DBContext nie je thread-safe, musí sa dať ináč...
 
 **!!! Veľký UPDATE: !!!** 
-- <u>Zrušili sa Objednávky</u> (kúpa stroja, prídavných zariadení, zemné práce, oprava stroja) ako entinty. Existovala myšlienka, že užívateľ si v profile bude môcť objednávky vylistovať a mal by o nich nejaké info.  
+
+- ~~<u>Zrušili sa Objednávky</u> (kúpa stroja, prídavných zariadení, zemné práce, oprava stroja) ako entinty. Existovala myšlienka, že užívateľ si v profile bude môcť objednávky vylistovať a mal by o nich nejaké info.  
 Problém bol s tým, že ako sa to pohodlne a jednoducho prepojí? Zo stránky užívateľ odošle prvotný email a ďalej komunikácia prebieha mimo stránky cez emaily. Znamená to, že potvrdenie objednávky nie je isté čo ak sa ďalej v komunikácii zistí nejaký problém a nakoniec o objednávku nebude záujem... Nemôžeme s istotou hneď po odoslaní prvotnej správy pridať užívateľovi položku do objednávok. Ako pohodlné riešenie pre obe strany by bolo vytvorenie vlastnej komunikácie priamo na stránke namiesto emailov. Ale to prišlo mne i ujovi už ako príliš, tak sme to zavrhli a povedali, že to za to nestojí. (Aj tak by to nebolo AŽ tak užitočné...)  
-Ide o to že to nefunguje ako nejaký eshop, kde si dám niečo do košíka zaplatím a je isté že som si vec kúpil, tu sa pošle dopytovací email a obchod sa dohodne cez maily, takže stránka nevie či obchod prebehol úspešne, takže nevie či objednávku môže pridať do objednávok užívateľa.
-- <u>Zrušilo sa upozorňovanie na servisnú prehliadku.</u> Kvôli zrušeniu objednávok teraz nemáme info o tom, ktorý stroj si užívateľ kúpil, takže ho nemôžme kontaktovať s tým, že je potrebná prehliadka stroja. (Pre aukčné ponuky by sa dalo, ale práve tam to nie je potrebné, požadované bolo iba pri nových)
+Ide o to že to nefunguje ako nejaký eshop, kde si dám niečo do košíka zaplatím a je isté že som si vec kúpil, tu sa pošle dopytovací email a obchod sa dohodne cez maily, takže stránka nevie či obchod prebehol úspešne, takže nevie či objednávku môže pridať do objednávok užívateľa.~~
+- ~~<u>Zrušilo sa upozorňovanie na servisnú prehliadku.</u> Kvôli zrušeniu objednávok teraz nemáme info o tom, ktorý stroj si užívateľ kúpil, takže ho nemôžme kontaktovať s tým, že je potrebná prehliadka stroja. (Pre aukčné ponuky by sa dalo, ale práve tam to nie je potrebné, požadované bolo iba pri nových)~~  
+**EDIT**: Nakoniec vyzerá, že pridám "chat", takže formy nebudú posielať správy na mail, ale konverzácie budú prebiehať v aplikácií. Tým pádom <u>nebudem musieť rušiť</u> tieto funkcionality.
 
 
 - **Aukcia:**
