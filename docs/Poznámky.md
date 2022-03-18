@@ -142,3 +142,5 @@ Všimol som si, že názvy kariet (ponuky) na detvaservise (stránka, ktorú pou
 Prišiel mi ako dobrý nápad zaviesť **maďarskú notáciu** pri modeloch, napr. MaximumPower**Kw**.
 
 Aby sa mi dobre pracovalo so záznamami v tabuľkách, vytvoril som si interface <code>IItem</code>, ktorý obsahuje id. Všetky tabuľky majú 1 id- teda až na tabuľu s uchádzačmi aukcie. Aby bolo všetko jednotné, tak som sa rozhodol zrušiť zložený PK (Užívateľ.PK a AukčnéPonuky.ID) a pridať nové id. Takže aj táto tabuľka bude mať 1 id, a teda bude pasovať do interfacu.
+
+Pri vytváraní modelov v kóde som premýšľal, či dať súčiastky stroja ako list alebo ako kolekciu. Kolekcia by možno dávala väčší zmysel, pretože logicky stroj je ako taká množina súčiastok :-D Ale vybral som si list, pretože chcem mať pri iterovaní garantované poradie :)
