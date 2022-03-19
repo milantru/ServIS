@@ -147,4 +147,5 @@ Pri vytváraní modelov v kóde som premýšľal, či dať súčiastky stroja ak
 
 Pýtal som sa a predávať sa môžu (hoc i na aukcii) stroje iba z kategórií: šmykom riadené nakladače, pásové bagre, pásové nakladače. => A preto som sa rozhodol zaviesť do modelu v programe enum s týmito kategóriami. Takisto som sa rozhodol pridať strojom property pre kategóriu (možno to neskôr pomôže výkonnosti; takisto queries budú vyzerať asi rozumenejšie keď budem mať rovnaký enum v tabuľkách pre stroje a prídavné zariadenia, bez enumu v tabuľke strojov by som musel zistiť čo to je za kategóriu podľa tabuľiek zderivovaných, a potom to kombinovať s enumom v prídavných zariadeniach... ak bude enum v oboch tabuľkách, tak to bude asi jasnejšie).
 
-While doing data annotations I checked an appropriate max length for name. It is said to be 35 (or 70 for fullname) according to: https://stackoverflow.com/questions/30485/what-is-a-reasonable-length-limit-on-person-name-fields
+While doing data annotations I checked an appropriate max length for name. It is said to be 35 (or 70 for fullname) according to: https://stackoverflow.com/questions/30485/what-is-a-reasonable-length-limit-on-person-name-fields  
+Also for email address: https://stackoverflow.com/questions/1199190/what-is-the-optimal-length-for-an-email-address-in-a-database
