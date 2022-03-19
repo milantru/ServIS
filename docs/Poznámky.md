@@ -152,3 +152,5 @@ Also for email address: https://stackoverflow.com/questions/1199190/what-is-the-
 Also, for phone numbers I chose 17 even though internet said its 15. Thats because format like 00421 123 456 789 might be accepted as well and this format has length 17.
 
 Why to use **DbContextFactory:** https://docs.microsoft.com/en-us/ef/core/dbcontext-configuration/#using-a-dbcontext-factory-eg-for-blazor
+
+Rozhodol som sa odstrániť enum ExcavatorCategory, pretože som si uvedomil, že by to mohlo užívateľa (admina) obmedzovať. Keď to bude string, je väčšia voľnosť v tom, čo sa tam môže napísať. A teda ponuka produktov môže byť flexibilnejšia (ak chce pridať niečo nové, nemusí čakať za mnou, aby som pridal položku do enumu). + Už už som šiel prídávať enum i pre značky strojov a príd. zariadení, ale po hovore s majiteľom, ktorý to chcel mať "voľnejšie", som si uvedomil, že enum by to zbytočne zostriktnil.

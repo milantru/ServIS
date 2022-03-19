@@ -7,7 +7,8 @@ namespace BServisData.Models
 	{
 		public int Id { get; set; }
 
-		public ExcavatorCategory ForWhichExcavatorCategory { get; set; }
+		[MaxLength(40)]
+		public string ForWhichExcavatorCategory { get; set; }
 
 		[MaxLength(30)]
 		public string Category { get; set; } = null!;
