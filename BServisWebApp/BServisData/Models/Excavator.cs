@@ -20,7 +20,7 @@ namespace BServisData.Models
 
 		public string Description { get; set; } = null!;
 
-		public DateOnly? LastInspection { get; set; }
+		public DateTime? LastInspection { get; set; }
 
 		public bool IsNew { get; set; }
 
