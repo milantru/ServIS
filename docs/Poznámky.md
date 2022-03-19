@@ -150,3 +150,5 @@ Pýtal som sa a predávať sa môžu (hoc i na aukcii) stroje iba z kategórií:
 While doing data annotations I checked an appropriate max length for name. It is said to be 35 (or 70 for fullname) according to: https://stackoverflow.com/questions/30485/what-is-a-reasonable-length-limit-on-person-name-fields  
 Also for email address: https://stackoverflow.com/questions/1199190/what-is-the-optimal-length-for-an-email-address-in-a-database  
 Also, for phone numbers I chose 17 even though internet said its 15. Thats because format like 00421 123 456 789 might be accepted as well and this format has length 17.
+
+Why to use **DbContextFactory:** https://docs.microsoft.com/en-us/ef/core/dbcontext-configuration/#using-a-dbcontext-factory-eg-for-blazor
