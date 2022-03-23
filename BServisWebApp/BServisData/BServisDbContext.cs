@@ -6,11 +6,6 @@ namespace BServisData
 {
 	public class BServisDbContext : DbContext
 	{
-		public BServisDbContext(DbContextOptions<BServisDbContext> options) : base(options)
-		{
-
-		}
-
 		public DbSet<AdditionalEquipment> AdditionalEquipments { get; set; } = null!;
 		public DbSet<AdditionalEquipmentPhoto> AdditionalEquipmentPhotos { get; set; } = null!;
 		public DbSet<Administrator> Administrators { get; set; } = null!;
@@ -24,6 +19,11 @@ namespace BServisData
 		public DbSet<TrackedExcavator> TrackedExcavators { get; set; } = null!;
 		public DbSet<TrackedLoader> TrackedLoaders { get; set; } = null!;
 		public DbSet<User> Users { get; set; } = null!;
+
+		public BServisDbContext(DbContextOptions<BServisDbContext> options) : base(options)
+		{
+
+		}
 	}
 
 	public class BServisDbContextFactory : IDesignTimeDbContextFactory<BServisDbContext>
