@@ -28,11 +28,20 @@ namespace BServisData
 
 	public class BServisDbContextFactory : IDesignTimeDbContextFactory<BServisDbContext>
 	{
+		//private readonly IConfiguration configuration;
+
+		// in order to be able to add migrations parameterless ctor is required...
+		//public BServisDbContextFactory(IConfiguration configuration)
+		//{
+		//	this.configuration = configuration;
+		//}
+
 		public BServisDbContext CreateDbContext(string[] args)
 		{
 			var optionsBuilder = new DbContextOptionsBuilder<BServisDbContext>();
 
-			optionsBuilder.UseMySQL("Data Source = test.db"); // @"Server=(localdb)\mssqllocaldb;Database=Test"
+			//optionsBuilder.UseMySQL(Configuration.GetConnectionString("Default"));
+			optionsBuilder.UseMySQL("config string");
 
 			return new BServisDbContext(optionsBuilder.Options);
 		}
