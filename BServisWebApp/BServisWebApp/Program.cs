@@ -16,6 +16,7 @@ builder.Services.AddDbContextFactory<BServisDbContext>(options =>
 		options.UseMySQL(connectionString);
 	}
 );
+builder.Services.AddScoped<IBServisApi, BServisApi>();
 
 var app = builder.Build();
 
