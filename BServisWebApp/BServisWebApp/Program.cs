@@ -1,4 +1,5 @@
 using BServisData;
+using BServisData.Interfaces;
 using BServisWebApp.Data;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -17,6 +18,9 @@ builder.Services.AddDbContextFactory<BServisDbContext>(options =>
 	}
 );
 builder.Services.AddScoped<IBServisApi, BServisApi>();
+builder.Services.Configure<IDbContextFactory<BServisDbContext>>(factory =>
+	factory.CreateDbContext().Database.Migrate()
+);
 
 var app = builder.Build();
 
