@@ -158,16 +158,25 @@ Rozhodol som sa odstrániť enum ExcavatorCategory, pretože som si uvedomil, ž
 Premýšľam ako navrhnúť API k databáze (queries), konkrétne vylistovanie strojov a prídavných zariadení podľa značiek. Najprv som rozmýšľal, že by som mohol spraviť metódu, ktorá berie parameter string (značka), potom som si povedal, že enum by bol efektívnejší, ale to som zavrhol, pretože by sa stratila flexibilita (enumy sú hardkodnuté, admin by si nemohol pridať novú značku ak by chcel). Takisto som premýšľal, či by sa tu nejako nedal využiť GroupBy alebo aby som mal pre kažú značku osobitnú metódu... Nakoniec som sa rozhodol pre ten string, pretože mi to prišlo ako najflexibilnejšie riešenie.
 
 Metódy na testovanie toho, či existuje zákazník/admin, som najprv chcel navrhnúť tak, že budú vraciať bool (myslel som si že sa využije sql ASK query, takže to bude efektívnejšie). Ale teraz premýšľam nad tým, že lepšie asi bude vraciať rovno inštanciu zákazníka/admina (príp. null). Myslím si, že ak sa budem pýtať na to, či zákazník/admin existuje, tak s ním rovno budem chcieť i pracovať (alebo aspoň vo väčšine prípadov, ak nie vo všetkých...). Dobre, tak teda nakoniec som sa rozhodol mať metódu, ktorá berie id, a takisto metódu, ktorá berie username a heslo. Obe budú vraciať inštanciu zákazníka/admina, akurát tá druhá bude vraciať nullable zákazníka/admina. Pretože ak už som raz mal inštanciu vybratú z DB a pracoval som s ňou, a len si ju chcem znova naťahať z DB (napr. id predám ako parameter do komponenty, ktorá má niečo vykresliť napr. profil užívateľa pre admina), tak je efektívnejšie hľadať len za pomoci id. Na druhú stranu, keď sa užívateľ prihlasuje, tak id nepoznám. Preto potrebujem aj metódu, ktorá vie vrátiť inštanciu zákazníka/admina podľa username a password (null ak údaje nesprávne, a teda nenájde záznam- tu je to očakávané, že nenájde).  
-
-Pri vytváraní API, som chcel mať metódy
+ 
+~~Pri vytváraní API, som chcel mať metódy~~
 ```C#
 public Task<List<AdditionalEquipment>> GetAdditionalEquipmentsByAsync(string? excavatorCategory = null);
 public Task<List<AdditionalEquipment>> GetAdditionalEquipmentsAsync(string? category = null);
 public Task<List<AdditionalEquipment>> GetAdditionalEquipmentsAsync(string? brand = null);
 ```
-pre jednoduché používianie, ale kedže signatúra je rovnaká. Musel som zmeniť na:
+~~pre jednoduché používianie, ale kedže signatúra je rovnaká. Musel som zmeniť na:~~
 ```C#
 public Task<List<AdditionalEquipment>> GetAdditionalEquipmentsByExcavatorCategoryAsync(string excavatorCategory);
 public Task<List<AdditionalEquipment>> GetAdditionalEquipmentsByCategoryAsync(string category);
 public Task<List<AdditionalEquipment>> GetAdditionalEquipmentsByBrandAsync(string brand);
 ```
+Edit: Tak nakoniec budem mať len metódu `public Task<List<AdditionalEquipment>> GetAdditionalEquipmentsAsync();` a až keď budeme potrebovaŤ filtrovať sa to vyfiltruje... Pretože potom som sa zamyslel a moŽností podľa čoho filtrovať je viac (kategória, značka...) a vytvárať pre každú novú metódu... ale počkať! Dobre tak nakoniec som sa rozhodol takto:
+```C#
+public Task<List<AdditionalEquipment>> GetAdditionalEquipmentsAsync(int numberOfAdditionalEquipments, int startIndex, string excavatorCategory, string? category = null, string? brand = null);
+```
+A podobne i pre stroje:
+```C#
+public Task<List<Excavator>> GetExcavatorsAsync(int numberOfExcavators, int startIndex, string? category = null, string ? brand = null, string? model = null);
+```
+(prvé parametre `int numberOfAdditionalEquipments, int startIndex` sú pre virtualizáciu)
