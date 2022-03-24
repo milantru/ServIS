@@ -30,15 +30,22 @@ namespace BServisData
 
 	public class BServisDbContextFactory : IDesignTimeDbContextFactory<BServisDbContext>
 	{
-		public BServisDbContext CreateDbContext(string[] args)
+		public static string GetConnectionString()
 		{
 			IConfiguration config = new ConfigurationBuilder()
 				.AddUserSecrets(Assembly.GetCallingAssembly())
 				.Build();
 
+			return config.GetConnectionString("Default");
+		}
+
+		public BServisDbContext CreateDbContext(string[] args)
+		{
+			var connectionString = GetConnectionString();
+
 			var optionsBuilder = new DbContextOptionsBuilder<BServisDbContext>();
 
-			optionsBuilder.UseMySQL(config.GetConnectionString("Default"));
+			optionsBuilder.UseMySQL(connectionString);
 
 			return new BServisDbContext(optionsBuilder.Options);
 		}
