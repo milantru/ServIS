@@ -1,6 +1,8 @@
-using BServisData.Models;
+﻿using BServisData.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.Extensions.Configuration;
+using System.Reflection;
 
 namespace BServisData
 {
@@ -28,20 +30,15 @@ namespace BServisData
 
 	public class BServisDbContextFactory : IDesignTimeDbContextFactory<BServisDbContext>
 	{
-		//private readonly IConfiguration configuration;
-
-		// in order to be able to add migrations parameterless ctor is required...
-		//public BServisDbContextFactory(IConfiguration configuration)
-		//{
-		//	this.configuration = configuration;
-		//}
-
 		public BServisDbContext CreateDbContext(string[] args)
 		{
+			IConfiguration config = new ConfigurationBuilder()
+				.AddUserSecrets(Assembly.GetCallingAssembly())
+				.Build();
+
 			var optionsBuilder = new DbContextOptionsBuilder<BServisDbContext>();
 
-			//optionsBuilder.UseMySQL(Configuration.GetConnectionString("Default"));
-			optionsBuilder.UseMySQL("config string");
+			optionsBuilder.UseMySQL(config.GetConnectionString("Default"));
 
 			return new BServisDbContext(optionsBuilder.Options);
 		}
