@@ -2,6 +2,7 @@ using BServisData;
 using BServisWebApp.Data;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,7 +10,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
-builder.Services.AddDbContextFactory<BServisDbContext>();
+builder.Services.AddDbContextFactory<BServisDbContext>(options =>
+	{
+		var connectionString = BServisDbContextFactory.GetConnectionString();
+		options.UseMySQL(connectionString);
+	}
+);
 
 var app = builder.Build();
 
