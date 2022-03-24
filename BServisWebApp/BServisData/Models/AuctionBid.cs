@@ -2,7 +2,7 @@
 
 namespace BServisData.Models
 {
-	public class AuctionBidder : IItem
+	public class AuctionBid : IItem
 	{
 		public int Id { get; set; }
 
