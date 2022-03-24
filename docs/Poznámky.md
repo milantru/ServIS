@@ -180,3 +180,10 @@ A podobne i pre stroje:
 public Task<List<Excavator>> GetExcavatorsAsync(int numberOfExcavators, int startIndex, string? category = null, string ? brand = null, string? model = null);
 ```
 (prvé parametre `int numberOfAdditionalEquipments, int startIndex` sú pre virtualizáciu)
+
+Mal som problém s tým, že od .Net6 (myslím) Startup.cs nie je, a teda ani `Configure()` metóda, do ktorej sa ako parameter mal injectnúť `IDbContextFactory<BServisDbContext>` a spraviť `factory.CreateDbContext().Database.Migrate()`. Nakoniec sa to vyriešilo v Program.cs takto:
+```C#
+builder.Services.Configure<IDbContextFactory<BServisDbContext>>(factory =>
+	factory.CreateDbContext().Database.Migrate()
+);
+```
