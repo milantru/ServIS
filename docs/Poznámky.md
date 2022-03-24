@@ -187,3 +187,5 @@ builder.Services.Configure<IDbContextFactory<BServisDbContext>>(factory =>
 	factory.CreateDbContext().Database.Migrate()
 );
 ```
+**Prečo som použil staršie verzie nuget packagov aj keď existujú novšie?**  
+Pretože s najnovšími mi nešlo robiť migrácie...
