@@ -13,8 +13,7 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddDbContextFactory<BServisDbContext>(options =>
 	{
-		var connectionString = BServisDbContextFactory.GetConnectionString();
-		options.UseMySQL(connectionString);
+		options.UseMySQL(BServisDbContextFactory.GetConnectionString());
 	}
 );
 builder.Services.AddScoped<IBServisApi, BServisApi>();
