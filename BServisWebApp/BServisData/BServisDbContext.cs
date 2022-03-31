@@ -33,7 +33,7 @@ namespace BServisData
 		public static string GetConnectionString()
 		{
 			IConfiguration config = new ConfigurationBuilder()
-				.AddUserSecrets(Assembly.GetCallingAssembly())
+				.AddUserSecrets("de01772f-834a-40d3-86af-a1dcae8ee4d4")
 				.Build();
 
 			return config.GetConnectionString("Default");
