@@ -17,11 +17,12 @@ builder.Services.AddDbContextFactory<BServisDbContext>(options =>
 	}
 );
 builder.Services.AddScoped<IBServisApi, BServisApi>();
-builder.Services.Configure<IDbContextFactory<BServisDbContext>>(factory =>
-	factory.CreateDbContext().Database.Migrate()
-);
 
 var app = builder.Build();
+
+// Apply migration
+var factory = app.Services.GetService<IDbContextFactory<BServisDbContext>>();
+factory?.CreateDbContext().Database.Migrate();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
