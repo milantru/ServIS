@@ -191,3 +191,5 @@ builder.Services.Configure<IDbContextFactory<BServisDbContext>>(factory =>
 Pretože s najnovšími mi nešlo robiť migrácie...
 
 Konečne som našiel ako vyriešiť problém s top level statementami, teda že chýba Startup.cs s metódami ```ConfigureServices()``` a ```ConfigureServicesConfigue()```... https://docs.microsoft.com/en-us/aspnet/core/migration/50-to-60?view=aspnetcore-6.0&tabs=visual-studio#new-hosting-model (ctrl + f a "ConfigureServices is replaced with")
+
+Zmenil som nastavenie v projektoch, aby sa Warningy brali ako Errory.
