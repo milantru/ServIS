@@ -15,8 +15,23 @@
     <WarningLevel>5</WarningLevel>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Components\MainCard.razor.css" />
+    <None Remove="Pages\Index.razor.css" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Components\MainCard.razor.css" />
+    <Content Include="Pages\Index.razor.css" />
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\BServisData\BServisData.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Pages\Admin\" />
   </ItemGroup>
 
 </Project>
