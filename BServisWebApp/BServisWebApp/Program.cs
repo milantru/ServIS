@@ -1,6 +1,5 @@
 using BServisData;
 using BServisData.Interfaces;
-using BServisWebApp.Data;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.EntityFrameworkCore;
