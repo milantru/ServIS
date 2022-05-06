@@ -193,3 +193,5 @@ Pretože s najnovšími mi nešlo robiť migrácie...
 Konečne som našiel ako vyriešiť problém s top level statementami, teda že chýba Startup.cs s metódami ```ConfigureServices()``` a ```ConfigureServicesConfigue()```... https://docs.microsoft.com/en-us/aspnet/core/migration/50-to-60?view=aspnetcore-6.0&tabs=visual-studio#new-hosting-model (ctrl + f a "ConfigureServices is replaced with")
 
 Zmenil som nastavenie v projektoch, aby sa Warningy brali ako Errory.
+
+```GetExcavatorsAsync()``` má jeden z parametrov ```string```- kategóriu stroja. POZOR! Je v slovenčine kvôli tomu, že som sa rozprával s majiteľom a proste hodí sa aby to bol string a nie enum, aby mohli prípadne pridávať aj inej kategórie ľahko, aby mali voľnosť v tomto.
