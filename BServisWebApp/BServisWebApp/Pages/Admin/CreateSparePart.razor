@@ -1,0 +1,88 @@
+﻿@using BServisWebApp.CssProviders
+@inject IBServisApi api
+
+<h3>Náhradné diely- vytvorenie nového záznamu</h3>
+
+<EditForm Model="SparePart" OnValidSubmit="HandleValidSubmit">
+	<DataAnnotationsValidator />
+	<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
+
+	<label>Katalógové číslo:</label>
+	<InputNumber @bind-Value=@SparePart.CatalogNumber />
+	<ValidationMessage For=@(() => SparePart.CatalogNumber) />
+
+	<label>Názov:</label>
+	<InputText @bind-Value=SparePart.Name />
+	<ValidationMessage For=@(() => SparePart.Name) />
+
+	@if (Excavators != null)
+	{
+		<table class="table">
+			<thead>
+				<tr>
+					<td>Názov:</td>
+					<td>Obsahuje diel:</td>
+				</tr>
+			</thead>
+			<tbody>
+
+				@for (var i = 0; i < Excavators.Count; i++)
+				{
+					<tr>
+						<td>
+							@Excavators[i].Name
+						</td>
+						<td>
+							<input type="checkbox"
+								   checked=@ExcavatorsChecked[i]
+								   @onclick=@(() => ExcavatorsChecked[i] = !ExcavatorsChecked[i]) />
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	}
+
+	<button class="btn btn-success" type="submit">Uložiť</button>
+</EditForm>
+
+@code {
+	public SparePart SparePart { get; set; } = new();
+
+	private List<Excavator> Excavators { get; set; } = null!;
+	private List<bool> ExcavatorsChecked { get; set; } = null!;
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+
+		Excavators = await api.GetExcavatorsAsync();
+		if (Excavators != null)
+		{
+			ExcavatorsChecked = new List<bool>(Excavators.Count);
+			for (int i = 0; i < Excavators.Count; i++)
+			{
+				ExcavatorsChecked.Add(false);
+			}
+		}
+	}
+
+	private async Task HandleValidSubmit()
+	{
+		var excavatorsUsingSparePart = new List<Excavator>();
+		for (int i = 0; i < ExcavatorsChecked.Count; i++)
+		{
+			if (ExcavatorsChecked[i])
+			{
+				excavatorsUsingSparePart.Add(Excavators[i]);
+			}
+		}
+		SparePart.Excavators = excavatorsUsingSparePart;
+
+		try
+		{
+			await api.SaveSparePartAsync(SparePart);
+		}
+		catch { /* TODO */ }
+	}
+}

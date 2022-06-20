@@ -1,0 +1,130 @@
+﻿@using BServisWebApp.CssProviders;
+@using System.Collections
+@typeparam ExcavatorCategory where ExcavatorCategory : Excavator, new()
+@inject IBServisApi api
+
+@if (Excavator != null)
+{
+
+	<EditForm Model="Excavator" OnValidSubmit="HandleValidSubmit">
+		<DataAnnotationsValidator />
+		<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
+
+		<label>Značka:</label>
+		<InputText @bind-Value="@Excavator.Brand" />
+		<ValidationMessage For="@(() => Excavator.Brand)" />
+
+		<label>Kategória:</label>
+		<InputText @bind-Value="@Excavator.Category" />
+		<ValidationMessage For="@(() => Excavator.Category)" />
+
+		<label>Model:</label>
+		<InputText @bind-Value="@Excavator.Model" />
+		<ValidationMessage For="@(() => Excavator.Model)" />
+
+		<label>Názov:</label>
+		<InputText @bind-Value="@Excavator.Name" />
+		<ValidationMessage For="@(() => Excavator.Name)" />
+
+		<label>Popis:</label>
+		<InputTextArea @bind-Value="@Excavator.Description" />
+		<ValidationMessage For="@(() => Excavator.Description)" />
+
+		<label>Dátum poslednej prehliadky:</label>
+		<InputDate @bind-Value="@Excavator.LastInspection" />
+		<ValidationMessage For="@(() => Excavator.LastInspection)" />
+		
+		<label>Je nový:</label>
+		<input type="checkbox"
+		   checked="@Excavator.IsNew"
+		   @bind-value="@Excavator.IsNew" />
+		@*<InputCheckbox @bind-Value="@TrackedExcavator.IsNew" class="form-check-input"/>*@
+		<ValidationMessage For="@(() => Excavator.IsNew)" />
+
+		<br />
+
+		<label>Náhradné diely:</label>
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Katalógové číslo</th>
+					<th>Názov</th>
+					<th>Pridať</th>
+				</tr>
+			</thead>
+			<tbody>
+				@if (SpareParts != null && SparePartsChecked != null)
+				{
+					@for (int i = 0; i < SpareParts.Count; i++)
+					{
+						<tr>
+							<td>@SpareParts[i].CatalogNumber</td>
+							<td>@SpareParts[i].Name</td>
+							@*<td><InputCheckbox @bind-Value="@SparePartsChecked[i]" /></td>*@
+							<td>
+								<input type="checkbox"
+									   checked="@SparePartsChecked[i]"
+									   @bind-value="@SparePartsChecked[i]" />
+							</td>
+						</tr>
+					}
+				}
+			</tbody>
+
+			<table class="table">
+				@ExcavatorSpecificInfoFields
+			</table>
+		</table>
+
+		<button class="btn btn-success" type="submit">Uložiť</button>
+	</EditForm>
+}
+
+@code {
+	[Parameter]
+	public Func<ExcavatorCategory, Task<ExcavatorCategory>> SaveExcavatorAsync { get; set; } = null!;
+
+	[Parameter]
+	public RenderFragment ExcavatorSpecificInfoFields { get; set; } = null!;
+
+	[Parameter]
+	public ExcavatorCategory Excavator { get; set; } = null!;
+	// bool is in pair with spare part, it will tell us if spare part is checked
+	public List<SparePart> SpareParts { get; set; } = null!;
+	public List<bool> SparePartsChecked { get; set; } = null!;
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+
+		SpareParts = await api.GetSparePartsAsync();
+		if (SpareParts != null)
+		{
+			SparePartsChecked = new List<bool>(SpareParts.Count);
+			for (int i = 0; i < SpareParts.Count; i++)
+			{
+				SparePartsChecked.Add(false);
+			}
+		}
+	}
+
+	private async Task HandleValidSubmit()
+	{
+		var sparePartsSelected = new List<SparePart>();
+
+		for (var i = 0; i < SparePartsChecked.Count; i++)
+		{
+			if (SparePartsChecked[i])
+			{
+				sparePartsSelected.Add(SpareParts[i]);
+			}
+		}
+		Excavator.SpareParts = sparePartsSelected;
+
+		try
+		{
+			await SaveExcavatorAsync(Excavator);
+		}
+		catch { /* TODO */ }
+	}
+}
