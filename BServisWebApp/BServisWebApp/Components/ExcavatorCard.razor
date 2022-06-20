@@ -1,0 +1,25 @@
+﻿<div class="card" style="width: 18rem;">
+  <img src="@imgSrc" class="card-img-top" alt="@Title">
+  <div class="card-body">
+    <h5 class="card-title">@Title</h5>
+  </div>
+</div>
+
+@code {
+    private string imgSrc = null!;
+
+    [EditorRequired]
+    [Parameter]
+    public string Title { get; set; } = null!;
+
+    [EditorRequired]
+    [Parameter]
+    public byte[] Image { get; set; } = null!;
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        imgSrc = $"data:image/bmp;base64, {Convert.ToBase64String(Image)}";
+    }
+}
