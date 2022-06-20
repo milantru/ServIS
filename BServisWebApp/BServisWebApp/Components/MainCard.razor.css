@@ -24,15 +24,6 @@
 .card-main-box:hover .card-main-img {
     display: none;
 }
-.card-main-img-eurocomach-pas {
-    background-image: url("images/eurocomach/eurocomach_card_pas.png");
-}
-.card-main-img-locust-smyk {
-    background-image: url("images/locust/locust_card_smyk.png");
-}
-.card-main-img-eurocomach-smyk {
-    background-image: url("images/eurocomach/eurocomach_card_smyk.png");
-}
 
 .card-main-title {
     background-color: gray;
