@@ -1,0 +1,36 @@
+﻿<div class="card mb-3" style="max-width: 540px;">
+  <div class="row g-0">
+    <div class="col-md-4">
+      <img src="@imgSrc" class="img-fluid rounded-start" alt="@Title">
+    </div>
+    <div class="col-md-8">
+      <div class="card-body">
+        <h5 class="card-title">Card title</h5>
+        <p class="card-text">@Text</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+@code {
+    private string imgSrc = null!;
+
+    [EditorRequired]
+    [Parameter]
+    public string Title { get; set; } = null!;
+
+    [EditorRequired]
+    [Parameter]
+    public string Text { get; set; } = null!;
+
+    [EditorRequired]
+    [Parameter]
+    public byte[] Image { get; set; } = null!;
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        imgSrc = $"data:image/bmp;base64, {Convert.ToBase64String(Image)}";
+    }
+}
