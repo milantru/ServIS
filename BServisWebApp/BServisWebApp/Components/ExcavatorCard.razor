@@ -20,6 +20,6 @@
     {
         base.OnParametersSet();
 
-        imgSrc = $"data:image/bmp;base64, {Convert.ToBase64String(Image)}";
+        imgSrc = FileTools.GetDataUrlBase64String(Image, "images/jpeg");
     }
 }

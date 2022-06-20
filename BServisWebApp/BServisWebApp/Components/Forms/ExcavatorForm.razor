@@ -11,6 +11,8 @@
 		<DataAnnotationsValidator />
 		<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
 
+		<InputFile OnChange="HandleInputFileChange" multiple />
+
 		<label>Značka:</label>
 		<InputText @bind-Value="@Excavator.Brand" />
 		<ValidationMessage For="@(() => Excavator.Brand)" />
@@ -34,7 +36,7 @@
 		<label>Dátum poslednej prehliadky:</label>
 		<InputDate @bind-Value="@Excavator.LastInspection" />
 		<ValidationMessage For="@(() => Excavator.LastInspection)" />
-		
+
 		<label>Je nový:</label>
 		<input type="checkbox"
 		   checked="@Excavator.IsNew"
@@ -64,8 +66,8 @@
 							@*<td><InputCheckbox @bind-Value="@SparePartsChecked[i]" /></td>*@
 							<td>
 								<input type="checkbox"
-									   checked="@SparePartsChecked[i]"
-									   @bind-value="@SparePartsChecked[i]" />
+						   checked="@SparePartsChecked[i]"
+						   @bind-value="@SparePartsChecked[i]" />
 							</td>
 						</tr>
 					}
@@ -82,7 +84,7 @@
 }
 
 @code {
-	[Parameter, EditorRequired]
+	[Parameter]
 	public string LinkToGoAfterValidSubmit { get; set; } = null!;
 
 	[Parameter]
@@ -96,6 +98,8 @@
 	// bool is in pair with spare part, it will tell us if spare part is checked
 	public List<SparePart> SpareParts { get; set; } = null!;
 	public List<bool> SparePartsChecked { get; set; } = null!;
+
+	public IReadOnlyList<IBrowserFile> UploadedFiles { get; set; } = null!;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -112,25 +116,73 @@
 		}
 	}
 
-	private async Task HandleValidSubmit()
+	public Task HandleInputFileChange(InputFileChangeEventArgs e)
 	{
-		var sparePartsSelected = new List<SparePart>();
+		UploadedFiles = e.GetMultipleFiles();
+
+		return Task.CompletedTask;
+	}
+
+	private List<SparePart> GetSelectedSpareParts()
+	{
+		var selectedSpareParts = new List<SparePart>();
 
 		for (var i = 0; i < SparePartsChecked.Count; i++)
 		{
 			if (SparePartsChecked[i])
 			{
-				sparePartsSelected.Add(SpareParts[i]);
+				selectedSpareParts.Add(SpareParts[i]);
 			}
 		}
-		Excavator.SpareParts = sparePartsSelected;
 
+		return selectedSpareParts;
+	}
+
+	private async Task<List<ExcavatorPhoto>> GetUploadedExcavatorPhotos()
+	{
+		var uploadedExcavatorPhotos = new List<ExcavatorPhoto>();
+
+		foreach (var uploadedFile in UploadedFiles)
+		{
+			// TODO: check if uploadedFile is image file
+			var excavatorPhoto = new ExcavatorPhoto();
+
+			var dataBytes = await uploadedFile.GetDataBytesAsync();
+			if (dataBytes == null)
+			{
+				// TODO: wrong format
+				throw new Exception("Something went wrong...");
+			}
+			excavatorPhoto.Photo = dataBytes;
+			excavatorPhoto.Excavator = Excavator;
+
+			uploadedExcavatorPhotos.Add(excavatorPhoto);
+		}
+		uploadedExcavatorPhotos[0].IsTitle = true; // the first uploaded image will be the title photo
+
+		return uploadedExcavatorPhotos;
+	}
+
+	private async Task HandleValidSubmit()
+	{
+		Excavator.SpareParts = GetSelectedSpareParts();
 		try
 		{
 			await SaveExcavatorAsync(Excavator);
 
-			navMan.NavigateTo(LinkToGoAfterValidSubmit);
 		}
 		catch { /* TODO */ }
+
+		var uploadedExcavatorPhotos = await GetUploadedExcavatorPhotos();
+		foreach (var uploadedExcavatorPhoto in uploadedExcavatorPhotos)
+		{
+			try
+			{
+				await api.SaveExcavatorPhotoAsync(uploadedExcavatorPhoto);
+			}
+			catch { /* TODO */ }
+		}
+
+		navMan.NavigateTo(LinkToGoAfterValidSubmit);
 	}
 }
