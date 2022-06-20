@@ -30,8 +30,4 @@
     <ProjectReference Include="..\BServisData\BServisData.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Pages\Admin\" />
-  </ItemGroup>
-
 </Project>
