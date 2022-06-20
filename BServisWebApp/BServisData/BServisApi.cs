@@ -48,9 +48,9 @@ namespace BServisData
 			TrackedExcavator currentTrackedExcavator;
 
 			if (trackedExcavator.Id == 0)
-		{
+			{
 				context.Add(trackedExcavator);
-		}
+			}
 			else
 			{
 				currentTrackedExcavator = await context.TrackedExcavators
@@ -73,7 +73,7 @@ namespace BServisData
 			if (trackedLoader.Id == 0)
 			{
 				context.Add(trackedLoader);
-		}
+			}
 			else
 			{
 				currentTrackedLoader = await context.TrackedLoaders
@@ -96,7 +96,7 @@ namespace BServisData
 			if (excavatorPhoto.Id == 0)
 			{
 				context.Add(excavatorPhoto);
-		}
+			} 
 			else
 			{
 				currentExcavatorPhoto = await context.ExcavatorPhotos
@@ -124,7 +124,7 @@ namespace BServisData
 			if (sparePart.Id == 0)
 			{
 				context.Add(sparePart);
-		}
+			}
 			else
 			{
 				currentSparePart = await context.SpareParts
@@ -154,7 +154,7 @@ namespace BServisData
 			if (additionalEquipment.Id == 0)
 			{
 				context.Add(additionalEquipment);
-		}
+			}
 			else
 			{
 				currentAdditionalEquipment = await context.AdditionalEquipments
@@ -181,7 +181,7 @@ namespace BServisData
 			if (additionalEquipmentPhoto.Id == 0)
 			{
 				context.Add(additionalEquipmentPhoto);
-		}
+			}
 			else
 			{
 				currentAdditionalEquipmentPhoto = await context.AdditionalEquipmentPhotos
@@ -210,7 +210,7 @@ namespace BServisData
 			if (customer.Id == 0)
 			{
 				context.Add(customer);
-		}
+			}
 			else
 			{
 				currentCustomer = await context.Customers
@@ -232,7 +232,7 @@ namespace BServisData
 			if (administrator.Id == 0)
 			{
 				context.Add(administrator);
-		}
+			}
 			else
 			{
 				currentAdministrator = await context.Administrators
@@ -255,7 +255,7 @@ namespace BServisData
 			if (auctionOffer.Id == 0)
 			{
 				context.Add(auctionOffer);
-		}
+			}
 			else
 			{
 				currentAuctionOffer = await context.AuctionOffers
@@ -284,14 +284,14 @@ namespace BServisData
 			if (auctionBid.Id == 0)
 			{
 				context.Add(auctionBid);
-		}
+			}
 			else
 			{
 				currentAuctionBid = await context.AuctionBids
 					.Include(ab => ab.User)
 					.Include(ab => ab.AuctionOffer)
 					.FirstOrDefaultAsync(ab => ab.Id == auctionBid.Id);
-		
+
 				currentAuctionBid.User = auctionBid.User;
 				//int userId = auctionBid.User.Id;
 				//currentAuctionBid.User = await context.Users
@@ -309,107 +309,333 @@ namespace BServisData
 		}
 		
 		// Read
-		public Task<List<Excavator>> GetExcavatorsAsync(int numberOfExcavators, int startIndex, string? category = null, string? brand = null, string? model = null)
+		public async Task<List<Excavator>> GetExcavatorsAsync(
+			int? numberOfExcavators = null, 
+			int? startIndex = null, 
+			string? category = null, 
+			string? brand = null, 
+			string? model = null
+		)
 		{
-			throw new NotImplementedException();
+			using var context = factory.CreateDbContext();
+
+			var query = context.Excavators;
+			if (category != null)
+			{
+				query.Where(e => e.Category == category);
+			}
+			if (brand != null)
+			{
+				query.Where(e => e.Brand == brand);
+			}
+			if (model != null)
+			{
+				query.Where(e => e.Model == model);
+			}
+			var orderedQuery = query.OrderBy(e => e.Name);
+			if (startIndex != null)
+			{
+				orderedQuery.Skip((int)startIndex);
+			}
+			if (numberOfExcavators != null)
+			{
+				orderedQuery.Take((int)numberOfExcavators);
+			}
+
+			return await orderedQuery.ToListAsync();
 		}
 
-		public Task<SkidSteerLoader> GetSkidSteerLoaderAsync(int id)
+		public async Task<int> GetExcavatorsCountAsync()
 		{
-			throw new NotImplementedException();
+			using var context = factory.CreateDbContext();
+
+			return await context.Excavators.CountAsync();
 		}
 
-		public Task<TrackedExcavator> GetTrackedExcavatorAsync(int id)
+		public async Task<int> GetSkidSteerLoadersCountAsync()
 		{
-			throw new NotImplementedException();
+			using var context = factory.CreateDbContext();
+
+			return await context.SkidSteerLoaders.CountAsync();
 		}
 
-		public Task<TrackedLoader> GetTrackedLoaderAsync(int id)
+		public async Task<int> GetTrackedExcavatorsCountAsync()
 		{
-			throw new NotImplementedException();
+			using var context = factory.CreateDbContext();
+
+			return await context.TrackedExcavators.CountAsync();
 		}
 
-		public Task<List<ExcavatorPhoto>> GetExcavatorPhotosAsync(int excavatorId)
+		public async Task<int> GetTrackedLoadersCountAsync()
 		{
-			throw new NotImplementedException();
+			using var context = factory.CreateDbContext();
+
+			return await context.TrackedLoaders.CountAsync();
 		}
 
-		public Task<ExcavatorPhoto> GetExcavatorTitlePhotoAsync(int excavatorId)
+		public async Task<SkidSteerLoader> GetSkidSteerLoaderAsync(int id)
 		{
-			throw new NotImplementedException();
+			using var context = factory.CreateDbContext();
+
+			return await context.SkidSteerLoaders
+				.Include(ssl => ssl.SpareParts)
+				.FirstOrDefaultAsync(ssl => ssl.Id == id);
 		}
 
-		public Task<List<SparePart>> GetSparePartsAsync(int excavatorId)
+		public async Task<TrackedExcavator> GetTrackedExcavatorAsync(int id)
 		{
-			throw new NotImplementedException();
+			using var context = factory.CreateDbContext();
+
+			return await context.TrackedExcavators
+				.Include(te => te.SpareParts)
+				.FirstOrDefaultAsync(te => te.Id == id);
 		}
 
-		public Task<SparePart> GetSparePartAsync(int id)
+		public async Task<TrackedLoader> GetTrackedLoaderAsync(int id)
 		{
-			throw new NotImplementedException();
+			using var context = factory.CreateDbContext();
+
+			return await context.TrackedLoaders
+				.Include(tl => tl.SpareParts)
+				.FirstOrDefaultAsync(tl => tl.Id == id);
+		}
+
+		public async Task<List<ExcavatorPhoto>> GetExcavatorPhotosAsync(int excavatorId)
+		{
+			using var context = factory.CreateDbContext();
+
+			return await context.ExcavatorPhotos
+				.Include(ep => ep.Excavator)
+				.Where(ep => ep.Excavator.Id == excavatorId)
+				.ToListAsync();
+		}
+
+		public async Task<int> GetExcavatorPhotosCountAsync()
+		{
+			using var context = factory.CreateDbContext();
+
+			return await context.ExcavatorPhotos.CountAsync();
+		}
+
+		public async Task<ExcavatorPhoto> GetExcavatorTitlePhotoAsync(int excavatorId)
+		{
+			using var context = factory.CreateDbContext();
+
+			return await context.ExcavatorPhotos
+				.Include(ep => ep.Excavator)
+				.Where(ep => ep.Excavator.Id == excavatorId)
+				.FirstOrDefaultAsync(ep => ep.IsTitle);
+		}
+
+		public async Task<List<SparePart>> GetSparePartsAsync()
+		{
+			using var context = factory.CreateDbContext();
+
+			return await context.SpareParts
+				//.Include(sp => sp.Excavators)
+				.ToListAsync();
+		}
+
+		public async Task<List<SparePart>> GetSparePartsAsync(int excavatorId)
+		{
+			using var context = factory.CreateDbContext();
+
+			return await context.SpareParts
+				.Include(sp => sp.Excavators)
+				.Where(sp => sp.Excavators.Any(e => e.Id == excavatorId))
+				.ToListAsync();
+		}
+
+		public async Task<int> GetSparePartsCountAsync()
+		{
+			using var context = factory.CreateDbContext();
+
+			return await context.SpareParts.CountAsync();
+		}
+
+		public async Task<SparePart> GetSparePartAsync(int id)
+		{
+			using var context = factory.CreateDbContext();
+
+			return await context.SpareParts
+				.Include(sp => sp.Excavators)
+				.FirstOrDefaultAsync(sp => sp.Id == id);
 		}
 
 
-		public Task<List<AdditionalEquipment>> GetAdditionalEquipmentsAsync(int numberOfAdditionalEquipments, int startIndex, string excavatorCategory, string? category = null, string? brand = null)
+		public async Task<List<AdditionalEquipment>> GetAdditionalEquipmentsAsync(
+			int? numberOfAdditionalEquipments = null, 
+			int? startIndex = null, 
+			string? forWhichExcavatorCategory = null, 
+			string? category = null, 
+			string? brand = null
+			)
 		{
-			throw new NotImplementedException();
+			using var context = factory.CreateDbContext();
+
+			var query = context.AdditionalEquipments;
+			if (forWhichExcavatorCategory != null)
+			{
+				query.Where(ae => ae.ForWhichExcavatorCategory == forWhichExcavatorCategory);
+			}
+			if (category != null)
+			{
+				query.Where(ae => ae.Category == category);
+			}
+			if (brand != null)
+			{
+				query.Where(ae => ae.Brand == brand);
+			}
+			var orderedQuery = query.OrderBy(ae => ae.Name);
+			if (startIndex != null)
+			{
+				orderedQuery.Skip((int)startIndex);
+			}
+			if (numberOfAdditionalEquipments != null)
+			{
+				orderedQuery.Take((int)numberOfAdditionalEquipments);
+			}
+
+			return await orderedQuery.ToListAsync();
 		}
 
-		public Task<AdditionalEquipment> GetAdditionalEquipmentAsync(int id)
+		public async Task<int> GetAdditionalEquipmentsCountAsync()
 		{
-			throw new NotImplementedException();
+			using var context = factory.CreateDbContext();
+
+			return await context.AdditionalEquipments.CountAsync();
 		}
 
-		public Task<List<AdditionalEquipmentPhoto>> GetAdditionalEquipmentPhotosAsync(int additionalEquipmentId)
+		public async Task<AdditionalEquipment> GetAdditionalEquipmentAsync(int id)
 		{
-			throw new NotImplementedException();
+			using var context = factory.CreateDbContext();
+
+			return await context.AdditionalEquipments
+				.FirstOrDefaultAsync(ae => ae.Id == id);
 		}
 
-		public Task<AdditionalEquipmentPhoto> GetAdditionalEquipmentTitlePhotoAsync(int additionalEquipmentId)
+		public async Task<List<AdditionalEquipmentPhoto>> GetAdditionalEquipmentPhotosAsync(int additionalEquipmentId)
 		{
-			throw new NotImplementedException();
+			using var context = factory.CreateDbContext();
+
+			return await context.AdditionalEquipmentPhotos
+				.Include(aep => aep.AdditionalEquipment)
+				.Where(aep => aep.AdditionalEquipment.Id == additionalEquipmentId)
+				.ToListAsync();
+		}
+
+		public async Task<int> GetAdditionalEquipmentPhotosCountAsync()
+		{
+			using var context = factory.CreateDbContext();
+
+			return await context.AdditionalEquipmentPhotos.CountAsync();
+		}
+
+		public async Task<AdditionalEquipmentPhoto> GetAdditionalEquipmentTitlePhotoAsync(int additionalEquipmentId)
+		{
+			using var context = factory.CreateDbContext();
+
+			return await context.AdditionalEquipmentPhotos
+				.Include(aep => aep.AdditionalEquipment)
+				.Where(aep => aep.AdditionalEquipment.Id == additionalEquipmentId)
+				.FirstOrDefaultAsync(aep => aep.IsTitle);
 		}
 
 
-		public Task<Customer> GetCustomerAsync(int id)
+		public async Task<Customer> GetCustomerAsync(int id)
 		{
-			throw new NotImplementedException();
+			using var context = factory.CreateDbContext();
+
+			return await context.Customers
+				.FirstOrDefaultAsync(c => c.Id == id);
 		}
 
-		public Task<Customer?> GetCustomerAsync(string username, string password)
+		public async Task<Customer?> GetCustomerAsync(string username, string password)
 		{
-			throw new NotImplementedException();
+			using var context = factory.CreateDbContext();
+
+			return await context.Customers
+				.FirstOrDefaultAsync(c => c.Username == username && c.Password == password);
 		}
 
-		public Task<Administrator> GetAdministratorAsync(int id)
+		public async Task<Administrator> GetAdministratorAsync(int id)
 		{
-			throw new NotImplementedException();
+			using var context = factory.CreateDbContext();
+
+			return await context.Administrators
+				.FirstOrDefaultAsync(a => a.Id == id);
 		}
 
-		public Task<Administrator?> GetAdministratorAsync(string username, string password)
+		public async Task<Administrator?> GetAdministratorAsync(string username, string password)
 		{
-			throw new NotImplementedException();
+			using var context = factory.CreateDbContext();
+
+			return await context.Administrators
+				.FirstOrDefaultAsync(a => a.Username == username && a.Password == password);
 		}
 
 
-		public Task<List<AuctionOffer>> GetAuctionOffersAsync(int numberOfAuctionOffers, int startIndex)
+		public async Task<List<AuctionOffer>> GetAuctionOffersAsync(int? numberOfAuctionOffers = null, int? startIndex = null)
 		{
-			throw new NotImplementedException();
+			using var context = factory.CreateDbContext();
+
+			var query = context.AuctionOffers
+				.Include(ao => ao.Excavator)
+				.OrderBy(ao => ao.Excavator.Name);
+			if (startIndex != null)
+			{
+				query.Skip((int)startIndex);
+			}
+			if (numberOfAuctionOffers != null)
+			{
+				query.Take((int)numberOfAuctionOffers);
+			}
+
+			return await query.ToListAsync();
 		}
 
-		public Task<AuctionOffer> GetAuctionOfferAsync(int id)
+		public async Task<int> GetAuctionOffersCountAsync()
 		{
-			throw new NotImplementedException();
+			using var context = factory.CreateDbContext();
+
+			return await context.AuctionOffers.CountAsync();
 		}
 
-		public Task<List<AuctionBid>> GetAuctionBidsAsync(int auctionOfferId)
+		public async Task<AuctionOffer> GetAuctionOfferAsync(int id)
 		{
-			throw new NotImplementedException();
+			using var context = factory.CreateDbContext();
+
+			return await context.AuctionOffers
+				.Include(ao => ao.Excavator)
+				.FirstOrDefaultAsync(ao => ao.Id == id);
 		}
 
-		public Task<AuctionBid> GetAuctionBidAsync(int id)
+		public async Task<List<AuctionBid>> GetAuctionBidsAsync(int auctionOfferId)
 		{
-			throw new NotImplementedException();
+			using var context = factory.CreateDbContext();
+
+			return await context.AuctionBids
+				.Include(ab => ab.User)
+				.Include(ab => ab.AuctionOffer)
+				.Where(ab => ab.AuctionOffer.Id == auctionOfferId)
+				.ToListAsync();
+		}
+
+		public async Task<int> GetAuctionBidsCountAsync()
+		{
+			using var context = factory.CreateDbContext();
+
+			return await context.AuctionBids.CountAsync();
+		}
+
+		public async Task<AuctionBid> GetAuctionBidAsync(int id)
+		{
+			using var context = factory.CreateDbContext();
+
+			return await context.AuctionBids
+				.Include(ab => ab.User)
+				.Include(ab => ab.AuctionOffer)
+				.FirstOrDefaultAsync(ab => ab.Id == id);
 		}
 
 		// delete
@@ -475,6 +701,164 @@ namespace BServisData
 		public Task AuctionOfferHasEnded()
 		{
 			throw new NotImplementedException();
+		}
+
+		// ---------- private methods ----------
+
+		private void UpdateExcavatorData(BServisDbContext context, Excavator currentExcavatorData, Excavator newExcavatorData)
+		{
+			currentExcavatorData.Category = newExcavatorData.Category;
+			currentExcavatorData.Brand = newExcavatorData.Brand;
+			currentExcavatorData.Model = newExcavatorData.Model;
+			currentExcavatorData.Name = newExcavatorData.Name;
+			currentExcavatorData.Description = newExcavatorData.Description;
+			currentExcavatorData.LastInspection = newExcavatorData.LastInspection;
+			currentExcavatorData.IsNew = newExcavatorData.IsNew;
+			//to.SpareParts = from.SpareParts;
+			var ids = newExcavatorData.SpareParts.Select(sp => sp.Id);
+			currentExcavatorData.SpareParts = context.SpareParts
+				.Where(sp => ids.Contains(sp.Id))
+				.ToList();
+		}
+
+		private void UpdateSkidSteerLoaderData(BServisDbContext context, SkidSteerLoader currentSkidSteerLoaderData, SkidSteerLoader newSkidSteerLoaderData)
+		{
+			UpdateExcavatorData(context, currentSkidSteerLoaderData, newSkidSteerLoaderData);
+
+			currentSkidSteerLoaderData.HeightMm = newSkidSteerLoaderData.HeightMm;
+			currentSkidSteerLoaderData.LengthWithBucketMm = newSkidSteerLoaderData.LengthWithBucketMm;
+			currentSkidSteerLoaderData.WidthWithBucketMm = newSkidSteerLoaderData.WidthWithBucketMm;
+			currentSkidSteerLoaderData.WeightKg = newSkidSteerLoaderData.WeightKg;
+			currentSkidSteerLoaderData.NominalLoadCapacityKg = newSkidSteerLoaderData.NominalLoadCapacityKg;
+			currentSkidSteerLoaderData.OverloadPointKg = newSkidSteerLoaderData.OverloadPointKg;
+			currentSkidSteerLoaderData.TopSpeedKmh = newSkidSteerLoaderData.TopSpeedKmh;
+			currentSkidSteerLoaderData.TopSpeedKmhSpeedVersionMin = newSkidSteerLoaderData.TopSpeedKmhSpeedVersionMin;
+			currentSkidSteerLoaderData.TopSpeedKmhSpeedVersionMax = newSkidSteerLoaderData.TopSpeedKmhSpeedVersionMax;
+			currentSkidSteerLoaderData.IncreasedBucketVolumeM3 = newSkidSteerLoaderData.IncreasedBucketVolumeM3;
+			currentSkidSteerLoaderData.TearingStrengthKn = newSkidSteerLoaderData.TearingStrengthKn;
+			currentSkidSteerLoaderData.TractionForceKn = newSkidSteerLoaderData.TractionForceKn;
+			currentSkidSteerLoaderData.TractionForceKnSpeedVersion = newSkidSteerLoaderData.TractionForceKnSpeedVersion;
+			currentSkidSteerLoaderData.LiftingForceKn = newSkidSteerLoaderData.LiftingForceKn;
+			currentSkidSteerLoaderData.ReachMm = newSkidSteerLoaderData.ReachMm;
+			currentSkidSteerLoaderData.MaximumDischargeHeightMm = newSkidSteerLoaderData.MaximumDischargeHeightMm;
+			currentSkidSteerLoaderData.EngineType = newSkidSteerLoaderData.EngineType;
+			currentSkidSteerLoaderData.RatedPowerKw = newSkidSteerLoaderData.RatedPowerKw;
+			currentSkidSteerLoaderData.DriveType = newSkidSteerLoaderData.DriveType;
+			currentSkidSteerLoaderData.DriveControlHydrogenerator = newSkidSteerLoaderData.DriveControlHydrogenerator;
+			currentSkidSteerLoaderData.VehicleHydraulicMotor = newSkidSteerLoaderData.VehicleHydraulicMotor;
+			currentSkidSteerLoaderData.VehicleHydraulicMotorOperatingPressureMpa = newSkidSteerLoaderData.VehicleHydraulicMotorOperatingPressureMpa;
+			currentSkidSteerLoaderData.ControlType = newSkidSteerLoaderData.ControlType;
+			currentSkidSteerLoaderData.OperatingControlPressureMpa = newSkidSteerLoaderData.OperatingControlPressureMpa;
+			currentSkidSteerLoaderData.Control = newSkidSteerLoaderData.Control;
+			currentSkidSteerLoaderData.WorkEquipmentHydrogenerator = newSkidSteerLoaderData.WorkEquipmentHydrogenerator;
+			currentSkidSteerLoaderData.WorkEquipmentSwitchboard = newSkidSteerLoaderData.WorkEquipmentSwitchboard;
+			currentSkidSteerLoaderData.OperatingPressureMpa = newSkidSteerLoaderData.OperatingPressureMpa;
+			currentSkidSteerLoaderData.OperatingHydraulicFlowLpm = newSkidSteerLoaderData.OperatingHydraulicFlowLpm;
+			currentSkidSteerLoaderData.BucketLeveling = newSkidSteerLoaderData.BucketLeveling;
+			currentSkidSteerLoaderData.AcousticNoisePowerDb = newSkidSteerLoaderData.AcousticNoisePowerDb;
+			currentSkidSteerLoaderData.StandardTiresMin = newSkidSteerLoaderData.StandardTiresMin;
+			currentSkidSteerLoaderData.StandardTiresMax = newSkidSteerLoaderData.StandardTiresMax;
+			currentSkidSteerLoaderData.ElectricalInstallationV = newSkidSteerLoaderData.ElectricalInstallationV;
+		}
+
+		private void UpdateTrackedExcavatorData(BServisDbContext context, TrackedExcavator currentTrackedExcavatorData, TrackedExcavator newTrackedExcavatorData)
+		{
+			UpdateExcavatorData(context, currentTrackedExcavatorData, newTrackedExcavatorData);
+
+			currentTrackedExcavatorData.OperatingWeightKg = newTrackedExcavatorData.OperatingWeightKg;
+			currentTrackedExcavatorData.ExcavationDepthMm = newTrackedExcavatorData.ExcavationDepthMm;
+			currentTrackedExcavatorData.MaximumWidthMm = newTrackedExcavatorData.MaximumWidthMm;
+			currentTrackedExcavatorData.Engine = newTrackedExcavatorData.Engine;
+			currentTrackedExcavatorData.MaximumPowerKw = newTrackedExcavatorData.MaximumPowerKw;
+			currentTrackedExcavatorData.TearingStrengthKg = newTrackedExcavatorData.TearingStrengthKg;
+			currentTrackedExcavatorData.PenetrationForceKg = newTrackedExcavatorData.PenetrationForceKg;
+			currentTrackedExcavatorData.HydraulicFlowLpm = newTrackedExcavatorData.HydraulicFlowLpm;
+			currentTrackedExcavatorData.OperatingPressureBar = newTrackedExcavatorData.OperatingPressureBar;
+		}
+
+		private void UpdateTrackedLoaderData(BServisDbContext context, TrackedLoader currentTrackedLoaderData, TrackedLoader newTrackedLoaderData)
+		{
+			UpdateExcavatorData(context, currentTrackedLoaderData, newTrackedLoaderData);
+
+			currentTrackedLoaderData.OperatingWeightKg = newTrackedLoaderData.OperatingWeightKg;
+			currentTrackedLoaderData.TiltingLoadKg = newTrackedLoaderData.TiltingLoadKg;
+			currentTrackedLoaderData.OperatingLoadCapacityIso14397Kg = newTrackedLoaderData.OperatingLoadCapacityIso14397Kg;
+			currentTrackedLoaderData.StandardBucketVolumeM3 = newTrackedLoaderData.StandardBucketVolumeM3;
+			currentTrackedLoaderData.Engine = newTrackedLoaderData.Engine;
+			currentTrackedLoaderData.MaximumPowerKw = newTrackedLoaderData.MaximumPowerKw;
+			currentTrackedLoaderData.TrackWidthMm = newTrackedLoaderData.TrackWidthMm;
+			currentTrackedLoaderData.TractionForceKn = newTrackedLoaderData.TractionForceKn;
+			currentTrackedLoaderData.HydraulicFlowLpm = newTrackedLoaderData.HydraulicFlowLpm;
+			currentTrackedLoaderData.HydraulicFlowHiFlowLpm = newTrackedLoaderData.HydraulicFlowHiFlowLpm;
+			currentTrackedLoaderData.MaximumOperatingPressureBar = newTrackedLoaderData.MaximumOperatingPressureBar;
+		}
+
+		private void UpdateUserData(BServisDbContext context, User currentUserData, User newUserData)
+		{
+			currentUserData.Username = newUserData.Username;
+			currentUserData.Password = newUserData.Password;
+		}
+
+		private void UpdateCustomerData(BServisDbContext context, Customer currentCustomerData, Customer newCustomerData)
+		{
+			UpdateUserData(context, currentCustomerData, newCustomerData);
+
+			currentCustomerData.Name = newCustomerData.Name;
+			currentCustomerData.Surname = newCustomerData.Surname;
+			currentCustomerData.PhoneNumber = newCustomerData.PhoneNumber;
+			currentCustomerData.Email = newCustomerData.Email;
+			currentCustomerData.Residence = newCustomerData.Residence;
+			currentCustomerData.IsTemporary = newCustomerData.IsTemporary;
+		}
+
+		private void UpdateAdministratorData(BServisDbContext context, Administrator currentAdministratorData, User newAdministratorData)
+		{
+			UpdateUserData(context, currentAdministratorData, newAdministratorData);
+		}
+
+		//private async Task<List<Excavator>> GetExcavatorsAsync(
+		//	int? numberOfExcavators = null,
+		//	int? startIndex = null,
+		//	string? category = null,
+		//	string? brand = null,
+		//	string? model = null
+		//)
+		//{
+		//	using var context = factory.CreateDbContext();
+
+		//	var query = context.Excavators.Include(e => e.SpareParts);
+		//	if (category != null)
+		//	{
+		//		query.Where(e => e.Category == category);
+		//	}
+		//	if (brand != null)
+		//	{
+		//		query.Where(e => e.Brand == brand);
+		//	}
+		//	if (model != null)
+		//	{
+		//		query.Where(e => e.Model == model);
+		//	}
+		//	var orderedQuery = query.OrderBy(e => e.Name);
+		//	if (startIndex != null)
+		//	{
+		//		orderedQuery.Skip((int)startIndex);
+		//	}
+		//	if (numberOfExcavators != null)
+		//	{
+		//		orderedQuery.Take((int)numberOfExcavators);
+		//	}
+
+		//	return await orderedQuery.ToListAsync();
+		//}
+
+		private async Task DeleteItem(IItem item)
+		{
+			using var context = factory.CreateDbContext();
+
+			context.Remove(item);
+
+			await context.SaveChangesAsync();
 		}
 	}
 }
