@@ -1,4 +1,5 @@
 ﻿using BServisData.Interfaces;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BServisData.Models
 {
@@ -8,6 +9,7 @@ namespace BServisData.Models
 
 		public AdditionalEquipment AdditionalEquipment { get; set; } = null!;
 
+		[Column(TypeName = "varbinary(50000)")]
 		public byte[] Photo { get; set; } = null!;
 
 		public bool IsTitle { get; set; }
