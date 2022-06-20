@@ -2,6 +2,7 @@
 @using System.Collections
 @typeparam ExcavatorCategory where ExcavatorCategory : Excavator, new()
 @inject IBServisApi api
+@inject NavigationManager navMan
 
 @if (Excavator != null)
 {
@@ -81,6 +82,9 @@
 }
 
 @code {
+	[Parameter, EditorRequired]
+	public string LinkToGoAfterValidSubmit { get; set; } = null!;
+
 	[Parameter]
 	public Func<ExcavatorCategory, Task<ExcavatorCategory>> SaveExcavatorAsync { get; set; } = null!;
 
@@ -124,6 +128,8 @@
 		try
 		{
 			await SaveExcavatorAsync(Excavator);
+
+			navMan.NavigateTo(LinkToGoAfterValidSubmit);
 		}
 		catch { /* TODO */ }
 	}

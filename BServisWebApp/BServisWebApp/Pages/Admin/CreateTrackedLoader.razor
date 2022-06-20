@@ -6,7 +6,8 @@
 
 <ExcavatorForm ExcavatorCategory=TrackedLoader
 			   Excavator=@TrackedLoader
-			   SaveExcavatorAsync=@(async (trackedExcavator) => await api.SaveTrackedLoaderAsync(trackedExcavator))>
+			   SaveExcavatorAsync=@(async (trackedExcavator) => await api.SaveTrackedLoaderAsync(trackedExcavator))
+			   LinkToGoAfterValidSubmit=@($"/pasove-nakladace-{ExcavatorBrand.ToLower()}") >
 	<ExcavatorSpecificInfoFields>
 		<tr>
 			<td>Pracovná hmotnosť (kg)</td>

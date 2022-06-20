@@ -6,7 +6,8 @@
 
 <ExcavatorForm ExcavatorCategory=SkidSteerLoader
 			   Excavator=@SkidSteerLoader
-			   SaveExcavatorAsync=@(async (skidSteerLoader) => await api.SaveSkidSteerLoaderAsync(skidSteerLoader))>
+			   SaveExcavatorAsync=@(async (skidSteerLoader) => await api.SaveSkidSteerLoaderAsync(skidSteerLoader))
+			   LinkToGoAfterValidSubmit=@($"/smykom-riadene-nakladace-{ExcavatorBrand.ToLower()}") >
 	<ExcavatorSpecificInfoFields>
 		<tr>
 			<td>Výška (mm)</td>
