@@ -1,0 +1,120 @@
+﻿.card-main-box {
+    background-color: #cccccc;
+    border-radius: 18px;
+    box-shadow: 1px 1px 10px gray;
+
+    display: flex;
+    flex-direction: column;
+    width: 320px;
+    height: 420px;
+
+    margin: 18px;
+
+    text-align: center;
+    
+}
+.card-main-box:hover {
+    box-shadow: 1px 1px 20px gray;
+}
+
+.card-main-img {
+    flex-grow: 1;
+    background-size: cover;
+}
+.card-main-box:hover .card-main-img {
+    display: none;
+}
+.card-main-img-eurocomach-pas {
+    background-image: url("images/eurocomach/eurocomach_card_pas.png");
+}
+.card-main-img-locust-smyk {
+    background-image: url("images/locust/locust_card_smyk.png");
+}
+.card-main-img-eurocomach-smyk {
+    background-image: url("images/eurocomach/eurocomach_card_smyk.png");
+}
+
+.card-main-title {
+    background-color: gray;
+    border-top-left-radius: 18px;
+    border-top-right-radius: 18px;
+
+    font-family: 'Roboto Slab', serif;
+    font-size: 23px;
+
+    padding-top: 1px;
+    padding-bottom: 3px;
+
+}
+.card-main-title-locust {
+    color: #ff8800;
+    text-shadow: 0px 0px 7px #ffa033;
+
+}
+.card-main-title-eurocomach {
+    color: rgb(255, 59, 11);
+    text-shadow: 0px 0px 7px #ffa880;
+}
+
+.card-main-subtitle {
+    background-color: white;
+    color: gray;
+    padding-top: 1px;
+    padding-bottom: 3px;
+
+    font-family: 'Roboto Slab', serif;
+    font-size: 15px;
+    font-weight: normal;
+
+}
+
+.card-main-text {
+    background-color: #cccccc;
+    color: white;
+    display: none;
+    font-size: 115%;
+
+    text-shadow: 1px 1px 10px black;
+    padding: 30px 7px 0px 7px;
+
+    margin-bottom: auto;
+}
+
+.card-main-box:hover .card-main-text {
+    display: inline;
+}
+
+.card-main-button {
+    background-color: gray;
+    border-bottom-left-radius: 18px;
+    border-bottom-right-radius: 18px;
+    padding-top: 12.5px;
+    padding-bottom: 13px;
+
+    box-shadow: 0px -3px 7px gray;
+}
+.card-main-button a {
+    background-color: white;
+
+    color: gray;
+    border-radius: 15px;
+    padding: 6px;
+
+    text-decoration: none;
+    text-shadow: 0px 0px 1px gray;
+    transition: all 0.2s ease-in;
+}
+.card-main-button-locust a {
+    box-shadow: 0px 0px 10px #ff8800;
+}
+.card-main-button-locust a:hover {
+    box-shadow: 0px 0px 12px 3px #ff8800,
+                inset 0px 0px 2px 0.3px #ff8800;
+}
+.card-main-button-eurocomach a {
+    box-shadow: 0px 0px 10px  rgb(255, 72, 0);
+}
+.card-main-button-eurocomach a:hover {
+    box-shadow: 0px 0px 12px 3px rgb(255, 72, 0),
+                inset 0px 0px 2px 0.3px rgb(255, 72, 0);
+}
