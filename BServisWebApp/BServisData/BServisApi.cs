@@ -47,6 +47,13 @@ namespace BServisData
 			using var context = factory.CreateDbContext();
 			TrackedExcavator currentTrackedExcavator;
 
+			foreach (var sparePart in trackedExcavator.SpareParts) {
+				if (!context.SpareParts.Local.Any(sp => sp.Id == sparePart.Id))
+				{
+					context.SpareParts.Attach(sparePart);
+				}
+			}
+
 			if (trackedExcavator.Id == 0)
 			{
 				context.Add(trackedExcavator);
@@ -93,6 +100,11 @@ namespace BServisData
 			using var context = factory.CreateDbContext();
 			ExcavatorPhoto currentExcavatorPhoto;
 
+			if (!context.Excavators.Local.Any(e => e.Id == excavatorPhoto.Excavator.Id))
+			{
+				context.Excavators.Attach(excavatorPhoto.Excavator);
+			}
+
 			if (excavatorPhoto.Id == 0)
 			{
 				context.Add(excavatorPhoto);
@@ -120,6 +132,14 @@ namespace BServisData
 		{
 			using var context = factory.CreateDbContext();
 			SparePart currentSparePart;
+
+			foreach (var excavator in sparePart.Excavators)
+			{
+				if (!context.Excavators.Local.Any(e => e.Id == excavator.Id))
+				{
+					context.Excavators.Attach(excavator);
+				}
+			}
 
 			if (sparePart.Id == 0)
 			{
