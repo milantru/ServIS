@@ -1,5 +1,6 @@
 ﻿@using BServisWebApp.CssProviders
 @inject IBServisApi api
+@inject NavigationManager navMan
 
 <h3>Náhradné diely- vytvorenie nového záznamu</h3>
 
@@ -84,5 +85,7 @@
 			await api.SaveSparePartAsync(SparePart);
 		}
 		catch { /* TODO */ }
+
+		navMan.NavigateTo("/profil");
 	}
 }
