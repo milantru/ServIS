@@ -1,0 +1,208 @@
+﻿@using ServISWebApp.CssProviders;
+@using System.Collections
+@typeparam ExcavatorCategory where ExcavatorCategory : Excavator, new()
+@inject IServISApi api
+@inject NavigationManager navMan
+
+@if (Excavator != null)
+{
+
+	<EditForm Model="Excavator" OnValidSubmit="HandleValidSubmit">
+		<DataAnnotationsValidator />
+		<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
+
+		<InputFile OnChange="HandleInputFileChange" multiple />
+
+		<label>Značka:</label>
+		<InputText @bind-Value="@Excavator.Brand" />
+		<ValidationMessage For="@(() => Excavator.Brand)" />
+
+		<label>Kategória:</label>
+		<InputText @bind-Value="@Excavator.Category" />
+		<ValidationMessage For="@(() => Excavator.Category)" />
+
+		<label>Model:</label>
+		<InputText @bind-Value="@Excavator.Model" />
+		<ValidationMessage For="@(() => Excavator.Model)" />
+
+		<label>Názov:</label>
+		<InputText @bind-Value="@Excavator.Name" />
+		<ValidationMessage For="@(() => Excavator.Name)" />
+
+		<label>Popis:</label>
+		<InputTextArea @bind-Value="@Excavator.Description" />
+		<ValidationMessage For="@(() => Excavator.Description)" />
+
+		<label>Je nový:</label>
+		<input type="checkbox"
+		   checked="@Excavator.IsNew"
+		   @bind-value="@Excavator.IsNew" />
+		@*<InputCheckbox @bind-Value="@TrackedExcavator.IsNew" class="form-check-input"/>*@
+		<ValidationMessage For="@(() => Excavator.IsNew)" />
+
+		@if (!@Excavator.IsNew)
+		{
+			<label>Dátum poslednej prehliadky:</label>
+			<InputDate @bind-Value="@Excavator.LastInspection" />
+			<ValidationMessage For="@(() => Excavator.LastInspection)" />
+		}
+
+		<br />
+
+		<label>Náhradné diely:</label>
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Katalógové číslo</th>
+					<th>Názov</th>
+					<th>Pridať</th>
+				</tr>
+			</thead>
+			<tbody>
+				@if (SpareParts != null && SparePartsChecked != null)
+				{
+					@for (int i = 0; i < SpareParts.Count; i++)
+					{
+						// otherwise would i be a reference;
+						// for more see: https://stackoverflow.com/questions/64982700/how-to-use-the-array-of-checkbox-in-asp-net-core-razor
+						var iCopy = i;
+						<tr>
+							<td>@SpareParts[iCopy].CatalogNumber</td>
+							<td>@SpareParts[iCopy].Name</td>
+							@*<td><InputCheckbox @bind-Value="@SparePartsChecked[i]" /></td>*@
+							<td>
+								<input type="checkbox"
+									   checked="@SparePartsChecked[iCopy]"
+									   @bind-value="@SparePartsChecked[iCopy]" />
+							</td>
+						</tr>
+					}
+				}
+			</tbody>
+
+			<table class="table">
+				@ExcavatorSpecificInfoFields
+			</table>
+		</table>
+
+		<button class="btn btn-success" type="submit">Uložiť</button>
+	</EditForm>
+}
+
+@code {
+	[Parameter]
+	public string LinkToGoAfterValidSubmit { get; set; } = null!;
+
+	[Parameter]
+	public Func<ExcavatorCategory, Task<ExcavatorCategory>> SaveExcavatorAsync { get; set; } = null!;
+
+	[Parameter]
+	public RenderFragment ExcavatorSpecificInfoFields { get; set; } = null!;
+
+	[Parameter]
+	public ExcavatorCategory Excavator { get; set; } = null!;
+	// bool is in pair with spare part, it will tell us if spare part is checked
+	public List<SparePart> SpareParts { get; set; } = null!;
+	public List<bool> SparePartsChecked { get; set; } = null!;
+
+	public IReadOnlyList<IBrowserFile> UploadedFiles { get; set; } = null!;
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+
+		SpareParts = await api.GetSparePartsAsync();
+		if (SpareParts != null)
+		{
+			SparePartsChecked = new List<bool>(SpareParts.Count);
+			for (int i = 0; i < SpareParts.Count; i++)
+			{
+				SparePartsChecked.Add(false);
+			}
+		}
+	}
+
+	protected override void OnParametersSet()
+	{
+		base.OnParametersSet();
+
+		if (Excavator.Id == 0)
+		{
+			Excavator.IsNew = true;
+		}
+	}
+
+	public Task HandleInputFileChange(InputFileChangeEventArgs e)
+	{
+		UploadedFiles = e.GetMultipleFiles();
+
+		return Task.CompletedTask;
+	}
+
+	private List<SparePart> GetSelectedSpareParts()
+	{
+		var selectedSpareParts = new List<SparePart>();
+
+		for (var i = 0; i < SparePartsChecked.Count; i++)
+		{
+			if (SparePartsChecked[i])
+			{
+				selectedSpareParts.Add(SpareParts[i]);
+			}
+		}
+
+		return selectedSpareParts;
+	}
+
+	private async Task<List<ExcavatorPhoto>> GetUploadedExcavatorPhotos()
+	{
+		var uploadedExcavatorPhotos = new List<ExcavatorPhoto>();
+
+		foreach (var uploadedFile in UploadedFiles)
+		{
+			// TODO: check if uploadedFile is image file
+			var excavatorPhoto = new ExcavatorPhoto();
+
+			var dataBytes = await uploadedFile.GetDataBytesAsync();
+			if (dataBytes == null)
+			{
+				// TODO: wrong format
+				throw new Exception("Something went wrong...");
+			}
+			excavatorPhoto.Photo = dataBytes;
+			excavatorPhoto.Excavator = Excavator;
+
+			uploadedExcavatorPhotos.Add(excavatorPhoto);
+		}
+		uploadedExcavatorPhotos[0].IsTitle = true; // the first uploaded image will be the title photo
+
+		return uploadedExcavatorPhotos;
+	}
+
+	private async Task HandleValidSubmit()
+	{
+		if (Excavator.IsNew)
+		{
+			Excavator.LastInspection = null;
+		}
+		Excavator.SpareParts = GetSelectedSpareParts();
+		try
+		{
+			await SaveExcavatorAsync(Excavator);
+
+		}
+		catch { /* TODO */ }
+
+		var uploadedExcavatorPhotos = await GetUploadedExcavatorPhotos();
+		foreach (var uploadedExcavatorPhoto in uploadedExcavatorPhotos)
+		{
+			try
+			{
+				await api.SaveExcavatorPhotoAsync(uploadedExcavatorPhoto);
+			}
+			catch { /* TODO */ }
+		}
+
+		navMan.NavigateTo(LinkToGoAfterValidSubmit);
+	}
+}

@@ -195,3 +195,7 @@ Konečne som našiel ako vyriešiť problém s top level statementami, teda že 
 Zmenil som nastavenie v projektoch, aby sa Warningy brali ako Errory.
 
 ```GetExcavatorsAsync()``` má jeden z parametrov ```string```- kategóriu stroja. POZOR! Je v slovenčine kvôli tomu, že som sa rozprával s majiteľom a proste hodí sa aby to bol string a nie enum, aby mohli prípadne pridávať aj inej kategórie ľahko, aby mali voľnosť v tomto.
+
+---
+
+**Premenovanie** -> BServis (WebApp) na ServIS (WebApp). Nebude sa používať názov firmy, ale aplikácia má už vlastný názov.

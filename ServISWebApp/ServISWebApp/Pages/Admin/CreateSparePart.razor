@@ -1,0 +1,93 @@
+﻿@using ServISWebApp.CssProviders
+@inject IServISApi api
+@inject NavigationManager navMan
+
+<h3>Náhradné diely- vytvorenie nového záznamu</h3>
+
+<EditForm Model="SparePart" OnValidSubmit="HandleValidSubmit">
+	<DataAnnotationsValidator />
+	<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
+
+	<label>Katalógové číslo:</label>
+	<InputNumber @bind-Value=@SparePart.CatalogNumber />
+	<ValidationMessage For=@(() => SparePart.CatalogNumber) />
+
+	<label>Názov:</label>
+	<InputText @bind-Value=SparePart.Name />
+	<ValidationMessage For=@(() => SparePart.Name) />
+
+	@if (Excavators != null)
+	{
+		<table class="table">
+			<thead>
+				<tr>
+					<td>Názov:</td>
+					<td>Obsahuje diel:</td>
+				</tr>
+			</thead>
+			<tbody>
+
+				@for (int i = 0; i < Excavators.Count; i++)
+				{
+					// otherwise would i be a reference; for more see: https://stackoverflow.com/questions/64982700/how-to-use-the-array-of-checkbox-in-asp-net-core-razor
+					int iCopy = i;
+					<tr>
+						<td>
+							@Excavators[iCopy].Name
+						</td>
+						<td>
+							<input type="checkbox"
+								   checked=@ExcavatorsChecked[iCopy]
+								   @onclick=@(() => ExcavatorsChecked[iCopy] = !ExcavatorsChecked[iCopy]) />
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	}
+
+	<button class="btn btn-success" type="submit">Uložiť</button>
+</EditForm>
+
+@code {
+	public SparePart SparePart { get; set; } = new();
+
+	private List<Excavator> Excavators { get; set; } = null!;
+	private List<bool> ExcavatorsChecked { get; set; } = null!;
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+
+		Excavators = await api.GetExcavatorsAsync();
+		if (Excavators != null)
+		{
+			ExcavatorsChecked = new List<bool>(Excavators.Count);
+			for (int i = 0; i < Excavators.Count; i++)
+			{
+				ExcavatorsChecked.Add(false);
+			}
+		}
+	}
+
+	private async Task HandleValidSubmit()
+	{
+		var excavatorsUsingSparePart = new List<Excavator>();
+		for (int i = 0; i < ExcavatorsChecked.Count; i++)
+		{
+			if (ExcavatorsChecked[i])
+			{
+				excavatorsUsingSparePart.Add(Excavators[i]);
+			}
+		}
+		SparePart.Excavators = excavatorsUsingSparePart;
+
+		try
+		{
+			await api.SaveSparePartAsync(SparePart);
+		}
+		catch { /* TODO */ }
+
+		navMan.NavigateTo("/profil");
+	}
+}
