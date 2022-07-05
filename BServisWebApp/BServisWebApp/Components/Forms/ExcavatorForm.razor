@@ -44,6 +44,13 @@
 		@*<InputCheckbox @bind-Value="@TrackedExcavator.IsNew" class="form-check-input"/>*@
 		<ValidationMessage For="@(() => Excavator.IsNew)" />
 
+		@if (!@Excavator.IsNew)
+		{
+			<label>Dátum poslednej prehliadky:</label>
+			<InputDate @bind-Value="@Excavator.LastInspection" />
+			<ValidationMessage For="@(() => Excavator.LastInspection)" />
+		}
+
 		<br />
 
 		<label>Náhradné diely:</label>
@@ -60,7 +67,8 @@
 				{
 					@for (int i = 0; i < SpareParts.Count; i++)
 					{
-						// otherwise would i be a reference; for more see: https://stackoverflow.com/questions/64982700/how-to-use-the-array-of-checkbox-in-asp-net-core-razor
+						// otherwise would i be a reference;
+						// for more see: https://stackoverflow.com/questions/64982700/how-to-use-the-array-of-checkbox-in-asp-net-core-razor
 						var iCopy = i;
 						<tr>
 							<td>@SpareParts[iCopy].CatalogNumber</td>
@@ -118,6 +126,16 @@
 		}
 	}
 
+	protected override void OnParametersSet()
+	{
+		base.OnParametersSet();
+
+		if (Excavator.Id == 0)
+		{
+			Excavator.IsNew = true;
+		}
+	}
+
 	public Task HandleInputFileChange(InputFileChangeEventArgs e)
 	{
 		UploadedFiles = e.GetMultipleFiles();
@@ -167,6 +185,10 @@
 
 	private async Task HandleValidSubmit()
 	{
+		if (Excavator.IsNew)
+		{
+			Excavator.LastInspection = null;
+		}
 		Excavator.SpareParts = GetSelectedSpareParts();
 		try
 		{
