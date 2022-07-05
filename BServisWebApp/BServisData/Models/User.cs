@@ -7,10 +7,10 @@ namespace BServisData.Models
 	{
 		public int Id { get; set; }
 
-		[MaxLength(30)]
+		[Required(ErrorMessage = "Toto pole je povinné."), StringLength(30, ErrorMessage = "Max {1} znakov.")]
 		public string Username { get; set; } = null!;
 
-		[MaxLength(80)]
+		[Required(ErrorMessage = "Toto pole je povinné."), MaxLength(ErrorMessage = "Príliš dlhé heslo.")]
 		public string Password { get; set; } = null!;
 	}
 }

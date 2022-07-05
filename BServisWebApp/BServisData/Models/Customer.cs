@@ -4,21 +4,22 @@ namespace BServisData.Models
 {
 	public class Customer : User
 	{
-		[MaxLength(35)]
+		[Required(ErrorMessage = "Toto pole je povinné."), StringLength(35, ErrorMessage = "Max {1} znakov.")]
 		public string Name { get; set; } = null!;
 
-		[MaxLength(35)]
+		[Required(ErrorMessage = "Toto pole je povinné."), StringLength(35, ErrorMessage = "Max {1} znakov.")]
 		public string Surname { get; set; } = null!;
 
-		[MaxLength(17)]
+		[Phone(ErrorMessage = "Telefónne číslo nie je validné.")]
 		public string? PhoneNumber { get; set; }
 
-		[MaxLength(254)]
+		[Required(ErrorMessage = "Toto pole je povinné."), EmailAddress(ErrorMessage = "Email nie je validný.")]
 		public string Email { get; set; } = null!;
 
-		[MaxLength(50)]
+		[StringLength(50, ErrorMessage = "Max {1} znakov.")]
 		public string? Residence { get; set; }
 
+		[Required]
 		public bool IsTemporary { get; set; }
 	}
 }
