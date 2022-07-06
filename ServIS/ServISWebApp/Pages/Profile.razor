@@ -1,8 +1,17 @@
 ﻿@page "/profil"
 
-<h3>Profile</h3>
+@using ServISWebApp.Pages.Admin
 
-<ServISWebApp.Pages.Admin.CreateSparePart />
+<h3>Profil</h3>
+
+<TabControl>
+  <TabPage TabLabel="Moje údaje">
+    <h1>Tu budú údaje užívateľa...</h1>
+  </TabPage>
+  <TabPage TabLabel="Pridanie náhradného dielu">
+    <CreateSparePart />
+  </TabPage>
+</TabControl>
 
 @code {
 
