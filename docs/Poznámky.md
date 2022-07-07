@@ -199,3 +199,5 @@ Zmenil som nastavenie v projektoch, aby sa Warningy brali ako Errory.
 ---
 
 **Premenovanie** -> BServis (WebApp) na ServIS (WebApp). Nebude sa používať názov firmy, ale aplikácia má už vlastný názov.
+
+Vymazanie **SparePartDetail** -> Mal som stránku pre detail náhradného dielu, dalo sa tam dostať cez tabuľku dielov, ktorá je v profilu (stačilo kliknúť na detail). Ale aj napriek tomu, že som to mal všetko naimplementované som sa rozhodol to zmazať, pretože všetko info bude vidno i na stránke s tabuľkou (dokonca to bude editovateľné!). Navyše, ak by som chcel ten detail spraviť poriadne, tak by som musel ešte nejako poriešiť to, aby keď klikneme na detail, a potom sa vrátime spať, bol stav formu (prípadne i tabu) rovnaký... Čiže musel by som robiť niečo naviac a mali by sme z toho rovnaký úžitok ako bez toho (dokonca menší lebo tam by nebola možnosť editovania)... Takže som to radšej zmazal.
