@@ -1,4 +1,4 @@
-﻿using ServISData.Interfaces;
+using ServISData.Interfaces;
 using ServISData.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -474,9 +474,9 @@ namespace ServISData
 		public async Task<SparePart> GetSparePartAsync(int id)
 		{
 			using var context = factory.CreateDbContext();
-
+			
 			return await context.SpareParts
-				.Include(sp => sp.Excavators)
+				//.Include(sp => sp.Excavators) // TODO: not working with Include...
 				.FirstOrDefaultAsync(sp => sp.Id == id);
 		}
 
