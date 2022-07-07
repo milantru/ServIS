@@ -32,7 +32,7 @@ namespace ServISData.Interfaces
 		public Task<List<ExcavatorPhoto>> GetExcavatorPhotosAsync(int excavatorId);
 		public Task<int> GetExcavatorPhotosCountAsync();
 		public Task<ExcavatorPhoto> GetExcavatorTitlePhotoAsync(int excavatorId);
-		public Task<List<SparePart>> GetSparePartsAsync();
+		public Task<List<SparePart>> GetSparePartsAsync(int? numberOfSpareParts = null, int? startIndex = null);
 		public Task<List<SparePart>> GetSparePartsAsync(int excavatorId);
 		public Task<int> GetSparePartsCountAsync();
 		public Task<SparePart> GetSparePartAsync(int id);

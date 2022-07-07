@@ -437,13 +437,21 @@ namespace ServISData
 				.FirstOrDefaultAsync(ep => ep.IsTitle);
 		}
 
-		public async Task<List<SparePart>> GetSparePartsAsync()
+		public async Task<List<SparePart>> GetSparePartsAsync(
+			int? numberOfSpareParts = null,
+			int? startIndex = null
+		)
 		{
 			using var context = factory.CreateDbContext();
 
-			return await context.SpareParts
-				//.Include(sp => sp.Excavators)
-				.ToListAsync();
+			var query = context.SpareParts.Skip(startIndex ?? 0); //.Include(sp => sp.Excavators)
+
+			if (numberOfSpareParts != null)
+			{
+				query = query.Take((int)numberOfSpareParts);
+			}
+
+			return await query.ToListAsync();
 		}
 
 		public async Task<List<SparePart>> GetSparePartsAsync(int excavatorId)
