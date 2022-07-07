@@ -1,9 +1,16 @@
 ﻿<h3>Správa náhradných dielov</h3>
 
-<SparePartForm @bind-SparePart=@SelectedSparePart />
+<SparePartForm @bind-SparePart=SelectedSparePart AfterValidSubmit="ReloadArticles" />
 
-<SparePartsLister @bind-SelectedSparePart=@SelectedSparePart />
+<SparePartsLister @ref=SparePartsLister @bind-SelectedSparePart=SelectedSparePart />
 
 @code {
 	public SparePart SelectedSparePart { get; private set; } = new SparePart();
+
+	private SparePartsLister SparePartsLister { get; set; } = null!;
+
+	private async Task ReloadArticles()
+	{
+		await SparePartsLister.ReloadArticles();
+	}
 }

@@ -60,6 +60,9 @@
 	[Parameter]
 	public EventCallback<SparePart> SparePartChanged { get; set; }
 
+	[Parameter]
+	public EventCallback AfterValidSubmit { get; set; }
+
 	private List<Excavator> Excavators { get; set; } = null!;
 
 	private List<bool> ExcavatorsChecked { get; set; } = null!;
@@ -120,5 +123,6 @@
 		catch { /* TODO */ }
 
 		Reset();
+		await AfterValidSubmit.InvokeAsync();
 	}
 }
