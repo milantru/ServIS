@@ -1,4 +1,4 @@
-@inject IServISApi api
+﻿@inject IServISApi api
 
 <Virtualize ItemsProvider="LoadExcavatorsPhotosAsync" Context="e">
 	<ExcavatorCard Title=@e.Excavator.Name
@@ -36,6 +36,7 @@
 		foreach (var excavator in excavators)
 		{
 			var excavatorPhoto = await api.GetExcavatorTitlePhotoAsync(excavator.Id);
+			// possible TODO: if photo is not available (e.g. due to some error, some "not found error" photo from wwwroot can be displayed instead)
 			excavatorPhoto.Excavator = excavator;
 			excavatorTitlePhotos.Add(excavatorPhoto);
 		}
