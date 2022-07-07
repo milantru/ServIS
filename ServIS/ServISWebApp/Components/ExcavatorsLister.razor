@@ -36,7 +36,10 @@
 		foreach (var excavator in excavators)
 		{
 			var excavatorPhoto = await api.GetExcavatorTitlePhotoAsync(excavator.Id);
-			// possible TODO: if photo is not available (e.g. due to some error, some "not found error" photo from wwwroot can be displayed instead)
+			if (excavatorPhoto == null) {
+				// possible TODO: if photo is not available (e.g. due to some error, some "not found error" photo from wwwroot can be displayed instead)
+				throw new Exception("Missing Excavator photo.");
+			}
 			excavatorPhoto.Excavator = excavator;
 			excavatorTitlePhotos.Add(excavatorPhoto);
 		}
