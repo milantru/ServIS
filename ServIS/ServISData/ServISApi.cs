@@ -317,13 +317,13 @@ namespace ServISData
 
 			return auctionBid;
 		}
-		
+
 		// Read
 		public async Task<List<Excavator>> GetExcavatorsAsync(
-			int? numberOfExcavators = null, 
-			int? startIndex = null, 
-			string? category = null, 
-			string? brand = null, 
+			int? numberOfExcavators = null,
+			int? startIndex = null,
+			string? category = null,
+			string? brand = null,
 			string? model = null
 		)
 		{
@@ -482,10 +482,10 @@ namespace ServISData
 
 
 		public async Task<List<AdditionalEquipment>> GetAdditionalEquipmentsAsync(
-			int? numberOfAdditionalEquipments = null, 
-			int? startIndex = null, 
-			string? forWhichExcavatorCategory = null, 
-			string? category = null, 
+			int? numberOfAdditionalEquipments = null,
+			int? startIndex = null,
+			string? forWhichExcavatorCategory = null,
+			string? category = null,
 			string? brand = null
 			)
 		{
