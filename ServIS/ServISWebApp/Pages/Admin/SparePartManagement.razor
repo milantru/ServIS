@@ -1,0 +1,9 @@
+﻿<h3>Správa náhradných dielov</h3>
+
+<SparePartForm @bind-SparePart=@SelectedSparePart />
+
+<SparePartsLister @bind-SelectedSparePart=@SelectedSparePart />
+
+@code {
+	public SparePart SelectedSparePart { get; private set; } = new SparePart();
+}

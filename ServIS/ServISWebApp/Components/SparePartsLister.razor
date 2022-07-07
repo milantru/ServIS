@@ -1,0 +1,93 @@
+﻿@inject IServISApi api
+@inject NavigationManager navMan
+
+<h3>Zoznam náhradných dielov</h3>
+
+<table class="table table-sm">
+	<thead>
+		<tr>
+			<th scope="col">Katalógové číslo</th>
+			<th scope="col">Názov</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+		<Virtualize ItemsProvider="LoadSparePartsAsync" Context="sp">
+			<tr class="@GetRowCss(sp)">
+				<td>@sp.CatalogNumber</td>
+				<td>@sp.Name</td>
+				<td class="input-group">
+					<button class="btn btn-primary" @onclick="() => Select(sp)">Vyber</button>
+
+					<button class="btn btn-secondary" @onclick="() => ShowDetail(sp.Id)">Detail</button>
+
+					<button class="btn btn-danger" @onclick="() => Delete(sp)">Vymaž</button>
+
+				</td>
+			</tr>
+		</Virtualize>
+	</tbody>
+</table>
+
+@code {
+	[Parameter]
+	public SparePart SelectedSparePart { get; set; } = null!;
+
+	[Parameter]
+	public EventCallback<SparePart> SelectedSparePartChanged { get; set; }
+
+	public int SparePartsTotalCount { get; set; }
+
+	private async ValueTask<ItemsProviderResult<SparePart>> LoadSparePartsAsync(ItemsProviderRequest request)
+	{
+		if (SparePartsTotalCount == 0)
+		{
+			SparePartsTotalCount = await api.GetSparePartsCountAsync();
+		}
+		if (SparePartsTotalCount == 0)
+		{// in case there is no spare part in the database
+			return new ItemsProviderResult<SparePart>();
+		}
+
+		int sparePartsDisplayedCount = Math.Min(request.Count, SparePartsTotalCount - request.StartIndex);
+
+		var excavators = await api.GetSparePartsAsync(sparePartsDisplayedCount, request.StartIndex);
+
+		return new ItemsProviderResult<SparePart>(excavators, SparePartsTotalCount);
+	}
+
+	private string GetRowCss(SparePart sparePart)
+	{
+		if (SelectedSparePart == sparePart)
+		{
+			return "bg-info";
+		}
+
+		return "";
+	}
+
+	private async Task Select(SparePart sparePart)
+	{
+		SelectedSparePart = sparePart;
+
+		await SelectedSparePartChanged.InvokeAsync(SelectedSparePart);
+	}
+
+	private void ShowDetail(int sparePartId)
+	{
+		navMan.NavigateTo("/nahradny-diel/" + sparePartId);
+	}
+
+	private async Task Delete(SparePart sparePart)
+	{
+		if (SelectedSparePart == sparePart)
+		{
+			SelectedSparePart = new SparePart();
+			await SelectedSparePartChanged.InvokeAsync(SelectedSparePart);
+		}
+
+		await api.DeleteSparePartAsync(sparePart);
+
+		StateHasChanged();
+	}
+}
