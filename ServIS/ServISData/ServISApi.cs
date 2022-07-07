@@ -19,10 +19,10 @@ namespace ServISData
 		}
 
 		// Create/Update
-		public async Task<SkidSteerLoader> SaveSkidSteerLoaderAsync(SkidSteerLoader skidSteerLoader)
+		public async Task<SkidSteerLoader?> SaveSkidSteerLoaderAsync(SkidSteerLoader skidSteerLoader)
 		{
 			using var context = factory.CreateDbContext();
-			SkidSteerLoader currentSkidSteerLoader;
+			SkidSteerLoader? currentSkidSteerLoader;
 
 			if (skidSteerLoader.Id == 0)
 			{
@@ -35,6 +35,10 @@ namespace ServISData
 				currentSkidSteerLoader = await context.SkidSteerLoaders
 					.Include(ssl => ssl.SpareParts)
 					.FirstOrDefaultAsync(ssl => ssl.Id == skidSteerLoader.Id);
+				if (currentSkidSteerLoader == null)
+				{
+					return null;
+				}
 
 				UpdateSkidSteerLoaderData(context, currentSkidSteerLoader, skidSteerLoader);
 			}
@@ -44,10 +48,10 @@ namespace ServISData
 			return skidSteerLoader;
 		}
 
-		public async Task<TrackedExcavator> SaveTrackedExcavatorAsync(TrackedExcavator trackedExcavator)
+		public async Task<TrackedExcavator?> SaveTrackedExcavatorAsync(TrackedExcavator trackedExcavator)
 		{
 			using var context = factory.CreateDbContext();
-			TrackedExcavator currentTrackedExcavator;
+			TrackedExcavator? currentTrackedExcavator;
 
 			if (trackedExcavator.Id == 0)
 			{
@@ -60,6 +64,10 @@ namespace ServISData
 				currentTrackedExcavator = await context.TrackedExcavators
 					.Include(te => te.SpareParts)
 					.FirstOrDefaultAsync(te => te.Id == trackedExcavator.Id);
+				if (currentTrackedExcavator == null)
+				{
+					return null;
+				}
 
 				UpdateTrackedExcavatorData(context, currentTrackedExcavator, trackedExcavator);
 			}
@@ -69,10 +77,10 @@ namespace ServISData
 			return trackedExcavator;
 		}
 
-		public async Task<TrackedLoader> SaveTrackedLoaderAsync(TrackedLoader trackedLoader)
+		public async Task<TrackedLoader?> SaveTrackedLoaderAsync(TrackedLoader trackedLoader)
 		{
 			using var context = factory.CreateDbContext();
-			TrackedLoader currentTrackedLoader;
+			TrackedLoader? currentTrackedLoader;
 
 			if (trackedLoader.Id == 0)
 			{
@@ -85,6 +93,10 @@ namespace ServISData
 				currentTrackedLoader = await context.TrackedLoaders
 					.Include(tl => tl.SpareParts)
 					.FirstOrDefaultAsync(tl => tl.Id == trackedLoader.Id);
+				if (currentTrackedLoader == null)
+				{
+					return null;
+				}
 
 				UpdateTrackedLoaderData(context, currentTrackedLoader, trackedLoader);
 			}
@@ -94,10 +106,10 @@ namespace ServISData
 			return trackedLoader;
 		}
 
-		public async Task<ExcavatorPhoto> SaveExcavatorPhotoAsync(ExcavatorPhoto excavatorPhoto)
+		public async Task<ExcavatorPhoto?> SaveExcavatorPhotoAsync(ExcavatorPhoto excavatorPhoto)
 		{
 			using var context = factory.CreateDbContext();
-			ExcavatorPhoto currentExcavatorPhoto;
+			ExcavatorPhoto? currentExcavatorPhoto;
 
 			if (excavatorPhoto.Id == 0)
 			{
@@ -110,6 +122,10 @@ namespace ServISData
 				currentExcavatorPhoto = await context.ExcavatorPhotos
 					.Include(ep => ep.Excavator)
 					.FirstOrDefaultAsync(ep => ep.Id == excavatorPhoto.Id);
+				if (currentExcavatorPhoto == null)
+				{
+					return null;
+				}
 
 				currentExcavatorPhoto.Excavator = excavatorPhoto.Excavator;
 				//int excavatorId = excavatorPhoto.Excavator.Id;
@@ -124,10 +140,10 @@ namespace ServISData
 			return excavatorPhoto;
 		}
 
-		public async Task<SparePart> SaveSparePartAsync(SparePart sparePart)
+		public async Task<SparePart?> SaveSparePartAsync(SparePart sparePart)
 		{
 			using var context = factory.CreateDbContext();
-			SparePart currentSparePart;
+			SparePart? currentSparePart;
 
 			if (sparePart.Id == 0)
 			{
@@ -140,6 +156,10 @@ namespace ServISData
 				currentSparePart = await context.SpareParts
 					.Include(sp => sp.Excavators)
 					.FirstOrDefaultAsync(sp => sp.Id == sparePart.Id);
+				if (currentSparePart == null)
+				{
+					return null;
+				}
 
 				currentSparePart.CatalogNumber = sparePart.CatalogNumber;
 				currentSparePart.Name = sparePart.Name;
@@ -156,10 +176,10 @@ namespace ServISData
 		}
 
 
-		public async Task<AdditionalEquipment> SaveAdditionalEquipmentAsync(AdditionalEquipment additionalEquipment)
+		public async Task<AdditionalEquipment?> SaveAdditionalEquipmentAsync(AdditionalEquipment additionalEquipment)
 		{
 			using var context = factory.CreateDbContext();
-			AdditionalEquipment currentAdditionalEquipment;
+			AdditionalEquipment? currentAdditionalEquipment;
 
 			if (additionalEquipment.Id == 0)
 			{
@@ -169,6 +189,10 @@ namespace ServISData
 			{
 				currentAdditionalEquipment = await context.AdditionalEquipments
 					.FirstOrDefaultAsync(ae => ae.Id == additionalEquipment.Id);
+				if (currentAdditionalEquipment == null)
+				{
+					return null;
+				}
 
 				currentAdditionalEquipment.ForWhichExcavatorCategory = additionalEquipment.ForWhichExcavatorCategory;
 				currentAdditionalEquipment.Category = additionalEquipment.Category;
@@ -183,10 +207,10 @@ namespace ServISData
 			return additionalEquipment;
 		}
 
-		public async Task<AdditionalEquipmentPhoto> SaveAdditionalEquipmentPhotoAsync(AdditionalEquipmentPhoto additionalEquipmentPhoto)
+		public async Task<AdditionalEquipmentPhoto?> SaveAdditionalEquipmentPhotoAsync(AdditionalEquipmentPhoto additionalEquipmentPhoto)
 		{
 			using var context = factory.CreateDbContext();
-			AdditionalEquipmentPhoto currentAdditionalEquipmentPhoto;
+			AdditionalEquipmentPhoto? currentAdditionalEquipmentPhoto;
 
 			if (additionalEquipmentPhoto.Id == 0)
 			{
@@ -197,6 +221,10 @@ namespace ServISData
 				currentAdditionalEquipmentPhoto = await context.AdditionalEquipmentPhotos
 					.Include(aep => aep.AdditionalEquipment)
 					.FirstOrDefaultAsync(aep => aep.Id == additionalEquipmentPhoto.Id);
+				if (currentAdditionalEquipmentPhoto == null)
+				{
+					return null;
+				}
 
 				currentAdditionalEquipmentPhoto.AdditionalEquipment = additionalEquipmentPhoto.AdditionalEquipment;
 				//int additionalEquipmentPhotoId = additionalEquipmentPhoto.AdditionalEquipment.Id;
@@ -212,10 +240,10 @@ namespace ServISData
 		}
 
 
-		public async Task<Customer> SaveCustomerAsync(Customer customer)
+		public async Task<Customer?> SaveCustomerAsync(Customer customer)
 		{
 			using var context = factory.CreateDbContext();
-			Customer currentCustomer;
+			Customer? currentCustomer;
 
 			if (customer.Id == 0)
 			{
@@ -225,6 +253,10 @@ namespace ServISData
 			{
 				currentCustomer = await context.Customers
 					.FirstOrDefaultAsync(c => c.Id == customer.Id);
+				if (currentCustomer == null)
+				{
+					return null;
+				}
 
 				UpdateCustomerData(context, currentCustomer, customer);
 			}
@@ -234,10 +266,10 @@ namespace ServISData
 			return customer;
 		}
 
-		public async Task<Administrator> SaveAdministratorAsync(Administrator administrator)
+		public async Task<Administrator?> SaveAdministratorAsync(Administrator administrator)
 		{
 			using var context = factory.CreateDbContext();
-			Administrator currentAdministrator;
+			Administrator? currentAdministrator;
 
 			if (administrator.Id == 0)
 			{
@@ -247,6 +279,10 @@ namespace ServISData
 			{
 				currentAdministrator = await context.Administrators
 					.FirstOrDefaultAsync(a => a.Id == administrator.Id);
+				if (currentAdministrator == null)
+				{
+					return null;
+				}
 
 				UpdateAdministratorData(context, currentAdministrator, administrator);
 			}
@@ -257,10 +293,10 @@ namespace ServISData
 		}
 
 
-		public async Task<AuctionOffer> SaveAuctionOfferAsync(AuctionOffer auctionOffer)
+		public async Task<AuctionOffer?> SaveAuctionOfferAsync(AuctionOffer auctionOffer)
 		{
 			using var context = factory.CreateDbContext();
-			AuctionOffer currentAuctionOffer;
+			AuctionOffer? currentAuctionOffer;
 
 			if (auctionOffer.Id == 0)
 			{
@@ -271,6 +307,10 @@ namespace ServISData
 				currentAuctionOffer = await context.AuctionOffers
 					.Include(ao => ao.Excavator)
 					.FirstOrDefaultAsync(ao => ao.Id == auctionOffer.Id);
+				if (currentAuctionOffer == null)
+				{
+					return null;
+				}
 
 				currentAuctionOffer.Excavator = auctionOffer.Excavator;
 				//int excavatorId = auctionOffer.Excavator.Id;
@@ -286,10 +326,10 @@ namespace ServISData
 			return auctionOffer;
 		}
 
-		public async Task<AuctionBid> SaveAuctionBidAsync(AuctionBid auctionBid)
+		public async Task<AuctionBid?> SaveAuctionBidAsync(AuctionBid auctionBid)
 		{
 			using var context = factory.CreateDbContext();
-			AuctionBid currentAuctionBid;
+			AuctionBid? currentAuctionBid;
 
 			if (auctionBid.Id == 0)
 			{
@@ -301,6 +341,10 @@ namespace ServISData
 					.Include(ab => ab.User)
 					.Include(ab => ab.AuctionOffer)
 					.FirstOrDefaultAsync(ab => ab.Id == auctionBid.Id);
+				if (currentAuctionBid == null)
+				{
+					return null;
+				}
 
 				currentAuctionBid.User = auctionBid.User;
 				//int userId = auctionBid.User.Id;
@@ -329,7 +373,7 @@ namespace ServISData
 		{
 			using var context = factory.CreateDbContext();
 
-			var query = context.Excavators; // .Include(e => e.SpareParts);
+			var query = context.Excavators.Include(e => e.SpareParts);
 			if (category != null)
 			{
 				query.Where(e => e.Category == category);
@@ -383,7 +427,7 @@ namespace ServISData
 			return await context.TrackedLoaders.CountAsync();
 		}
 
-		public async Task<SkidSteerLoader> GetSkidSteerLoaderAsync(int id)
+		public async Task<SkidSteerLoader?> GetSkidSteerLoaderAsync(int id)
 		{
 			using var context = factory.CreateDbContext();
 
@@ -392,7 +436,7 @@ namespace ServISData
 				.FirstOrDefaultAsync(ssl => ssl.Id == id);
 		}
 
-		public async Task<TrackedExcavator> GetTrackedExcavatorAsync(int id)
+		public async Task<TrackedExcavator?> GetTrackedExcavatorAsync(int id)
 		{
 			using var context = factory.CreateDbContext();
 
@@ -401,7 +445,7 @@ namespace ServISData
 				.FirstOrDefaultAsync(te => te.Id == id);
 		}
 
-		public async Task<TrackedLoader> GetTrackedLoaderAsync(int id)
+		public async Task<TrackedLoader?> GetTrackedLoaderAsync(int id)
 		{
 			using var context = factory.CreateDbContext();
 
@@ -427,7 +471,7 @@ namespace ServISData
 			return await context.ExcavatorPhotos.CountAsync();
 		}
 
-		public async Task<ExcavatorPhoto> GetExcavatorTitlePhotoAsync(int excavatorId)
+		public async Task<ExcavatorPhoto?> GetExcavatorTitlePhotoAsync(int excavatorId)
 		{
 			using var context = factory.CreateDbContext();
 
@@ -471,12 +515,12 @@ namespace ServISData
 			return await context.SpareParts.CountAsync();
 		}
 
-		public async Task<SparePart> GetSparePartAsync(int id)
+		public async Task<SparePart?> GetSparePartAsync(int id)
 		{
 			using var context = factory.CreateDbContext();
 			
 			return await context.SpareParts
-				//.Include(sp => sp.Excavators) // TODO: not working with Include...
+				.Include(sp => sp.Excavators)
 				.FirstOrDefaultAsync(sp => sp.Id == id);
 		}
 
@@ -524,7 +568,7 @@ namespace ServISData
 			return await context.AdditionalEquipments.CountAsync();
 		}
 
-		public async Task<AdditionalEquipment> GetAdditionalEquipmentAsync(int id)
+		public async Task<AdditionalEquipment?> GetAdditionalEquipmentAsync(int id)
 		{
 			using var context = factory.CreateDbContext();
 
@@ -549,7 +593,7 @@ namespace ServISData
 			return await context.AdditionalEquipmentPhotos.CountAsync();
 		}
 
-		public async Task<AdditionalEquipmentPhoto> GetAdditionalEquipmentTitlePhotoAsync(int additionalEquipmentId)
+		public async Task<AdditionalEquipmentPhoto?> GetAdditionalEquipmentTitlePhotoAsync(int additionalEquipmentId)
 		{
 			using var context = factory.CreateDbContext();
 
@@ -560,7 +604,7 @@ namespace ServISData
 		}
 
 
-		public async Task<Customer> GetCustomerAsync(int id)
+		public async Task<Customer?> GetCustomerAsync(int id)
 		{
 			using var context = factory.CreateDbContext();
 
@@ -576,7 +620,7 @@ namespace ServISData
 				.FirstOrDefaultAsync(c => c.Username == username && c.Password == password);
 		}
 
-		public async Task<Administrator> GetAdministratorAsync(int id)
+		public async Task<Administrator?> GetAdministratorAsync(int id)
 		{
 			using var context = factory.CreateDbContext();
 
@@ -619,7 +663,7 @@ namespace ServISData
 			return await context.AuctionOffers.CountAsync();
 		}
 
-		public async Task<AuctionOffer> GetAuctionOfferAsync(int id)
+		public async Task<AuctionOffer?> GetAuctionOfferAsync(int id)
 		{
 			using var context = factory.CreateDbContext();
 
@@ -646,7 +690,7 @@ namespace ServISData
 			return await context.AuctionBids.CountAsync();
 		}
 
-		public async Task<AuctionBid> GetAuctionBidAsync(int id)
+		public async Task<AuctionBid?> GetAuctionBidAsync(int id)
 		{
 			using var context = factory.CreateDbContext();
 
