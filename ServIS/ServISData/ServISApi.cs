@@ -329,7 +329,7 @@ namespace ServISData
 		{
 			using var context = factory.CreateDbContext();
 
-			var query = context.Excavators;
+			var query = context.Excavators; // .Include(e => e.SpareParts);
 			if (category != null)
 			{
 				query.Where(e => e.Category == category);

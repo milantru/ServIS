@@ -39,8 +39,8 @@
 							</td>
 							<td>
 								<input type="checkbox"
-						   checked=@ExcavatorsChecked[iCopy]
-						   @onclick=@(() => ExcavatorsChecked[iCopy] = !ExcavatorsChecked[iCopy]) />
+									   checked=@ExcavatorsChecked[iCopy]
+									   @onclick=@(() => ExcavatorsChecked[iCopy] = !ExcavatorsChecked[iCopy]) />
 							</td>
 						</tr>
 					}
@@ -72,14 +72,6 @@
 		await base.OnInitializedAsync();
 
 		Excavators = await api.GetExcavatorsAsync();
-		if (Excavators != null)
-		{
-			ExcavatorsChecked = new List<bool>(Excavators.Count);
-			for (int i = 0; i < Excavators.Count; i++)
-			{
-				ExcavatorsChecked.Add(false);
-			}
-		}
 	}
 
 	protected override void OnParametersSet()
@@ -94,6 +86,22 @@
 			* instead of SparePart=... and it thinks the parameter was not provided)
 			*/
 			throw new ArgumentException("SparePartForm used without a SparePart");
+		}
+	}
+
+	protected override async Task OnParametersSetAsync()
+	{
+		await base.OnParametersSetAsync();
+
+		if (Excavators != null)
+		{
+			ExcavatorsChecked = new List<bool>(Excavators.Count);
+			foreach (var excavator in Excavators)
+			{
+				//var excavatorHasSparePart = excavator.SpareParts.Contains(SparePart);
+				//ExcavatorsChecked.Add(excavatorHasSparePart);
+				ExcavatorsChecked.Add(false);
+			}
 		}
 	}
 
