@@ -1,4 +1,4 @@
-﻿@inject IServISApi api
+@inject IServISApi api
 
 <Virtualize ItemsProvider="LoadExcavatorsPhotosAsync" Context="e">
 	<ExcavatorCard Title=@e.Excavator.Name
@@ -22,7 +22,7 @@
 			ExcavatorsTotalCount = await api.GetTrackedExcavatorsCountAsync();
 		}
 		if (ExcavatorsTotalCount == 0)
-		{// 1st cond is for the case when there is no tracked excavator in the database
+		{// in case there is no tracked excavator in the database
 			return new ItemsProviderResult<ExcavatorPhoto>();
 		}
 
