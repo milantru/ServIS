@@ -19,8 +19,6 @@
 				<td class="input-group">
 					<button class="btn btn-primary" @onclick="() => Select(sp)">Vyber</button>
 
-					<button class="btn btn-secondary" @onclick="() => ShowDetail(sp.Id)">Detail</button>
-
 					<button class="btn btn-danger" @onclick="() => Delete(sp)">Vymaž</button>
 
 				</td>
@@ -71,11 +69,6 @@
 		SelectedSparePart = sparePart;
 
 		await SelectedSparePartChanged.InvokeAsync(SelectedSparePart);
-	}
-
-	private void ShowDetail(int sparePartId)
-	{
-		navMan.NavigateTo("/nahradny-diel/" + sparePartId);
 	}
 
 	private async Task Delete(SparePart sparePart)
