@@ -12,7 +12,7 @@
 		</tr>
 	</thead>
 	<tbody>
-		<Virtualize ItemsProvider="LoadSparePartsAsync" Context="sp">
+		<Virtualize @ref="SparePartsContainer" ItemsProvider="LoadSparePartsAsync" Context="sp">
 			<tr class="@GetRowCss(sp)">
 				<td>@sp.CatalogNumber</td>
 				<td>@sp.Name</td>
@@ -35,6 +35,13 @@
 	public EventCallback<SparePart> SelectedSparePartChanged { get; set; }
 
 	public int SparePartsTotalCount { get; set; }
+
+	private Virtualize<SparePart> SparePartsContainer { get; set; } = null!;
+
+	public async Task ReloadArticles()
+	{
+		await SparePartsContainer.RefreshDataAsync();
+	}
 
 	private async ValueTask<ItemsProviderResult<SparePart>> LoadSparePartsAsync(ItemsProviderRequest request)
 	{
@@ -81,6 +88,6 @@
 
 		await api.DeleteSparePartAsync(sparePart);
 
-		StateHasChanged();
+		await ReloadArticles();
 	}
 }
