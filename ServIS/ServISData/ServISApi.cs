@@ -1,4 +1,4 @@
-using ServISData.Interfaces;
+﻿using ServISData.Interfaces;
 using ServISData.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -101,10 +101,10 @@ namespace ServISData
 
 			if (excavatorPhoto.Id == 0)
 			{
-				context.Excavators.Attach(excavatorPhoto.Excavator);
+				//context.Excavators.Attach(excavatorPhoto.Excavator); // might need this when in excavator form more photos will be uploaded
 
 				context.Add(excavatorPhoto);
-			} 
+			}
 			else
 			{
 				currentExcavatorPhoto = await context.ExcavatorPhotos

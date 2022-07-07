@@ -11,7 +11,7 @@
 		<DataAnnotationsValidator />
 		<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
 
-		<InputFile OnChange="HandleInputFileChange" multiple />
+		<InputFile OnChange="HandleInputFileChange" multiple required />
 
 		<label>Značka:</label>
 		<InputText @bind-Value="@Excavator.Brand" />
@@ -186,14 +186,12 @@
 			Excavator.LastInspection = null;
 		}
 		Excavator.SpareParts = GetSelectedSpareParts();
-		try
-		{
-			await SaveExcavatorAsync(Excavator);
-
-		}
-		catch { /* TODO */ }
 
 		var uploadedExcavatorPhotos = await GetUploadedExcavatorPhotos();
+		if (uploadedExcavatorPhotos.Count == 0)
+		{
+			throw new Exception("No excavator photo provided.");
+		}
 		foreach (var uploadedExcavatorPhoto in uploadedExcavatorPhotos)
 		{
 			try
