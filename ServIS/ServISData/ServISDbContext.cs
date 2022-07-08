@@ -45,7 +45,7 @@ namespace ServISData
 
 			var optionsBuilder = new DbContextOptionsBuilder<ServISDbContext>();
 
-			optionsBuilder.UseMySQL(connectionString);
+			optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
 
 			return new ServISDbContext(optionsBuilder.Options);
 		}

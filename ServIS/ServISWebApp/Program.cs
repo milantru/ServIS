@@ -11,7 +11,8 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddDbContextFactory<ServISDbContext>(options =>
 	{
-		options.UseMySQL(ServISDbContextFactory.GetConnectionString());
+		var connectionString = ServISDbContextFactory.GetConnectionString();
+		options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
 	}
 );
 builder.Services.AddScoped<IServISApi, ServISApi>();
