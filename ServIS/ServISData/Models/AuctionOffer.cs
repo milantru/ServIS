@@ -11,8 +11,8 @@ namespace ServISData.Models
 		[Required]
 		public Excavator Excavator { get; set; } = null!;
 
-		[MaxLength(ErrorMessage = "Popis príliš dlhý.")]
-		public string Description { get; set; } = null!;
+		[Required(AllowEmptyStrings = true), MaxLength(ErrorMessage = "Popis príliš dlhý.")]
+		public string Description { get; set; } = "";
 
 		[Required(ErrorMessage = "Toto pole je povinné.")]
 		public DateTime OfferEnd { get; set; }

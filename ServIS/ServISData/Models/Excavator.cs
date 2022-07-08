@@ -19,8 +19,8 @@ namespace ServISData.Models
 		[Required(ErrorMessage = "Toto pole je povinné."), StringLength(80, ErrorMessage = "Max {1} znakov.")]
 		public string Name { get; set; } = null!;
 
-		[MaxLength(ErrorMessage = "Popis príliš dlhý.")]
-		public string Description { get; set; } = null!;
+		[Required(AllowEmptyStrings = true), MaxLength(ErrorMessage = "Popis príliš dlhý.")]
+		public string Description { get; set; } = "";
 
 		[Required]
 		public bool IsNew { get; set; }
