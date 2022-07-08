@@ -13,6 +13,9 @@
 
 		<InputFile OnChange="HandleInputFileChange" multiple required />
 
+		<br />
+		<br />
+
 		<label>Značka:</label>
 		<InputText @bind-Value="@Excavator.Brand" />
 		<ValidationMessage For="@(() => Excavator.Brand)" />
@@ -42,11 +45,13 @@
 
 		@if (!@Excavator.IsNew)
 		{
+			<br />
 			<label>Dátum poslednej prehliadky:</label>
 			<InputDate @bind-Value="@Excavator.LastInspection" />
 			<ValidationMessage For="@(() => Excavator.LastInspection)" />
 		}
 
+		<br />
 		<br />
 
 		<label>Náhradné diely:</label>
@@ -79,10 +84,13 @@
 					}
 				}
 			</tbody>
+		</table>
 
-			<table class="table">
-				@ExcavatorSpecificInfoFields
-			</table>
+		<br />
+		<br />
+
+		<table class="table">
+			@ExcavatorSpecificInfoFields
 		</table>
 
 		<button class="btn btn-success" type="submit">Uložiť</button>
