@@ -113,7 +113,7 @@ namespace ServISData
 
 			if (excavatorPhoto.Id == 0)
 			{
-				//context.Excavators.Attach(excavatorPhoto.Excavator); // might need this when in excavator form more photos will be uploaded
+				context.Excavators.Attach(excavatorPhoto.Excavator);
 
 				context.Add(excavatorPhoto);
 			}
