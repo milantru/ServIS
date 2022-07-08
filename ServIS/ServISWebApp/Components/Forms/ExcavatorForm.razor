@@ -132,11 +132,9 @@
 		}
 	}
 
-	public Task HandleInputFileChange(InputFileChangeEventArgs e)
+	public void HandleInputFileChange(InputFileChangeEventArgs e)
 	{
 		UploadedFiles = e.GetMultipleFiles();
-
-		return Task.CompletedTask;
 	}
 
 	private List<SparePart> GetSelectedSpareParts()
