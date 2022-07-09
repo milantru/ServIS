@@ -1,9 +1,11 @@
 ﻿@inject IServISApi api
 
-<Virtualize ItemsProvider="LoadExcavatorsPhotosAsync" Context="e">
-	<ExcavatorCard Title=@e.Excavator.Name
-				   Image=@e.Photo />
-</Virtualize>
+<div class="d-flex flex-wrap">
+	<Virtualize ItemsProvider="LoadExcavatorsPhotosAsync" Context="e">
+		<ExcavatorCard Title=@e.Excavator.Name
+					   Image=@e.Photo />
+	</Virtualize>
+</div>
 
 @code {
 	[Parameter]
