@@ -8,12 +8,13 @@
 @code {
     private string imgSrc = null!;
 
-    [EditorRequired]
-    [Parameter]
+    [EditorRequired, Parameter]
+    public int Id { get; set; }
+
+    [EditorRequired, Parameter]
     public string Title { get; set; } = null!;
 
-    [EditorRequired]
-    [Parameter]
+    [EditorRequired, Parameter]
     public byte[] Image { get; set; } = null!;
 
     protected override void OnParametersSet()
