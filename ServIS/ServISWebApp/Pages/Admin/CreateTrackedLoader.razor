@@ -6,7 +6,6 @@
 
 <ExcavatorForm ExcavatorCategory=TrackedLoader
 			   Excavator=@TrackedLoader
-			   SaveExcavatorAsync=@(async (trackedExcavator) => await api.SaveTrackedLoaderAsync(trackedExcavator))
 			   LinkToGoAfterValidSubmit=@($"/pasove-nakladace-{ExcavatorBrand.ToLower()}") >
 	<ExcavatorSpecificInfoFields>
 		<tr>

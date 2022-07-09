@@ -6,7 +6,6 @@
 
 <ExcavatorForm ExcavatorCategory=TrackedExcavator
 			   Excavator=@TrackedExcavator
-			   SaveExcavatorAsync=@(async (trackedExcavator) => await api.SaveTrackedExcavatorAsync(trackedExcavator))
 			   LinkToGoAfterValidSubmit=@($"/pasove-bagre-{ExcavatorBrand.ToLower()}") >
 	<ExcavatorSpecificInfoFields>
 		<tr>

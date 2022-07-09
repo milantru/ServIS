@@ -102,9 +102,6 @@
 	public string LinkToGoAfterValidSubmit { get; set; } = null!;
 
 	[Parameter]
-	public Func<ExcavatorCategory, Task<ExcavatorCategory>> SaveExcavatorAsync { get; set; } = null!;
-
-	[Parameter]
 	public RenderFragment ExcavatorSpecificInfoFields { get; set; } = null!;
 
 	[Parameter]
