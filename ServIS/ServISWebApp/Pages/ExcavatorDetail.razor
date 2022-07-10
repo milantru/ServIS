@@ -3,12 +3,12 @@
 @inject IServISApi api
 @using ServISWebApp.CssProviders
 
-@if (Excavator != null)
+@if (Excavator != null && ExcavatorPhotos != null)
 {
 	<div class="container">
 		<div class="row">
 			<div class="col">
-				<PhotoSlider />
+				<PhotoSlider Images="GetImages()" />
 			</div>
 
 			<div class="col">
@@ -82,18 +82,20 @@
 
 	public Excavator Excavator { get; private set; } = null!;
 
+	public List<ExcavatorPhoto> ExcavatorPhotos { get; private set; } = null!;
+
 	protected override async Task OnParametersSetAsync()
 	{
 		await base.OnParametersSetAsync();
 
-		var photos = await api.GetExcavatorPhotosAsync(Id);
-		if (photos == null || photos.Count == 0)
+		ExcavatorPhotos = await api.GetExcavatorPhotosAsync(Id);
+		if (ExcavatorPhotos == null || ExcavatorPhotos.Count == 0)
 		{
 			// possible TODO: place dummy "missing photo" photo instead of throwing error, so at least rest of the page could be displayed
 			throw new Exception("No excavator photos.");
 		}
 
-		Excavator = photos[0].Excavator;
+		Excavator = ExcavatorPhotos[0].Excavator;
 	}
 
 	private void ToggleForm()
@@ -416,5 +418,17 @@
 		";
 
 		return skidSteerLoaderSpecificInfoMarkup;
+	}
+
+	private List<byte[]> GetImages()
+	{
+		var images = new List<byte[]>(ExcavatorPhotos.Count);
+
+		foreach (var excavatorPhoto in ExcavatorPhotos)
+		{
+			images.Add(excavatorPhoto.Photo);
+		}
+
+		return images;
 	}
 }

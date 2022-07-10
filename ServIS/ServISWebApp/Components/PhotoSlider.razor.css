@@ -1,0 +1,9 @@
+﻿.inactive {
+	opacity: 0.5;
+}
+
+.carousel-indicators > button {
+	border-style: none;
+
+	margin: 0.5px;
+}
