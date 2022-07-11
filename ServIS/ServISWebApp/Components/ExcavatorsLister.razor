@@ -1,14 +1,17 @@
 ﻿@inject IServISApi api
 
 <div class="d-flex flex-wrap">
-	<Virtualize ItemsProvider="LoadExcavatorsPhotosAsync" Context="e">
-		<ExcavatorCard Id=@e.Excavator.Id
-					   Title=@e.Excavator.Name
-					   Image=@e.Photo />
+	<Virtualize @ref="excavatorPhotosContainer" ItemsProvider="LoadExcavatorsPhotosAsync" Context="e">
+		<ExcavatorCard Id="@e.Excavator.Id"
+					   Title="@e.Excavator.Name"
+					   Image="@e.Photo" 
+					   OnDelete="() => DeleteExcavatorAsync(e.Excavator)" />
 	</Virtualize>
 </div>
 
 @code {
+	private Virtualize<ExcavatorPhoto> excavatorPhotosContainer = null!;
+
 	[Parameter]
 	public string ExcavatorBrand { get; set; } = null!;
 
@@ -16,6 +19,11 @@
 	public string ExcavatorCategory { get; set; } = null!;
 
 	public int ExcavatorsTotalCount { get; set; } // excavators of given category (ExcavatorCategory)
+
+	public async Task ReloadExcavatorsPhotosAsync()
+	{
+		await excavatorPhotosContainer.RefreshDataAsync();
+	}
 
 	private async ValueTask<ItemsProviderResult<ExcavatorPhoto>> LoadExcavatorsPhotosAsync(ItemsProviderRequest request)
 	{
@@ -48,5 +56,12 @@
 		}
 
 		return new ItemsProviderResult<ExcavatorPhoto>((IEnumerable<ExcavatorPhoto>)excavatorTitlePhotos, ExcavatorsTotalCount);
+	}
+
+	private async Task DeleteExcavatorAsync(Excavator excavator)
+	{
+		await api.DeleteExcavatorAsync(excavator);
+
+		await ReloadExcavatorsPhotosAsync();
 	}
 }
