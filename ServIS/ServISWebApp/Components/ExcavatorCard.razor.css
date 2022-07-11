@@ -1,0 +1,8 @@
+﻿.excavator-card-container {
+	position: relative;
+}
+
+.excavator-card-content {
+	width: 18rem;
+	margin: 0 10px 10px 0;
+}
