@@ -701,19 +701,9 @@ namespace ServISData
 		}
 
 		// delete
-		public async Task DeleteTrackedSkidSteerLoaderAsync(SkidSteerLoader skidSteerLoader)
+		public async Task DeleteExcavatorAsync(Excavator excavator)
 		{
-			await DeleteItem(skidSteerLoader);
-		}
-
-		public async Task DeleteTrackedExcavatorAsync(TrackedExcavator trackedExcavator)
-		{
-			await DeleteItem(trackedExcavator);
-		}
-
-		public async Task DeleteTrackedLoaderAsync(TrackedLoader trackedLoader)
-		{
-			await DeleteItem(trackedLoader);
+			await DeleteItem(excavator);
 		}
 
 		public async Task DeleteExcavatorPhotoAsync(ExcavatorPhoto excavatorPhoto)

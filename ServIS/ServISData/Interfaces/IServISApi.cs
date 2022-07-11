@@ -57,9 +57,7 @@ namespace ServISData.Interfaces
 		public Task<AuctionBid?> GetAuctionBidAsync(int id);
 
 		// delete
-		public Task DeleteTrackedSkidSteerLoaderAsync(SkidSteerLoader skidSteerLoader);
-		public Task DeleteTrackedExcavatorAsync(TrackedExcavator trackedExcavator);
-		public Task DeleteTrackedLoaderAsync(TrackedLoader trackedLoader);
+		public Task DeleteExcavatorAsync(Excavator excavator);
 		public Task DeleteExcavatorPhotoAsync(ExcavatorPhoto excavatorPhoto);
 		public Task DeleteSparePartAsync(SparePart sparePart);
 
