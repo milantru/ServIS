@@ -1,7 +1,28 @@
-﻿<h3 class="text-primary">LoginPanel</h3>
+﻿@inject AuthenticationStateProvider authStateProvider
+@inject NavigationManager navMan
+@using ServISWebApp.Auth
 
-<a href="/profil">Profil</a>
+<div>
+	<h3 class="text-primary">LoginPanel</h3>
+
+	<AuthorizeView>
+		<Authorized>
+			<a href="/profil">Profil</a>
+			<a href="javascript:void(0)" @onclick="Logout">Odhlásiť</a>
+		</Authorized>
+		<NotAuthorized>
+			<a href="/prihlasovanie">Prihlásiť</a>
+			<a href="/registracia">Registrovať</a>
+		</NotAuthorized>
+	</AuthorizeView>
+</div>
 
 @code {
+	private async Task Logout()
+	{
+		var customAuthStateProvider = (CustomAuthenticationStateProvider)authStateProvider;
+		await customAuthStateProvider.UpdateAuthenticationState(null);
 
+		navMan.NavigateTo("/");
+	}
 }
