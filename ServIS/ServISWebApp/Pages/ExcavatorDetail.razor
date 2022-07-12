@@ -30,24 +30,24 @@
 					<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
 
 					<label>Meno:</label>
-					<InputText @bind-Value="@Data.Customer.Name" />
-					<ValidationMessage For="@(() => Data.Customer.Name)" />
+					<InputText @bind-Value="@Data.User.Name" />
+					<ValidationMessage For="@(() => Data.User.Name)" />
 
 					<label>Priezvisko:</label>
-					<InputText @bind-Value="@Data.Customer.Surname" />
-					<ValidationMessage For="@(() => Data.Customer.Surname)" />
+					<InputText @bind-Value="@Data.User.Surname" />
+					<ValidationMessage For="@(() => Data.User.Surname)" />
 
 					<label>Telefónne číslo:</label>
-					<InputText @bind-Value="@Data.Customer.PhoneNumber" />
-					<ValidationMessage For="@(() => Data.Customer.PhoneNumber)" />
+					<InputText @bind-Value="@Data.User.PhoneNumber" />
+					<ValidationMessage For="@(() => Data.User.PhoneNumber)" />
 
 					<label>Email:</label>
-					<InputText @bind-Value="@Data.Customer.Email" />
-					<ValidationMessage For="@(() => Data.Customer.Email)" />
+					<InputText @bind-Value="@Data.User.Email" />
+					<ValidationMessage For="@(() => Data.User.Email)" />
 
 					<label>Mesto:</label>
-					<InputText @bind-Value="@Data.Customer.Residence" />
-					<ValidationMessage For="@(() => Data.Customer.Residence)" />
+					<InputText @bind-Value="@Data.User.Residence" />
+					<ValidationMessage For="@(() => Data.User.Residence)" />
 
 					<label>Správa:</label>
 					<InputTextArea @bind-Value="@Data.Message" />
@@ -70,7 +70,7 @@
 		</div>
 
 		<AuthorizeView Roles="Administrator">
-		<button class="btn btn-secondary" onclick="@(() => GoToExcavatorEditPage())">Uprav</button>
+			<button class="btn btn-secondary" onclick="@(() => GoToExcavatorEditPage())">Uprav</button>
 		</AuthorizeView>
 	</div>
 }
@@ -114,12 +114,12 @@
 	{
 		//Data.Customer.Username = "";
 		//Data.Customer.Password = "";
-		Data.Customer.IsTemporary = true;
+		Data.User.IsTemporary = true;
 	}
 
 	private class FormFields
 	{
-		public Customer Customer { get; set; } = new();
+		public User User { get; set; } = new();
 		public string Message { get; set; } = "";
 	}
 
