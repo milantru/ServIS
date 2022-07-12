@@ -14,8 +14,7 @@ namespace ServISData.Interfaces
 		public Task<AdditionalEquipment?> SaveAdditionalEquipmentAsync(AdditionalEquipment additionalEquipment);
 		public Task<AdditionalEquipmentPhoto?> SaveAdditionalEquipmentPhotoAsync(AdditionalEquipmentPhoto additionalEquipmentPhoto);
 
-		public Task<Customer?> SaveCustomerAsync(Customer customer);
-		public Task<Administrator?> SaveAdministratorAsync(Administrator administrator);
+		public Task<User?> SaveUserAsync(User user);
 
 		public Task<AuctionOffer?> SaveAuctionOfferAsync(AuctionOffer auctionOffer);
 		public Task<AuctionBid?> SaveAuctionBidAsync(AuctionBid auctionBid);
@@ -44,10 +43,8 @@ namespace ServISData.Interfaces
 		public Task<int> GetAdditionalEquipmentPhotosCountAsync();
 		public Task<AdditionalEquipmentPhoto?> GetAdditionalEquipmentTitlePhotoAsync(int additionalEquipmentId);
 
-		public Task<Customer?> GetCustomerAsync(int id);
-		public Task<Customer?> GetCustomerAsync(string username, string password);
-		public Task<Administrator?> GetAdministratorAsync(int id);
-		public Task<Administrator?> GetAdministratorAsync(string username, string password);
+		public Task<User?> GetUserAsync(int id);
+		public Task<User?> GetUserAsync(string username);
 
 		public Task<List<AuctionOffer>> GetAuctionOffersAsync(int? numberOfAuctionOffers = null, int? startIndex = null);
 		public Task<int> GetAuctionOffersCountAsync();
@@ -64,8 +61,7 @@ namespace ServISData.Interfaces
 		public Task DeleteAdditionalEquipmentAsync(AdditionalEquipment additionalEquipment);
 		public Task DeleteAdditionalEquipmentPhotoAsync(AdditionalEquipmentPhoto additionalEquipmentPhoto);
 
-		public Task DeleteCustomerAsync(Customer customer);
-		public Task DeleteAdministratorAsync(Administrator administrator);
+		public Task DeleteUserAsync(User user);
 
 		public Task DeleteAuctionOfferAsync(AuctionOffer auctionOffer);
 		public Task DeleteAuctionBidAsync(AuctionBid auctionBid);

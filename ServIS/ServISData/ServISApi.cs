@@ -239,56 +239,30 @@ namespace ServISData
 		}
 
 
-		public async Task<Customer?> SaveCustomerAsync(Customer customer)
+		public async Task<User?> SaveUserAsync(User user)
 		{
 			using var context = factory.CreateDbContext();
-			Customer? currentCustomer;
+			User? currentUser;
 
-			if (customer.Id == 0)
+			if (user.Id == 0)
 			{
-				context.Add(customer);
+				context.Add(user);
 			}
 			else
 			{
-				currentCustomer = await context.Customers
-					.FirstOrDefaultAsync(c => c.Id == customer.Id);
-				if (currentCustomer == null)
+				currentUser = await context.Users
+					.FirstOrDefaultAsync(c => c.Id == user.Id);
+				if (currentUser == null)
 				{
 					return null;
 				}
 
-				UpdateCustomerData(context, currentCustomer, customer);
+				UpdateCustomerData(context, currentUser, user);
 			}
 
 			await context.SaveChangesAsync();
 
-			return customer;
-		}
-
-		public async Task<Administrator?> SaveAdministratorAsync(Administrator administrator)
-		{
-			using var context = factory.CreateDbContext();
-			Administrator? currentAdministrator;
-
-			if (administrator.Id == 0)
-			{
-				context.Add(administrator);
-			}
-			else
-			{
-				currentAdministrator = await context.Administrators
-					.FirstOrDefaultAsync(a => a.Id == administrator.Id);
-				if (currentAdministrator == null)
-				{
-					return null;
-				}
-
-				UpdateAdministratorData(context, currentAdministrator, administrator);
-			}
-
-			await context.SaveChangesAsync();
-
-			return administrator;
+			return user;
 		}
 
 
@@ -612,36 +586,20 @@ namespace ServISData
 		}
 
 
-		public async Task<Customer?> GetCustomerAsync(int id)
+		public async Task<User?> GetUserAsync(int id)
 		{
 			using var context = factory.CreateDbContext();
 
-			return await context.Customers
+			return await context.Users
 				.FirstOrDefaultAsync(c => c.Id == id);
 		}
 
-		public async Task<Customer?> GetCustomerAsync(string username, string password)
+		public async Task<User?> GetUserAsync(string username)
 		{
 			using var context = factory.CreateDbContext();
 
-			return await context.Customers
-				.FirstOrDefaultAsync(c => c.Username == username && c.Password == password);
-		}
-
-		public async Task<Administrator?> GetAdministratorAsync(int id)
-		{
-			using var context = factory.CreateDbContext();
-
-			return await context.Administrators
-				.FirstOrDefaultAsync(a => a.Id == id);
-		}
-
-		public async Task<Administrator?> GetAdministratorAsync(string username, string password)
-		{
-			using var context = factory.CreateDbContext();
-
-			return await context.Administrators
-				.FirstOrDefaultAsync(a => a.Username == username && a.Password == password);
+			return await context.Users
+				.FirstOrDefaultAsync(c => c.Username == username);
 		}
 
 
@@ -736,14 +694,9 @@ namespace ServISData
 		}
 
 
-		public async Task DeleteCustomerAsync(Customer customer)
+		public async Task DeleteUserAsync(User user)
 		{
-			await DeleteItem(customer);
-		}
-
-		public async Task DeleteAdministratorAsync(Administrator administrator)
-		{
-			await DeleteItem(administrator);
+			await DeleteItem(user);
 		}
 
 
@@ -859,21 +812,17 @@ namespace ServISData
 			currentUserData.Password = newUserData.Password;
 		}
 
-		private void UpdateCustomerData(ServISDbContext context, Customer currentCustomerData, Customer newCustomerData)
+		private void UpdateCustomerData(ServISDbContext context, User currentUserData, User newUserData)
 		{
-			UpdateUserData(context, currentCustomerData, newCustomerData);
+			UpdateUserData(context, currentUserData, newUserData);
 
-			currentCustomerData.Name = newCustomerData.Name;
-			currentCustomerData.Surname = newCustomerData.Surname;
-			currentCustomerData.PhoneNumber = newCustomerData.PhoneNumber;
-			currentCustomerData.Email = newCustomerData.Email;
-			currentCustomerData.Residence = newCustomerData.Residence;
-			currentCustomerData.IsTemporary = newCustomerData.IsTemporary;
-		}
-
-		private void UpdateAdministratorData(ServISDbContext context, Administrator currentAdministratorData, User newAdministratorData)
-		{
-			UpdateUserData(context, currentAdministratorData, newAdministratorData);
+			currentUserData.Name = newUserData.Name;
+			currentUserData.Surname = newUserData.Surname;
+			currentUserData.PhoneNumber = newUserData.PhoneNumber;
+			currentUserData.Email = newUserData.Email;
+			currentUserData.Residence = newUserData.Residence;
+			currentUserData.IsTemporary = newUserData.IsTemporary;
+			//currentUserData.Role = newUserData.Role;
 		}
 
 		//private async Task<List<Excavator>> GetExcavatorsAsync(

@@ -10,10 +10,8 @@ namespace ServISData
 	{
 		public DbSet<AdditionalEquipment> AdditionalEquipments { get; set; } = null!;
 		public DbSet<AdditionalEquipmentPhoto> AdditionalEquipmentPhotos { get; set; } = null!;
-		public DbSet<Administrator> Administrators { get; set; } = null!;
 		public DbSet<AuctionBid> AuctionBids { get; set; } = null!;
 		public DbSet<AuctionOffer> AuctionOffers { get; set; } = null!;
-		public DbSet<Customer> Customers { get; set; } = null!;
 		public DbSet<Excavator> Excavators { get; set; } = null!;
 		public DbSet<ExcavatorPhoto> ExcavatorPhotos { get; set; } = null!;
 		public DbSet<SkidSteerLoader> SkidSteerLoaders { get; set; } = null!;
