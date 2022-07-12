@@ -29,7 +29,7 @@ namespace ServISData.Interfaces
 		public Task<SkidSteerLoader?> GetSkidSteerLoaderAsync(int id);
 		public Task<TrackedExcavator?> GetTrackedExcavatorAsync(int id);
 		public Task<TrackedLoader?> GetTrackedLoaderAsync(int id);
-		public Task<List<ExcavatorPhoto>> GetExcavatorPhotosAsync(int excavatorId);
+		public Task<List<ExcavatorPhoto>> GetExcavatorPhotosAsync(int excavatorId, bool shouldIncludeExcavator = true);
 		public Task<int> GetExcavatorPhotosCountAsync();
 		public Task<ExcavatorPhoto?> GetExcavatorTitlePhotoAsync(int excavatorId);
 		public Task<List<SparePart>> GetSparePartsAsync(int? numberOfSpareParts = null, int? startIndex = null);

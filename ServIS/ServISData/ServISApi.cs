@@ -454,14 +454,23 @@ namespace ServISData
 				.FirstOrDefaultAsync(tl => tl.Id == id);
 		}
 
-		public async Task<List<ExcavatorPhoto>> GetExcavatorPhotosAsync(int excavatorId)
+		public async Task<List<ExcavatorPhoto>> GetExcavatorPhotosAsync(int excavatorId, bool shouldIncludeExcavator = true)
 		{
 			using var context = factory.CreateDbContext();
 
+			if (shouldIncludeExcavator)
+			{
 			return await context.ExcavatorPhotos
 				.Include(ep => ep.Excavator)
 				.Where(ep => ep.Excavator.Id == excavatorId)
 				.ToListAsync();
+			}
+			else
+			{
+				return await context.ExcavatorPhotos
+					.Where(ep => ep.Excavator.Id == excavatorId)
+					.ToListAsync();
+		}
 		}
 
 		public async Task<int> GetExcavatorPhotosCountAsync()
