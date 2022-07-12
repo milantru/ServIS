@@ -8,15 +8,24 @@
 <TabControl>
 	<AuthorizeView Roles="Administrator">
 		<Authorized>
-  <TabPage TabLabel="Pridanie náhradného dielu">
-    <SparePartManagement />
-  </TabPage>
+			<TabPage TabLabel="Pridanie náhradného dielu">
+				<SparePartManagement />
+			</TabPage>
 		</Authorized>
 	</AuthorizeView>
 	<AuthorizeView>
-  <TabPage TabLabel="Moje údaje">
-    <h1>Tu budú údaje užívateľa...</h1>
-  </TabPage>
+		<TabPage TabLabel="Moje údaje">
+			<h4>Moje údaje</h4>
+
+			<table class="table table-striped">
+				<tbody>
+					<tr>
+						<td>Prihlasovacie meno:</td>
+						<td>@(context.User.Identity?.Name ?? "Chýba meno")</td>
+					</tr>
+				</tbody>
+			</table>
+		</TabPage>
 	</AuthorizeView>
 </TabControl>
 
