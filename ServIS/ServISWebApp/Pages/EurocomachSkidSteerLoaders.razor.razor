@@ -2,7 +2,9 @@
 
 <h3>Eurocomach- Šmykom riadené nakladače</h3>
 
-<a href="/admin/novy-stroj/smykom-riadene-nakladace/eurocomach">Pridať novú ponuku</a>
+<AuthorizeView Roles="Administrator">
+	<a href="/admin/novy-stroj/smykom-riadene-nakladace/eurocomach">Pridať novú ponuku</a>
+</AuthorizeView>
 
 @*šmykom riadené nakladače -> skid steer loaders*@
 <ExcavatorsLister ExcavatorBrand="eurocomach"

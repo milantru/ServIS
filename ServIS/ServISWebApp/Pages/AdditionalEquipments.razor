@@ -2,7 +2,9 @@
 
 <h3>Prídavné zariadenia</h3>
 
-<a href="/admin/nove-pridavne-zariadenie">Pridať novú položku</a>
+<AuthorizeView Roles="Administrator">
+	<a href="/admin/nove-pridavne-zariadenie">Pridať novú položku</a>
+</AuthorizeView>
 
 @*<AdditionalEquipmentCard />*@
 

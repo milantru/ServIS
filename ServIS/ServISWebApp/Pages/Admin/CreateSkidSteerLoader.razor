@@ -1,6 +1,7 @@
 ﻿@page "/admin/novy-stroj/smykom-riadene-nakladace/{ExcavatorBrand}"
 @page "/admin/uprava-stroja/smykom-riadene-nakladace/{ExcavatorId:int}"
 
+@attribute [Authorize(Roles = "Administrator")]
 @inject IServISApi api
 
 @if (ExcavatorBrand != null && ExcavatorId == null)

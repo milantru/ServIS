@@ -9,7 +9,9 @@
 	</a>
 	@if (OnDelete.HasDelegate)
 	{
-		<button class="btn btn-danger delete-btn" onclick="@(() => OnDelete.InvokeAsync())">X</button>
+		<AuthorizeView Roles="Administrator">
+			<button class="btn btn-danger delete-btn" onclick="@(() => OnDelete.InvokeAsync())">X</button>
+		</AuthorizeView>
 	}
 </div>
 

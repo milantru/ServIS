@@ -1,16 +1,23 @@
 ﻿@page "/profil"
 
+@attribute [Authorize(Roles = "Administrator,User")]
 @using ServISWebApp.Pages.Admin
 
 <h3>Profil</h3>
 
 <TabControl>
+	<AuthorizeView Roles="Administrator">
+		<Authorized>
   <TabPage TabLabel="Pridanie náhradného dielu">
     <SparePartManagement />
   </TabPage>
+		</Authorized>
+	</AuthorizeView>
+	<AuthorizeView>
   <TabPage TabLabel="Moje údaje">
     <h1>Tu budú údaje užívateľa...</h1>
   </TabPage>
+	</AuthorizeView>
 </TabControl>
 
 @code {

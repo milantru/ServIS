@@ -1,5 +1,7 @@
 ﻿@page "/admin/nova-aukcna-ponuka"
 
+@attribute [Authorize(Roles = "Administrator")]
+
 <h3>Aukčné ponuky- vytvorenie nového záznamu</h3>
 
 @code {

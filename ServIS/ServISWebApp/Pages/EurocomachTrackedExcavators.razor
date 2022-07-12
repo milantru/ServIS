@@ -2,7 +2,9 @@
 
 <h3>Eurocomach- Pásové bagre</h3>
 
-<a href="/admin/novy-stroj/pasove-bagre/eurocomach">Pridať novú ponuku</a>
+<AuthorizeView Roles="Administrator">
+	<a href="/admin/novy-stroj/pasove-bagre/eurocomach">Pridať novú ponuku</a>
+</AuthorizeView>
 
 @*pásové bagre -> tracked excavators*@
 <ExcavatorsLister ExcavatorBrand="eurocomach"

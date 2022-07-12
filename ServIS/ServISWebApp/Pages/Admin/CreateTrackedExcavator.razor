@@ -1,6 +1,7 @@
 ﻿@page "/admin/novy-stroj/pasove-bagre/{ExcavatorBrand}"
 @page "/admin/uprava-stroja/pasove-bagre/{ExcavatorId:int}"
 
+@attribute [Authorize(Roles = "Administrator")]
 @inject IServISApi api
 
 @if (ExcavatorBrand != null && ExcavatorId == null)

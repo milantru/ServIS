@@ -69,7 +69,9 @@
 			</div>
 		</div>
 
+		<AuthorizeView Roles="Administrator">
 		<button class="btn btn-secondary" onclick="@(() => GoToExcavatorEditPage())">Uprav</button>
+		</AuthorizeView>
 	</div>
 }
 

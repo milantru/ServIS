@@ -2,7 +2,9 @@
 
 <h3>Eurocomach- Pásové nakladače</h3>
 
-<a href="/admin/novy-stroj/pasove-nakladace/eurocomach">Pridať novú ponuku</a>
+<AuthorizeView Roles="Administrator">
+	<a href="/admin/novy-stroj/pasove-nakladace/eurocomach">Pridať novú ponuku</a>
+</AuthorizeView>
 
 @*pásové nakladače -> tracked loaders*@
 <ExcavatorsLister ExcavatorBrand="eurocomach"
