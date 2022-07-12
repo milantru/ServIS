@@ -1,0 +1,53 @@
+﻿@page "/registracia"
+
+@inject IServISApi api
+@inject NavigationManager navMan
+@using ServISWebApp.CssProviders
+
+<h3>Registrácia</h3>
+
+<EditForm Model="User" OnValidSubmit="RegisterUser">
+	<DataAnnotationsValidator />
+	<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
+
+	<label>Prihlasovacie meno:</label>
+	<InputText @bind-Value="@User.Username" />
+	<ValidationMessage For="@(() => User.Username)" />
+
+	<label>Heslo:</label>
+	<InputText @bind-Value="@User.Password" />
+	<ValidationMessage For="@(() => User.Password)" />
+
+	<label>Meno:</label>
+	<InputText @bind-Value="@User.Name" />
+	<ValidationMessage For="@(() => User.Name)" />
+
+	<label>Priezvisko:</label>
+	<InputText @bind-Value="@User.Surname" />
+	<ValidationMessage For="@(() => User.Surname)" />
+
+	<label>Telefónne číslo:</label>
+	<InputText @bind-Value="@User.PhoneNumber" />
+	<ValidationMessage For="@(() => User.PhoneNumber)" />
+
+	<label>Email:</label>
+	<InputText @bind-Value="@User.Email" />
+	<ValidationMessage For="@(() => User.Email)" />
+
+	<label>Mesto:</label>
+	<InputText @bind-Value="@User.Residence" />
+	<ValidationMessage For="@(() => User.Residence)" />
+
+	<button class="btn btn-success" type="submit">Registrovať</button>
+</EditForm>
+
+@code {
+	private User User { get; set; } = new();
+
+	private async Task RegisterUser()
+	{
+		await api.SaveUserAsync(User);
+
+		navMan.NavigateTo("/");
+	}
+}
