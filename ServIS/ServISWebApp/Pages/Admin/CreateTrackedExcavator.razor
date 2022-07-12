@@ -1,12 +1,20 @@
 ﻿@page "/admin/novy-stroj/pasove-bagre/{ExcavatorBrand}"
+@page "/admin/uprava-stroja/pasove-bagre/{ExcavatorId:int}"
 
 @inject IServISApi api
 
-<h3>Pásové bagre- vytvorenie nového záznamu</h3>
+@if (ExcavatorBrand != null && ExcavatorId == null)
+{
+	<h3>Pásové bagre- vytvorenie nového záznamu</h3>
+}
+else
+{
+	<h3>Pásové bagre- úprava záznamu</h3>
+}
 
-<ExcavatorForm ExcavatorCategory=TrackedExcavator
-			   Excavator=@TrackedExcavator
-			   LinkToGoAfterValidSubmit=@($"/pasove-bagre-{ExcavatorBrand.ToLower()}") >
+<ExcavatorForm ExcavatorCategory="TrackedExcavator"
+			   Excavator="@TrackedExcavator"
+			   LinkToGoAfterValidSubmit="@LinkToGoAfterValidSubmit">
 	<ExcavatorSpecificInfoFields>
 		<tr>
 			<td>Pracovná hmotnosť (kg)</td>
@@ -84,16 +92,45 @@
 
 @code {
 	[Parameter]
-	public string ExcavatorBrand { get; set; } = null!;
+	public string? ExcavatorBrand { get; set; } = null;
 
-	private TrackedExcavator TrackedExcavator { get; set; } = new();
+	[Parameter]
+	public int? ExcavatorId { get; set; } = null;
+
+	private TrackedExcavator TrackedExcavator { get; set; } = null!;
+
+	private string LinkToGoAfterValidSubmit { get; set; } = null!;
 
 	protected override void OnParametersSet()
 	{
 		base.OnParametersSet();
 
-		TrackedExcavator.Brand = ExcavatorBrand;
-		TrackedExcavator.Category = "pásové bagre";
-		Console.WriteLine("Som v CreateTrackedExcavavtor a hodnota je: " + TrackedExcavator.Brand);
+		if (ExcavatorId == null && ExcavatorBrand != null)
+		{
+			TrackedExcavator = new TrackedExcavator
+				{
+					Brand = ExcavatorBrand,
+					Category = "pásové bagre"
+				};
+
+			LinkToGoAfterValidSubmit = $"/pasove-bagre-{ExcavatorBrand.ToLower()}";
+		}
+	}
+
+	protected override async Task OnParametersSetAsync()
+	{
+		await base.OnParametersSetAsync();
+
+		if (ExcavatorId != null && ExcavatorBrand == null)
+		{
+			var trackedExcavatorTmp = await api.GetTrackedExcavatorAsync((int)ExcavatorId);
+			if (trackedExcavatorTmp == null)
+			{
+				throw new Exception("Tracked excavator missing.");
+			}
+			TrackedExcavator = trackedExcavatorTmp;
+
+			LinkToGoAfterValidSubmit = $"/stroj/{ExcavatorId}";
+		}
 	}
 }

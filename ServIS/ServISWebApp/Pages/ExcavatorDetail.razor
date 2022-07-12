@@ -1,6 +1,7 @@
 ﻿@page "/stroj/{Id:int}"
 
 @inject IServISApi api
+@inject NavigationManager navMan
 @using ServISWebApp.CssProviders
 
 @if (Excavator != null && ExcavatorPhotos != null)
@@ -67,6 +68,8 @@
 				</table>
 			</div>
 		</div>
+
+		<button class="btn btn-secondary" onclick="@(() => GoToExcavatorEditPage())">Uprav</button>
 	</div>
 }
 
@@ -430,5 +433,23 @@
 		}
 
 		return images;
+	}
+
+	private void GoToExcavatorEditPage()
+	{
+		var excavatorType = Excavator.GetType();
+		if (excavatorType == typeof(SkidSteerLoader))
+		{
+			navMan.NavigateTo($"/admin/uprava-stroja/smykom-riadene-nakladace/{Excavator.Id}");
+		} else if (excavatorType == typeof(TrackedExcavator))
+		{
+			navMan.NavigateTo($"/admin/uprava-stroja/pasove-bagre/{Excavator.Id}");
+		} else if (excavatorType == typeof(TrackedLoader))
+		{
+			navMan.NavigateTo($"/admin/uprava-stroja/pasove-nakladace/{Excavator.Id}");
+		} else
+		{
+			throw new Exception("Unknown excavator type, cannot edit.");
+		}
 	}
 }

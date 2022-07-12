@@ -120,7 +120,6 @@ namespace ServISData
 			else
 			{
 				currentExcavatorPhoto = await context.ExcavatorPhotos
-					.Include(ep => ep.Excavator)
 					.FirstOrDefaultAsync(ep => ep.Id == excavatorPhoto.Id);
 				if (currentExcavatorPhoto == null)
 				{
@@ -460,17 +459,17 @@ namespace ServISData
 
 			if (shouldIncludeExcavator)
 			{
-			return await context.ExcavatorPhotos
-				.Include(ep => ep.Excavator)
-				.Where(ep => ep.Excavator.Id == excavatorId)
-				.ToListAsync();
+				return await context.ExcavatorPhotos
+					.Include(ep => ep.Excavator)
+					.Where(ep => ep.Excavator.Id == excavatorId)
+					.ToListAsync();
 			}
 			else
 			{
 				return await context.ExcavatorPhotos
 					.Where(ep => ep.Excavator.Id == excavatorId)
 					.ToListAsync();
-		}
+			}
 		}
 
 		public async Task<int> GetExcavatorPhotosCountAsync()

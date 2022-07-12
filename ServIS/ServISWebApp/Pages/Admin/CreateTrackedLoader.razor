@@ -1,12 +1,20 @@
 ﻿@page "/admin/novy-stroj/pasove-nakladace/{ExcavatorBrand}"
+@page "/admin/uprava-stroja/pasove-nakladace/{ExcavatorId:int}"
 
 @inject IServISApi api
 
-<h3>Pásové nakladače- vytvorenie nového záznamu</h3>
+@if (ExcavatorBrand != null && ExcavatorId == null)
+{
+	<h3>Pásové nakladače- vytvorenie nového záznamu</h3>
+}
+else
+{
+	<h3>Pásové nakladače- úprava záznamu</h3>
+}
 
-<ExcavatorForm ExcavatorCategory=TrackedLoader
-			   Excavator=@TrackedLoader
-			   LinkToGoAfterValidSubmit=@($"/pasove-nakladace-{ExcavatorBrand.ToLower()}") >
+<ExcavatorForm ExcavatorCategory="TrackedLoader"
+			   Excavator="@TrackedLoader"
+			   LinkToGoAfterValidSubmit="@LinkToGoAfterValidSubmit">
 	<ExcavatorSpecificInfoFields>
 		<tr>
 			<td>Pracovná hmotnosť (kg)</td>
@@ -102,13 +110,43 @@
 	[Parameter]
 	public string ExcavatorBrand { get; set; } = null!;
 
-	private TrackedLoader TrackedLoader { get; set; } = new();
+	[Parameter]
+	public int? ExcavatorId { get; set; } = null;
+
+	private TrackedLoader TrackedLoader { get; set; } = null!;
+
+	private string LinkToGoAfterValidSubmit { get; set; } = null!;
 
 	protected override void OnParametersSet()
 	{
 		base.OnParametersSet();
 
-		TrackedLoader.Brand = ExcavatorBrand;
-		TrackedLoader.Category = "pásové nakladače";
+		if (ExcavatorId == null && ExcavatorBrand != null)
+		{
+			TrackedLoader = new TrackedLoader
+				{
+					Brand = ExcavatorBrand,
+					Category = "pásové nakladače"
+				};
+
+			LinkToGoAfterValidSubmit = $"/pasove-nakladace-{ExcavatorBrand.ToLower()}";
+		}
+	}
+
+	protected override async Task OnParametersSetAsync()
+	{
+		await base.OnParametersSetAsync();
+
+		if (ExcavatorId != null && ExcavatorBrand == null)
+		{
+			var trackedLoaderTmp = await api.GetTrackedLoaderAsync((int)ExcavatorId);
+			if (trackedLoaderTmp == null)
+			{
+				throw new Exception("Tracked loader missing.");
+			}
+			TrackedLoader = trackedLoaderTmp;
+
+			LinkToGoAfterValidSubmit = $"/stroj/{ExcavatorId}";
+		}
 	}
 }

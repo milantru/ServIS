@@ -1,7 +1,4 @@
-﻿@using ServISWebApp.CssProviders;
-@using System.Collections
-@typeparam ExcavatorCategory where ExcavatorCategory : Excavator, new()
-@inject IServISApi api
+﻿@inject IServISApi api
 @inject NavigationManager navMan
 @typeparam ExcavatorCategory where ExcavatorCategory : Excavator, new()
 @using ServISWebApp.CssProviders;
@@ -9,12 +6,31 @@
 
 @if (Excavator != null)
 {
-
 	<EditForm Model="Excavator" OnValidSubmit="HandleValidSubmit">
 		<DataAnnotationsValidator />
 		<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
 
-		<InputFile OnChange="HandleInputFileChange" multiple required />
+		<InputFile OnChange="HandleInputFileChange" multiple required="@(@Excavator.Id == 0 ? true : false)" />
+		<div>
+			Nahrané fotky:<br />
+
+			@if (DisplayedExcavatorPhotos.Count == 0)
+			{
+				<p>Nie sú nahrané žiadne fotky.</p>
+			}
+			else
+			{
+				<div class="d-flex flex-wrap">
+					@foreach (var photo in DisplayedExcavatorPhotos)
+					{
+						<div class="delete-btn-container">
+							<img src="@FileTools.GetDataUrlBase64String(photo.Photo, "image/jpeg")" />
+							<button class="btn btn-danger delete-btn" type="button" onclick="@(() => DeletePhotoAsync(photo))">X</button>
+						</div>
+					}
+				</div>
+			}
+		</div>
 
 		<br />
 		<br />
@@ -67,21 +83,21 @@
 				</tr>
 			</thead>
 			<tbody>
-				@if (SpareParts != null && SparePartsChecked != null)
+				@if (AllSpareParts != null && AllSparePartsChecked != null && AllSpareParts.Count == AllSparePartsChecked.Count)
 				{
-					@for (int i = 0; i < SpareParts.Count; i++)
+					@for (int i = 0; i < AllSpareParts.Count; i++)
 					{
 						// otherwise would i be a reference;
 						// for more see: https://stackoverflow.com/questions/64982700/how-to-use-the-array-of-checkbox-in-asp-net-core-razor
 						var iCopy = i;
 						<tr>
-							<td>@SpareParts[iCopy].CatalogNumber</td>
-							<td>@SpareParts[iCopy].Name</td>
+							<td>@AllSpareParts[iCopy].CatalogNumber</td>
+							<td>@AllSpareParts[iCopy].Name</td>
 							@*<td><InputCheckbox @bind-Value="@SparePartsChecked[i]" /></td>*@
 							<td>
 								<input type="checkbox"
-									   checked="@SparePartsChecked[iCopy]"
-									   @bind-value="@SparePartsChecked[iCopy]" />
+									   checked="@AllSparePartsChecked[iCopy]"
+									   @bind-value="@AllSparePartsChecked[iCopy]" />
 							</td>
 						</tr>
 					}
@@ -109,24 +125,22 @@
 
 	[Parameter]
 	public ExcavatorCategory Excavator { get; set; } = null!;
-	// bool is in pair with spare part, it will tell us if spare part is checked
-	public List<SparePart> SpareParts { get; set; } = null!;
-	public List<bool> SparePartsChecked { get; set; } = null!;
 
+	// bool is in pair with spare part, it will tell us if spare part is checked
+	public List<SparePart> AllSpareParts { get; set; } = null!;
+	public List<bool> AllSparePartsChecked { get; set; } = null!;
 	public IReadOnlyList<IBrowserFile> UploadedFiles { get; set; } = null!;
+
+	private List<ExcavatorPhoto> DisplayedExcavatorPhotos { get; set; } = new();
 
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
 
-		SpareParts = await api.GetSparePartsAsync();
-		if (SpareParts != null)
+		AllSpareParts = await api.GetSparePartsAsync();
+		if (AllSpareParts == null)
 		{
-			SparePartsChecked = new List<bool>(SpareParts.Count);
-			for (int i = 0; i < SpareParts.Count; i++)
-			{
-				SparePartsChecked.Add(false);
-			}
+			throw new Exception("Spare parts missing.");
 		}
 	}
 
@@ -137,76 +151,130 @@
 		if (Excavator.Id == 0)
 		{
 			Excavator.IsNew = true;
+			Excavator.SpareParts = new();
+		}
+
+		/* && SparePartsChecked == null part is here because after submitting the form this method was called again for some reason...
+			* and rewrote SparePartsChecked (so everything was false even though user checked the box) */
+		if (AllSpareParts != null && AllSparePartsChecked == null)
+		{
+			AllSparePartsChecked = new List<bool>(AllSpareParts.Count);
+			var excavatorsSparePartsIds = Excavator.SpareParts.Select(sp => sp.Id);
+			for (int i = 0; i < AllSpareParts.Count; i++)
+			{
+				bool excavatorHasSparePart = excavatorsSparePartsIds.Contains(AllSpareParts[i].Id);
+				AllSparePartsChecked.Add(excavatorHasSparePart);
+			}
 		}
 	}
 
-	public void HandleInputFileChange(InputFileChangeEventArgs e)
+	protected override async Task OnParametersSetAsync()
+	{
+		await base.OnParametersSetAsync();
+
+		if (Excavator.Id != 0)
+		{
+			DisplayedExcavatorPhotos = await api.GetExcavatorPhotosAsync(Excavator.Id, false);
+			if (DisplayedExcavatorPhotos == null || DisplayedExcavatorPhotos.Count == 0)
+			{
+				throw new Exception("Excavator photo(s) missing");
+			}
+
+			foreach (var photo in DisplayedExcavatorPhotos)
+			{
+				photo.Excavator = Excavator;
+			}
+		}
+	}
+
+	public async Task HandleInputFileChange(InputFileChangeEventArgs e)
 	{
 		UploadedFiles = e.GetMultipleFiles();
+
+		foreach (var uploadedFile in UploadedFiles)
+		{
+			var dataBytes = await uploadedFile.GetDataBytesAsync();
+			if (dataBytes == null)
+			{
+				// TODO: check if uploadedFile is image file, wrong format
+				throw new Exception("Something went wrong with showing uploaded photo.");
+			}
+
+			var excavatorPhoto = new ExcavatorPhoto
+			{
+				Photo = dataBytes,
+				Excavator = Excavator
+			};
+			DisplayedExcavatorPhotos.Add(excavatorPhoto);
+		}
+
+		StateHasChanged();
 	}
 
 	private List<SparePart> GetSelectedSpareParts()
 	{
 		var selectedSpareParts = new List<SparePart>();
 
-		for (var i = 0; i < SparePartsChecked.Count; i++)
+		for (var i = 0; i < AllSparePartsChecked.Count; i++)
 		{
-			if (SparePartsChecked[i])
+			if (AllSparePartsChecked[i])
 			{
-				selectedSpareParts.Add(SpareParts[i]);
+				selectedSpareParts.Add(AllSpareParts[i]);
 			}
 		}
 
 		return selectedSpareParts;
 	}
 
-	private async Task<List<ExcavatorPhoto>> GetUploadedExcavatorPhotos()
-	{
-		var uploadedExcavatorPhotos = new List<ExcavatorPhoto>();
-
-		foreach (var uploadedFile in UploadedFiles)
-		{
-			// TODO: check if uploadedFile is image file
-			var excavatorPhoto = new ExcavatorPhoto();
-
-			var dataBytes = await uploadedFile.GetDataBytesAsync();
-			if (dataBytes == null)
-			{
-				// TODO: wrong format
-				throw new Exception("Something went wrong...");
-			}
-			excavatorPhoto.Photo = dataBytes;
-			excavatorPhoto.Excavator = Excavator;
-
-			uploadedExcavatorPhotos.Add(excavatorPhoto);
-		}
-		uploadedExcavatorPhotos[0].IsTitle = true; // the first uploaded image will be the title photo
-
-		return uploadedExcavatorPhotos;
-	}
-
-	private async Task HandleValidSubmit()
+	private void FinishSettingExcavator()
 	{
 		if (Excavator.IsNew)
 		{
 			Excavator.LastInspection = null;
 		}
-		Excavator.SpareParts = GetSelectedSpareParts();
 
-		var uploadedExcavatorPhotos = await GetUploadedExcavatorPhotos();
-		if (uploadedExcavatorPhotos.Count == 0)
+		Excavator.SpareParts = GetSelectedSpareParts();
+	}
+
+	private void FinishSettingExcavatorPhotos()
+	{
+		if (DisplayedExcavatorPhotos.Count == 0)
 		{
-			throw new Exception("No excavator photo provided.");
+			throw new Exception("No excavator photos provided.");
 		}
-		foreach (var uploadedExcavatorPhoto in uploadedExcavatorPhotos)
+		DisplayedExcavatorPhotos[0].IsTitle = true; // the first uploaded image is the title photo
+	}
+
+	private async Task HandleValidSubmit()
+	{
+		FinishSettingExcavator();
+
+		FinishSettingExcavatorPhotos();
+
+		foreach (var photo in DisplayedExcavatorPhotos)
 		{
 			try
 			{
-				await api.SaveExcavatorPhotoAsync(uploadedExcavatorPhoto);
+				await api.SaveExcavatorPhotoAsync(photo); // this will also save excavator because photo contains it
 			}
 			catch { /* TODO */ }
 		}
 
 		navMan.NavigateTo(LinkToGoAfterValidSubmit);
+	}
+
+	private async Task DeletePhotoAsync(ExcavatorPhoto excavatorPhoto)
+	{
+		if (DisplayedExcavatorPhotos.Count > 1)
+		{
+			if (excavatorPhoto.Id != 0)
+			{
+				await api.DeleteExcavatorPhotoAsync(excavatorPhoto);
+			}
+
+			DisplayedExcavatorPhotos.Remove(excavatorPhoto);
+
+			StateHasChanged();
+		}
 	}
 }
