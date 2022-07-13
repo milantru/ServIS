@@ -1,0 +1,141 @@
+﻿@using ServISWebApp.CssProviders
+@inject IServISApi api
+@inject NavigationManager navMan
+
+@if (AdditionalEquipment != null && DisplayedAdditionalEquipmentPhotos != null)
+{
+	<EditForm Model="AdditionalEquipment" OnValidSubmit="SaveAdditionalEquipment">
+		<DataAnnotationsValidator />
+		<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
+
+		<InputFile OnChange="HandleInputFileChange" multiple required="@(@AdditionalEquipment.Id == 0 ? true : false)" />
+		<div>
+			Nahrané fotky:<br />
+
+			@if (DisplayedAdditionalEquipmentPhotos.Count == 0)
+			{
+				<p>Nie sú nahrané žiadne fotky.</p>
+			}
+			else
+			{
+				<div class="d-flex flex-wrap">
+					@foreach (var photo in DisplayedAdditionalEquipmentPhotos)
+					{
+						<div class="pos-rel">
+							<img src="@FileTools.GetDataUrlBase64String(photo.Photo, "image/jpeg")" />
+							<button class="btn btn-danger delete-btn" type="button" @onclick="(() => DeleteAdditionalEquipment(photo))">X</button>
+						</div>
+					}
+				</div>
+			}
+		</div>
+
+		<br />
+		<br />
+
+		<label>Pre akú kategóriu strojov (pásové bagre, šmykom riadené nakladače...):</label>
+		<InputText @bind-Value="@AdditionalEquipment.ForWhichExcavatorCategory" />
+		<ValidationMessage For="@(() => AdditionalEquipment.ForWhichExcavatorCategory)" />
+
+		<label>Kategória:</label>
+		<InputText @bind-Value="@AdditionalEquipment.Category" />
+		<ValidationMessage For="@(() => AdditionalEquipment.Category)" />
+
+		<label>Značka:</label>
+		<InputText @bind-Value="@AdditionalEquipment.Brand" />
+		<ValidationMessage For="@(() => AdditionalEquipment.Brand)" />
+
+		<label>Názov:</label>
+		<InputText @bind-Value="@AdditionalEquipment.Name" />
+		<ValidationMessage For="@(() => AdditionalEquipment.Name)" />
+
+		<label>Popis:</label>
+		<InputTextArea @bind-Value="@AdditionalEquipment.Description" />
+		<ValidationMessage For="@(() => AdditionalEquipment.Description)" />
+
+		<button class="btn btn-success" type="submit">Uložiť</button>
+	</EditForm>
+}
+
+@code {
+	[EditorRequired, Parameter]
+	public AdditionalEquipment AdditionalEquipment { get; set; } = null!;
+
+	private List<AdditionalEquipmentPhoto> DisplayedAdditionalEquipmentPhotos { get; set; } = null!;
+
+	protected override async Task OnParametersSetAsync()
+	{
+		await base.OnParametersSetAsync();
+
+		if (AdditionalEquipment.Id != 0)
+		{
+			DisplayedAdditionalEquipmentPhotos = await api.GetAdditionalEquipmentPhotosAsync(AdditionalEquipment.Id, false);
+
+			foreach (var photo in DisplayedAdditionalEquipmentPhotos)
+			{
+				photo.AdditionalEquipment = AdditionalEquipment;
+			}
+		}
+		else
+		{
+			DisplayedAdditionalEquipmentPhotos = new();
+		}
+	}
+
+	private async Task HandleInputFileChange(InputFileChangeEventArgs e)
+	{
+		var uploadedFiles = e.GetMultipleFiles();
+
+		foreach (var uploadedFile in uploadedFiles)
+		{
+			var dataBytes = await uploadedFile.GetDataBytesAsync();
+			if (dataBytes == null)
+			{
+				// TODO: check if uploadedFile is image file, wrong format
+				throw new Exception("Something went wrong with showing uploaded photo.");
+			}
+
+			var excavatorPhoto = new AdditionalEquipmentPhoto
+			{
+				Photo = dataBytes,
+				AdditionalEquipment = AdditionalEquipment,
+			};
+			DisplayedAdditionalEquipmentPhotos.Add(excavatorPhoto);
+		}
+
+		StateHasChanged();
+	}
+
+	private async Task SaveAdditionalEquipment()
+	{
+		if (DisplayedAdditionalEquipmentPhotos == null || DisplayedAdditionalEquipmentPhotos.Count == 0)
+		{
+			throw new Exception("No photos provided. Cannot save additional equipment.");
+		}
+		DisplayedAdditionalEquipmentPhotos[0].IsTitle = true;
+
+		AdditionalEquipment.Price = 0; // tmp line; TODO: delete this line when price row will be deleted from db
+
+		foreach (var photo in DisplayedAdditionalEquipmentPhotos)
+		{
+			await api.SaveAdditionalEquipmentPhotoAsync(photo); // this will also save additional equipment because photo contains it
+		}
+
+		navMan.NavigateTo("/pridavne-zariadenia");
+	}
+
+	private async Task DeleteAdditionalEquipment(AdditionalEquipmentPhoto additionalEquipmentPhoto)
+	{
+		if (DisplayedAdditionalEquipmentPhotos.Count > 1)
+		{
+			if (additionalEquipmentPhoto.Id != 0)
+			{
+				await api.DeleteAdditionalEquipmentPhotoAsync(additionalEquipmentPhoto);
+			}
+
+			DisplayedAdditionalEquipmentPhotos.Remove(additionalEquipmentPhoto);
+
+			StateHasChanged();
+		}
+	}
+}
