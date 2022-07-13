@@ -507,27 +507,17 @@ namespace ServISData
 		{
 			using var context = factory.CreateDbContext();
 
-			var query = context.AdditionalEquipments;
-			if (forWhichExcavatorCategory != null)
-			{
-				query.Where(ae => ae.ForWhichExcavatorCategory == forWhichExcavatorCategory);
-			}
-			if (category != null)
-			{
-				query.Where(ae => ae.Category == category);
-			}
-			if (brand != null)
-			{
-				query.Where(ae => ae.Brand == brand);
-			}
-			var orderedQuery = query.OrderBy(ae => ae.Name);
-			if (startIndex != null)
-			{
-				orderedQuery.Skip((int)startIndex);
-			}
+			var query = context.AdditionalEquipments
+				.Where(ae => forWhichExcavatorCategory != null ? ae.ForWhichExcavatorCategory == forWhichExcavatorCategory : true)
+				.Where(ae => category != null ? ae.Category == category : true)
+				.Where(ae => brand != null ? ae.Brand == brand : true);
+			
+			var orderedQuery = query.OrderBy(ae => ae.Name)
+				.Skip(startIndex ?? 0);
+			
 			if (numberOfAdditionalEquipments != null)
 			{
-				orderedQuery.Take((int)numberOfAdditionalEquipments);
+				orderedQuery = orderedQuery.Take((int)numberOfAdditionalEquipments);
 			}
 
 			return await orderedQuery.ToListAsync();
