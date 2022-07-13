@@ -490,7 +490,7 @@ namespace ServISData
 		public async Task<SparePart?> GetSparePartAsync(int id)
 		{
 			using var context = factory.CreateDbContext();
-			
+
 			return await context.SpareParts
 				.Include(sp => sp.Excavators)
 				.FirstOrDefaultAsync(sp => sp.Id == id);
@@ -548,14 +548,23 @@ namespace ServISData
 				.FirstOrDefaultAsync(ae => ae.Id == id);
 		}
 
-		public async Task<List<AdditionalEquipmentPhoto>> GetAdditionalEquipmentPhotosAsync(int additionalEquipmentId)
+		public async Task<List<AdditionalEquipmentPhoto>> GetAdditionalEquipmentPhotosAsync(int additionalEquipmentId, bool shouldIncludeAdditionalEquipment = true)
 		{
 			using var context = factory.CreateDbContext();
 
-			return await context.AdditionalEquipmentPhotos
-				.Include(aep => aep.AdditionalEquipment)
-				.Where(aep => aep.AdditionalEquipment.Id == additionalEquipmentId)
-				.ToListAsync();
+			if (shouldIncludeAdditionalEquipment)
+			{
+				return await context.AdditionalEquipmentPhotos
+					.Include(aep => aep.AdditionalEquipment)
+					.Where(aep => aep.AdditionalEquipment.Id == additionalEquipmentId)
+					.ToListAsync();
+			}
+			else
+			{
+				return await context.AdditionalEquipmentPhotos
+					.Where(aep => aep.AdditionalEquipment.Id == additionalEquipmentId)
+					.ToListAsync();
+			}
 		}
 
 		public async Task<int> GetAdditionalEquipmentPhotosCountAsync()

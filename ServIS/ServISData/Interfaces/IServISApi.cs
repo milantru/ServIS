@@ -39,7 +39,7 @@ namespace ServISData.Interfaces
 		public Task<List<AdditionalEquipment>> GetAdditionalEquipmentsAsync(int? numberOfAdditionalEquipments = null, int? startIndex = null, string? excavatorCategory = null, string? category = null, string? brand = null);
 		public Task<int> GetAdditionalEquipmentsCountAsync();
 		public Task<AdditionalEquipment?> GetAdditionalEquipmentAsync(int id);
-		public Task<List<AdditionalEquipmentPhoto>> GetAdditionalEquipmentPhotosAsync(int additionalEquipmentId);
+		public Task<List<AdditionalEquipmentPhoto>> GetAdditionalEquipmentPhotosAsync(int additionalEquipmentId, bool shouldIncludeAdditionalEquipment = true);
 		public Task<int> GetAdditionalEquipmentPhotosCountAsync();
 		public Task<AdditionalEquipmentPhoto?> GetAdditionalEquipmentTitlePhotoAsync(int additionalEquipmentId);
 
