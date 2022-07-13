@@ -346,27 +346,17 @@ namespace ServISData
 		{
 			using var context = factory.CreateDbContext();
 
-			var query = context.Excavators.Include(e => e.SpareParts);
-			if (category != null)
-			{
-				query.Where(e => e.Category == category);
-			}
-			if (brand != null)
-			{
-				query.Where(e => e.Brand == brand);
-			}
-			if (model != null)
-			{
-				query.Where(e => e.Model == model);
-			}
-			var orderedQuery = query.OrderBy(e => e.Name);
-			if (startIndex != null)
-			{
-				orderedQuery.Skip((int)startIndex);
-			}
+			var query = context.Excavators.Include(e => e.SpareParts)
+				.Where(e => category != null ? e.Category == category : true)
+				.Where(e => brand != null ? e.Brand == brand : true)
+				.Where(e => model != null ? e.Model == model : true);
+
+			var orderedQuery = query.OrderBy(e => e.Name)
+				.Skip(startIndex ?? 0);
+
 			if (numberOfExcavators != null)
 			{
-				orderedQuery.Take((int)numberOfExcavators);
+				orderedQuery = orderedQuery.Take((int)numberOfExcavators);
 			}
 
 			return await orderedQuery.ToListAsync();
