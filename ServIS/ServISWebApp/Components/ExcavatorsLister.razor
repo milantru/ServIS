@@ -43,7 +43,7 @@
 				excavatorsDisplayedCount, request.StartIndex, ExcavatorCategory, ExcavatorBrand
 		);
 
-		var excavatorTitlePhotos = new List<ExcavatorPhoto>();
+		var excavatorsTitlePhotos = new List<ExcavatorPhoto>();
 		foreach (var excavator in excavators)
 		{
 			var excavatorPhoto = await api.GetExcavatorTitlePhotoAsync(excavator.Id);
@@ -52,10 +52,10 @@
 				throw new Exception("Missing Excavator photo.");
 			}
 			excavatorPhoto.Excavator = excavator;
-			excavatorTitlePhotos.Add(excavatorPhoto);
+			excavatorsTitlePhotos.Add(excavatorPhoto);
 		}
 
-		return new ItemsProviderResult<ExcavatorPhoto>((IEnumerable<ExcavatorPhoto>)excavatorTitlePhotos, ExcavatorsTotalCount);
+		return new ItemsProviderResult<ExcavatorPhoto>(excavatorsTitlePhotos, ExcavatorsTotalCount);
 	}
 
 	private async Task DeleteExcavatorAsync(Excavator excavator)

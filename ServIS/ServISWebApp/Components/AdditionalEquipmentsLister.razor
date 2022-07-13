@@ -42,7 +42,11 @@
 		int additionalEquipmentsDisplayedCount = Math.Min(request.Count, AdditionalEquipmentsTotalCount - request.StartIndex);
 
 		var additionalEquipments = await api.GetAdditionalEquipmentsAsync(
-				additionalEquipmentsDisplayedCount, request.StartIndex, AdditionalEquipmentExcavatorCategory, AdditionalEquipmentCategory, AdditionalEquipmentBrand
+				additionalEquipmentsDisplayedCount, 
+				request.StartIndex, 
+				AdditionalEquipmentExcavatorCategory, 
+				AdditionalEquipmentCategory, 
+				AdditionalEquipmentBrand
 		);
 
 		var additionalEquipmentsTitlePhotos = new List<AdditionalEquipmentPhoto>();
@@ -58,6 +62,6 @@
 			additionalEquipmentsTitlePhotos.Add(additionalEquipmentPhoto);
 		}
 
-		return new ItemsProviderResult<AdditionalEquipmentPhoto>((IEnumerable<AdditionalEquipmentPhoto>)additionalEquipmentsTitlePhotos, AdditionalEquipmentsTotalCount);
+		return new ItemsProviderResult<AdditionalEquipmentPhoto>(additionalEquipmentsTitlePhotos, AdditionalEquipmentsTotalCount);
 	}
 }
