@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using System.Security.Claims;
+using System.Text.Json;
 
 namespace ServISWebApp.Auth
 {
@@ -25,10 +26,13 @@ namespace ServISWebApp.Auth
 					return await Task.FromResult(new AuthenticationState(anonymous));
 				}
 
+				var userDataJson = JsonSerializer.Serialize(userSessionStorage.User);
 				var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim>
 				{
-					new Claim(ClaimTypes.Name, userSessionStorage.Username),
-					new Claim(ClaimTypes.Role, userSessionStorage.Role)
+					new Claim(ClaimTypes.Name, userSessionStorage.User.Username),
+					new Claim(ClaimTypes.Role, userSessionStorage.User.Role),
+
+					new Claim(ClaimTypes.UserData, userDataJson)
 				}, "CustomAuth"));
 
 				return await Task.FromResult(new AuthenticationState(claimsPrincipal));
@@ -46,11 +50,14 @@ namespace ServISWebApp.Auth
 			if (userSessionStorage != null)
 			{// login
 				await sessionStorage.SetAsync(nameof(UserSessionStorage), userSessionStorage);
+				var userDataJson = JsonSerializer.Serialize(userSessionStorage.User);
 				claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim>
 				{
-					new Claim(ClaimTypes.Name, userSessionStorage.Username),
-					new Claim(ClaimTypes.Role, userSessionStorage.Role)
-				}));
+					new Claim(ClaimTypes.Name, userSessionStorage.User.Username),
+					new Claim(ClaimTypes.Role, userSessionStorage.User.Role),
+
+					new Claim(ClaimTypes.UserData, userDataJson)
+				}, "CustomAuth"));
 			}
 			else
 			{// logout
