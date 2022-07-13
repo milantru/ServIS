@@ -23,7 +23,7 @@
 				<div class="d-flex flex-wrap">
 					@foreach (var photo in DisplayedExcavatorPhotos)
 					{
-						<div class="delete-btn-container">
+						<div class="pos-rel">
 							<img src="@FileTools.GetDataUrlBase64String(photo.Photo, "image/jpeg")" />
 							<button class="btn btn-danger delete-btn" type="button" onclick="@(() => DeletePhotoAsync(photo))">X</button>
 						</div>

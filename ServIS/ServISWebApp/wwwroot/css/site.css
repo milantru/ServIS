@@ -64,7 +64,7 @@ a, .btn-link {
     }
 
 /* Start of custom css */
-.delete-btn-container {
+.pos-rel {
     position: relative;
 }
 
