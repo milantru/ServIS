@@ -36,11 +36,11 @@
 		<br />
 
 		<label>Značka:</label>
-		<InputText @bind-Value="@Excavator.Brand" />
+		<InputText @bind-Value="@Excavator.Brand" disabled />
 		<ValidationMessage For="@(() => Excavator.Brand)" />
 
 		<label>Kategória:</label>
-		<InputText @bind-Value="@Excavator.Category" />
+		<InputText @bind-Value="@Excavator.Category" disabled />
 		<ValidationMessage For="@(() => Excavator.Category)" />
 
 		<label>Model:</label>
@@ -129,9 +129,8 @@
 	// bool is in pair with spare part, it will tell us if spare part is checked
 	public List<SparePart> AllSpareParts { get; set; } = null!;
 	public List<bool> AllSparePartsChecked { get; set; } = null!;
-	public IReadOnlyList<IBrowserFile> UploadedFiles { get; set; } = null!;
 
-	private List<ExcavatorPhoto> DisplayedExcavatorPhotos { get; set; } = new();
+	private List<ExcavatorPhoto> DisplayedExcavatorPhotos { get; set; } = null!;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -185,13 +184,17 @@
 				photo.Excavator = Excavator;
 			}
 		}
+		else
+		{
+			DisplayedExcavatorPhotos = new();
+		}
 	}
 
-	public async Task HandleInputFileChange(InputFileChangeEventArgs e)
+	private async Task HandleInputFileChange(InputFileChangeEventArgs e)
 	{
-		UploadedFiles = e.GetMultipleFiles();
+		var uploadedFiles = e.GetMultipleFiles();
 
-		foreach (var uploadedFile in UploadedFiles)
+		foreach (var uploadedFile in uploadedFiles)
 		{
 			var dataBytes = await uploadedFile.GetDataBytesAsync();
 			if (dataBytes == null)
