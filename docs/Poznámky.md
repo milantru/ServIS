@@ -209,3 +209,9 @@ Vymazanie **SparePartDetail** -> Mal som stránku pre detail náhradného dielu,
 **zmena db providera** -> Z *Oracle* na *Pomelo*, pretože som nemohol robiť migrácie... ak som mal staršiu verziu packagov, mohol som robiť migrácie, ale nejaké z queries nefungovali dobre (problém s .Include()). Ak som updatol na najnovšiu verziu, queries fungovali dobre, ale nešli migrácie. Viackrát som sa na internete stretol s tým, že Pomelo je lepší provider(rýchlejšie reagujú + na nuget.org viac stiahnutí) a vraj ak ho zmením všetko bude fungovať. A áno po zmene všetko funguje a mám najnovšie verzie. (Ďalšie info tu: https://stackoverflow.com/questions/70224907/unable-to-resolve-service-for-type-microsoft-entityframeworkcore-diagnostics-idi)
 
 **prečo klasický input checkbox namiesto InputCheckbox?** -> Pretože mi nejako zle fungoval... myslím, že konkrétne checked nechcel fungovať.
+
+---
+
+**Prečo je v URL slovenčina a nie angličtina keď kód je napísaný anglicky?** -> V URL je slovenčina, lebo to vidí užívateľ, a keďze program je určený hlavne pre slovenské firmy, tak som sa rozhodol tam dať slovenčinu.
+
+**Katalógové čísla náhradných dielov** -> Tieto čísla negenerujeme my. Každý náhradný diel má svoje katalógové číslo.
