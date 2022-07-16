@@ -4,7 +4,7 @@
 @using ServISWebApp.CssProviders;
 @using System.Collections
 
-@if (Excavator != null)
+@if (Excavator != null && DisplayedExcavatorPhotos != null)
 {
 	<EditForm Model="Excavator" OnValidSubmit="HandleValidSubmit">
 		<DataAnnotationsValidator />
