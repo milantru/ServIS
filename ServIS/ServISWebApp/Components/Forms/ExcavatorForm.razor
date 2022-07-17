@@ -4,7 +4,7 @@
 @using ServISWebApp.CssProviders;
 @using System.Collections
 
-@if (Excavator != null && DisplayedExcavatorPhotos != null)
+@if (Excavator != null)
 {
 	<EditForm Model="Excavator" OnValidSubmit="HandleValidSubmit">
 		<DataAnnotationsValidator />
@@ -130,7 +130,7 @@
 	public List<SparePart> AllSpareParts { get; set; } = null!;
 	public List<bool> AllSparePartsChecked { get; set; } = null!;
 
-	private List<ExcavatorPhoto> DisplayedExcavatorPhotos { get; set; } = null!;
+	private List<ExcavatorPhoto> DisplayedExcavatorPhotos { get; set; } = new();
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -183,10 +183,6 @@
 			{
 				photo.Excavator = Excavator;
 			}
-		}
-		else
-		{
-			DisplayedExcavatorPhotos = new();
 		}
 	}
 
