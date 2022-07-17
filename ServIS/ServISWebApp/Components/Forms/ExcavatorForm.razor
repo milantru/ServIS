@@ -108,22 +108,25 @@
 		<br />
 		<br />
 
+		@if (ExcavatorSpecificInfoFields != null)
+		{
 		<table class="table">
 			@ExcavatorSpecificInfoFields
 		</table>
+		}
 
 		<button class="btn btn-success" type="submit">Uložiť</button>
 	</EditForm>
 }
 
 @code {
-	[Parameter]
+	[EditorRequired, Parameter]
 	public string LinkToGoAfterValidSubmit { get; set; } = null!;
 
 	[Parameter]
 	public RenderFragment ExcavatorSpecificInfoFields { get; set; } = null!;
 
-	[Parameter]
+	[EditorRequired, Parameter]
 	public ExcavatorCategory Excavator { get; set; } = null!;
 
 	// bool is in pair with spare part, it will tell us if spare part is checked
