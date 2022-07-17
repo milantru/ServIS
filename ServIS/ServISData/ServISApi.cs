@@ -211,6 +211,8 @@ namespace ServISData
 
 			if (additionalEquipmentPhoto.Id == 0)
 			{
+				context.AdditionalEquipments.Attach(additionalEquipmentPhoto.AdditionalEquipment);
+
 				context.Add(additionalEquipmentPhoto);
 			}
 			else
