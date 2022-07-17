@@ -17,7 +17,7 @@
 		<InputText @bind-Value=SparePart.Name />
 		<ValidationMessage For=@(() => SparePart.Name) />
 
-		@if (Excavators != null)
+		@if (Excavators != null && ExcavatorsChecked != null)
 		{
 			<table class="table">
 				<thead>
