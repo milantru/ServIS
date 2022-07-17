@@ -127,7 +127,9 @@ else
 			TrackedLoader = new TrackedLoader
 				{
 					Brand = ExcavatorBrand,
-					Category = "pásové nakladače"
+					Category = "pásové nakladače",
+					IsNew = true,
+					SpareParts = new()
 				};
 
 			LinkToGoAfterValidSubmit = $"/pasove-nakladace-{ExcavatorBrand.ToLower()}";

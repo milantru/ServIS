@@ -314,7 +314,9 @@ else
 			SkidSteerLoader = new SkidSteerLoader
 				{
 					Brand = ExcavatorBrand,
-					Category = "šmykom riadené nakladače"
+					Category = "šmykom riadené nakladače",
+					IsNew = true,
+					SpareParts = new()
 				};
 
 			LinkToGoAfterValidSubmit = $"/smykom-riadene-nakladace-{ExcavatorBrand.ToLower()}";

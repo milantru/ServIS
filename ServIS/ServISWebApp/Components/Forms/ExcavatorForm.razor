@@ -110,9 +110,9 @@
 
 		@if (ExcavatorSpecificInfoFields != null)
 		{
-		<table class="table">
-			@ExcavatorSpecificInfoFields
-		</table>
+			<table class="table">
+				@ExcavatorSpecificInfoFields
+			</table>
 		}
 
 		<button class="btn btn-success" type="submit">Uložiť</button>
@@ -150,15 +150,11 @@
 	{
 		base.OnParametersSet();
 
-		if (Excavator.Id == 0)
-		{
-			Excavator.IsNew = true;
-			Excavator.SpareParts = new();
-		}
-
-		/* && SparePartsChecked == null part is here because after submitting the form this method was called again for some reason...
-			* and rewrote SparePartsChecked (so everything was false even though user checked the box) */
-		if (AllSpareParts != null && AllSparePartsChecked == null)
+		/* AllSparePartsChecked == null needs to be here because after changing ExcavatorSpecificInfoFields 
+		 * this method was called again and rewrote user data 
+		 * also  Excavator != null is needed because for some reason Excavator was sometimes null even though
+		 * it shouldnt be at this point */
+		if (AllSpareParts != null && AllSparePartsChecked == null && Excavator != null)
 		{
 			AllSparePartsChecked = new List<bool>(AllSpareParts.Count);
 			var excavatorsSparePartsIds = Excavator.SpareParts.Select(sp => sp.Id);
@@ -174,7 +170,10 @@
 	{
 		await base.OnParametersSetAsync();
 
-		if (Excavator.Id != 0)
+		/* DisplayedExcavatorPhotos.Count == 0 needs to be here because after changing ExcavatorSpecificInfoFields 
+		 * this method was called again and rewrote user data 
+		 * also Excavator != null is here because of the same reason as in OnParametersSet() */
+		if (Excavator != null && Excavator.Id != 0 && DisplayedExcavatorPhotos.Count == 0)
 		{
 			DisplayedExcavatorPhotos = await api.GetExcavatorPhotosAsync(Excavator.Id, false);
 			if (DisplayedExcavatorPhotos == null || DisplayedExcavatorPhotos.Count == 0)

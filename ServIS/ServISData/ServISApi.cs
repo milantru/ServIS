@@ -126,10 +126,8 @@ namespace ServISData
 					return null;
 				}
 
-				currentExcavatorPhoto.Excavator = excavatorPhoto.Excavator;
-				//int excavatorId = excavatorPhoto.Excavator.Id;
-				//currentExcavatorPhoto.Excavator = await context.Excavators
-				//	.FirstOrDefaultAsync(e => e.Id == excavatorId);
+				await SaveExcavatorAsync(excavatorPhoto.Excavator);
+
 				currentExcavatorPhoto.Photo = excavatorPhoto.Photo;
 				currentExcavatorPhoto.IsTitle = excavatorPhoto.IsTitle;
 			}
@@ -706,6 +704,27 @@ namespace ServISData
 		}
 
 		// ---------- private methods ----------
+
+		private async Task SaveExcavatorAsync(Excavator excavator)
+		{
+			var excavatorType = excavator.GetType();
+			if (excavatorType == typeof(SkidSteerLoader))
+			{
+				await SaveSkidSteerLoaderAsync((SkidSteerLoader)excavator);
+			}
+			else if (excavatorType == typeof(TrackedExcavator))
+			{
+				await SaveTrackedExcavatorAsync((TrackedExcavator)excavator);
+			}
+			else if (excavatorType == typeof(TrackedLoader))
+			{
+				await SaveTrackedLoaderAsync((TrackedLoader)excavator);
+			}
+			else
+			{
+				throw new Exception("Cannot save excavator photo- unknown excavator type.");
+			}
+		}
 
 		private void UpdateExcavatorData(ServISDbContext context, Excavator currentExcavatorData, Excavator newExcavatorData)
 		{

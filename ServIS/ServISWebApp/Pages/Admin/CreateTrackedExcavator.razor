@@ -111,7 +111,9 @@ else
 			TrackedExcavator = new TrackedExcavator
 				{
 					Brand = ExcavatorBrand,
-					Category = "pásové bagre"
+					Category = "pásové bagre",
+					IsNew = true,
+					SpareParts = new()
 				};
 
 			LinkToGoAfterValidSubmit = $"/pasove-bagre-{ExcavatorBrand.ToLower()}";
