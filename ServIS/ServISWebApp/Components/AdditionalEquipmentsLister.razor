@@ -2,9 +2,8 @@
 
 <div class="d-flex flex-wrap">
 	<Virtualize @ref="additionalEquipmentPhotosContainer" ItemsProvider="LoadAdditionalEquipmentPhotoAsync" Context="aep">
-		<AdditionalEquipmentCard Title="@aep.AdditionalEquipment.Name"
-								 Text="@aep.AdditionalEquipment.Description"
-								 Image="@aep.Photo" />
+		<AdditionalEquipmentCard AdditionalEquipmentPhoto="@aep" 
+								 OnDelete="() => DeleteAdditionalEquipment(aep.AdditionalEquipment)" />
 	</Virtualize>
 </div>
 
@@ -63,5 +62,11 @@
 		}
 
 		return new ItemsProviderResult<AdditionalEquipmentPhoto>(additionalEquipmentsTitlePhotos, AdditionalEquipmentsTotalCount);
+	}
+
+	private async Task DeleteAdditionalEquipment(AdditionalEquipment additionalEquipment) {
+		await api.DeleteAdditionalEquipmentAsync(additionalEquipment);
+
+		await ReloadAdditionalEquipmentPhotosAsync();
 	}
 }
