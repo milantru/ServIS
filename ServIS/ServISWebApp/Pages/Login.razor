@@ -18,7 +18,8 @@
 
 	<div>
 		<label>Heslo</label>
-		<InputText @bind-Value="@loginData.Password" />
+		<InputText @bind-Value="@loginData.Password" type="@(isPasswordVisible ? "text" : "password")" />
+		<input type="checkbox" checked="@isPasswordVisible" @onclick="() => isPasswordVisible = !isPasswordVisible" style="margin-left: -25px;" />
 	</div>
 
 
@@ -26,6 +27,7 @@
 </EditForm>
 
 @code {
+	private bool isPasswordVisible;
 	private LoginData loginData = new();
 
 	private async Task Authenticate()
