@@ -7,7 +7,7 @@
 @if (Excavator != null)
 {
 	<EditForm Model="Excavator" OnValidSubmit="HandleValidSubmit">
-		<DataAnnotationsValidator />
+		<ObjectGraphDataAnnotationsValidator />
 		<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
 
 		<InputFile OnChange="HandleInputFileChange" multiple required="@(@Excavator.Id == 0 ? true : false)" />

@@ -5,7 +5,7 @@
 @if (AdditionalEquipment != null && DisplayedAdditionalEquipmentPhotos != null)
 {
 	<EditForm Model="AdditionalEquipment" OnValidSubmit="SaveAdditionalEquipment">
-		<DataAnnotationsValidator />
+		<ObjectGraphDataAnnotationsValidator />
 		<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
 
 		<InputFile OnChange="HandleInputFileChange" multiple required="@(@AdditionalEquipment.Id == 0 ? true : false)" />

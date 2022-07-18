@@ -6,7 +6,7 @@
 @if (SparePart != null)
 {
 	<EditForm Model="SparePart" OnValidSubmit="HandleValidSubmit">
-		<DataAnnotationsValidator />
+		<ObjectGraphDataAnnotationsValidator />
 		<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
 
 		<label>Katalógové číslo:</label>
