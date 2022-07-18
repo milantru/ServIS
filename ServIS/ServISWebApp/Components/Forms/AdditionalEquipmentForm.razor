@@ -1,5 +1,6 @@
 ﻿@using ServISWebApp.CssProviders
 @inject IServISApi api
+@inject IJSRuntime js
 @inject NavigationManager navMan
 
 @if (AdditionalEquipment != null && DisplayedAdditionalEquipmentPhotos != null)
@@ -10,7 +11,7 @@
 
 		<InputFile OnChange="HandleInputFileChange" multiple required="@(@AdditionalEquipment.Id == 0 ? true : false)" />
 		<div>
-			Nahrané fotky:<br />
+			Nahrané fotky (max. veľkosť fotky je 50kB):<br />
 
 			@if (DisplayedAdditionalEquipmentPhotos.Count == 0)
 			{
@@ -88,6 +89,12 @@
 
 		foreach (var uploadedFile in uploadedFiles)
 		{
+			if (!uploadedFile.IsValidImageFile(out string? errorMessage))
+			{
+				await js.InvokeVoidAsync("alert", errorMessage);
+				continue;
+			}
+
 			var dataBytes = await uploadedFile.GetDataBytesAsync();
 			if (dataBytes == null)
 			{

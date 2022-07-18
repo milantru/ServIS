@@ -1,4 +1,5 @@
 ﻿@inject IServISApi api
+@inject IJSRuntime js
 @inject NavigationManager navMan
 @typeparam ExcavatorCategory where ExcavatorCategory : Excavator, new()
 @using ServISWebApp.CssProviders;
@@ -12,7 +13,7 @@
 
 		<InputFile OnChange="HandleInputFileChange" multiple required="@(@Excavator.Id == 0 ? true : false)" />
 		<div>
-			Nahrané fotky:<br />
+			Nahrané fotky (max. veľkosť fotky je 50kB):<br />
 
 			@if (DisplayedExcavatorPhotos.Count == 0)
 			{
@@ -151,9 +152,9 @@
 		base.OnParametersSet();
 
 		/* AllSparePartsChecked == null needs to be here because after changing ExcavatorSpecificInfoFields 
-		 * this method was called again and rewrote user data 
-		 * also  Excavator != null is needed because for some reason Excavator was sometimes null even though
-		 * it shouldnt be at this point */
+			* this method was called again and rewrote user data 
+			* also  Excavator != null is needed because for some reason Excavator was sometimes null even though
+			* it shouldnt be at this point */
 		if (AllSpareParts != null && AllSparePartsChecked == null && Excavator != null)
 		{
 			AllSparePartsChecked = new List<bool>(AllSpareParts.Count);
@@ -171,8 +172,8 @@
 		await base.OnParametersSetAsync();
 
 		/* DisplayedExcavatorPhotos.Count == 0 needs to be here because after changing ExcavatorSpecificInfoFields 
-		 * this method was called again and rewrote user data 
-		 * also Excavator != null is here because of the same reason as in OnParametersSet() */
+			* this method was called again and rewrote user data 
+			* also Excavator != null is here because of the same reason as in OnParametersSet() */
 		if (Excavator != null && Excavator.Id != 0 && DisplayedExcavatorPhotos.Count == 0)
 		{
 			DisplayedExcavatorPhotos = await api.GetExcavatorPhotosAsync(Excavator.Id, false);
@@ -194,11 +195,16 @@
 
 		foreach (var uploadedFile in uploadedFiles)
 		{
+			if (!uploadedFile.IsValidImageFile(out string? errorMessage))
+			{
+				await js.InvokeVoidAsync("alert", errorMessage);
+				continue;
+			}
+
 			var dataBytes = await uploadedFile.GetDataBytesAsync();
 			if (dataBytes == null)
 			{
-				// TODO: check if uploadedFile is image file, wrong format
-				throw new Exception("Something went wrong with showing uploaded photo.");
+				throw new Exception("Something went wrong with uploading photo.");
 			}
 
 			var excavatorPhoto = new ExcavatorPhoto
