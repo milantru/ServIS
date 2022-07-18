@@ -11,9 +11,7 @@ namespace ServISData.Models
 		[ValidateComplexType, Required]
 		public AdditionalEquipment AdditionalEquipment { get; set; } = null!;
 
-		[Required(ErrorMessage = "Nutné vložiť fotku.")]
 		[Column(TypeName = "varbinary(50000)")]
-		[MaxLength(50000, ErrorMessage = "Fotka je príliš veľká (max 50 kB).")]
 		public byte[] Photo { get; set; } = null!;
 
 		[Required]
