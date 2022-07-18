@@ -257,7 +257,7 @@ namespace ServISData
 					return null;
 				}
 
-				UpdateCustomerData(context, currentUser, user);
+				UpdateUserData(context, currentUser, user);
 			}
 
 			await context.SaveChangesAsync();
@@ -820,12 +820,6 @@ namespace ServISData
 		{
 			currentUserData.Username = newUserData.Username;
 			currentUserData.Password = newUserData.Password;
-		}
-
-		private void UpdateCustomerData(ServISDbContext context, User currentUserData, User newUserData)
-		{
-			UpdateUserData(context, currentUserData, newUserData);
-
 			currentUserData.Name = newUserData.Name;
 			currentUserData.Surname = newUserData.Surname;
 			currentUserData.PhoneNumber = newUserData.PhoneNumber;
