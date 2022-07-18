@@ -13,6 +13,7 @@ namespace ServISData.Models
 		[Required(ErrorMessage = "Toto pole je povinné."), StringLength(80, ErrorMessage = "Max {1} znakov.")]
 		public string Name { get; set; } = null!;
 
+		[ValidateComplexType]
 		public List<Excavator> Excavators { get; set; } = null!;
 	}
 }

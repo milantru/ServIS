@@ -27,6 +27,7 @@ namespace ServISData.Models
 
 		public DateTime? LastInspection { get; set; }
 
+		[ValidateComplexType]
 		public List<SparePart> SpareParts { get; set; } = null!;
 	}
 }

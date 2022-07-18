@@ -8,7 +8,7 @@ namespace ServISData.Models
 	{
 		public int Id { get; set; }
 
-		[Required]
+		[ValidateComplexType, Required]
 		public AdditionalEquipment AdditionalEquipment { get; set; } = null!;
 
 		[Required(ErrorMessage = "Nutné vložiť fotku.")]

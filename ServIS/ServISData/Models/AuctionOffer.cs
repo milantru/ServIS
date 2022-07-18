@@ -8,7 +8,7 @@ namespace ServISData.Models
 	{
 		public int Id { get; set; }
 
-		[Required]
+		[ValidateComplexType, Required]
 		public Excavator Excavator { get; set; } = null!;
 
 		[Required(AllowEmptyStrings = true), MaxLength(ErrorMessage = "Popis príliš dlhý.")]

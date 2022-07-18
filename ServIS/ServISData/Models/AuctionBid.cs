@@ -8,10 +8,10 @@ namespace ServISData.Models
 	{
 		public int Id { get; set; }
 
-		[Required]
+		[ValidateComplexType, Required]
 		public User User { get; set; } = null!;
 
-		[Required]
+		[ValidateComplexType, Required]
 		public AuctionOffer AuctionOffer { get; set; } = null!;
 
 		[Required(ErrorMessage = "Toto pole je povinné."), Column(TypeName = "decimal(11,2)")]
