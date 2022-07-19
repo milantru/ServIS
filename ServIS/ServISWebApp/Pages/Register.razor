@@ -49,7 +49,23 @@
 	{
 		User.Password = PasswordHasher.Hash(User.Password);
 
-		await api.SaveUserAsync(User);
+		/* we dont really need to create newUser, we can just save User
+		 * but we would see on a brief moment password hash in the form,
+		 * this way we wont see it */
+		var newUser = new User
+			{
+				Id = User.Id,
+				Username = User.Username,
+				Password = PasswordHasher.Hash(User.Password),
+				Role = User.Role,
+				Name = User.Name,
+				Surname = User.Surname,
+				PhoneNumber = User.PhoneNumber,
+				Email = User.Email,
+				Residence = User.Residence,
+				IsTemporary = User.IsTemporary
+			};
+		await api.SaveUserAsync(newUser);
 
 		navMan.NavigateTo("/");
 	}
