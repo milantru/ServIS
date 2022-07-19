@@ -3,6 +3,7 @@
 @attribute [Authorize(Roles = "Administrator,User")]
 @inject AuthenticationStateProvider authStateProvider
 @inject IServISApi api
+@inject IJSRuntime js
 @using ServISWebApp.Auth
 @using ServISWebApp.CssProviders
 @using ServISWebApp.Pages.Admin
@@ -40,15 +41,26 @@
 						<InputText @bind-Value="@User.Username" />
 						<ValidationMessage For="@(() => User.Username)" />
 
-						<label>Heslo</label>
-						<div style="position:relative;">
-							<InputText @bind-Value="@User.Password" type="@(isPasswordVisible ? "text" : "password")" />
-							<input class="toggle-password-visibility"
+						<h6>Zmena hesla</h6>
+						<div>
+							<label>Staré heslo</label>
+							<div style="position:relative;">
+								<InputText @bind-Value="@oldPassword" type="@(isOldPasswordVisible ? "text" : "password")" />
+								<input class="toggle-password-visibility"
 								   type="checkbox"
-								   checked="@isPasswordVisible"
-								   @onclick="() => isPasswordVisible = !isPasswordVisible" />
+								   checked="@isOldPasswordVisible"
+								   @onclick="() => isOldPasswordVisible = !isOldPasswordVisible" />
+							</div>
+
+							<label>Nové heslo</label>
+							<div style="position:relative;">
+								<InputText @bind-Value="@newPassword" type="@(isNewPasswordVisible ? "text" : "password")" />
+								<input class="toggle-password-visibility"
+								   type="checkbox"
+								   checked="@isNewPasswordVisible"
+								   @onclick="() => isNewPasswordVisible = !isNewPasswordVisible" />
+							</div>
 						</div>
-						<ValidationMessage For="@(() => User.Password)" />
 					</div>
 
 					<br />
@@ -84,7 +96,10 @@
 </TabControl>
 
 @code {
-	private bool isPasswordVisible;
+	private string oldPassword = "";
+	private string newPassword = "";
+	private bool isOldPasswordVisible;
+	private bool isNewPasswordVisible;
 
 	private User? User { get; set; }
 
@@ -97,7 +112,12 @@
 		var userDataJson = authState.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.UserData)?.Value;
 		if (userDataJson != null)
 		{
-			User = JsonSerializer.Deserialize<User>(userDataJson);
+			int? userId = JsonSerializer.Deserialize<User>(userDataJson)?.Id;
+			if (userId.HasValue)
+			{
+				User = await api.GetUserAsync(userId.Value);
+			}
+
 		}
 	}
 
@@ -108,9 +128,21 @@
 			throw new Exception("User missing, cannot save.");
 		}
 
+		if (newPassword != "")
+		{
+			if (!PasswordHasher.AreCredentialsCorrect(User.Password, oldPassword))
+			{
+				await js.InvokeVoidAsync("alert", "Nemôžem uložiť- nesprávne heslo.");
+				return;
+			}
+			User.Password = PasswordHasher.Hash(newPassword);
+		}
+
 		await api.SaveUserAsync(User);
 
 		var customAuthStateProvider = (CustomAuthenticationStateProvider)authStateProvider;
 		await customAuthStateProvider.UpdateAuthenticationState(new UserSessionStorage(User));
+
+		await js.InvokeVoidAsync("alert", "Údaje úspešne zmenené.");
 	}
 }

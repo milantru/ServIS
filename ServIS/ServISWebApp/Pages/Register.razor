@@ -2,6 +2,7 @@
 
 @inject IServISApi api
 @inject NavigationManager navMan
+@using ServISWebApp.Auth
 @using ServISWebApp.CssProviders
 
 <h3>Registrácia</h3>
@@ -46,6 +47,8 @@
 
 	private async Task RegisterUser()
 	{
+		User.Password = PasswordHasher.Hash(User.Password);
+
 		await api.SaveUserAsync(User);
 
 		navMan.NavigateTo("/");

@@ -33,9 +33,15 @@
 	private async Task Authenticate()
 	{
 		var user = await api.GetUserAsync(loginData.Username);
-		if (user == null || user.Password != loginData.Password)
+		if (user == null)
 		{
-			await js.InvokeVoidAsync("alert", "Nesprávne prihlasovacie údaje.");
+			await js.InvokeVoidAsync("alert", "Užívateľ s takýmto menom neexistuje.");
+			return;
+		}
+
+		if (!PasswordHasher.AreCredentialsCorrect(user.Password, loginData.Password))
+		{
+			await js.InvokeVoidAsync("alert", "Nesprávne heslo.");
 			return;
 		}
 
