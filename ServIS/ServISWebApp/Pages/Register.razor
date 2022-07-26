@@ -47,8 +47,6 @@
 
 	private async Task RegisterUser()
 	{
-		User.Password = PasswordHasher.Hash(User.Password);
-
 		/* we dont really need to create newUser, we can just save User
 		 * but we would see on a brief moment password hash in the form,
 		 * this way we wont see it */
