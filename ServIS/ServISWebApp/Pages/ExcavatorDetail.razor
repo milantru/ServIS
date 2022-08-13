@@ -1,10 +1,10 @@
-﻿@page "/stroj/{Id:int}"
+﻿@page "/stroj/{ExcavatorId:int}"
 
 @inject IServISApi api
 @inject NavigationManager navMan
 @using ServISWebApp.CssProviders
 
-@if (Excavator != null && ExcavatorPhotos != null)
+@if (Excavator != null)
 {
 	<div class="container">
 		<div class="row">
@@ -61,9 +61,16 @@
 
 		<div class="row">
 			<div class="col">
+				<p>Vlastnosti stroja:</p>
 				<table class="table">
 					<tbody>
-						@RenderExcavatorSpecificInfo()
+						@foreach (var property in Excavator.Properties)
+						{
+							<tr>
+								<td>@property.PropertyType.Name</td>
+								<td>@property.Value</td>
+							</tr>
+						}
 					</tbody>
 				</table>
 			</div>
@@ -78,29 +85,25 @@
 @code {
 	private bool isFormHidden = true;
 
-	private EditForm Form { get; set; } = null!;
-
-	private FormFields Data { get; set; } = new();
-
 	[Parameter]
-	public int Id { get; set; }
+	public int ExcavatorId { get; set; }
 
 	public Excavator Excavator { get; private set; } = null!;
 
-	public List<ExcavatorPhoto> ExcavatorPhotos { get; private set; } = null!;
+	private EditForm Form { get; set; } = null!;
+
+	private FormFields Data { get; set; } = new();
 
 	protected override async Task OnParametersSetAsync()
 	{
 		await base.OnParametersSetAsync();
 
-		ExcavatorPhotos = await api.GetExcavatorPhotosAsync(Id);
-		if (ExcavatorPhotos == null || ExcavatorPhotos.Count == 0)
+		var excavator = await api.GetExcavatorAsync(ExcavatorId);
+		if (excavator == null)
 		{
-			// possible TODO: place dummy "missing photo" photo instead of throwing error, so at least rest of the page could be displayed
-			throw new Exception("No excavator photos.");
+			throw new Exception($"Excavator with id '{ExcavatorId}' was not found.");
 		}
-
-		Excavator = ExcavatorPhotos[0].Excavator;
+		Excavator = excavator;
 	}
 
 	private void ToggleForm()
@@ -114,7 +117,7 @@
 	{
 		//Data.Customer.Username = "";
 		//Data.Customer.Password = "";
-		Data.User.IsTemporary = true;
+		//Data.User.IsTemporary = true;
 	}
 
 	private class FormFields
@@ -123,335 +126,10 @@
 		public string Message { get; set; } = "";
 	}
 
-	private MarkupString RenderExcavatorSpecificInfo()
-	{
-		var excavatorType = Excavator.GetType();
-		if (excavatorType == typeof(SkidSteerLoader))
-		{
-			return GetSkidSteerLoaderSpecificInfoMarkup((SkidSteerLoader)Excavator);
-		}
-		else if (excavatorType == typeof(TrackedExcavator))
-		{
-			return GetTrackedExcavatorSpecificInfoMarkup((TrackedExcavator)Excavator);
-		}
-		else if (excavatorType == typeof(TrackedLoader))
-		{
-			return GetTrackedLoaderSpecificInfoMarkup((TrackedLoader)Excavator);
-		}
-		else
-		{
-			throw new Exception("Cannot render excavator specific info because its type is unknown.");
-		}
-	}
-
-	private static MarkupString GetSkidSteerLoaderSpecificInfoMarkup(SkidSteerLoader skidSteerLoader)
-	{
-		var skidSteerLoaderSpecificInfoMarkup = (MarkupString)$@"
-		<tr>
-			<td>Výška</td>
-			<td>{skidSteerLoader.HeightMm} mm</td>
-		</tr>
-
-		<tr>
-			<td>Dĺžka s lopatou</td>
-			<td>{skidSteerLoader.LengthWithBucketMm} mm</td>
-		</tr>
-
-		<tr>
-			<td>Šírka s lopatou</td>
-			<td>{skidSteerLoader.WidthWithBucketMm} mm</td>
-		</tr>
-
-		<tr>
-			<td>Hmotnosť</td>
-			<td>{skidSteerLoader.WeightKg} kg</td>
-		</tr>
-
-		<tr>
-			<td>Nominálna nosnosť</td>
-			<td>{skidSteerLoader.NominalLoadCapacityKg} kg</td>
-		</tr>
-
-		<tr>
-			<td>Bod preťaženia</td>
-			<td>{skidSteerLoader.OverloadPointKg} kg</td>
-		</tr>
-
-		<tr>
-			<td>Maximálna rýchlosť</td>
-			<td>{skidSteerLoader.TopSpeedKmh} km/h</td>
-		</tr>
-
-		<tr>
-			<td>Maximálna rýchlosť (verzia SPEED)</td>
-			<td>{skidSteerLoader.TopSpeedKmhSpeedVersionMin}-{skidSteerLoader.TopSpeedKmhSpeedVersionMax} km/h</td>
-		</tr>
-
-		<tr>
-			<td>Navŕšený objem lopaty</td>
-			<td>{skidSteerLoader.IncreasedBucketVolumeM3} m3</td>
-		</tr>
-
-		<tr>
-			<td>Trhacia sila</td>
-			<td>{skidSteerLoader.TearingStrengthKn} kN</td>
-		</tr>
-
-		<tr>
-			<td>Ťažná sila</td>
-			<td>{skidSteerLoader.TractionForceKn} kN</td>
-		</tr>
-
-		<tr>
-			<td>Ťažná sila (verzia SPEED)</td>
-			<td>{skidSteerLoader.TractionForceKnSpeedVersion} kN</td>
-		</tr>
-
-		<tr>
-			<td>Zdvíhacia sila</td>
-			<td>{skidSteerLoader.LiftingForceKn} kN</td>
-		</tr>
-
-		<tr>
-			<td>Dosah</td>
-			<td>{skidSteerLoader.ReachMm} mm</td>
-		</tr>
-
-		<tr>
-			<td>Maximálna vysýpacia výška</td>
-			<td>{skidSteerLoader.MaximumDischargeHeightMm} mm</td>
-		</tr>
-
-		<tr>
-			<td>Typ motora</td>
-			<td>{skidSteerLoader.EngineType}</td>
-		</tr>
-
-		<tr>
-			<td>Menovitý výkon</td>
-			<td>{skidSteerLoader.RatedPowerKw} kW</td>
-		</tr>
-
-		<tr>
-			<td>Druh pohonu</td>
-			<td>{skidSteerLoader.DriveType}</td>
-		</tr>
-
-		<tr>
-			<td>Regulačný hydrogenerátor pohonu</td>
-			<td>{skidSteerLoader.DriveControlHydrogenerator}</td>
-		</tr>
-
-		<tr>
-			<td>Hydromotor pojazdu</td>
-			<td>{skidSteerLoader.VehicleHydraulicMotor}</td>
-		</tr>
-
-		<tr>
-			<td>Hydraulika pojazdu- pracovný tlak</td>
-			<td>{skidSteerLoader.VehicleHydraulicMotorOperatingPressureMpa} MPa</td>
-		</tr>
-
-		<tr>
-			<td>Druh ovládania</td>
-			<td>{skidSteerLoader.ControlType}</td>
-		</tr>
-
-		<tr>
-			<td>Pracovný tlak ovládania</td>
-			<td>{skidSteerLoader.OperatingControlPressureMpa} MPa</td>
-		</tr>
-
-		<tr>
-			<td>Riadenie</td>
-			<td>{skidSteerLoader.Control}</td>
-		</tr>
-
-		<tr>
-			<td>Hydrogenerátor pracovného zariadenia</td>
-			<td>{skidSteerLoader.WorkEquipmentHydrogenerator}</td>
-		</tr>
-
-		<tr>
-			<td>Rozvádzač pracovného zariadenia</td>
-			<td>{skidSteerLoader.WorkEquipmentSwitchboard}</td>
-		</tr>
-
-		<tr>
-			<td>Pracovný tlak</td>
-			<td>{skidSteerLoader.OperatingPressureMpa} MPa</td>
-		</tr>
-
-		<tr>
-			<td>Prietok pracovnej hydrauliky</td>
-			<td>{skidSteerLoader.OperatingHydraulicFlowLpm} l/min</td>
-		</tr>
-
-		<tr>
-			<td>Vyrovnávanie lopaty</td>
-			<td>{skidSteerLoader.BucketLeveling}</td>
-		</tr>
-
-		<tr>
-			<td>Výsledná hlučnosť akustického výkonu</td>
-			<td>{skidSteerLoader.AcousticNoisePowerDb} dB</td>
-		</tr>
-
-		<tr>
-			<td>Pneumatiky štandardné</td>
-			<td>{skidSteerLoader.StandardTiresMin}-{skidSteerLoader.StandardTiresMax}</td>
-		</tr>
-
-		<tr>
-			<td>Elektrická inštalácia</td>
-			<td>{skidSteerLoader.ElectricalInstallationV} V</td>
-		</tr>
-		";
-
-		return skidSteerLoaderSpecificInfoMarkup;
-	}
-
-	private static MarkupString GetTrackedExcavatorSpecificInfoMarkup(TrackedExcavator trackedExcavator)
-	{
-		var skidSteerLoaderSpecificInfoMarkup = (MarkupString)$@"
-		<tr>
-			<td>Pracovná hmotnosť</td>
-			<td>{trackedExcavator.OperatingWeightKg} kg</td>
-		</tr>
-
-		<tr>
-			<td>Hĺbka výkopu</td>
-			<td>{trackedExcavator.ExcavationDepthMm} mm</td>
-		</tr>
-
-		<tr>
-			<td>Maximálna šírka</td>
-			<td>{trackedExcavator.MaximumWidthMm} mm</td>
-		</tr>
-
-		<tr>
-			<td>Motor</td>
-			<td>{trackedExcavator.Engine}</td>
-		</tr>
-
-		<tr>
-			<td>Maximálny výkon (kw)</td>
-			<td>{trackedExcavator.MaximumPowerKw} kw</td>
-		</tr>
-
-		<tr>
-			<td>Trhacia sila</td>
-			<td>{trackedExcavator.TearingStrengthKg} kg</td>
-		</tr>
-
-		<tr>
-			<td>Sila vniknutia</td>
-			<td>{trackedExcavator.PenetrationForceKg} kg</td>
-		</tr>
-
-		<tr>
-			<td>Prietok hydrauliky</td>
-			<td>{trackedExcavator.HydraulicFlowLpm} l/min</td>
-		</tr>
-
-		<tr>
-			<td>Pracovný tlak</td>
-			<td>{trackedExcavator.OperatingPressureBar} bar</td>
-		</tr>
-		";
-
-		return skidSteerLoaderSpecificInfoMarkup;
-	}
-
-	private static MarkupString GetTrackedLoaderSpecificInfoMarkup(TrackedLoader trackedLoader)
-	{
-		var skidSteerLoaderSpecificInfoMarkup = (MarkupString)$@"
-		<tr>
-			<td>Pracovná hmotnosť</td>
-			<td>{trackedLoader.OperatingWeightKg} kg</td>
-		</tr>
-
-		<tr>
-			<td>Preklápacie zaťaženie</td>
-			<td>{trackedLoader.TiltingLoadKg} kg</td>
-		</tr>
-
-		<tr>
-			<td>Prevádzková nosnosť ISO 14397</td>
-			<td>{trackedLoader.OperatingLoadCapacityIso14397Kg} kg</td>
-		</tr>
-
-		<tr>
-			<td>Štandardný objem lopaty</td>
-			<td>{trackedLoader.StandardBucketVolumeM3} m3</td>
-		</tr>
-
-		<tr>
-			<td>Motor</td>
-			<td>{trackedLoader.Engine}</td>
-		</tr>
-
-		<tr>
-			<td>Maximálny výkon</td>
-			<td>{trackedLoader.MaximumPowerKw} kW</td>
-		</tr>
-
-		<tr>
-			<td>Šírka pásov</td>
-			<td>{trackedLoader.TrackWidthMm} mm</td>
-		</tr>
-
-		<tr>
-			<td>Trakčná sila</td>
-			<td>{trackedLoader.TractionForceKn} kN</td>
-		</tr>
-
-		<tr>
-			<td>Prietok hydrauliky (štandard)</td>
-			<td>{trackedLoader.HydraulicFlowLpm} l/min</td>
-		</tr>
-
-		<tr>
-			<td>Prietok hydrauliky (Hi-flow)</td>
-			<td>{trackedLoader.HydraulicFlowHiFlowLpm} l/min</td>
-		</tr>
-
-		<tr>
-			<td>Maximálny prevádzkový tlak</td>
-			<td>{trackedLoader.MaximumOperatingPressureBar} bar</td>
-		</tr>
-		";
-
-		return skidSteerLoaderSpecificInfoMarkup;
-	}
-
-	private List<byte[]> GetImages()
-	{
-		var images = new List<byte[]>(ExcavatorPhotos.Count);
-
-		foreach (var excavatorPhoto in ExcavatorPhotos)
-		{
-			images.Add(excavatorPhoto.Photo);
-		}
-
-		return images;
-	}
+	private List<byte[]> GetImages() => Excavator.Photos.Select(p => p.Photo).ToList();
 
 	private void GoToExcavatorEditPage()
 	{
-		var excavatorType = Excavator.GetType();
-		if (excavatorType == typeof(SkidSteerLoader))
-		{
-			navMan.NavigateTo($"/admin/uprava-stroja/smykom-riadene-nakladace/{Excavator.Id}");
-		} else if (excavatorType == typeof(TrackedExcavator))
-		{
-			navMan.NavigateTo($"/admin/uprava-stroja/pasove-bagre/{Excavator.Id}");
-		} else if (excavatorType == typeof(TrackedLoader))
-		{
-			navMan.NavigateTo($"/admin/uprava-stroja/pasove-nakladace/{Excavator.Id}");
-		} else
-		{
-			throw new Exception("Unknown excavator type, cannot edit.");
-		}
+		navMan.NavigateTo($"/admin/uprava-stroja/{Excavator.Id}");
 	}
 }
