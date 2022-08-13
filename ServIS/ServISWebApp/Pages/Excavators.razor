@@ -1,0 +1,37 @@
+﻿@page "/typ-stroja/{ExcavatorTypeId:int}"
+
+@inject IServISApi api
+
+<AuthorizeView Roles="Administrator">
+	<a href="/admin/novy-stroj/@ExcavatorTypeId">Pridať nový stroj tohto typu</a>
+</AuthorizeView>
+
+@if (ExcavatorType == null)
+{
+	<p>Načítava sa...</p>
+}
+else
+{
+	<h3>@ExcavatorType.Category- @ExcavatorType.Brand</h3>
+
+	<ExcavatorsLister ExcavatorType="@ExcavatorType" />
+}
+
+@code {
+	[Parameter]
+	public int ExcavatorTypeId { get; set; }
+
+	private ExcavatorType ExcavatorType { get; set; } = null!;
+
+	protected override async Task OnParametersSetAsync()
+	{
+		await base.OnParametersSetAsync();
+
+		var excavatorType = await api.GetExcavatorTypeAsync(ExcavatorTypeId);
+		if (excavatorType == null)
+		{
+			throw new Exception($"Excavator type with id '{ExcavatorTypeId}' not found.");
+		}
+		ExcavatorType = excavatorType;
+	}
+}
