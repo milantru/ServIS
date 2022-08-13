@@ -1,4 +1,4 @@
-﻿@page "/profil"
+@page "/profil"
 
 @attribute [Authorize(Roles = "Administrator,User")]
 @inject AuthenticationStateProvider authStateProvider
@@ -17,6 +17,10 @@
 		<Authorized>
 			<TabPage TabLabel="Pridanie náhradného dielu">
 				<SparePartManagement />
+			</TabPage>
+
+			<TabPage TabLabel="Typy vlastností strojov">
+				<ExcavatorPropertyTypeManagement />
 			</TabPage>
 		</Authorized>
 	</AuthorizeView>

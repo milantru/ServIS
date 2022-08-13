@@ -1,0 +1,36 @@
+﻿@using ServISData
+@inject IServISApi api
+
+<h3>Správa typov vlastností stroja</h3>
+
+<ExcavatorPropertyTypeForm @bind-PropertyType="SelectedExcavatorPropertyType" AfterValidSubmit="ReloadExcavatorPropertyTypesAsync" />
+
+<ItemsTableLister ItemType="ExcavatorPropertyType"
+				  @ref="excavatorPropertyTypesLister"
+				  @bind-SelectedItem="SelectedExcavatorPropertyType"
+				  Title="Zoznam typov vlastností stroja"
+				  Context="ept"
+				  GetItemsAsync="async (int numberOfExcavatorPropertyTypes, int startIndex) =>
+									await api.GetExcavatorPropertyTypesAsync(numberOfExcavatorPropertyTypes, startIndex)"
+				  GetItemsTotalCountAsync="async () => await api.GetExcavatorPropertyTypesCountAsync()"
+				  DeleteItemAsync="async (excavatorPropertyType) => await api.DeleteExcavatorPropertyTypeAsync(excavatorPropertyType)">
+	<HeadCols>
+		<th>Názov</th>
+		<th>Typ vlastnosti</th>
+	</HeadCols>
+	<BodyCols>
+		<td>@ept.Name</td>
+		<td>@ept.InputType.GetLabel()</td>
+	</BodyCols>
+</ItemsTableLister>
+
+@code {
+	private ItemsTableLister<ExcavatorPropertyType> excavatorPropertyTypesLister = null!;
+
+	public ExcavatorPropertyType SelectedExcavatorPropertyType { get; private set; } = new();
+
+	public async Task ReloadExcavatorPropertyTypesAsync()
+	{
+		await excavatorPropertyTypesLister.ReloadItemsAsync();
+	}
+}
