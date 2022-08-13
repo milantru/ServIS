@@ -1,11 +1,10 @@
 ﻿@inject IServISApi api
 
 <div class="d-flex flex-wrap">
-	<Virtualize @ref="excavatorPhotosContainer" ItemsProvider="LoadExcavatorsPhotosAsync" Context="e">
-		<ExcavatorCard Id="@e.Excavator.Id"
-					   Title="@e.Excavator.Name"
-					   Image="@e.Photo" 
-					   OnDelete="() => DeleteExcavatorAsync(e.Excavator)" />
+	<Virtualize @ref="excavatorPhotosContainer" ItemsProvider="LoadExcavatorsPhotosAsync" Context="ep">
+		<ExcavatorCard Excavator="@ep.Excavator"
+					   Image="@ep.Photo" 
+					   OnDelete="() => DeleteExcavatorAsync(ep.Excavator)" />
 	</Virtualize>
 </div>
 
@@ -13,10 +12,7 @@
 	private Virtualize<ExcavatorPhoto> excavatorPhotosContainer = null!;
 
 	[Parameter]
-	public string ExcavatorBrand { get; set; } = null!;
-
-	[Parameter]
-	public string ExcavatorCategory { get; set; } = null!;
+	public ExcavatorType ExcavatorType { get; set; } = null!;
 
 	public int ExcavatorsTotalCount { get; set; } // excavators of given category (ExcavatorCategory)
 
@@ -30,29 +26,29 @@
 		// number of excavators is equal to number of their title photos (each excavator has exactly 1 title photo)
 		if (ExcavatorsTotalCount == 0)
 		{
-			ExcavatorsTotalCount = await api.GetTrackedExcavatorsCountAsync();
-		}
-		if (ExcavatorsTotalCount == 0)
-		{// in case there is no tracked excavator in the database
-			return new ItemsProviderResult<ExcavatorPhoto>();
+			ExcavatorsTotalCount = await api.GetExcavatorsCountAsync(ExcavatorType);
+			if (ExcavatorsTotalCount == 0)
+			{// in case there is no excavator in the database
+				return new ItemsProviderResult<ExcavatorPhoto>();
+			}
 		}
 
 		int excavatorsDisplayedCount = Math.Min(request.Count, ExcavatorsTotalCount - request.StartIndex);
 
-		var excavators = await api.GetExcavatorsAsync(
-				excavatorsDisplayedCount, request.StartIndex, ExcavatorCategory, ExcavatorBrand
-		);
+		var excavators = await api.GetExcavatorsAsync(excavatorsDisplayedCount, request.StartIndex, ExcavatorType);
 
-		var excavatorsTitlePhotos = new List<ExcavatorPhoto>();
+		var excavatorsTitlePhotos = new List<ExcavatorPhoto>(excavators.Count);
 		foreach (var excavator in excavators)
 		{
-			var excavatorPhoto = await api.GetExcavatorTitlePhotoAsync(excavator.Id);
-			if (excavatorPhoto == null) {
-				// possible TODO: if photo is not available (e.g. due to some error, some "not found error" photo from wwwroot can be displayed instead)
-				throw new Exception("Missing Excavator photo.");
+			var excavatorPhotos = excavator.Photos;
+			foreach (var photo in excavatorPhotos)
+			{
+				if (photo.IsTitle)
+				{
+					excavatorsTitlePhotos.Add(photo);
+					break;
+				}
 			}
-			excavatorPhoto.Excavator = excavator;
-			excavatorsTitlePhotos.Add(excavatorPhoto);
 		}
 
 		return new ItemsProviderResult<ExcavatorPhoto>(excavatorsTitlePhotos, ExcavatorsTotalCount);
