@@ -215,3 +215,29 @@ Vymazanie **SparePartDetail** -> Mal som stránku pre detail náhradného dielu,
 **Prečo je v URL slovenčina a nie angličtina keď kód je napísaný anglicky?** -> V URL je slovenčina, lebo to vidí užívateľ, a keďze program je určený hlavne pre slovenské firmy, tak som sa rozhodol tam dať slovenčinu.
 
 **Katalógové čísla náhradných dielov** -> Tieto čísla negenerujeme my. Každý náhradný diel má svoje katalógové číslo.
+
+---
+
+**Užitočný text (aukčný portál)** -> https://www.onlineaukcie.sk/userfiles/file/Aukcny_poriadok_kovo.pdf
+
+**Potrebujem DTO (data transfer object), Automapper?** -> 
+- <u>Ak využijeme DTO</u>, tak *výhodou* by bolo, že funkcie tried by boli pekne oddelené. Triedy na uloženie dát okreme od tried, ktoré by sa využívali pri logike. *Nevýhodou* by bolo, že si do kódu zanesieme nové triedy, prípadne hrozí nepochopenie kedy akú využívať.
+- <u>Ak nevyužijeme DTO</u>, môžme využiť funkcie EF Coru a pridať do modelových tried properties, ktoré chceme využívať, ale pripíšeme k ním atribúty, ktoré zabránia mapovaniu na stĺpce tabuliek. Tým pádom by boli požadované properties prázdne, a preto by ich bolo treba naplniť napr. v implementácii API (v `GetXAsync()`). *Výhodou* by bolo, že nepridávame nové triedy a máme menší/"čistejší" kód, ALE *nevýhodou* je že triedy by spĺňali viac účelov. 
+
+  <u>Záver:</u> Nepotrebujem DTO, Automapper ani nič také... Zistil som novú vec o EF Coru, že  one-to-many relationship sa dá aj ináč spraviť (viď Convention 3 na https://www.entityframeworktutorial.net/efcore/one-to-many-conventions-entity-framework-core.aspx)
+
+---
+
+**V `ExcavatorForme` mám `InputSelect` a do premennej priraďujem len cez `@onchange`, prečo?** -> Zdá sa, že do `InputSelect` vie pracovať s `int`ami a `enum`ami, ale nie s mojim vlstným typom akým je napr. `ExcavatorType`. Skúsil som vytvoriť vlastný `InputSelect` (podľa https://github.com/dotnet/aspnetcore/issues/11181), ale vypísalo mi chybu:  
+"RZ9991	The attribute names could not be inferred from bind attribute 'bind-Value'. Bind attributes should be of the form 'bind' or 'bind-value' along with their corresponding optional parameters like 'bind-value:event', 'bind:format' etc."
+
+**Veľmi zaujímava vec o EF Core a IntelliSense :-D** -> https://github.com/dotnet/efcore/issues/6560 ("rowanmiller commented on 21 Sep 2016"). Mal som kód:
+```C#
+return await context.Excavators
+				.Include(e => e.Photos)
+				.Include(e => e.Properties)
+				.ThenInclude(ep => ep.PropertyType)
+				.FirstOrDefaultAsync(e => e.Id == id);
+```
+
+Takto napísaný kód je validný, je to to čo som chcel, ale vtipné je na tom to, že Intellisense ukazovala že `ep` je `IList<ExcavatorProperty>` a nie `ExcavatorProperty`, takže mi to tvrdilo, že nemôžem dať `ep.PropertyType`. Ale môžem. Keď som to takto napísal, už aj IntelliSense ukazuje správne.
