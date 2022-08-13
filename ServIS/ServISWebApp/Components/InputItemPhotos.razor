@@ -1,0 +1,104 @@
+﻿@inject IJSRuntime js
+@typeparam PhotoType where PhotoType : IPhoto, new()
+
+@if (Photos != null)
+{
+	<InputFile OnChange="HandleInputFileChange" multiple required="@IsRequired" />
+	<div>
+		Nahrané fotky:<br />
+
+		@if (Photos.Count == 0)
+		{
+			<p>Nie sú nahrané žiadne fotky.</p>
+		}
+		else
+		{
+			<div class="d-flex flex-wrap">
+				@foreach (var photo in Photos)
+				{
+					<div class="pos-rel">
+						<img src="@FileTools.GetDataUrlBase64String(photo.Photo, "image/jpeg")" />
+						<button class="btn btn-danger delete-btn"
+								type="button"
+								@onclick="async () => await HandleDeleteAsync(photo)">X</button>
+					</div>
+				}
+			</div>
+		}
+	</div>
+}
+
+@code {
+	[Parameter]
+	public IList<PhotoType> Photos { get; set; } = null!;
+
+	[Parameter]
+	public EventCallback<IList<PhotoType>> PhotosChanged { get; set; }
+
+	[Parameter, EditorRequired]
+	public Func<byte[], PhotoType> CreatePhoto { get; set; } = null!;
+
+	[Parameter]
+	public Action<PhotoType> DeletePhoto { get; set; } = null!;
+
+	[Parameter]
+	public Func<PhotoType, Task> DeletePhotoAsync { get; set; } = null!;
+
+	[Parameter]
+	public bool IsRequired { get; set; }
+
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+
+		if (Photos == null)
+		{
+			throw new Exception($"Parameter '{nameof(Photos)}' not provided.");
+		}
+		if (DeletePhoto == null && DeletePhotoAsync == null)
+		{
+			throw new Exception(
+				$"Parameters '{DeletePhoto}' and '{DeletePhotoAsync}' cannot be null at the same time."
+			);
+		}
+	}
+
+	private async Task HandleInputFileChange(InputFileChangeEventArgs e)
+	{
+		var uploadedFiles = e.GetMultipleFiles();
+
+		foreach (var uploadedFile in uploadedFiles)
+		{
+			if (!uploadedFile.IsValidImageFile(out string? errorMessage))
+			{
+				await js.InvokeVoidAsync("alert", errorMessage);
+				continue;
+			}
+
+			var dataBytes = await uploadedFile.GetDataBytesAsync();
+			if (dataBytes == null)
+			{
+				throw new Exception("Something went wrong with uploading photo.");
+			}
+
+			var photo = CreatePhoto(dataBytes);
+
+			Photos.Add(photo);
+		}
+
+		await PhotosChanged.InvokeAsync(Photos);
+	}
+
+	private async Task HandleDeleteAsync(PhotoType photo)
+	{
+
+		if (DeletePhoto != null)
+		{
+			DeletePhoto(photo);
+		}
+		if (DeletePhotoAsync != null)
+		{
+			await DeletePhotoAsync(photo);
+		}
+	}
+}
