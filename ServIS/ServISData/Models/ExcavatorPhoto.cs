@@ -4,17 +4,16 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ServISData.Models
 {
-	public class ExcavatorPhoto : IItem
+	public class ExcavatorPhoto : IItem, IPhoto
 	{
 		public int Id { get; set; }
 
-		[ValidateComplexType, Required]
+		[Required, ValidateComplexType]
 		public Excavator Excavator { get; set; } = null!;
 
-		[Column(TypeName = "varbinary(50000)")]
+		[Required] // TODO: maybe better attributes
 		public byte[] Photo { get; set; } = null!;
 
-		[Required]
 		public bool IsTitle { get; set; }
 	}
 }

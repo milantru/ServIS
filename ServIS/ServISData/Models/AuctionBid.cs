@@ -8,13 +8,13 @@ namespace ServISData.Models
 	{
 		public int Id { get; set; }
 
-		[ValidateComplexType, Required]
+		[Required, ValidateComplexType]
 		public User User { get; set; } = null!;
 
-		[ValidateComplexType, Required]
+		[Required, ValidateComplexType]
 		public AuctionOffer AuctionOffer { get; set; } = null!;
 
-		[Required(ErrorMessage = "Toto pole je povinné."), Column(TypeName = "decimal(11,2)")]
+		[Column(TypeName = "decimal(11,2)")]
 		public decimal Bid { get; set; }
 	}
 }

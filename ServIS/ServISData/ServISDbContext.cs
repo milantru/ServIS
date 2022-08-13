@@ -8,16 +8,18 @@ namespace ServISData
 {
 	public class ServISDbContext : DbContext
 	{
+		public DbSet<AcquiredExcavator> AcquiredExcavators { get; set; } = null!;
 		public DbSet<AdditionalEquipment> AdditionalEquipments { get; set; } = null!;
 		public DbSet<AdditionalEquipmentPhoto> AdditionalEquipmentPhotos { get; set; } = null!;
 		public DbSet<AuctionBid> AuctionBids { get; set; } = null!;
 		public DbSet<AuctionOffer> AuctionOffers { get; set; } = null!;
 		public DbSet<Excavator> Excavators { get; set; } = null!;
 		public DbSet<ExcavatorPhoto> ExcavatorPhotos { get; set; } = null!;
-		public DbSet<SkidSteerLoader> SkidSteerLoaders { get; set; } = null!;
+		public DbSet<ExcavatorProperty> ExcavatorProperties { get; set; } = null!;
+		public DbSet<ExcavatorPropertyType> ExcavatorPropertyTypes { get; set; } = null!;
+		public DbSet<ExcavatorType> ExcavatorTypes { get; set; } = null!;
+		public DbSet<MainOffer> MainOffers { get; set; } = null!;
 		public DbSet<SparePart> SpareParts { get; set; } = null!;
-		public DbSet<TrackedExcavator> TrackedExcavators { get; set; } = null!;
-		public DbSet<TrackedLoader> TrackedLoaders { get; set; } = null!;
 		public DbSet<User> Users { get; set; } = null!;
 
 		public ServISDbContext(DbContextOptions<ServISDbContext> options) : base(options)
