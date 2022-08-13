@@ -1,0 +1,76 @@
+﻿@typeparam ItemType
+
+<table class="table table-striped">
+	<thead>
+		<tr>
+			<th>Vybrať</th>
+			@HeaderCols
+		</tr>
+	</thead>
+	<tbody>
+		@if (Items != null && ItemsChecked != null && Items.Count == ItemsChecked.Count)
+		{
+			@for (int i = 0; i < Items.Count; i++)
+			{
+				// otherwise would i be a reference;
+				// for more see: https://stackoverflow.com/questions/64982700/how-to-use-the-array-of-checkbox-in-asp-net-core-razor
+				int iCopy = i;
+
+				<tr>
+					<td>
+						<input type="checkbox"
+							   checked="@ItemsChecked[iCopy]"
+							   @onclick="async () => await CheckUncheck(iCopy)" />
+					</td>
+					@BodyCols(Items[iCopy])
+				</tr>
+			}
+		}
+	</tbody>
+</table>
+
+@code {
+	[Parameter]
+	public List<ItemType> Items { get; set; } = null!;
+
+	[Parameter]
+	public List<bool> ItemsChecked { get; set; } = null!;
+
+	[Parameter]
+	public EventCallback<List<bool>> ItemsCheckedChanged { get; set; }
+
+	[Parameter]
+	public RenderFragment HeaderCols { get; set; } = null!;
+
+	[Parameter]
+	public RenderFragment<ItemType> BodyCols { get; set; } = null!;
+
+	protected override void OnParametersSet()
+	{
+		base.OnParametersSet();
+
+		// we had to use these ifs for null checks
+		// becasue attribute EditorRequired cannot be used if we want to use two-way binding
+		if (Items == null)
+		{
+			throw new ArgumentNullException($"Parameter '{nameof(Items)}' not provided.");
+		}
+		if (ItemsChecked == null)
+		{
+			throw new ArgumentNullException($"Parameter '{nameof(ItemsChecked)}' not provided.");
+		}
+		if (Items.Count != ItemsChecked.Count)
+		{
+			throw new ArgumentNullException(
+				$"Count of both parameters '{nameof(Items)}' and '{nameof(ItemsChecked)}' must be the same."
+			);
+		}
+	}
+
+	private async Task CheckUncheck(int index) 
+	{
+		ItemsChecked[index] = !ItemsChecked[index];
+
+		await ItemsCheckedChanged.InvokeAsync(ItemsChecked);
+	}
+}
