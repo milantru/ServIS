@@ -13,12 +13,12 @@
 </CascadingValue>
 
 @code {
-	private List<TabPage> TabPages { get; set; } = new();
-
 	[Parameter]
 	public RenderFragment ChildContent { get; set; } = null!;
 
 	public TabPage ActivePage { get; set; } = null!;
+
+	private List<TabPage> TabPages { get; set; } = new();
 
 	public void AddPage(TabPage tabPage)
 	{
