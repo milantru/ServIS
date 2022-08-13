@@ -1,9 +1,10 @@
 ﻿@inject IServISApi api
 @inject IJSRuntime js
 @inject NavigationManager navMan
-@typeparam ExcavatorCategory where ExcavatorCategory : Excavator, new()
+@using ServISData
 @using ServISWebApp.CssProviders;
 @using System.Collections
+@using System.Text
 
 @if (Excavator != null)
 {
@@ -11,42 +12,14 @@
 		<ObjectGraphDataAnnotationsValidator />
 		<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
 
-		<InputFile OnChange="HandleInputFileChange" multiple required="@(@Excavator.Id == 0 ? true : false)" />
-		<div>
-			Nahrané fotky (max. veľkosť fotky je 50kB):<br />
-
-			@if (DisplayedExcavatorPhotos.Count == 0)
-			{
-				<p>Nie sú nahrané žiadne fotky.</p>
-			}
-			else
-			{
-				<div class="d-flex flex-wrap">
-					@foreach (var photo in DisplayedExcavatorPhotos)
-					{
-						<div class="pos-rel">
-							<img src="@FileTools.GetDataUrlBase64String(photo.Photo, "image/jpeg")" />
-							<button class="btn btn-danger delete-btn" type="button" onclick="@(() => DeletePhotoAsync(photo))">X</button>
-						</div>
-					}
-				</div>
-			}
-		</div>
+		<InputItemPhotos PhotoType="ExcavatorPhoto"
+						 @bind-Photos="Excavator.Photos"
+						 CreatePhoto="@((dataBytes) => 
+							new ExcavatorPhoto { Photo = dataBytes, Excavator = Excavator })"
+						 DeletePhotoAsync="@(async (photo) => await DeletePhotoAsync(photo))"
+						 IsRequired="@(Excavator.Id == 0)" />
 
 		<br />
-		<br />
-
-		<label>Značka:</label>
-		<InputText @bind-Value="@Excavator.Brand" disabled />
-		<ValidationMessage For="@(() => Excavator.Brand)" />
-
-		<label>Kategória:</label>
-		<InputText @bind-Value="@Excavator.Category" disabled />
-		<ValidationMessage For="@(() => Excavator.Category)" />
-
-		<label>Model:</label>
-		<InputText @bind-Value="@Excavator.Model" />
-		<ValidationMessage For="@(() => Excavator.Model)" />
 
 		<label>Názov:</label>
 		<InputText @bind-Value="@Excavator.Name" />
@@ -56,22 +29,13 @@
 		<InputTextArea @bind-Value="@Excavator.Description" />
 		<ValidationMessage For="@(() => Excavator.Description)" />
 
-		<label>Je nový:</label>
+		<label>Je IBA pre aukciu:</label>
 		<input type="checkbox"
-		   checked="@Excavator.IsNew"
-		   @bind-value="@Excavator.IsNew" />
-		@*<InputCheckbox @bind-Value="@TrackedExcavator.IsNew" class="form-check-input"/>*@
-		<ValidationMessage For="@(() => Excavator.IsNew)" />
+		   checked="@Excavator.IsForAuctionOnly"
+		   @bind-value="@Excavator.IsForAuctionOnly" />
+		@*<InputCheckbox @bind-Value="@TrackedExcavator.IsForAuctionOnly" class="form-check-input"/>*@
+		<ValidationMessage For="@(() => Excavator.IsForAuctionOnly)" />
 
-		@if (!@Excavator.IsNew)
-		{
-			<br />
-			<label>Dátum poslednej prehliadky:</label>
-			<InputDate @bind-Value="@Excavator.LastInspection" />
-			<ValidationMessage For="@(() => Excavator.LastInspection)" />
-		}
-
-		<br />
 		<br />
 
 		<label>Náhradné diely:</label>
@@ -107,12 +71,57 @@
 		</table>
 
 		<br />
+
+		<ExcavatorTypeSelector @bind-ExcavatorType="Excavator.Type" />
+
 		<br />
 
-		@if (ExcavatorSpecificInfoFields != null)
+		<h6>Špecifické vlastnosti:</h6>
+		@if (Excavator.Properties.Count == 0)
 		{
-			<table class="table">
-				@ExcavatorSpecificInfoFields
+			<p>Tento typ stroja nemá žiadne vlastnosti</p>
+		}
+		else
+		{
+			<table>
+				<thead>
+					<tr>
+						<th>Názov vlastnosti</th>
+						<th>Hodnota</th>
+					</tr>
+				</thead>
+				<tbody>
+					@foreach (var property in Excavator.Properties)
+					{
+						var propertyType = property.PropertyType;
+						var propertyInputType = propertyType.InputType;
+						<tr>
+							<td><label>@propertyType.Name</label></td>
+
+							@switch (propertyInputType)
+							{
+								case InputType.Date:
+									@*<td><InputDate TValue="string" @bind-Value="property.Value" /></td>*@
+									<td><input type="datetime" @bind-value="property.Value" /></td>
+									break;
+								case InputType.Number:
+									@*<td><InputNumber TValue="string" @bind-Value="property.Value" /></td>*@
+									<td><input type="number" @bind-value="property.Value" /></td>
+									break;
+								case InputType.Text:
+									<td><InputText @bind-Value="property.Value" /></td>
+									break;
+								case InputType.TextArea:
+									<td><InputTextArea @bind-Value="property.Value" /></td>
+									break;
+								case InputType.Unset:
+									throw new Exception("Excavator property input type is unset.");
+								default:
+									throw new Exception("Unknown excavator property input type.");
+							}
+						</tr>
+					}
+				</tbody>
 			</table>
 		}
 
@@ -121,167 +130,133 @@
 }
 
 @code {
-	[EditorRequired, Parameter]
-	public string LinkToGoAfterValidSubmit { get; set; } = null!;
-
 	[Parameter]
-	public RenderFragment ExcavatorSpecificInfoFields { get; set; } = null!;
+	public Excavator Excavator { get; set; } = null!;
 
-	[EditorRequired, Parameter]
-	public ExcavatorCategory Excavator { get; set; } = null!;
-
+	private List<ExcavatorProperty> ExcavatorProperties { get; set; } = null!;
 	// bool is in pair with spare part, it will tell us if spare part is checked
-	public List<SparePart> AllSpareParts { get; set; } = null!;
-	public List<bool> AllSparePartsChecked { get; set; } = null!;
+	private List<SparePart> AllSpareParts { get; set; } = null!;
+	private List<bool> AllSparePartsChecked { get; set; } = null!;
 
-	private List<ExcavatorPhoto> DisplayedExcavatorPhotos { get; set; } = new();
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+
+		if (Excavator == null)
+		{
+			throw new Exception($"Parameter '{nameof(Excavator)}' not provided.");
+		}
+	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
 
 		AllSpareParts = await api.GetSparePartsAsync();
-		if (AllSpareParts == null)
-		{
-			throw new Exception("Spare parts missing.");
-		}
+		AllSparePartsChecked = new bool[AllSpareParts.Count].ToList();
 	}
 
 	protected override void OnParametersSet()
 	{
 		base.OnParametersSet();
 
-		/* AllSparePartsChecked == null needs to be here because after changing ExcavatorSpecificInfoFields 
-			* this method was called again and rewrote user data 
-			* also  Excavator != null is needed because for some reason Excavator was sometimes null even though
-			* it shouldnt be at this point */
-		if (AllSpareParts != null && AllSparePartsChecked == null && Excavator != null)
+		if (AllSpareParts != null)
 		{
-			AllSparePartsChecked = new List<bool>(AllSpareParts.Count);
 			var excavatorsSparePartsIds = Excavator.SpareParts.Select(sp => sp.Id);
 			for (int i = 0; i < AllSpareParts.Count; i++)
 			{
 				bool excavatorHasSparePart = excavatorsSparePartsIds.Contains(AllSpareParts[i].Id);
-				AllSparePartsChecked.Add(excavatorHasSparePart);
+				AllSparePartsChecked[i] = excavatorHasSparePart;
 			}
 		}
 	}
 
-	protected override async Task OnParametersSetAsync()
+	private List<SparePart> GetCheckedSpareParts()
 	{
-		await base.OnParametersSetAsync();
-
-		/* DisplayedExcavatorPhotos.Count == 0 needs to be here because after changing ExcavatorSpecificInfoFields 
-			* this method was called again and rewrote user data 
-			* also Excavator != null is here because of the same reason as in OnParametersSet() */
-		if (Excavator != null && Excavator.Id != 0 && DisplayedExcavatorPhotos.Count == 0)
-		{
-			DisplayedExcavatorPhotos = await api.GetExcavatorPhotosAsync(Excavator.Id, false);
-			if (DisplayedExcavatorPhotos == null || DisplayedExcavatorPhotos.Count == 0)
-			{
-				throw new Exception("Excavator photo(s) missing");
-			}
-
-			foreach (var photo in DisplayedExcavatorPhotos)
-			{
-				photo.Excavator = Excavator;
-			}
-		}
-	}
-
-	private async Task HandleInputFileChange(InputFileChangeEventArgs e)
-	{
-		var uploadedFiles = e.GetMultipleFiles();
-
-		foreach (var uploadedFile in uploadedFiles)
-		{
-			if (!uploadedFile.IsValidImageFile(out string? errorMessage))
-			{
-				await js.InvokeVoidAsync("alert", errorMessage);
-				continue;
-			}
-
-			var dataBytes = await uploadedFile.GetDataBytesAsync();
-			if (dataBytes == null)
-			{
-				throw new Exception("Something went wrong with uploading photo.");
-			}
-
-			var excavatorPhoto = new ExcavatorPhoto
-			{
-				Photo = dataBytes,
-				Excavator = Excavator
-			};
-			DisplayedExcavatorPhotos.Add(excavatorPhoto);
-		}
-
-		StateHasChanged();
-	}
-
-	private List<SparePart> GetSelectedSpareParts()
-	{
-		var selectedSpareParts = new List<SparePart>();
+		var checkedSpareParts = new List<SparePart>();
 
 		for (var i = 0; i < AllSparePartsChecked.Count; i++)
 		{
 			if (AllSparePartsChecked[i])
 			{
-				selectedSpareParts.Add(AllSpareParts[i]);
+				checkedSpareParts.Add(AllSpareParts[i]);
 			}
 		}
 
-		return selectedSpareParts;
-	}
-
-	private void FinishSettingExcavator()
-	{
-		if (Excavator.IsNew)
-		{
-			Excavator.LastInspection = null;
-		}
-
-		Excavator.SpareParts = GetSelectedSpareParts();
-	}
-
-	private void FinishSettingExcavatorPhotos()
-	{
-		if (DisplayedExcavatorPhotos.Count == 0)
-		{
-			throw new Exception("No excavator photos provided.");
-		}
-		DisplayedExcavatorPhotos[0].IsTitle = true; // the first uploaded image is the title photo
+		return checkedSpareParts;
 	}
 
 	private async Task HandleValidSubmit()
 	{
-		FinishSettingExcavator();
-
-		FinishSettingExcavatorPhotos();
-
-		foreach (var photo in DisplayedExcavatorPhotos)
+		if (Excavator.Photos.Count == 0)
 		{
-			try
-			{
-				await api.SaveExcavatorPhotoAsync(photo); // this will also save excavator because photo contains it
-			}
-			catch { /* TODO */ }
+			throw new Exception("No excavator photos provided.");
 		}
+		Excavator.Photos[0].IsTitle = true; // the first uploaded image is the title photo
 
-		navMan.NavigateTo(LinkToGoAfterValidSubmit);
+		Excavator.SpareParts = GetCheckedSpareParts();
+
+		await api.SaveExcavatorAsync(Excavator);
+		try
+		{
+		}
+		catch { /* TODO */ }
+
+		navMan.NavigateTo($"/typ-stroja/{Excavator.Type.Id}");
 	}
 
 	private async Task DeletePhotoAsync(ExcavatorPhoto excavatorPhoto)
 	{
-		if (DisplayedExcavatorPhotos.Count > 1)
+		if (Excavator.Photos.Count > 1)
 		{
 			if (excavatorPhoto.Id != 0)
 			{
+				excavatorPhoto.Excavator = null!;
 				await api.DeleteExcavatorPhotoAsync(excavatorPhoto);
 			}
 
-			DisplayedExcavatorPhotos.Remove(excavatorPhoto);
+			Excavator.Photos.Remove(excavatorPhoto);
 
 			StateHasChanged();
 		}
 	}
+
+	//private static char Urlize(char lowerChar)
+	//{
+	//	return lowerChar switch
+	//	{
+	//		' ' => '-',
+	//		'á' => 'a',
+	//		'ä' => 'a',
+	//		'č' => 'c',
+	//		'ď' => 'd',
+	//		'é' => 'e',
+	//		'í' => 'i',
+	//		'ĺ' => 'l',
+	//		'ľ' => 'l',
+	//		'ň' => 'n',
+	//		'ó' => 'o',
+	//		'ô' => 'o',
+	//		'ŕ' => 'r',
+	//		'ř' => 'r',
+	//		'š' => 's',
+	//		'ť' => 't',
+	//		'ú' => 'u',
+	//		'ý' => 'y',
+	//		'ž' => 'z',
+	//		_ => lowerChar
+	//	};
+	//}
+
+	//private static string Urlize(string str)
+	//{
+	//	var mutableLowerStr = new StringBuilder(str.ToLowerInvariant());
+
+	//	for (int i = 0; i < mutableLowerStr.Length; i++)
+	//	{
+	//		mutableLowerStr[i] = Urlize(mutableLowerStr[i]);
+	//	}
+
+	//	return mutableLowerStr.ToString();
+	//}
 }
