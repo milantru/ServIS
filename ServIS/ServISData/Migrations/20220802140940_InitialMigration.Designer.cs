@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ServISData;
 
@@ -10,9 +11,10 @@ using ServISData;
 namespace ServISData.Migrations
 {
     [DbContext(typeof(ServISDbContext))]
-    partial class ServISDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220802140940_InitialMigration")]
+    partial class InitialMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -31,7 +33,7 @@ namespace ServISData.Migrations
 
                     b.HasIndex("PropertyTypesId");
 
-                    b.ToTable("ExcavatorPropertyTypeExcavatorType", (string)null);
+                    b.ToTable("ExcavatorPropertyTypeExcavatorType");
                 });
 
             modelBuilder.Entity("ExcavatorSparePart", b =>
@@ -46,7 +48,7 @@ namespace ServISData.Migrations
 
                     b.HasIndex("SparePartsId");
 
-                    b.ToTable("ExcavatorSparePart", (string)null);
+                    b.ToTable("ExcavatorSparePart");
                 });
 
             modelBuilder.Entity("ServISData.Models.AcquiredExcavator", b =>
@@ -70,7 +72,7 @@ namespace ServISData.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AcquiredExcavators", (string)null);
+                    b.ToTable("AcquiredExcavators");
                 });
 
             modelBuilder.Entity("ServISData.Models.AdditionalEquipment", b =>
@@ -105,7 +107,7 @@ namespace ServISData.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("AdditionalEquipments", (string)null);
+                    b.ToTable("AdditionalEquipments");
                 });
 
             modelBuilder.Entity("ServISData.Models.AdditionalEquipmentPhoto", b =>
@@ -128,7 +130,7 @@ namespace ServISData.Migrations
 
                     b.HasIndex("AdditionalEquipmentId");
 
-                    b.ToTable("AdditionalEquipmentPhotos", (string)null);
+                    b.ToTable("AdditionalEquipmentPhotos");
                 });
 
             modelBuilder.Entity("ServISData.Models.AuctionBid", b =>
@@ -152,7 +154,7 @@ namespace ServISData.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AuctionBids", (string)null);
+                    b.ToTable("AuctionBids");
                 });
 
             modelBuilder.Entity("ServISData.Models.AuctionOffer", b =>
@@ -178,7 +180,7 @@ namespace ServISData.Migrations
 
                     b.HasIndex("ExcavatorId");
 
-                    b.ToTable("AuctionOffers", (string)null);
+                    b.ToTable("AuctionOffers");
                 });
 
             modelBuilder.Entity("ServISData.Models.Excavator", b =>
@@ -206,7 +208,7 @@ namespace ServISData.Migrations
 
                     b.HasIndex("TypeId");
 
-                    b.ToTable("Excavators", (string)null);
+                    b.ToTable("Excavators");
                 });
 
             modelBuilder.Entity("ServISData.Models.ExcavatorPhoto", b =>
@@ -229,7 +231,7 @@ namespace ServISData.Migrations
 
                     b.HasIndex("ExcavatorId");
 
-                    b.ToTable("ExcavatorPhotos", (string)null);
+                    b.ToTable("ExcavatorPhotos");
                 });
 
             modelBuilder.Entity("ServISData.Models.ExcavatorProperty", b =>
@@ -254,7 +256,7 @@ namespace ServISData.Migrations
 
                     b.HasIndex("PropertyTypeId");
 
-                    b.ToTable("ExcavatorProperties", (string)null);
+                    b.ToTable("ExcavatorProperties");
                 });
 
             modelBuilder.Entity("ServISData.Models.ExcavatorPropertyType", b =>
@@ -272,7 +274,7 @@ namespace ServISData.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ExcavatorPropertyTypes", (string)null);
+                    b.ToTable("ExcavatorPropertyTypes");
                 });
 
             modelBuilder.Entity("ServISData.Models.ExcavatorType", b =>
@@ -293,7 +295,7 @@ namespace ServISData.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ExcavatorTypes", (string)null);
+                    b.ToTable("ExcavatorTypes");
                 });
 
             modelBuilder.Entity("ServISData.Models.MainOffer", b =>
@@ -317,7 +319,7 @@ namespace ServISData.Migrations
 
                     b.HasIndex("ExcavatorTypeId");
 
-                    b.ToTable("MainOffers", (string)null);
+                    b.ToTable("MainOffers");
                 });
 
             modelBuilder.Entity("ServISData.Models.SparePart", b =>
@@ -336,7 +338,7 @@ namespace ServISData.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("SpareParts", (string)null);
+                    b.ToTable("SpareParts");
                 });
 
             modelBuilder.Entity("ServISData.Models.User", b =>
@@ -381,7 +383,7 @@ namespace ServISData.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("ExcavatorPropertyTypeExcavatorType", b =>

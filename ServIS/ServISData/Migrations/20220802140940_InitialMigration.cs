@@ -19,7 +19,7 @@ namespace ServISData.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    ForWhichExcavatorCategory = table.Column<string>(type: "varchar(40)", maxLength: 40, nullable: false)
+                    ExcavatorCategory = table.Column<string>(type: "varchar(40)", maxLength: 40, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Category = table.Column<string>(type: "varchar(30)", maxLength: 30, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
@@ -28,8 +28,7 @@ namespace ServISData.Migrations
                     Name = table.Column<string>(type: "varchar(80)", maxLength: 80, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Description = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Price = table.Column<decimal>(type: "decimal(11,2)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
@@ -38,94 +37,35 @@ namespace ServISData.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Excavators",
+                name: "ExcavatorPropertyTypes",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Category = table.Column<string>(type: "varchar(40)", maxLength: 40, nullable: false)
+                    Name = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Brand = table.Column<string>(type: "varchar(30)", maxLength: 30, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Model = table.Column<string>(type: "varchar(30)", maxLength: 30, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Name = table.Column<string>(type: "varchar(80)", maxLength: 80, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Description = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    IsNew = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    LastInspection = table.Column<DateTime>(type: "datetime(6)", nullable: true),
-                    Discriminator = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    HeightMm = table.Column<int>(type: "int", nullable: true),
-                    LengthWithBucketMm = table.Column<int>(type: "int", nullable: true),
-                    WidthWithBucketMm = table.Column<int>(type: "int", nullable: true),
-                    WeightKg = table.Column<int>(type: "int", nullable: true),
-                    NominalLoadCapacityKg = table.Column<int>(type: "int", nullable: true),
-                    OverloadPointKg = table.Column<int>(type: "int", nullable: true),
-                    TopSpeedKmh = table.Column<float>(type: "float", nullable: true),
-                    TopSpeedKmhSpeedVersionMin = table.Column<float>(type: "float", nullable: true),
-                    TopSpeedKmhSpeedVersionMax = table.Column<float>(type: "float", nullable: true),
-                    IncreasedBucketVolumeM3 = table.Column<float>(type: "float", nullable: true),
-                    TearingStrengthKn = table.Column<float>(type: "float", nullable: true),
-                    TractionForceKn = table.Column<float>(type: "float", nullable: true),
-                    TractionForceKnSpeedVersion = table.Column<float>(type: "float", nullable: true),
-                    LiftingForceKn = table.Column<float>(type: "float", nullable: true),
-                    ReachMm = table.Column<int>(type: "int", nullable: true),
-                    MaximumDischargeHeightMm = table.Column<int>(type: "int", nullable: true),
-                    EngineType = table.Column<string>(type: "varchar(80)", maxLength: 80, nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    RatedPowerKw = table.Column<float>(type: "float", nullable: true),
-                    DriveType = table.Column<string>(type: "varchar(30)", maxLength: 30, nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    DriveControlHydrogenerator = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    VehicleHydraulicMotor = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    VehicleHydraulicMotorOperatingPressureMpa = table.Column<float>(type: "float", nullable: true),
-                    ControlType = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    OperatingControlPressureMpa = table.Column<float>(type: "float", nullable: true),
-                    Control = table.Column<string>(type: "varchar(40)", maxLength: 40, nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    WorkEquipmentHydrogenerator = table.Column<string>(type: "varchar(30)", maxLength: 30, nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    WorkEquipmentSwitchboard = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    OperatingPressureMpa = table.Column<float>(type: "float", nullable: true),
-                    OperatingHydraulicFlowLpm = table.Column<int>(type: "int", nullable: true),
-                    BucketLeveling = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    AcousticNoisePowerDb = table.Column<int>(type: "int", nullable: true),
-                    StandardTiresMin = table.Column<float>(type: "float", nullable: true),
-                    StandardTiresMax = table.Column<float>(type: "float", nullable: true),
-                    ElectricalInstallationV = table.Column<int>(type: "int", nullable: true),
-                    OperatingWeightKg = table.Column<int>(type: "int", nullable: true),
-                    ExcavationDepthMm = table.Column<int>(type: "int", nullable: true),
-                    MaximumWidthMm = table.Column<int>(type: "int", nullable: true),
-                    Engine = table.Column<string>(type: "varchar(80)", maxLength: 80, nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    MaximumPowerKw = table.Column<float>(type: "float", nullable: true),
-                    TearingStrengthKg = table.Column<int>(type: "int", nullable: true),
-                    PenetrationForceKg = table.Column<int>(type: "int", nullable: true),
-                    HydraulicFlowLpm = table.Column<float>(type: "float", nullable: true),
-                    OperatingPressureBar = table.Column<int>(type: "int", nullable: true),
-                    TrackedLoader_OperatingWeightKg = table.Column<int>(type: "int", nullable: true),
-                    TiltingLoadKg = table.Column<int>(type: "int", nullable: true),
-                    OperatingLoadCapacityIso14397Kg = table.Column<int>(type: "int", nullable: true),
-                    StandardBucketVolumeM3 = table.Column<float>(type: "float", nullable: true),
-                    TrackedLoader_Engine = table.Column<string>(type: "varchar(80)", maxLength: 80, nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    TrackedLoader_MaximumPowerKw = table.Column<float>(type: "float", nullable: true),
-                    TrackWidthMm = table.Column<int>(type: "int", nullable: true),
-                    TrackedLoader_TractionForceKn = table.Column<float>(type: "float", nullable: true),
-                    TrackedLoader_HydraulicFlowLpm = table.Column<float>(type: "float", nullable: true),
-                    HydraulicFlowHiFlowLpm = table.Column<float>(type: "float", nullable: true),
-                    MaximumOperatingPressureBar = table.Column<int>(type: "int", nullable: true)
+                    InputType = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Excavators", x => x.Id);
+                    table.PrimaryKey("PK_ExcavatorPropertyTypes", x => x.Id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "ExcavatorTypes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Brand = table.Column<string>(type: "varchar(30)", maxLength: 30, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Category = table.Column<string>(type: "varchar(40)", maxLength: 40, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ExcavatorTypes", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -155,19 +95,18 @@ namespace ServISData.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Password = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Discriminator = table.Column<string>(type: "longtext", nullable: false)
+                    Role = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Name = table.Column<string>(type: "varchar(35)", maxLength: 35, nullable: true)
+                    Name = table.Column<string>(type: "varchar(35)", maxLength: 35, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Surname = table.Column<string>(type: "varchar(35)", maxLength: 35, nullable: true)
+                    Surname = table.Column<string>(type: "varchar(35)", maxLength: 35, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     PhoneNumber = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Email = table.Column<string>(type: "longtext", nullable: true)
+                    Email = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Residence = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    IsTemporary = table.Column<bool>(type: "tinyint(1)", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
@@ -182,7 +121,7 @@ namespace ServISData.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     AdditionalEquipmentId = table.Column<int>(type: "int", nullable: false),
-                    Photo = table.Column<byte[]>(type: "varbinary(50000)", maxLength: 50000, nullable: false),
+                    Photo = table.Column<byte[]>(type: "longblob", nullable: false),
                     IsTitle = table.Column<bool>(type: "tinyint(1)", nullable: false)
                 },
                 constraints: table =>
@@ -192,6 +131,107 @@ namespace ServISData.Migrations
                         name: "FK_AdditionalEquipmentPhotos_AdditionalEquipments_AdditionalEqu~",
                         column: x => x.AdditionalEquipmentId,
                         principalTable: "AdditionalEquipments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "ExcavatorPropertyTypeExcavatorType",
+                columns: table => new
+                {
+                    ExcavatorTypesWithThisPropertyId = table.Column<int>(type: "int", nullable: false),
+                    PropertyTypesId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ExcavatorPropertyTypeExcavatorType", x => new { x.ExcavatorTypesWithThisPropertyId, x.PropertyTypesId });
+                    table.ForeignKey(
+                        name: "FK_ExcavatorPropertyTypeExcavatorType_ExcavatorPropertyTypes_Pr~",
+                        column: x => x.PropertyTypesId,
+                        principalTable: "ExcavatorPropertyTypes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ExcavatorPropertyTypeExcavatorType_ExcavatorTypes_ExcavatorT~",
+                        column: x => x.ExcavatorTypesWithThisPropertyId,
+                        principalTable: "ExcavatorTypes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Excavators",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Name = table.Column<string>(type: "varchar(80)", maxLength: 80, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Description = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    IsForAuctionOnly = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    TypeId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Excavators", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Excavators_ExcavatorTypes_TypeId",
+                        column: x => x.TypeId,
+                        principalTable: "ExcavatorTypes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "MainOffers",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Photo = table.Column<byte[]>(type: "longblob", nullable: false),
+                    Description = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ExcavatorTypeId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MainOffers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MainOffers_ExcavatorTypes_ExcavatorTypeId",
+                        column: x => x.ExcavatorTypeId,
+                        principalTable: "ExcavatorTypes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "AcquiredExcavators",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    LastInspection = table.Column<DateOnly>(type: "date", nullable: false),
+                    ExcavatorId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AcquiredExcavators", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AcquiredExcavators_Excavators_ExcavatorId",
+                        column: x => x.ExcavatorId,
+                        principalTable: "Excavators",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AcquiredExcavators_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
@@ -228,7 +268,7 @@ namespace ServISData.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     ExcavatorId = table.Column<int>(type: "int", nullable: false),
-                    Photo = table.Column<byte[]>(type: "varbinary(50000)", maxLength: 50000, nullable: false),
+                    Photo = table.Column<byte[]>(type: "longblob", nullable: false),
                     IsTitle = table.Column<bool>(type: "tinyint(1)", nullable: false)
                 },
                 constraints: table =>
@@ -240,6 +280,34 @@ namespace ServISData.Migrations
                         principalTable: "Excavators",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "ExcavatorProperties",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Value = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    PropertyTypeId = table.Column<int>(type: "int", nullable: false),
+                    ExcavatorId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ExcavatorProperties", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ExcavatorProperties_ExcavatorPropertyTypes_PropertyTypeId",
+                        column: x => x.PropertyTypeId,
+                        principalTable: "ExcavatorPropertyTypes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ExcavatorProperties_Excavators_ExcavatorId",
+                        column: x => x.ExcavatorId,
+                        principalTable: "Excavators",
+                        principalColumn: "Id");
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -297,6 +365,16 @@ namespace ServISData.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
+                name: "IX_AcquiredExcavators_ExcavatorId",
+                table: "AcquiredExcavators",
+                column: "ExcavatorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AcquiredExcavators_UserId",
+                table: "AcquiredExcavators",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_AdditionalEquipmentPhotos_AdditionalEquipmentId",
                 table: "AdditionalEquipmentPhotos",
                 column: "AdditionalEquipmentId");
@@ -322,13 +400,41 @@ namespace ServISData.Migrations
                 column: "ExcavatorId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ExcavatorProperties_ExcavatorId",
+                table: "ExcavatorProperties",
+                column: "ExcavatorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ExcavatorProperties_PropertyTypeId",
+                table: "ExcavatorProperties",
+                column: "PropertyTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ExcavatorPropertyTypeExcavatorType_PropertyTypesId",
+                table: "ExcavatorPropertyTypeExcavatorType",
+                column: "PropertyTypesId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Excavators_TypeId",
+                table: "Excavators",
+                column: "TypeId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ExcavatorSparePart_SparePartsId",
                 table: "ExcavatorSparePart",
                 column: "SparePartsId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MainOffers_ExcavatorTypeId",
+                table: "MainOffers",
+                column: "ExcavatorTypeId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "AcquiredExcavators");
+
             migrationBuilder.DropTable(
                 name: "AdditionalEquipmentPhotos");
 
@@ -339,7 +445,16 @@ namespace ServISData.Migrations
                 name: "ExcavatorPhotos");
 
             migrationBuilder.DropTable(
+                name: "ExcavatorProperties");
+
+            migrationBuilder.DropTable(
+                name: "ExcavatorPropertyTypeExcavatorType");
+
+            migrationBuilder.DropTable(
                 name: "ExcavatorSparePart");
+
+            migrationBuilder.DropTable(
+                name: "MainOffers");
 
             migrationBuilder.DropTable(
                 name: "AdditionalEquipments");
@@ -351,10 +466,16 @@ namespace ServISData.Migrations
                 name: "Users");
 
             migrationBuilder.DropTable(
+                name: "ExcavatorPropertyTypes");
+
+            migrationBuilder.DropTable(
                 name: "SpareParts");
 
             migrationBuilder.DropTable(
                 name: "Excavators");
+
+            migrationBuilder.DropTable(
+                name: "ExcavatorTypes");
         }
     }
 }
