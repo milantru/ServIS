@@ -1,30 +1,30 @@
-﻿<div class="pos-rel">
-	<a href="/stroj/@Id">
-		<div class="card excavator-card-content">
-			<img src="@imgSrc" class="card-img-top" alt="@Title">
-			<div class="card-body" style="height: 88px;">
-				<h5 class="card-title">@Title</h5>
+﻿@if (Excavator != null)
+{
+	<div class="pos-rel">
+		<a href="/stroj/@Excavator.Id">
+			<div class="card excavator-card-content">
+				<img src="@imgSrc" class="card-img-top" alt="@Excavator.Name">
+				<div class="card-body" style="height: 88px;">
+					<h5 class="card-title">@Excavator.Name</h5>
+				</div>
 			</div>
-		</div>
-	</a>
-	@if (OnDelete.HasDelegate)
-	{
-		<AuthorizeView Roles="Administrator">
-			<button class="btn btn-danger delete-btn" onclick="@(() => OnDelete.InvokeAsync())">X</button>
-		</AuthorizeView>
-	}
-</div>
+		</a>
+		@if (OnDelete.HasDelegate)
+		{
+			<AuthorizeView Roles="Administrator">
+				<button class="btn btn-danger delete-btn" type="button" @onclick="async () => await OnDelete.InvokeAsync()">X</button>
+			</AuthorizeView>
+		}
+	</div>
+}
 
 @code {
 	private string imgSrc = null!;
 
 	[EditorRequired, Parameter]
-	public int Id { get; set; }
+	public Excavator Excavator { get; set; } = null!;
 
-	[EditorRequired, Parameter]
-	public string Title { get; set; } = null!;
-
-	[EditorRequired, Parameter]
+	[Parameter]
 	public byte[] Image { get; set; } = null!;
 
 	[Parameter]
@@ -33,6 +33,11 @@
 	protected override void OnParametersSet()
 	{
 		base.OnParametersSet();
+
+		if (Image == null)
+		{
+			Image = Excavator.Photos.First(p => p.IsTitle).Photo;
+		}
 
 		imgSrc = FileTools.GetDataUrlBase64String(Image, "images/jpeg");
 	}
