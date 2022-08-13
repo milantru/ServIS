@@ -1,0 +1,85 @@
+﻿@inject IServISApi api
+@using ServISData
+@using ServISWebApp.CssProviders
+
+@if (PropertyType != null)
+{
+	<EditForm Model="PropertyType" OnValidSubmit="HandleValidSubmitAsync">
+		<DataAnnotationsValidator />
+		<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
+
+		<label>Názov vlastnosti:</label>
+		<InputText @bind-Value="PropertyType.Name" />
+		<ValidationMessage For="@(() => PropertyType.Name)" />
+
+		<label>Typ vlastnosti:</label>
+		<InputSelect @bind-Value="PropertyType.InputType">
+			@if (InputTypes == null)
+			{
+				<p>Načítava sa...</p>
+			}
+			else
+			{
+				@foreach (var inputType in InputTypes)
+				{
+					<option value="@inputType">@inputType.GetLabel()</option>
+				}
+			}
+		</InputSelect>
+
+		<button class="btn btn-success" type="submit">Uložiť</button>
+		<button class="btn btn-secondary" type="button" @onclick="async () => await ResetAsync()">Reset</button>
+	</EditForm>
+}
+
+@code {
+	[Parameter]
+	public ExcavatorPropertyType PropertyType { get; set; } = null!;
+
+	[Parameter]
+	public EventCallback<ExcavatorPropertyType> PropertyTypeChanged { get; set; }
+
+	[Parameter]
+	public EventCallback AfterValidSubmit { get; set; }
+
+	private InputType[] InputTypes { get; set; } = null!;
+
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+
+		if (PropertyType == null)
+		{
+			throw new Exception($"Parameter '{nameof(PropertyType)}' not provided.");
+		}
+	}
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+
+		InputTypes = Enum.GetValues<InputType>()
+			.Skip(1) // we skip the 'InputType.Unset'
+			.ToArray();
+	}
+
+	private async Task ResetAsync()
+	{
+		PropertyType = new();
+
+		await PropertyTypeChanged.InvokeAsync(PropertyType);
+	}
+
+	private async Task HandleValidSubmitAsync()
+	{
+		try
+		{
+			await api.SaveExcavatorPropertyTypeAsync(PropertyType);
+		}
+		catch { /* TODO */ }
+
+		await ResetAsync();
+
+		await AfterValidSubmit.InvokeAsync();
+	}
+}
