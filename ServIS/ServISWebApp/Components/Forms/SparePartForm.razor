@@ -17,39 +17,23 @@
 		<InputText @bind-Value=SparePart.Name />
 		<ValidationMessage For=@(() => SparePart.Name) />
 
-		@if (Excavators != null && ExcavatorsChecked != null)
+		@if (AllExcavators != null && AllExcavatorsChecked != null && AllExcavators.Count == AllExcavatorsChecked.Count)
 		{
-			<table class="table">
-				<thead>
-					<tr>
-						<td>Názov:</td>
-						<td>Obsahuje diel:</td>
-					</tr>
-				</thead>
-				<tbody>
-
-					@for (int i = 0; i < Excavators.Count; i++)
-					{
-						// otherwise would i be a reference;
-						// for more see: https://stackoverflow.com/questions/64982700/how-to-use-the-array-of-checkbox-in-asp-net-core-razor
-						int iCopy = i;
-						<tr>
-							<td>
-								@Excavators[iCopy].Name
-							</td>
-							<td>
-								<input type="checkbox"
-									   checked=@ExcavatorsChecked[iCopy]
-									   @onclick=@(() => ExcavatorsChecked[iCopy] = !ExcavatorsChecked[iCopy]) />
-							</td>
-						</tr>
-					}
-				</tbody>
-			</table>
+            <ChecklistTable ItemType="Excavator"
+							Items="AllExcavators" 
+							ItemsChecked="AllExcavatorsChecked" 
+							Context="excavator" >
+				<HeaderCols>
+					<td>Názov:</td>
+				</HeaderCols>
+				<BodyCols>
+					<td>@excavator.Name</td>
+				</BodyCols>
+			</ChecklistTable>
 		}
 
 		<button class="btn btn-success" type="submit">Uložiť</button>
-		<button class="btn btn-secondary" type="reset" @onclick="@(async () => await InvokeAsync(Reset))">Reset</button>
+		<button class="btn btn-secondary" type="reset" @onclick="async () => await ResetAsync()">Reset</button>
 	</EditForm>
 }
 
@@ -63,9 +47,17 @@
     [Parameter]
     public EventCallback AfterValidSubmit { get; set; }
 
-    private List<Excavator> Excavators { get; set; } = null!;
+    private List<Excavator> AllExcavators { get; set; } = null!;
 
-    private List<bool> ExcavatorsChecked { get; set; } = null!;
+    private List<bool> AllExcavatorsChecked { get; set; } = null!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        AllExcavators = await api.GetExcavatorsAsync();
+        AllExcavatorsChecked = new bool[AllExcavators.Count].ToList();
+    }
 
     protected override void OnParametersSet()
     {
@@ -78,44 +70,51 @@
             * if we want to use two way binding (we would use @bind-SparePart=...
             * instead of SparePart=... and it thinks the parameter was not provided)
             */
-            throw new ArgumentException("SparePartForm used without a SparePart");
+            throw new ArgumentException($"Parameter '{nameof(SparePart)}' not provided.");
         }
-    }
 
-    protected override async Task OnParametersSetAsync()
-    {
-        await base.OnParametersSetAsync();
-
-        Excavators = await api.GetExcavatorsAsync();
-        if (Excavators != null)
+        if (AllExcavators != null)
         {
-            ExcavatorsChecked = new List<bool>(Excavators.Count);
-            foreach (var excavator in Excavators)
+            var excavatorIds = SparePart.Excavators.Select(e => e.Id);
+            for (int i = 0; i < AllExcavators.Count; i++)
             {
-                var excavatorHasSparePart = excavator.SpareParts.Contains(SparePart, new SparePartComparer());
-                ExcavatorsChecked.Add(excavatorHasSparePart);
+                var isSparePartInExcavator = excavatorIds.Contains(AllExcavators[i].Id);
+                AllExcavatorsChecked[i] = isSparePartInExcavator;
             }
         }
     }
 
-    private async void Reset()
+    private async Task ResetAsync()
     {
-        SparePart = new SparePart();
+        SparePart = new();
+
+        for (int i = 0; i < AllExcavatorsChecked.Count; i++)
+        {
+            AllExcavatorsChecked[i] = false;
+        }
 
         await SparePartChanged.InvokeAsync(SparePart);
     }
 
-    private async Task HandleValidSubmit()
+    private List<Excavator> GetCheckedExcavators()
     {
-        var excavatorsUsingSparePart = new List<Excavator>();
-        for (int i = 0; i < ExcavatorsChecked.Count; i++)
+        var checkedExcavators = new List<Excavator>();
+
+        for (int i = 0; i < AllExcavatorsChecked.Count; i++)
         {
-            if (ExcavatorsChecked[i])
+            if (AllExcavatorsChecked[i])
             {
-                excavatorsUsingSparePart.Add(Excavators[i]);
+                var checkedExcavator = AllExcavators[i];
+                checkedExcavators.Add(checkedExcavator);
             }
         }
-        SparePart.Excavators = excavatorsUsingSparePart;
+
+        return checkedExcavators;
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        SparePart.Excavators = GetCheckedExcavators();
 
         try
         {
@@ -123,42 +122,9 @@
         }
         catch { /* TODO */ }
 
-        Reset();
+
+        await ResetAsync();
+
         await AfterValidSubmit.InvokeAsync();
-    }
-
-    private class SparePartComparer : IEqualityComparer<SparePart>
-    {
-        public bool Equals(SparePart? sparePartLeft, SparePart? sparePartRight)
-        {
-            if (sparePartLeft == null && sparePartRight == null)
-            {
-                return true;
-            }
-            else if (sparePartLeft == null || sparePartRight == null)
-            {
-                return false;
-            }
-
-            int sparePartLeftId = sparePartLeft.Id;
-            int sparePartRightId = sparePartRight.Id;
-
-            if (sparePartLeftId == 0 && sparePartRightId == 0)
-            {
-                /*
-                 * We could compare other properties, but it still could be questionable.
-                 * Anyway, in this context this cannot happen as we are using this class to compare
-                 * already existing spare parts from db.
-                 */
-                throw new Exception("Cannot compare spare parts.");
-            }
-
-            return sparePartLeft.Id == sparePartRight.Id;
-        }
-
-        public int GetHashCode(SparePart sparePart)
-        {
-            return sparePart.GetHashCode();
-        }
     }
 }
