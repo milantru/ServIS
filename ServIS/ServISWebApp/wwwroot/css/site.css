@@ -74,3 +74,10 @@ a, .btn-link {
     right: 0;
     border-radius: 50%;
 }
+
+.edit-btn {
+    position: absolute;
+    top: -10px;
+    left: 0;
+    border-radius: 50%;
+}

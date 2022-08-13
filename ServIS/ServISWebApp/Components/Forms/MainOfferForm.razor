@@ -1,0 +1,70 @@
+﻿@using ServISWebApp.CssProviders
+@using ServISData.Interfaces
+@inject IServISApi api
+@inject IJSRuntime js
+@inject NavigationManager navMan
+
+@if (MainOffer != null)
+{
+	<EditForm EditContext="@editContext" Model="MainOffer" OnValidSubmit="HandleValidSubmit">
+		<ObjectGraphDataAnnotationsValidator />
+		<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
+
+		<InputFile OnChange="HandleInputFileChangeAsync" />
+		<div>
+			Nahraná fotka:<br />
+
+			@if (MainOffer.Photo == null)
+			{
+				<p>Nie je nahraná žiadná fotka.</p>
+			}
+			else
+			{
+				<img src="@FileTools.GetDataUrlBase64String(MainOffer.Photo, "image/jpeg")" />
+			}
+		</div>
+
+		<ExcavatorTypeSelector @bind-ExcavatorType="MainOffer.ExcavatorType"  />
+
+		<label>Popis:</label>
+		<InputTextArea @bind-Value="@MainOffer.Description" />
+		<ValidationMessage For="@(() => MainOffer.Description)" />
+
+		<button class="btn btn-success" type="submit">Uložiť</button>
+	</EditForm>
+}
+
+@code {
+	private EditContext editContext = null!;
+
+	[Parameter, EditorRequired]
+	public MainOffer MainOffer { get; set; } = null!;
+
+	private async Task HandleInputFileChangeAsync(InputFileChangeEventArgs e)
+	{
+		var uploadedFile = e.File;
+
+		if (!uploadedFile.IsValidImageFile(out string? errorMessage))
+		{
+			await js.InvokeVoidAsync("alert", errorMessage);
+			return;
+		}
+
+		var dataBytes = await uploadedFile.GetDataBytesAsync();
+		if (dataBytes == null)
+		{
+			throw new Exception("Something went wrong with uploading photo.");
+		}
+
+		MainOffer.Photo = dataBytes;
+
+		StateHasChanged();
+	}
+
+	private async Task HandleValidSubmit()
+	{
+		await api.SaveMainOfferAsync(MainOffer);
+
+		navMan.NavigateTo("/");
+	}
+}

@@ -1,41 +1,47 @@
-﻿<div class="card-main-box">
-	<div class="card-main-title card-main-title-eurocomach">
-		@Brand
-	</div>
+﻿@using ServISData.Models
+@using ServISWebApp.Shared
+@inject NavigationManager navMan
 
-	<div class="card-main-subtitle">
-		(@Category)
-	</div>
+@if (MainOffer != null)
+{
+	<div class="card-main-box pos-rel">
+		<div class="card-main-title card-main-title-eurocomach">
+			@MainOffer.ExcavatorType.Brand
+		</div>
 
-	<img class="card-main-img card-main-img-eurocomach-pas" src="@PathToImage" />
+		<div class="card-main-subtitle">
+			(@MainOffer.ExcavatorType.Category)
+		</div>
 
-	<div class="card-main-text">
-		@Description
-	</div>
+		<img class="card-main-img card-main-img-eurocomach-pas" 
+			 src="@FileTools.GetDataUrlBase64String(MainOffer.Photo, "image/jpeg")" />
 
-	<div class="card-main-button card-main-button-eurocomach">
-		<a href="@Link">Zobraziť</a>
+		<div class="card-main-text">
+			@MainOffer.Description
+		</div>
+
+		<div class="card-main-button card-main-button-eurocomach">
+			<a href="/typ-stroja/@MainOffer.ExcavatorType.Id">Zobraziť</a>
+		</div>
+
+		@if (OnDelete.HasDelegate)
+		{
+			<AuthorizeView Roles="Administrator">
+				<button class="btn btn-danger delete-btn" type="button" @onclick="async () => await OnDelete.InvokeAsync()">X</button>
+			</AuthorizeView>
+
+			<AuthorizeView Roles="Administrator">
+				<button class="btn btn-secondary edit-btn" type="button" @onclick="@(() => 
+					navMan.NavigateTo($"/admin/uprava-ponuky/{MainOffer.Id}"))">E</button>
+			</AuthorizeView>
+		}
 	</div>
-</div>
+}
 
 @code {
-	[EditorRequired]
-	[Parameter]
-	public string Brand { get; set; } = null!;
+	[Parameter, EditorRequired]
+	public MainOffer MainOffer { get; set; } = null!;
 
-	[EditorRequired]
 	[Parameter]
-	public string Category { get; set; } = null!;
-
-	[EditorRequired]
-	[Parameter]
-	public string PathToImage { get; set; } = null!;
-
-	[EditorRequired]
-	[Parameter]
-	public string Description { get; set; } = null!;
-
-	[EditorRequired]
-	[Parameter]
-	public string Link { get; set; } = null!;
+	public EventCallback OnDelete { get; set; }
 }

@@ -1,9 +1,32 @@
 ﻿@page "/"
 
+@inject IServISApi api
+
 <PageTitle>B-Servis | Domov</PageTitle>
 
-<div class="content wrap-on">
-	<MainCard Brand="Eurocomach"
+<AuthorizeView Roles="Administrator">
+	<a href="/admin/nova-ponuka">Pridať novú ponuku</a>
+</AuthorizeView>
+
+@if (MainOffers == null)
+{
+	<p>Načítava sa...</p>
+}
+else if (MainOffers.Count == 0)
+{
+	<p>Neexistujú žiadne hlavné ponuky.</p>
+}
+else
+{
+	<div class="content wrap-on">
+		@foreach (var mainOffer in MainOffers)
+		{
+			<MainCard MainOffer="@mainOffer"
+					  OnDelete="async () => await DeleteMainOfferAsync(mainOffer)" />
+		}
+	</div>
+}
+@*	<MainCard Brand="Eurocomach"
 			  Category="pásové bagre"
 			  PathToImage="images/index/pasove-bagre-eurocomach.png"
 			  Description="Naša spoločnosť B-Servis, s.r.o. je predajcom pásových bagrov Eurocomach. V našej ponuke nájdete širokú ponuku bagrov z váhou od 1 do 10 ton, vďaka čomu Vám vieme ponúknuť vhodný typ stroja pre rôzne druhy prác– od práce v interiéri až po väčšie stroje určené na zemné a stavebné práce."
@@ -27,4 +50,28 @@
 			  PathToImage="images/index/pasove-nakladace-eurocomach.png"
 			  Description="Naša spoločnosť B-Servis, s.r.o. je predajcom pásových nakladačov Eurocomach. Pásové nakladače Eurocomach sa vyznačujú svojou hybnosťou a bezpečným použitím v akomkoľvek teréne. Obsluhujúcemu personálu ponúka kabína nadštandardný komfort a výhľad, vďaka čomu sa nakladače radia k vrcholu svojej kategórie."
 			  Link="/pasove-nakladace-eurocomach" />
-</div>
+*@
+
+@code {
+	public List<MainOffer> MainOffers { get; private set; } = null!;
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+
+		var mainOffersTmp = await api.GetMainOffersAsync();
+		if (mainOffersTmp == null)
+		{
+			throw new Exception("Error retrieving main offers.");
+		}
+		MainOffers = mainOffersTmp;
+	}
+
+	private async Task DeleteMainOfferAsync(MainOffer mainOffer)
+	{
+		await api.DeleteMainOfferAsync(mainOffer);
+		MainOffers.Remove(mainOffer);
+
+		StateHasChanged();
+	}
+}

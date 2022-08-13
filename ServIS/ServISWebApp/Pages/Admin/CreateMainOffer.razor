@@ -1,0 +1,40 @@
+﻿@page "/admin/nova-ponuka"
+@page "/admin/uprava-ponuky/{MainOfferId:int}"
+
+@attribute [Authorize(Roles = "Administrator")]
+@inject IServISApi api
+
+@if (MainOffer == null)
+{
+	<p>Načítava sa...</p>
+}
+else
+{
+	<MainOfferForm MainOffer="MainOffer" />
+}
+
+@code {
+	[Parameter]
+	public int? MainOfferId { get; set; } = null!;
+
+	public MainOffer MainOffer { get; private set; } = null!;
+
+	protected override async Task OnParametersSetAsync()
+	{
+		await base.OnParametersSetAsync();
+
+		if (MainOfferId.HasValue)
+		{
+			var mainOfferTmp = await api.GetMainOfferAsync(MainOfferId.Value);
+			if (mainOfferTmp == null)
+			{
+				throw new Exception($"Main offer with id {mainOfferTmp} was not found.");
+			}
+			MainOffer = mainOfferTmp;
+		}
+		else
+		{
+			MainOffer = new();
+		}
+	}
+}
