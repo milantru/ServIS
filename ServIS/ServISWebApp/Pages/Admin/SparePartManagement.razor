@@ -1,16 +1,35 @@
-﻿<h3>Správa náhradných dielov</h3>
+﻿@inject IServISApi api
 
-<SparePartForm @bind-SparePart=SelectedSparePart AfterValidSubmit="ReloadArticlesAsync" />
+<h3>Správa náhradných dielov</h3>
 
-<SparePartsLister @ref=SparePartsLister @bind-SelectedSparePart=SelectedSparePart />
+<SparePartForm @bind-SparePart="SelectedSparePart" AfterValidSubmit="async () => await ReloadSparePartsAsync()" />
+
+<ItemsTableLister ItemType="SparePart"
+				  @ref="sparePartsLister"
+				  @bind-SelectedItem="SelectedSparePart"
+				  Title="Zoznam náhradných dielov"
+				  Context="sp"
+				  GetItemsAsync="async (int numberOfSpareParts, int startIndex) =>
+									await api.GetSparePartsAsync(numberOfSpareParts, startIndex)"
+				  GetItemsTotalCountAsync="async () => await api.GetSparePartsCountAsync()"
+				  DeleteItemAsync="async (sparePart) => await api.DeleteSparePartAsync(sparePart)" >
+	<HeadCols>
+		<th>Katalógové číslo</th>
+		<th>Názov</th>
+	</HeadCols>
+	<BodyCols>
+		<td>@sp.CatalogNumber</td>
+		<td>@sp.Name</td>
+	</BodyCols>
+</ItemsTableLister>
 
 @code {
-	public SparePart SelectedSparePart { get; private set; } = new SparePart();
+	private ItemsTableLister<SparePart> sparePartsLister = null!;
 
-	private SparePartsLister SparePartsLister { get; set; } = null!;
+	public SparePart SelectedSparePart { get; private set; } = new();
 
-	private async Task ReloadArticlesAsync()
+	public async Task ReloadSparePartsAsync()
 	{
-		await SparePartsLister.ReloadArticlesAsync();
+		await sparePartsLister.ReloadItemsAsync();
 	}
 }
