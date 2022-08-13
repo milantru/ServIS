@@ -1,0 +1,128 @@
+﻿@using ServISData
+@using ServISWebApp.CssProviders
+@inject IServISApi api
+
+<h3>Typy strojov- vytvorenie nového záznamu</h3>
+
+@if (ExcavatorType != null)
+{
+	<EditForm Model="ExcavatorType" OnValidSubmit="HandleValidSubmit">
+		<ObjectGraphDataAnnotationsValidator />
+		<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
+
+		<label>Značka:</label>
+		<InputText @bind-Value="ExcavatorType.Brand" />
+		<ValidationMessage For="@(() => ExcavatorType.Brand)" />
+
+		<label>Kategória:</label>
+		<InputText @bind-Value="ExcavatorType.Category" />
+		<ValidationMessage For="@(() => ExcavatorType.Category)" />
+
+		@if (AllPropertyTypes != null && AllPropertyTypesChecked != null && AllPropertyTypes.Count == AllPropertyTypesChecked.Count)
+		{
+			<ChecklistTable ItemType="ExcavatorPropertyType"
+							Items="AllPropertyTypes" 
+							ItemsChecked="AllPropertyTypesChecked" 
+							Context="propertyType" >
+				<HeaderCols>
+					<th>Názov vlastnosti</th>
+					<th>Typ vlastnosti</th>
+				</HeaderCols>
+				<BodyCols>
+					<td>@propertyType.Name</td>
+					<td>@propertyType.InputType.GetLabel()</td>
+				</BodyCols>
+			</ChecklistTable>
+		}
+
+		<button class="btn btn-success" type="submit">Uložiť</button>
+		<button class="btn btn-secondary" type="button" @onclick="async () => await ResetAsync()">Reset</button>
+	</EditForm>	
+}
+
+@code {
+	[Parameter]
+	public ExcavatorType ExcavatorType { get; set; } = null!;
+
+	[Parameter]
+	public EventCallback<ExcavatorType> ExcavatorTypeChanged { get; set; }
+
+	[Parameter]
+	public EventCallback AfterValidSubmit { get; set; }
+
+	private List<ExcavatorPropertyType> AllPropertyTypes { get; set; } = null!;
+	private List<bool> AllPropertyTypesChecked { get; set; } = null!;
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+
+		AllPropertyTypes = await api.GetExcavatorPropertyTypesAsync();
+		AllPropertyTypesChecked = new bool[AllPropertyTypes.Count].ToList();
+	}
+
+	protected override void OnParametersSet()
+	{
+		base.OnParametersSet();
+
+		if (ExcavatorType == null)
+		{
+			throw new Exception($"Parameter '{nameof(ExcavatorType)}' not provided.");
+		}
+
+		if (AllPropertyTypes != null)
+		{
+			var propertyTypesIds = ExcavatorType.PropertyTypes.Select(pt => pt.Id);
+			for (int i = 0; i < AllPropertyTypes.Count; i++)
+			{
+				var excavatorTypeHasProperty = propertyTypesIds.Contains(AllPropertyTypes[i].Id);
+				AllPropertyTypesChecked[i] = excavatorTypeHasProperty;
+			}
+		}
+	}
+
+	private async Task ResetAsync()
+	{
+		ExcavatorType = new();
+
+		for (int i = 0; i < AllPropertyTypesChecked.Count; i++)
+		{
+			AllPropertyTypesChecked[i] = false;
+		}
+
+		await ExcavatorTypeChanged.InvokeAsync(ExcavatorType);
+	}
+
+	private List<ExcavatorPropertyType> GetCheckedPropertyTypes()
+	{
+		var checkedPropertyTypes = new List<ExcavatorPropertyType>();
+
+		for (int i = 0; i < AllPropertyTypesChecked.Count; i++)
+		{
+			if (AllPropertyTypesChecked[i])
+			{
+				var checkedPropertyType = AllPropertyTypes[i];
+				checkedPropertyTypes.Add(checkedPropertyType);
+			}
+		}
+
+		return checkedPropertyTypes;
+	}
+
+	private async Task HandleValidSubmit()
+	{
+		ExcavatorType.PropertyTypes = GetCheckedPropertyTypes();
+
+		// await ExcavatorTypeChanged.InvokeAsync();
+
+		try
+		{
+			await api.SaveExcavatorTypeAsync(ExcavatorType);
+		}
+		catch { /* TODO */ }
+
+		await ResetAsync();
+		
+		await AfterValidSubmit.InvokeAsync();
+	}
+}
