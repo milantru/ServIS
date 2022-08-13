@@ -9,34 +9,19 @@
 		<ObjectGraphDataAnnotationsValidator />
 		<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
 
-		<InputFile OnChange="HandleInputFileChange" multiple required="@(@AdditionalEquipment.Id == 0 ? true : false)" />
-		<div>
-			Nahrané fotky (max. veľkosť fotky je 50kB):<br />
-
-			@if (DisplayedAdditionalEquipmentPhotos.Count == 0)
-			{
-				<p>Nie sú nahrané žiadne fotky.</p>
-			}
-			else
-			{
-				<div class="d-flex flex-wrap">
-					@foreach (var photo in DisplayedAdditionalEquipmentPhotos)
-					{
-						<div class="pos-rel">
-							<img src="@FileTools.GetDataUrlBase64String(photo.Photo, "image/jpeg")" />
-							<button class="btn btn-danger delete-btn" type="button" @onclick="(() => DeleteAdditionalEquipment(photo))">X</button>
-						</div>
-					}
-				</div>
-			}
-		</div>
+		<InputItemPhotos PhotoType="AdditionalEquipmentPhoto"
+						 @bind-Photos="AdditionalEquipment.Photos"
+						 CreatePhoto="@((dataBytes) => 
+							new AdditionalEquipmentPhoto { Photo = dataBytes, AdditionalEquipment = AdditionalEquipment })"
+						 DeletePhotoAsync="@(async (photo) => await DeleteAdditionalEquipmentAsync(photo))"
+						 IsRequired="@(AdditionalEquipment.Id == 0)" />
 
 		<br />
 		<br />
 
 		<label>Pre akú kategóriu strojov (pásové bagre, šmykom riadené nakladače...):</label>
-		<InputText @bind-Value="@AdditionalEquipment.ForWhichExcavatorCategory" />
-		<ValidationMessage For="@(() => AdditionalEquipment.ForWhichExcavatorCategory)" />
+		<InputText @bind-Value="@AdditionalEquipment.ExcavatorCategory" />
+		<ValidationMessage For="@(() => AdditionalEquipment.ExcavatorCategory)" />
 
 		<label>Kategória:</label>
 		<InputText @bind-Value="@AdditionalEquipment.Category" />
@@ -70,7 +55,7 @@
 
 		if (AdditionalEquipment.Id != 0)
 		{
-			DisplayedAdditionalEquipmentPhotos = await api.GetAdditionalEquipmentPhotosAsync(AdditionalEquipment.Id, false);
+			DisplayedAdditionalEquipmentPhotos = await api.GetAdditionalEquipmentPhotosAsync(AdditionalEquipment.Id);
 
 			foreach (var photo in DisplayedAdditionalEquipmentPhotos)
 			{
@@ -121,8 +106,6 @@
 		}
 		DisplayedAdditionalEquipmentPhotos[0].IsTitle = true;
 
-		AdditionalEquipment.Price = 0; // tmp line; TODO: delete this line when price row will be deleted from db
-
 		foreach (var photo in DisplayedAdditionalEquipmentPhotos)
 		{
 			await api.SaveAdditionalEquipmentPhotoAsync(photo); // this will also save additional equipment because photo contains it
@@ -131,7 +114,7 @@
 		navMan.NavigateTo("/pridavne-zariadenia");
 	}
 
-	private async Task DeleteAdditionalEquipment(AdditionalEquipmentPhoto additionalEquipmentPhoto)
+	private async Task DeleteAdditionalEquipmentAsync(AdditionalEquipmentPhoto additionalEquipmentPhoto)
 	{
 		if (DisplayedAdditionalEquipmentPhotos.Count > 1)
 		{
