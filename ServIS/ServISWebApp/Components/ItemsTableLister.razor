@@ -1,0 +1,127 @@
+﻿@typeparam ItemType where ItemType : class, new()
+
+@if (Title != null)
+{
+	<h3>@Title</h3>
+}
+
+<table class="table table-sm">
+	@if (HeadCols != null)
+	{
+		<thead>
+			<tr>
+				@HeadCols
+
+				<th></th> @*This column is here for the Select and Delete buttons*@
+			</tr>
+		</thead>
+	}
+	<tbody>
+		<Virtualize @ref="itemsContainer" ItemsProvider="LoadItemsAsync" Context="item" OverscanCount="3" >
+			<tr class="@GetRowCss(item)">
+				@if (BodyCols != null)
+				{
+					@BodyCols(item)
+				}
+
+				<td class="input-group">
+					<button class="btn btn-primary" type="button" @onclick="() => SelectAsync(item)">Vyber</button>
+
+					<button class="btn btn-danger" type="button" @onclick="() => DeleteAsync(item)">Vymaž</button>
+				</td>
+			</tr>
+		</Virtualize>
+	</tbody>
+</table>
+
+@code {
+	private Virtualize<ItemType> itemsContainer = null!;
+
+	[Parameter, EditorRequired]
+	public Func<int, int, Task<List<ItemType>>> GetItemsAsync { get; set; } = null!;
+
+	[Parameter, EditorRequired]
+	public Func<Task<int>> GetItemsTotalCountAsync { get; set; } = null!;
+
+	[Parameter, EditorRequired]
+	public Func<ItemType, Task> DeleteItemAsync { get; set; } = null!;
+
+	[Parameter]
+	public ItemType SelectedItem { get; set; } = default(ItemType)!;
+
+	[Parameter]
+	public EventCallback<ItemType> SelectedItemChanged { get; set; }
+
+	[Parameter]
+	public string Title { get; set; } = null!;
+
+	[Parameter]
+	public RenderFragment HeadCols { get; set; } = null!;
+
+	[Parameter]
+	public RenderFragment<ItemType> BodyCols { get; set; } = null!;
+
+	public int ItemsTotalCount { get; private set; }
+
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+
+		if (SelectedItem == null)
+		{// this null check is here because we want to use two-way binding and thus cannot use EditorRequired
+			throw new Exception($"Parameter '{nameof(SelectedItem)}' not provided.");
+		}
+	}
+
+	public async Task SelectAsync(ItemType item)
+	{
+		SelectedItem = item;
+		await SelectedItemChanged.InvokeAsync(item);
+	}
+
+	public async Task DeleteAsync(ItemType item)
+	{
+		if (SelectedItem == item)
+		{
+			SelectedItem = new ItemType();
+			await SelectedItemChanged.InvokeAsync(SelectedItem);
+		}
+
+		await DeleteItemAsync(item);
+
+		await ReloadItemsAsync();
+	}
+
+	public async Task ReloadItemsAsync()
+	{
+		await itemsContainer.RefreshDataAsync();
+	}
+
+	private async ValueTask<ItemsProviderResult<ItemType>> LoadItemsAsync(ItemsProviderRequest request)
+	{
+		if (ItemsTotalCount == 0)
+		{
+			ItemsTotalCount = await GetItemsTotalCountAsync();
+		}
+		if (ItemsTotalCount == 0)
+		{// in case there is no spare part in the database
+			return new ItemsProviderResult<ItemType>();
+		}
+
+		int itemsDisplayedCount = Math.Min(request.Count, ItemsTotalCount - request.StartIndex);
+
+		var items = await GetItemsAsync(itemsDisplayedCount, request.StartIndex);
+
+		return new ItemsProviderResult<ItemType>(items, ItemsTotalCount);
+	}
+
+	private string GetRowCss(ItemType item)
+	{
+		if (SelectedItem == item)
+		{
+			return "bg-info";
+		}
+
+		return "";
+	}
+}
