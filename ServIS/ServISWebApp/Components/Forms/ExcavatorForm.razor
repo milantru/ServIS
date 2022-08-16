@@ -72,7 +72,7 @@
 
 		<br />
 
-		<ExcavatorTypeSelector @bind-ExcavatorType="Excavator.Type" />
+		<ExcavatorTypeSelector @bind-ExcavatorType="Excavator.Type" OnSelect="UpdateExcavatorProperties" />
 
 		<br />
 
@@ -221,42 +221,15 @@
 		}
 	}
 
-	//private static char Urlize(char lowerChar)
-	//{
-	//	return lowerChar switch
-	//	{
-	//		' ' => '-',
-	//		'á' => 'a',
-	//		'ä' => 'a',
-	//		'č' => 'c',
-	//		'ď' => 'd',
-	//		'é' => 'e',
-	//		'í' => 'i',
-	//		'ĺ' => 'l',
-	//		'ľ' => 'l',
-	//		'ň' => 'n',
-	//		'ó' => 'o',
-	//		'ô' => 'o',
-	//		'ŕ' => 'r',
-	//		'ř' => 'r',
-	//		'š' => 's',
-	//		'ť' => 't',
-	//		'ú' => 'u',
-	//		'ý' => 'y',
-	//		'ž' => 'z',
-	//		_ => lowerChar
-	//	};
-	//}
-
-	//private static string Urlize(string str)
-	//{
-	//	var mutableLowerStr = new StringBuilder(str.ToLowerInvariant());
-
-	//	for (int i = 0; i < mutableLowerStr.Length; i++)
-	//	{
-	//		mutableLowerStr[i] = Urlize(mutableLowerStr[i]);
-	//	}
-
-	//	return mutableLowerStr.ToString();
-	//}
+	private void UpdateExcavatorProperties()
+	{
+		Excavator.Properties.Clear();
+		foreach (var propertyType in Excavator.Type.PropertyTypes)
+		{
+			Excavator.Properties.Add(new ExcavatorProperty
+				{
+					PropertyType = propertyType,
+				});
+		}
+	}
 }

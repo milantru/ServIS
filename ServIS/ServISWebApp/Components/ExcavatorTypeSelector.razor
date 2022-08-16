@@ -39,6 +39,9 @@ else
 	[Parameter]
 	public EventCallback<ExcavatorType> ExcavatorTypeChanged { get; set; }
 
+	[Parameter]
+	public EventCallback OnSelect { get; set; }
+
 	private List<ExcavatorType> AllExcavatorTypes { get; set; } = null!;
 
 	protected override void OnInitialized()
@@ -60,7 +63,16 @@ else
 
 	private async Task UpdateExcavatorType(int excavatorTypeId)
 	{
-		ExcavatorType = AllExcavatorTypes.FirstOrDefault(t => t.Id == excavatorTypeId)!;
-		await ExcavatorTypeChanged.InvokeAsync(ExcavatorType);
+		var excavatorTypeTmp = AllExcavatorTypes.FirstOrDefault(t => t.Id == excavatorTypeId)!;
+		if (excavatorTypeTmp != null)
+		{
+			ExcavatorType = excavatorTypeTmp;
+			await ExcavatorTypeChanged.InvokeAsync(ExcavatorType);
+
+			if (OnSelect.HasDelegate)
+			{
+				await OnSelect.InvokeAsync();
+			}
+		}
 	}
 }

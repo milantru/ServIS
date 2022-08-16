@@ -5,8 +5,6 @@ namespace ServISData.Models
 {
 	public class Excavator : IItem
 	{
-		private ExcavatorType _type = new();
-
 		public int Id { get; set; }
 
 		[Required(ErrorMessage = "Toto pole je povinné."), StringLength(80, ErrorMessage = "Max {1} znakov.")]
@@ -21,26 +19,7 @@ namespace ServISData.Models
 		public IList<ExcavatorPhoto> Photos { get; set; } = new List<ExcavatorPhoto>();
 
 		[Required, ValidateComplexType]
-		public ExcavatorType Type
-		{
-			get => _type;
-			set
-			{
-				_type = value!;
-
-				if (_type != null)
-				{
-					Properties.Clear();
-					foreach (var propertyType in _type.PropertyTypes)
-					{
-						Properties.Add(new ExcavatorProperty
-						{
-							PropertyType = propertyType,
-						});
-					}
-				}
-			}
-		}
+		public ExcavatorType Type { get; set; } = new();
 
 		public IList<ExcavatorProperty> Properties { get; set; } = new List<ExcavatorProperty>();
 
