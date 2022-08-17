@@ -458,7 +458,7 @@ namespace ServISData
 				orderedQuery = orderedQuery.Take((int)numberOfExcavators);
 			}
 
-			return await orderedQuery.ToListAsync();
+			return await orderedQuery.AsNoTracking().ToListAsync();
 		}
 
 		public async Task<Excavator?> GetExcavatorAsync(int id)
@@ -471,6 +471,7 @@ namespace ServISData
 				.ThenInclude(ep => ep.PropertyType)
 				.Include(e => e.Type)
 				.Include(e =>e.SpareParts)
+				.AsNoTracking()
 				.FirstOrDefaultAsync(e => e.Id == id);
 		}
 
@@ -499,6 +500,7 @@ namespace ServISData
 
 			return await context.ExcavatorPhotos
 				.Where(ep => ep.Excavator.Id == excavatorId)
+				.AsNoTracking()
 				.ToListAsync();
 		}
 
@@ -525,7 +527,7 @@ namespace ServISData
 				query = query.Take(numberOfExcavatorTypes.Value);
 			}
 
-			return await query.ToListAsync();
+			return await query.AsNoTracking().ToListAsync();
 		}
 
 		public async Task<int> GetExcavatorTypesCountAsync()
@@ -550,7 +552,7 @@ namespace ServISData
 				query = query.Take(numberOfExcavatorPropertyTypes.Value);
 			}
 
-			return await query.ToListAsync();
+			return await query.AsNoTracking().ToListAsync();
 		}
 
 		public async Task<int> GetExcavatorPropertyTypesCountAsync()
@@ -564,7 +566,9 @@ namespace ServISData
 		{
 			using var context = factory.CreateDbContext();
 
-			return await context.ExcavatorTypes.FirstOrDefaultAsync(et => et.Id == id);
+			return await context.ExcavatorTypes
+				.AsNoTracking()
+				.FirstOrDefaultAsync(et => et.Id == id);
 		}
 
 		public async Task<ExcavatorPhoto?> GetExcavatorTitlePhotoAsync(int excavatorId)
@@ -574,6 +578,7 @@ namespace ServISData
 			return await context.ExcavatorPhotos
 				.Include(ep => ep.Excavator)
 				.Where(ep => ep.Excavator.Id == excavatorId)
+				.AsNoTracking()
 				.FirstOrDefaultAsync(ep => ep.IsTitle);
 		}
 
@@ -593,7 +598,7 @@ namespace ServISData
 				query = query.Take(numberOfSpareParts.Value);
 			}
 
-			return await query.ToListAsync();
+			return await query.AsNoTracking().ToListAsync();
 		}
 
 		public async Task<List<SparePart>> GetSparePartsAsync(int excavatorId)
@@ -603,6 +608,7 @@ namespace ServISData
 			return await context.SpareParts
 				.Include(sp => sp.Excavators)
 				.Where(sp => sp.Excavators.Any(e => e.Id == excavatorId))
+				.AsNoTracking()
 				.ToListAsync();
 		}
 
@@ -619,6 +625,7 @@ namespace ServISData
 
 			return await context.SpareParts
 				.Include(sp => sp.Excavators)
+				.AsNoTracking()
 				.FirstOrDefaultAsync(sp => sp.Id == id);
 		}
 
@@ -629,6 +636,7 @@ namespace ServISData
 
 			return await context.MainOffers
 				.Include(mo => mo.ExcavatorType)
+				.AsNoTracking()
 				.ToListAsync();
 		}
 
@@ -638,6 +646,7 @@ namespace ServISData
 
 			return await context.MainOffers
 				.Include(mo => mo.ExcavatorType)
+				.AsNoTracking()
 				.FirstOrDefaultAsync(mo => mo.Id == id);
 		}
 
@@ -665,7 +674,9 @@ namespace ServISData
 				orderedQuery = orderedQuery.Take(numberOfAdditionalEquipments.Value);
 			}
 
-			return await orderedQuery.ToListAsync();
+			return await orderedQuery
+				.AsNoTracking()
+				.ToListAsync();
 		}
 
 		public async Task<int> GetAdditionalEquipmentsCountAsync()
@@ -680,6 +691,7 @@ namespace ServISData
 			using var context = factory.CreateDbContext();
 
 			return await context.AdditionalEquipments
+				.AsNoTracking()
 				.FirstOrDefaultAsync(ae => ae.Id == id);
 		}
 
@@ -689,6 +701,7 @@ namespace ServISData
 
 			return await context.AdditionalEquipmentPhotos
 				.Where(aep => aep.AdditionalEquipment.Id == additionalEquipmentId)
+				.AsNoTracking()
 				.ToListAsync();
 		}
 
@@ -706,6 +719,7 @@ namespace ServISData
 			return await context.AdditionalEquipmentPhotos
 				.Include(aep => aep.AdditionalEquipment)
 				.Where(aep => aep.AdditionalEquipment.Id == additionalEquipmentId)
+				.AsNoTracking()
 				.FirstOrDefaultAsync(aep => aep.IsTitle);
 		}
 
@@ -715,6 +729,7 @@ namespace ServISData
 			using var context = factory.CreateDbContext();
 
 			return await context.Users
+				.AsNoTracking()
 				.FirstOrDefaultAsync(c => c.Id == id);
 		}
 
@@ -723,6 +738,7 @@ namespace ServISData
 			using var context = factory.CreateDbContext();
 
 			return await context.Users
+				.AsNoTracking()
 				.FirstOrDefaultAsync(c => c.Username == username);
 		}
 
@@ -741,7 +757,7 @@ namespace ServISData
 				query = query.Take(numberOfAuctionOffers.Value);
 			}
 
-			return await query.ToListAsync();
+			return await query.AsNoTracking().ToListAsync();
 		}
 
 		public async Task<int> GetAuctionOffersCountAsync()
@@ -757,6 +773,7 @@ namespace ServISData
 
 			return await context.AuctionOffers
 				.Include(ao => ao.Excavator)
+				.AsNoTracking()
 				.FirstOrDefaultAsync(ao => ao.Id == id);
 		}
 
@@ -768,6 +785,7 @@ namespace ServISData
 				.Include(ab => ab.User)
 				.Include(ab => ab.AuctionOffer)
 				.Where(ab => ab.AuctionOffer.Id == auctionOfferId)
+				.AsNoTracking()
 				.ToListAsync();
 		}
 
@@ -785,6 +803,7 @@ namespace ServISData
 			return await context.AuctionBids
 				.Include(ab => ab.User)
 				.Include(ab => ab.AuctionOffer)
+				.AsNoTracking()
 				.FirstOrDefaultAsync(ab => ab.Id == id);
 		}
 
