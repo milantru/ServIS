@@ -470,7 +470,7 @@ namespace ServISData
 				.Include(e => e.Properties)
 				.ThenInclude(ep => ep.PropertyType)
 				.Include(e => e.Type)
-				.Include(e =>e.SpareParts)
+				.Include(e => e.SpareParts)
 				.AsNoTracking()
 				.FirstOrDefaultAsync(e => e.Id == id);
 		}
@@ -520,6 +520,7 @@ namespace ServISData
 
 			var query = context.ExcavatorTypes
 				.Include(et => et.PropertyTypes)
+				.Include(et => et.ExcavatorsOfThisType)
 				.Skip(startIndex ?? 0);
 
 			if (numberOfExcavatorTypes.HasValue)
@@ -545,6 +546,7 @@ namespace ServISData
 			using var context = factory.CreateDbContext();
 
 			var query = context.ExcavatorPropertyTypes
+				.Include(ept => ept.ExcavatorTypesWithThisProperty)
 				.Skip(startIndex ?? 0);
 
 			if (numberOfExcavatorPropertyTypes.HasValue)

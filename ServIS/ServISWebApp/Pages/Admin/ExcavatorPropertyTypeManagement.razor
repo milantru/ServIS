@@ -17,10 +17,12 @@
 	<HeadCols>
 		<th>Názov</th>
 		<th>Typ vlastnosti</th>
+		<th>Počet typov strojov s touto vlastnosťou</th>
 	</HeadCols>
 	<BodyCols>
 		<td>@ept.Name</td>
 		<td>@ept.InputType.GetLabel()</td>
+		<td>@ept.ExcavatorTypesWithThisProperty.Count</td>
 	</BodyCols>
 </ItemsTableLister>
 
