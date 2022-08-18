@@ -156,6 +156,8 @@ namespace ServISData
 
 			if (excavatorPropertyType.Id == 0)
 			{
+				context.AttachRange(excavatorPropertyType.ExcavatorTypesWithThisProperty);
+
 				context.Add(excavatorPropertyType);
 			}
 			else
