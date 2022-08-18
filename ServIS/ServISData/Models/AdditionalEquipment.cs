@@ -24,6 +24,6 @@ namespace ServISData.Models
 		public string Description { get; set; } = "";
 
 		// TODO: Custom attr (NotNullNorEmpty)
-		public IList<AdditionalEquipmentPhoto> Photos { get; set; } = new List<AdditionalEquipmentPhoto>();
+		public IList<AdditionalEquipmentPhoto> Photos { get; set; } = null!;
 	}
 }

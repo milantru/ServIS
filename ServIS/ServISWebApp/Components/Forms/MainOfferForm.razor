@@ -40,6 +40,16 @@
 	[Parameter, EditorRequired]
 	public MainOffer MainOffer { get; set; } = null!;
 
+	protected override void OnParametersSet()
+	{
+		base.OnParametersSet();
+
+		if (MainOffer.Id == 0 && MainOffer.ExcavatorType == null)
+		{
+			MainOffer.ExcavatorType = new();
+		}
+	}
+
 	private async Task HandleInputFileChangeAsync(InputFileChangeEventArgs e)
 	{
 		var uploadedFile = e.File;

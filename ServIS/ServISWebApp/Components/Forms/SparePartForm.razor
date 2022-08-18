@@ -73,6 +73,11 @@
             throw new ArgumentException($"Parameter '{nameof(SparePart)}' not provided.");
         }
 
+        if (SparePart.Id == 0 && SparePart.Excavators == null)
+        {
+            SparePart.Excavators = new List<Excavator>();
+        }
+
         if (AllExcavators != null)
         {
             var excavatorIds = SparePart.Excavators.Select(e => e.Id);

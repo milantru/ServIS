@@ -18,7 +18,7 @@ namespace ServISData.Models
 		// TODO: Custom attribute NotUnset
 		public InputType InputType { get; set; } = InputType.Unset;
 
-		public IList<ExcavatorType> ExcavatorTypesWithThisProperty { get; set; } = new List<ExcavatorType>()!;
+		public IList<ExcavatorType> ExcavatorTypesWithThisProperty { get; set; } = null!;
 
 		//public IList<SpecificExcavatorProperty> SpecificExcavatorPropertiesWithThisType { get; set; } = null!;
 	}

@@ -138,16 +138,6 @@
 	private List<SparePart> AllSpareParts { get; set; } = null!;
 	private List<bool> AllSparePartsChecked { get; set; } = null!;
 
-	protected override void OnInitialized()
-	{
-		base.OnInitialized();
-
-		if (Excavator == null)
-		{
-			throw new Exception($"Parameter '{nameof(Excavator)}' not provided.");
-		}
-	}
-
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
@@ -159,6 +149,23 @@
 	protected override void OnParametersSet()
 	{
 		base.OnParametersSet();
+
+		if (Excavator == null)
+		{
+			throw new Exception($"Parameter '{nameof(Excavator)}' not provided.");
+		}
+
+		if (Excavator.Id == 0 && 
+			Excavator.Photos == null && 
+			Excavator.Type == null && 
+			Excavator.Properties == null && 
+			Excavator.SpareParts == null)
+		{
+			Excavator.Photos = new List<ExcavatorPhoto>();
+			Excavator.Type = new ExcavatorType();
+			Excavator.Properties = new List<ExcavatorProperty>();
+			Excavator.SpareParts = new List<SparePart>();
+		}
 
 		if (AllSpareParts != null)
 		{
@@ -196,9 +203,9 @@
 
 		Excavator.SpareParts = GetCheckedSpareParts();
 
-		await api.SaveExcavatorAsync(Excavator);
 		try
 		{
+			await api.SaveExcavatorAsync(Excavator);
 		}
 		catch { /* TODO */ }
 

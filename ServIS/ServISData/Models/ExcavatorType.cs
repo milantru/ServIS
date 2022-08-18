@@ -18,8 +18,8 @@ namespace ServISData.Models
 		[Required(ErrorMessage = "Toto pole je povinné."), StringLength(40, ErrorMessage = "Max {1} znakov.")]
 		public string Category { get; set; } = null!;
 
-		public IList<ExcavatorPropertyType> PropertyTypes { get; set; } = new List<ExcavatorPropertyType>();
+		public IList<ExcavatorPropertyType> PropertyTypes { get; set; } = null!;
 
-		public IList<Excavator> ExcavatorsOfThisType { get; set; } = new List<Excavator>();
+		public IList<Excavator> ExcavatorsOfThisType { get; set; } = null!;
 	}
 }

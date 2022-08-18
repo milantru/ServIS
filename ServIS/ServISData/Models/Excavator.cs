@@ -16,17 +16,17 @@ namespace ServISData.Models
 		public bool IsForAuctionOnly { get; set; }
 
 		// TODO: Custom attr (NotNullNorEmpty)
-		public IList<ExcavatorPhoto> Photos { get; set; } = new List<ExcavatorPhoto>();
+		public IList<ExcavatorPhoto> Photos { get; set; } = null!;
 
 		[Required, ValidateComplexType]
-		public ExcavatorType Type { get; set; } = new();
+		public ExcavatorType Type { get; set; } = null!;
 
-		public IList<ExcavatorProperty> Properties { get; set; } = new List<ExcavatorProperty>();
+		public IList<ExcavatorProperty> Properties { get; set; } = null!;
 
 		//public IList<AcquiredExcavator> AcquiredExcavators { get; set; } = null!;
 
 		//public IList<AuctionOffer> AuctionOffers { get; set; } = null!;
 
-		public IList<SparePart> SpareParts { get; set; } = new List<SparePart>();
+		public IList<SparePart> SpareParts { get; set; } = null!;
 	}
 }

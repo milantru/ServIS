@@ -14,7 +14,7 @@ namespace ServISData.Models
 		public int Id { get; set; }
 
 		[Required, ValidateComplexType]
-		public ExcavatorType ExcavatorType { get; set; } = new();
+		public ExcavatorType ExcavatorType { get; set; } = null!;
 
 		[Required] // TODO: maybe better attributes
 		public byte[] Photo { get; set; } = null!;

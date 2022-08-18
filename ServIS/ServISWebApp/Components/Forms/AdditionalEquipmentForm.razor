@@ -49,6 +49,16 @@
 
 	private List<AdditionalEquipmentPhoto> DisplayedAdditionalEquipmentPhotos { get; set; } = null!;
 
+	protected override void OnParametersSet()
+	{
+		base.OnParametersSet();
+
+		if (AdditionalEquipment.Id == 0 && AdditionalEquipment.Photos == null)
+		{
+			AdditionalEquipment.Photos = new List<AdditionalEquipmentPhoto>();
+		}
+	}
+
 	protected override async Task OnParametersSetAsync()
 	{
 		await base.OnParametersSetAsync();

@@ -70,9 +70,20 @@
 			throw new Exception($"Parameter '{nameof(ExcavatorType)}' not provided.");
 		}
 
+		if (ExcavatorType.Id == 0 && 
+			ExcavatorType.PropertyTypes == null && 
+			ExcavatorType.ExcavatorsOfThisType == null)
+		{
+			ExcavatorType.PropertyTypes = new List<ExcavatorPropertyType>();
+			ExcavatorType.ExcavatorsOfThisType = new List<Excavator>();
+		}
+
 		if (AllPropertyTypes != null)
 		{
-			var propertyTypesIds = ExcavatorType.PropertyTypes.Select(pt => pt.Id);
+			// ExcavatorType.PropertyTypes will not be null here, but compiler thinks otherwise 
+			// because of the preceding if, thats why ! is used here (to get rid of the error/warning)
+			var propertyTypes = ExcavatorType.PropertyTypes!;
+			var propertyTypesIds = propertyTypes.Select(pt => pt.Id);
 			for (int i = 0; i < AllPropertyTypes.Count; i++)
 			{
 				var excavatorTypeHasProperty = propertyTypesIds.Contains(AllPropertyTypes[i].Id);

@@ -44,16 +44,6 @@
 
 	private InputType[] InputTypes { get; set; } = null!;
 
-	protected override void OnInitialized()
-	{
-		base.OnInitialized();
-
-		if (PropertyType == null)
-		{
-			throw new Exception($"Parameter '{nameof(PropertyType)}' not provided.");
-		}
-	}
-
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
@@ -61,6 +51,21 @@
 		InputTypes = Enum.GetValues<InputType>()
 			.Skip(1) // we skip the 'InputType.Unset'
 			.ToArray();
+	}
+
+	protected override void OnParametersSet()
+	{
+		base.OnParametersSet();
+
+		if (PropertyType == null)
+		{
+			throw new Exception($"Parameter '{nameof(PropertyType)}' not provided.");
+		}
+
+		if (PropertyType.Id == 0 && PropertyType.ExcavatorTypesWithThisProperty == null)
+		{
+			PropertyType.ExcavatorTypesWithThisProperty = new List<ExcavatorType>();
+		}
 	}
 
 	private async Task ResetAsync()
