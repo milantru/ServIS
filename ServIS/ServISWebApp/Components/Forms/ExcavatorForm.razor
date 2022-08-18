@@ -38,37 +38,23 @@
 
 		<br />
 
-		<label>Náhradné diely:</label>
-		<table class="table">
-			<thead>
-				<tr>
-					<th>Katalógové číslo</th>
-					<th>Názov</th>
-					<th>Pridať</th>
-				</tr>
-			</thead>
-			<tbody>
+		<label>Náhradné diely v stroji:</label>
 				@if (AllSpareParts != null && AllSparePartsChecked != null && AllSpareParts.Count == AllSparePartsChecked.Count)
 				{
-					@for (int i = 0; i < AllSpareParts.Count; i++)
-					{
-						// otherwise would i be a reference;
-						// for more see: https://stackoverflow.com/questions/64982700/how-to-use-the-array-of-checkbox-in-asp-net-core-razor
-						var iCopy = i;
-						<tr>
-							<td>@AllSpareParts[iCopy].CatalogNumber</td>
-							<td>@AllSpareParts[iCopy].Name</td>
-							@*<td><InputCheckbox @bind-Value="@SparePartsChecked[i]" /></td>*@
-							<td>
-								<input type="checkbox"
-									   checked="@AllSparePartsChecked[iCopy]"
-									   @bind-value="@AllSparePartsChecked[iCopy]" />
-							</td>
-						</tr>
+			<ChecklistTable ItemType="SparePart"
+							Items="AllSpareParts"
+							@bind-ItemsChecked="AllSparePartsChecked"
+							Context="sp">
+				<HeaderCols>
+					<th>Katalógové číslo</th>
+					<th>Názov</th>
+				</HeaderCols>
+				<BodyCols>
+					<td>@sp.CatalogNumber</td>
+					<td>@sp.Name</td>
+				</BodyCols>
+			</ChecklistTable>
 					}
-				}
-			</tbody>
-		</table>
 
 		<br />
 
