@@ -17,7 +17,8 @@
 				@foreach (var photo in Photos)
 				{
 					<div class="pos-rel">
-						<img src="@FileTools.GetDataUrlBase64String(photo.Photo, "image/jpeg")" />
+						<img src="@FileTools.GetDataUrlBase64String(photo.Photo, "image/jpeg")"
+							 width="280" />
 						<button class="btn btn-danger delete-btn"
 								type="button"
 								@onclick="async () => await HandleDeleteAsync(photo)">X</button>
