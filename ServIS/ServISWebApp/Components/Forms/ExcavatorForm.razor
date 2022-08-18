@@ -1,12 +1,11 @@
 ﻿@inject IServISApi api
 @inject IJSRuntime js
-@inject NavigationManager navMan
 @using ServISData
 @using ServISWebApp.CssProviders;
 @using System.Collections
 @using System.Text
 
-@if (Excavator != null)
+@if (isExcavatorInitialized)
 {
 	<EditForm Model="Excavator" OnValidSubmit="HandleValidSubmit">
 		<ObjectGraphDataAnnotationsValidator />
@@ -31,16 +30,16 @@
 
 		<label>Je IBA pre aukciu:</label>
 		<input type="checkbox"
-		   checked="@Excavator.IsForAuctionOnly"
-		   @bind-value="@Excavator.IsForAuctionOnly" />
+			   checked="@Excavator.IsForAuctionOnly"
+			   @bind-value="@Excavator.IsForAuctionOnly" />
 		@*<InputCheckbox @bind-Value="@TrackedExcavator.IsForAuctionOnly" class="form-check-input"/>*@
 		<ValidationMessage For="@(() => Excavator.IsForAuctionOnly)" />
 
 		<br />
 
 		<label>Náhradné diely v stroji:</label>
-				@if (AllSpareParts != null && AllSparePartsChecked != null && AllSpareParts.Count == AllSparePartsChecked.Count)
-				{
+		@if (AllSpareParts != null && AllSparePartsChecked != null && AllSpareParts.Count == AllSparePartsChecked.Count)
+		{
 			<ChecklistTable ItemType="SparePart"
 							Items="AllSpareParts"
 							@bind-ItemsChecked="AllSparePartsChecked"
@@ -54,11 +53,11 @@
 					<td>@sp.Name</td>
 				</BodyCols>
 			</ChecklistTable>
-					}
+		}
 
 		<br />
 
-		<ExcavatorTypeSelector @bind-ExcavatorType="Excavator.Type" OnSelect="UpdateExcavatorProperties" />
+		<ExcavatorTypeSelector @bind-ExcavatorType="Excavator.Type" OnSelect="async () => await UpdateExcavatorPropertiesAsync()" />
 
 		<br />
 
@@ -112,14 +111,22 @@
 		}
 
 		<button class="btn btn-success" type="submit">Uložiť</button>
+		<button class="btn btn-secondary" type="reset" @onclick="async () => await ResetAsync()">Reset</button>
 	</EditForm>
 }
 
 @code {
+	private bool isExcavatorInitialized;
+
 	[Parameter]
 	public Excavator Excavator { get; set; } = null!;
 
-	private List<ExcavatorProperty> ExcavatorProperties { get; set; } = null!;
+	[Parameter]
+	public EventCallback<Excavator> ExcavatorChanged { get; set; }
+
+	[Parameter]
+	public EventCallback AfterValidSubmit { get; set; }
+
 	// bool is in pair with spare part, it will tell us if spare part is checked
 	private List<SparePart> AllSpareParts { get; set; } = null!;
 	private List<bool> AllSparePartsChecked { get; set; } = null!;
@@ -141,27 +148,44 @@
 			throw new Exception($"Parameter '{nameof(Excavator)}' not provided.");
 		}
 
-		if (Excavator.Id == 0 && 
-			Excavator.Photos == null && 
-			Excavator.Type == null && 
-			Excavator.Properties == null && 
-			Excavator.SpareParts == null)
+		if (Excavator.Id == 0)
 		{
-			Excavator.Photos = new List<ExcavatorPhoto>();
-			Excavator.Type = new ExcavatorType();
-			Excavator.Properties = new List<ExcavatorProperty>();
-			Excavator.SpareParts = new List<SparePart>();
+			InitExcavator(Excavator);
 		}
+		isExcavatorInitialized = true;
 
 		if (AllSpareParts != null)
 		{
-			var excavatorsSparePartsIds = Excavator.SpareParts.Select(sp => sp.Id);
+			// Excavator.SpareParts will not be null here but ? and ! operators are needed for compiler...
+			var excavatorsSparePartsIds = Excavator.SpareParts?.Select(sp => sp.Id)!;
 			for (int i = 0; i < AllSpareParts.Count; i++)
 			{
-				bool excavatorHasSparePart = excavatorsSparePartsIds.Contains(AllSpareParts[i].Id);
+				// ...and the same here, ? and ?? are here only for compiler
+				bool excavatorHasSparePart = excavatorsSparePartsIds?.Contains(AllSpareParts[i].Id) ?? false;
 				AllSparePartsChecked[i] = excavatorHasSparePart;
 			}
 		}
+	}
+
+	private static void InitExcavator(Excavator excavator)
+	{
+		excavator.Photos ??= new List<ExcavatorPhoto>();
+		excavator.Type ??= new ExcavatorType();
+		excavator.Properties ??= new List<ExcavatorProperty>();
+		excavator.SpareParts ??= new List<SparePart>();
+	}
+
+	private async Task ResetAsync()
+	{
+		Excavator = new();
+		InitExcavator(Excavator);
+
+		for (int i = 0; i < AllSparePartsChecked.Count; i++)
+		{
+			AllSparePartsChecked[i] = false;
+		}
+
+		await ExcavatorChanged.InvokeAsync(Excavator);
 	}
 
 	private List<SparePart> GetCheckedSpareParts()
@@ -195,7 +219,9 @@
 		}
 		catch { /* TODO */ }
 
-		navMan.NavigateTo($"/typ-stroja/{Excavator.Type.Id}");
+		await ResetAsync();
+
+		await AfterValidSubmit.InvokeAsync();
 	}
 
 	private async Task DeletePhotoAsync(ExcavatorPhoto excavatorPhoto)
@@ -210,11 +236,11 @@
 
 			Excavator.Photos.Remove(excavatorPhoto);
 
-			StateHasChanged();
+			await ExcavatorChanged.InvokeAsync(Excavator);
 		}
 	}
 
-	private void UpdateExcavatorProperties()
+	private async Task UpdateExcavatorPropertiesAsync()
 	{
 		Excavator.Properties.Clear();
 		foreach (var propertyType in Excavator.Type.PropertyTypes)
@@ -224,5 +250,7 @@
 					PropertyType = propertyType,
 				});
 		}
+
+		await ExcavatorChanged.InvokeAsync(Excavator);
 	}
 }

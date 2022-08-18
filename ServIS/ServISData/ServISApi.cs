@@ -459,8 +459,9 @@ namespace ServISData
 			var query = context.Excavators
 				.Include(e => e.Photos)
 				.Include(e => e.Type)
-				//.Include(e => e.Properties)
-				//.Include(e => e.SpareParts)
+				.Include(e => e.Properties)
+				.ThenInclude(e => e.PropertyType)
+				.Include(e => e.SpareParts)
 				.Where(e => category != null ? e.Type.Category == category : true)
 				.Where(e => brand != null ? e.Type.Brand == brand : true);
 
