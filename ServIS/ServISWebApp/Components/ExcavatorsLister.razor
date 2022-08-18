@@ -4,7 +4,7 @@
 	<Virtualize @ref="excavatorPhotosContainer" ItemsProvider="LoadExcavatorsPhotosAsync" Context="ep">
 		<ExcavatorCard Excavator="@ep.Excavator"
 					   Image="@ep.Photo" 
-					   OnDelete="() => DeleteExcavatorAsync(ep.Excavator)" />
+					   OnDelete="async () => await DeleteExcavatorAsync(ep.Excavator)" />
 	</Virtualize>
 </div>
 
