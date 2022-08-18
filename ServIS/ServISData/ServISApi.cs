@@ -24,11 +24,18 @@ namespace ServISData
 			using var context = factory.CreateDbContext();
 			Excavator? currentExcavator;
 
+			List<IList<Excavator>> excavatorsTmp = null!;
 			if (excavator.Id == 0)
 			{
-				//context.ExcavatorTypes.Attach(excavator.Type);
-				context.ExcavatorProperties.AttachRange(excavator.Properties);
-				context.SpareParts.AttachRange(excavator.SpareParts);
+				context.Attach(excavator.Type);
+				excavatorsTmp = new List<IList<Excavator>>(excavator.SpareParts.Count);
+				for (int i = 0; i < excavator.SpareParts.Count; i++)
+				{
+					var sparePart = excavator.SpareParts[i];
+					excavatorsTmp.Add(sparePart.Excavators);
+					sparePart.Excavators = null!; // TODO: mere hotfix, but this is not pretty, should be changed!
+				}
+				context.AttachRange(excavator.SpareParts);
 
 				context.Add(excavator);
 			}
@@ -49,6 +56,13 @@ namespace ServISData
 			}
 
 			await context.SaveChangesAsync();
+			if (excavatorsTmp != null)
+			{
+				for (int i = 0; i < excavator.SpareParts.Count; i++)
+				{
+					excavator.SpareParts[i].Excavators = excavatorsTmp[i];
+				}
+			}
 
 			return excavator;
 		}
