@@ -3,6 +3,7 @@
 
 @attribute [Authorize(Roles = "Administrator")]
 @inject IServISApi api
+@inject NavigationManager navMan
 
 @if (Excavator == null)
 {
@@ -10,7 +11,7 @@
 }
 else
 {
-	<ExcavatorForm Excavator="Excavator" />
+	<ExcavatorForm @bind-Excavator="Excavator" AfterValidSubmit="@(() => navMan.NavigateTo($"/typ-stroja/{Excavator.Type.Id}"))" />
 }
 
 @code {

@@ -18,11 +18,12 @@
 		<InputText @bind-Value="ExcavatorType.Category" />
 		<ValidationMessage For="@(() => ExcavatorType.Category)" />
 
+		<label>Typy vlastností:</label>
 		@if (AllPropertyTypes != null && AllPropertyTypesChecked != null && AllPropertyTypes.Count == AllPropertyTypesChecked.Count)
 		{
 			<ChecklistTable ItemType="ExcavatorPropertyType"
 							Items="AllPropertyTypes" 
-							ItemsChecked="AllPropertyTypesChecked" 
+							@bind-ItemsChecked="AllPropertyTypesChecked" 
 							Context="propertyType" >
 				<HeaderCols>
 					<th>Názov vlastnosti</th>

@@ -17,14 +17,15 @@
 		<InputText @bind-Value=SparePart.Name />
 		<ValidationMessage For=@(() => SparePart.Name) />
 
+        <label>Stroje obsahujúce diel:</label>
 		@if (AllExcavators != null && AllExcavatorsChecked != null && AllExcavators.Count == AllExcavatorsChecked.Count)
 		{
             <ChecklistTable ItemType="Excavator"
 							Items="AllExcavators" 
-							ItemsChecked="AllExcavatorsChecked" 
+							@bind-ItemsChecked="AllExcavatorsChecked" 
 							Context="excavator" >
 				<HeaderCols>
-					<td>Názov:</td>
+					<th>Názov:</th>
 				</HeaderCols>
 				<BodyCols>
 					<td>@excavator.Name</td>
