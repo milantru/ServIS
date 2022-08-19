@@ -163,6 +163,7 @@ namespace ServISData
 			else
 			{
 				currentExcavatorPropertyType = await context.ExcavatorPropertyTypes
+					.Include(ept => ept.ExcavatorTypesWithThisProperty)
 					.FirstOrDefaultAsync(ept => ept.Id == excavatorPropertyType.Id);
 				if (currentExcavatorPropertyType == null)
 				{
