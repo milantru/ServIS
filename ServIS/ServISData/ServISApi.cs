@@ -110,7 +110,6 @@ namespace ServISData
 			if (excavatorType.Id == 0)
 			{
 				context.ExcavatorPropertyTypes.AttachRange(excavatorType.PropertyTypes);
-				context.Excavators.AttachRange(excavatorType.ExcavatorsOfThisType);
 
 				context.Add(excavatorType);
 			}
@@ -156,8 +155,6 @@ namespace ServISData
 
 			if (excavatorPropertyType.Id == 0)
 			{
-				context.AttachRange(excavatorPropertyType.ExcavatorTypesWithThisProperty);
-
 				context.Add(excavatorPropertyType);
 			}
 			else
