@@ -156,12 +156,15 @@
 
 		if (AllSpareParts != null)
 		{
-			// Excavator.SpareParts will not be null here but ? and ! operators are needed for compiler...
-			var excavatorsSparePartsIds = Excavator.SpareParts?.Select(sp => sp.Id)!;
+			if (Excavator.SpareParts == null)
+			{// Excavator.SpareParts will not be null here, but compiler doesn't see it, so we need this if
+				throw new Exception($"{nameof(Excavator.SpareParts)} cannot be null here.");
+			}
+
+			var excavatorsSparePartsIds = Excavator.SpareParts.Select(sp => sp.Id);
 			for (int i = 0; i < AllSpareParts.Count; i++)
 			{
-				// ...and the same here, ? and ?? are here only for compiler
-				bool excavatorHasSparePart = excavatorsSparePartsIds?.Contains(AllSpareParts[i].Id) ?? false;
+				bool excavatorHasSparePart = excavatorsSparePartsIds.Contains(AllSpareParts[i].Id);
 				AllSparePartsChecked[i] = excavatorHasSparePart;
 			}
 		}
