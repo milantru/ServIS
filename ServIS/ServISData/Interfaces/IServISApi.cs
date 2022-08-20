@@ -64,6 +64,7 @@ namespace ServISData.Interfaces
 		public Task DeleteExcavatorAsync(Excavator excavator);
 		public Task DeleteExcavatorPhotoAsync(ExcavatorPhoto excavatorPhoto);
 		public Task DeleteExcavatorTypeAsync(ExcavatorType excavatorType);
+		public Task DeleteExcavatorPropertyAsync(ExcavatorProperty excavatorProperty);
 		public Task DeleteExcavatorPropertyTypeAsync(ExcavatorPropertyType excavatorPropertyType);
 		public Task DeleteSparePartAsync(SparePart sparePart);
 

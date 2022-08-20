@@ -843,6 +843,11 @@ namespace ServISData
 			await DeleteItem(excavatorType);
 		}
 
+		public async Task DeleteExcavatorPropertyAsync(ExcavatorProperty excavatorProperty)
+		{
+			await DeleteItem(excavatorProperty);
+		}
+
 		public async Task DeleteExcavatorPropertyTypeAsync(ExcavatorPropertyType excavatorPropertyType)
 		{
 			await DeleteItem(excavatorPropertyType);
