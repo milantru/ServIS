@@ -536,6 +536,9 @@ namespace ServISData
 			var query = context.ExcavatorTypes
 				.Include(et => et.PropertyTypes)
 				.Include(et => et.ExcavatorsOfThisType)
+				.ThenInclude(e => e.Properties)
+				.Include(et => et.ExcavatorsOfThisType)
+				.ThenInclude(e => e.Photos)
 				.Skip(startIndex ?? 0);
 
 			if (numberOfExcavatorTypes.HasValue)
@@ -844,6 +847,16 @@ namespace ServISData
 
 		public async Task DeleteExcavatorTypeAsync(ExcavatorType excavatorType)
 		{
+			var excavatorsOfThisType = excavatorType.ExcavatorsOfThisType;
+			/* For loop- better go in reverse because for some reason the items are removed also from the list
+			 * not just from db and as the list is edited, we can easily go out of range...
+			 * And because of this behaviour we don't really need to call .Clear(), but I'll leave it there just in case... */
+			for (int i = excavatorsOfThisType.Count - 1; i >= 0; i--)
+			{
+				await DeleteExcavatorAsync(excavatorsOfThisType[i]);
+			}
+			excavatorsOfThisType.Clear();
+
 			await DeleteItem(excavatorType);
 		}
 
