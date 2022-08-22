@@ -827,6 +827,13 @@ namespace ServISData
 		// delete
 		public async Task DeleteExcavatorAsync(Excavator excavator)
 		{
+			var properties = excavator.Properties;
+			for (int i = properties.Count - 1; i >= 0 ; i--)
+			{
+				await DeleteExcavatorPropertyAsync(properties[i]);
+			}
+			properties.Clear();
+
 			await DeleteItem(excavator);
 		}
 
