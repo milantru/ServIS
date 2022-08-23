@@ -57,7 +57,7 @@
 
 		<br />
 
-		<ExcavatorTypeSelector @bind-ExcavatorType="Excavator.Type" OnSelect="async () => await UpdateExcavatorPropertiesAsync()" />
+		<ExcavatorTypeSelector @bind-ExcavatorType="Excavator.Type" OnSelect="UpdateExcavatorProperties" />
 
 		<br />
 
@@ -239,11 +239,11 @@
 
 			Excavator.Photos.Remove(excavatorPhoto);
 
-			await ExcavatorChanged.InvokeAsync(Excavator);
+			StateHasChanged();
 		}
 	}
 
-	private async Task UpdateExcavatorPropertiesAsync()
+	private void UpdateExcavatorProperties()
 	{
 		Excavator.Properties.Clear();
 		foreach (var propertyType in Excavator.Type.PropertyTypes)
@@ -254,6 +254,6 @@
 				});
 		}
 
-		await ExcavatorChanged.InvokeAsync(Excavator);
+		StateHasChanged();
 	}
 }
