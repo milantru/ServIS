@@ -45,6 +45,7 @@ namespace ServISData
 					.Include(e => e.Photos)
 					.Include(e => e.Type)
 					.Include(e => e.Properties)
+					.ThenInclude(ep => ep.PropertyType)
 					.Include(e => e.SpareParts)
 					.FirstOrDefaultAsync(e => e.Id == excavator.Id);
 				if (currentExcavator == null)
@@ -955,7 +956,10 @@ namespace ServISData
 				var currentProperties = currentExcavator.Properties;
 				foreach (var currentProperty in currentProperties)
 				{
-					var newPropertyValue = newExcavator.Properties.First(p => p.Id == currentProperty.Id).Value;
+					/* we check ids of property types and not properties itselves because 
+					 * when excavator has type A, user changes it to type B, then back to type A, 
+					 * new properties are created with ids 0 */
+					var newPropertyValue = newExcavator.Properties.First(p => p.PropertyType.Id == currentProperty.PropertyType.Id).Value;
 					currentProperty.Value = newPropertyValue;
 				}
 			}
