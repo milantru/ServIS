@@ -83,8 +83,11 @@
 		}
 		catch { /* TODO */ }
 
-		await ResetAsync();
+		if (AfterValidSubmit.HasDelegate)
+		{
+			await AfterValidSubmit.InvokeAsync();
+		}
 
-		await AfterValidSubmit.InvokeAsync();
+		await ResetAsync();
 	}
 }

@@ -3,7 +3,7 @@
 
 <h3>Správa typov vlastností stroja</h3>
 
-<ExcavatorPropertyTypeForm @bind-PropertyType="SelectedExcavatorPropertyType" AfterValidSubmit="ReloadExcavatorPropertyTypesAsync" />
+<ExcavatorPropertyTypeForm @bind-PropertyType="SelectedExcavatorPropertyType" AfterValidSubmit="async () => await ReloadExcavatorPropertyTypesAsync()" />
 
 <ItemsTableLister ItemType="ExcavatorPropertyType"
 				  @ref="excavatorPropertyTypesLister"

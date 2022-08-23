@@ -132,9 +132,12 @@
 			await api.SaveExcavatorTypeAsync(ExcavatorType);
 		}
 		catch { /* TODO */ }
+		
+		if (AfterValidSubmit.HasDelegate)
+		{
+			await AfterValidSubmit.InvokeAsync();
+		}
 
 		await ResetAsync();
-		
-		await AfterValidSubmit.InvokeAsync();
 	}
 }
