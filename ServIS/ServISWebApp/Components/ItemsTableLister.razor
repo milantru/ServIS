@@ -25,9 +25,9 @@
 				}
 
 				<td class="input-group">
-					<button class="btn btn-primary" type="button" @onclick="() => SelectAsync(item)">Vyber</button>
+					<button class="btn btn-primary" type="button" @onclick="async () => await SelectAsync(item)">Vyber</button>
 
-					<button class="btn btn-danger" type="button" @onclick="() => DeleteAsync(item)">Vymaž</button>
+					<button class="btn btn-danger" type="button" @onclick="async () => await DeleteAsync(item)">Vymaž</button>
 				</td>
 			</tr>
 		</Virtualize>

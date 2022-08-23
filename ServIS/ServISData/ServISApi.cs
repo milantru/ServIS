@@ -161,20 +161,10 @@ namespace ServISData
 			else
 			{
 				currentExcavatorPropertyType = await context.ExcavatorPropertyTypes
-					.Include(ept => ept.ExcavatorTypesWithThisProperty)
-					.FirstOrDefaultAsync(ept => ept.Id == excavatorPropertyType.Id);
-				if (currentExcavatorPropertyType == null)
-				{
-					return null;
-				}
+					.FirstAsync(ept => ept.Id == excavatorPropertyType.Id);
 
 				currentExcavatorPropertyType.Name = excavatorPropertyType.Name;
 				currentExcavatorPropertyType.InputType = excavatorPropertyType.InputType;
-
-				var excavatorTypeIds = excavatorPropertyType.ExcavatorTypesWithThisProperty.Select(e => e.Id);
-				currentExcavatorPropertyType.ExcavatorTypesWithThisProperty = await context.ExcavatorTypes
-					.Where(et => excavatorTypeIds.Contains(et.Id))
-					.ToListAsync();
 			}
 
 			await context.SaveChangesAsync();
