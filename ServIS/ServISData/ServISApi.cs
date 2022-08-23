@@ -916,46 +916,73 @@ namespace ServISData
 		}
 
 		// ---------- private methods ----------
-		private static async Task UpdateExcavatorDataAsync(ServISDbContext context, Excavator currentExcavator, Excavator newExcavator)
+		private void UpdateExcavatorPhotos(Excavator currentExcavator, Excavator newExcavator)
+		{
+			var currentPhotos = currentExcavator.Photos;
+			var newPhotos = newExcavator.Photos;
+
+			for (int i = currentPhotos.Count - 1; i >= 0; i--)
+			{
+				var currentPhoto = currentPhotos[i];
+				var isCurrentPhotoInNewPhotos = newPhotos.Select(newPhoto => newPhoto.Id == currentPhoto.Id).Any();
+				if (!isCurrentPhotoInNewPhotos)
+				{
+					currentPhotos.Remove(currentPhoto);
+				}
+			}
+
+			var newPhotosCount = newPhotos.Count;
+			for (int i = 0; i < newPhotosCount; i++)
+			{
+				var photo = newPhotos[i];
+				if (photo.Id == 0)
+				{
+					currentPhotos.Add(photo);
+				}
+			}
+		}
+
+		private async Task UpdateExcavatorTypeAsync(ServISDbContext context, Excavator currentExcavator, Excavator newExcavator)
+		{
+			currentExcavator.Type = await context.ExcavatorTypes
+				.FirstAsync(et => et.Id == newExcavator.Type.Id);
+		}
+
+		private async Task UpdateExcavatorPropertiesAsync(ServISDbContext context, Excavator currentExcavator, Excavator newExcavator)
+		{
+			var propertiesIds = newExcavator.Properties.Select(p => p.Id);
+			currentExcavator.Properties = await context.ExcavatorProperties
+				.Where(p => propertiesIds.Contains(p.Id))
+				.ToListAsync();
+
+			foreach (var currentProperty in currentExcavator.Properties)
+			{
+				var newPropertyValue = newExcavator.Properties.First(p => p.Id == currentProperty.Id).Value;
+				currentProperty.Value = newPropertyValue;
+			}
+		}
+
+		private async Task UpdateExcavatorSparePartsAsync(ServISDbContext context, Excavator currentExcavator, Excavator newExcavator)
+		{
+			var sparePartsIds = newExcavator.SpareParts.Select(sp => sp.Id);
+			currentExcavator.SpareParts = await context.SpareParts
+				.Where(sp => sparePartsIds.Contains(sp.Id))
+				.ToListAsync();
+		}
+
+		private async Task UpdateExcavatorDataAsync(ServISDbContext context, Excavator currentExcavator, Excavator newExcavator)
 		{
 			currentExcavator.Name = newExcavator.Name;
 			currentExcavator.Description = newExcavator.Description;
 			currentExcavator.IsForAuctionOnly = newExcavator.IsForAuctionOnly;
 
-			var excavatorPhotosIds = newExcavator.Photos.Select(ep => ep.Id);
-			currentExcavator.Photos = context.ExcavatorPhotos
-				.Where(ep => excavatorPhotosIds.Contains(ep.Id))
-				.ToList();
+			UpdateExcavatorPhotos(currentExcavator, newExcavator);
 
-			//currentExcavator.Type = newExcavator.Type;
-			var excavatorTypeTmp = await context.ExcavatorTypes
-				.FirstOrDefaultAsync(et => et.Id == newExcavator.Type.Id);
-			if (excavatorTypeTmp == null)
-			{
-				throw new Exception($"Error saving excavator- excavator type with id '{newExcavator.Type.Id}' not found.");
-			}
-			currentExcavator.Type = excavatorTypeTmp;
+			await UpdateExcavatorTypeAsync(context, currentExcavator, newExcavator);
 
-			//currentExcavator.Properties = newExcavator.Properties;
-			var propertiesIds = newExcavator.Properties.Select(p => p.Id);
-			currentExcavator.Properties = await context.ExcavatorProperties
-				.Where(p => propertiesIds.Contains(p.Id))
-				.ToListAsync();
-			foreach (var property in currentExcavator.Properties)
-			{
-				var propNewValTmp = newExcavator.Properties.FirstOrDefault(p => p.Id == property.Id)?.Value;
-				if (propNewValTmp == null)
-				{
-					continue;
-				}
-				property.Value = propNewValTmp;
-			}
+			await UpdateExcavatorPropertiesAsync(context, currentExcavator, newExcavator);
 
-			//currentExcavatorData.SpareParts = newExcavatorData.SpareParts;
-			var sparePartsIds = newExcavator.SpareParts.Select(sp => sp.Id);
-			currentExcavator.SpareParts = await context.SpareParts
-				.Where(sp => sparePartsIds.Contains(sp.Id))
-				.ToListAsync();
+			await UpdateExcavatorSparePartsAsync(context, currentExcavator, newExcavator);
 		}
 
 		private static void UpdateUserData(User currentUser, User newUser)
