@@ -948,18 +948,28 @@ namespace ServISData
 				.FirstAsync(et => et.Id == newExcavator.Type.Id);
 		}
 
-		private async Task UpdateExcavatorPropertiesAsync(ServISDbContext context, Excavator currentExcavator, Excavator newExcavator)
+		private void UpdateExcavatorProperties(Excavator currentExcavator, Excavator newExcavator)
 		{
-			var propertiesIds = newExcavator.Properties.Select(p => p.Id);
-			currentExcavator.Properties = await context.ExcavatorProperties
-				.Where(p => propertiesIds.Contains(p.Id))
-				.ToListAsync();
-
-			foreach (var currentProperty in currentExcavator.Properties)
+			if (currentExcavator.Type.Id == newExcavator.Type.Id)
 			{
-				var newPropertyValue = newExcavator.Properties.First(p => p.Id == currentProperty.Id).Value;
-				currentProperty.Value = newPropertyValue;
+				var currentProperties = currentExcavator.Properties;
+				foreach (var currentProperty in currentProperties)
+				{
+					var newPropertyValue = newExcavator.Properties.First(p => p.Id == currentProperty.Id).Value;
+					currentProperty.Value = newPropertyValue;
+				}
 			}
+			else
+			{
+				currentExcavator.Properties.Clear();
+
+				var newProperties = newExcavator.Properties;
+				foreach (var newProperty in newProperties)
+				{
+					newProperty.PropertyType.ExcavatorTypesWithThisProperty = null!;
+					currentExcavator.Properties.Add(newProperty);
+				}
+			}			
 		}
 
 		private async Task UpdateExcavatorSparePartsAsync(ServISDbContext context, Excavator currentExcavator, Excavator newExcavator)
@@ -978,9 +988,9 @@ namespace ServISData
 
 			UpdateExcavatorPhotos(currentExcavator, newExcavator);
 
-			await UpdateExcavatorTypeAsync(context, currentExcavator, newExcavator);
+			UpdateExcavatorProperties(currentExcavator, newExcavator);
 
-			await UpdateExcavatorPropertiesAsync(context, currentExcavator, newExcavator);
+			await UpdateExcavatorTypeAsync(context, currentExcavator, newExcavator);
 
 			await UpdateExcavatorSparePartsAsync(context, currentExcavator, newExcavator);
 		}
