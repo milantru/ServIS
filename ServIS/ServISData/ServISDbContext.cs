@@ -26,6 +26,14 @@ namespace ServISData
 		{
 
 		}
+
+		protected override void OnModelCreating(ModelBuilder modelBuilder)
+		{
+			modelBuilder.Entity<ExcavatorProperty>()
+				.HasOne<Excavator>()
+				.WithMany(e => e.Properties)
+				.IsRequired();
+		}
 	}
 
 	public class ServISDbContextFactory : IDesignTimeDbContextFactory<ServISDbContext>
