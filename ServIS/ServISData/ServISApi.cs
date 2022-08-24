@@ -19,10 +19,10 @@ namespace ServISData
 		}
 
 		// Create/Update
-		public async Task<Excavator?> SaveExcavatorAsync(Excavator excavator)
+		public async Task<Excavator> SaveExcavatorAsync(Excavator excavator)
 		{
 			using var context = factory.CreateDbContext();
-			Excavator? currentExcavator;
+			Excavator currentExcavator;
 
 			List<IList<Excavator>> excavatorsTmp = null!;
 			if (excavator.Id == 0)
@@ -47,11 +47,7 @@ namespace ServISData
 					.Include(e => e.Properties)
 					.ThenInclude(ep => ep.PropertyType)
 					.Include(e => e.SpareParts)
-					.FirstOrDefaultAsync(e => e.Id == excavator.Id);
-				if (currentExcavator == null)
-				{
-					return null;
-				}
+					.FirstAsync(e => e.Id == excavator.Id);
 
 				await UpdateExcavatorDataAsync(context, currentExcavator, excavator);
 			}
@@ -103,10 +99,10 @@ namespace ServISData
 			return excavatorPhoto;
 		}
 
-		public async Task<ExcavatorType?> SaveExcavatorTypeAsync(ExcavatorType excavatorType)
+		public async Task<ExcavatorType> SaveExcavatorTypeAsync(ExcavatorType excavatorType)
 		{
 			using var context = factory.CreateDbContext();
-			ExcavatorType? currentExcavatorType;
+			ExcavatorType currentExcavatorType;
 
 			if (excavatorType.Id == 0)
 			{
@@ -129,10 +125,10 @@ namespace ServISData
 			return excavatorType;
 		}
 
-		public async Task<ExcavatorPropertyType?> SaveExcavatorPropertyTypeAsync(ExcavatorPropertyType excavatorPropertyType)
+		public async Task<ExcavatorPropertyType> SaveExcavatorPropertyTypeAsync(ExcavatorPropertyType excavatorPropertyType)
 		{
 			using var context = factory.CreateDbContext();
-			ExcavatorPropertyType? currentExcavatorPropertyType;
+			ExcavatorPropertyType currentExcavatorPropertyType;
 
 			if (excavatorPropertyType.InputType == InputType.Unset)
 			{// defensive programming... we don't want InputType.Unset in db
@@ -148,8 +144,7 @@ namespace ServISData
 				currentExcavatorPropertyType = await context.ExcavatorPropertyTypes
 					.FirstAsync(ept => ept.Id == excavatorPropertyType.Id);
 
-				currentExcavatorPropertyType.Name = excavatorPropertyType.Name;
-				currentExcavatorPropertyType.InputType = excavatorPropertyType.InputType;
+				UpdateExcavatorPropertyTypeData(currentExcavatorPropertyType, excavatorPropertyType);
 			}
 
 			await context.SaveChangesAsync();
@@ -184,14 +179,14 @@ namespace ServISData
 			return excavatorProperty;
 		}
 
-		public async Task<SparePart?> SaveSparePartAsync(SparePart sparePart)
+		public async Task<SparePart> SaveSparePartAsync(SparePart sparePart)
 		{
 			using var context = factory.CreateDbContext();
-			SparePart? currentSparePart;
+			SparePart currentSparePart;
 
 			if (sparePart.Id == 0)
 			{
-				context.Excavators.AttachRange(sparePart.Excavators);
+				context.AttachRange(sparePart.Excavators);
 
 				context.Add(sparePart);
 			}
@@ -199,11 +194,7 @@ namespace ServISData
 			{
 				currentSparePart = await context.SpareParts
 					.Include(sp => sp.Excavators)
-					.FirstOrDefaultAsync(sp => sp.Id == sparePart.Id);
-				if (currentSparePart == null)
-				{
-					return null;
-				}
+					.FirstAsync(sp => sp.Id == sparePart.Id);
 
 				currentSparePart.CatalogNumber = sparePart.CatalogNumber;
 				currentSparePart.Name = sparePart.Name;
@@ -823,15 +814,15 @@ namespace ServISData
 
 		public async Task DeleteExcavatorTypeAsync(ExcavatorType excavatorType)
 		{
-			var excavatorsOfThisType = excavatorType.ExcavatorsOfThisType;
+			var excavatorsOfDeletingType = excavatorType.ExcavatorsOfThisType;
 			/* For loop- better go in reverse because for some reason the items are removed also from the list
 			 * not just from db and as the list is edited, we can easily go out of range...
 			 * And because of this behaviour we don't really need to call .Clear(), but I'll leave it there just in case... */
-			for (int i = excavatorsOfThisType.Count - 1; i >= 0; i--)
+			for (int i = excavatorsOfDeletingType.Count - 1; i >= 0; i--)
 			{
-				await DeleteExcavatorAsync(excavatorsOfThisType[i]);
+				await DeleteExcavatorAsync(excavatorsOfDeletingType[i]);
 			}
-			excavatorsOfThisType.Clear();
+			excavatorsOfDeletingType.Clear();
 
 			await DeleteItem(excavatorType);
 		}
@@ -892,11 +883,8 @@ namespace ServISData
 		}
 
 		// ---------- private methods ----------
-		private void UpdateExcavatorPhotos(Excavator currentExcavator, Excavator newExcavator)
+		private void RemoveDeletedPhotos(IList<ExcavatorPhoto> currentPhotos, IList<ExcavatorPhoto> newPhotos)
 		{
-			var currentPhotos = currentExcavator.Photos;
-			var newPhotos = newExcavator.Photos;
-
 			for (int i = currentPhotos.Count - 1; i >= 0; i--)
 			{
 				var currentPhoto = currentPhotos[i];
@@ -906,7 +894,10 @@ namespace ServISData
 					currentPhotos.Remove(currentPhoto);
 				}
 			}
+		}
 
+		private void AddNewlyAddedPhotos(IList<ExcavatorPhoto> currentPhotos, IList<ExcavatorPhoto> newPhotos)
+		{
 			var newPhotosCount = newPhotos.Count;
 			for (int i = 0; i < newPhotosCount; i++)
 			{
@@ -916,6 +907,16 @@ namespace ServISData
 					currentPhotos.Add(photo);
 				}
 			}
+		}
+
+		private void UpdateExcavatorPhotos(Excavator currentExcavator, Excavator newExcavator)
+		{
+			var currentPhotos = currentExcavator.Photos;
+			var newPhotos = newExcavator.Photos;
+
+			RemoveDeletedPhotos(currentPhotos, newPhotos);
+
+			AddNewlyAddedPhotos(currentPhotos, newPhotos);
 		}
 
 		private async Task UpdateExcavatorTypeAsync(ServISDbContext context, Excavator currentExcavator, Excavator newExcavator)
@@ -1078,6 +1079,12 @@ namespace ServISData
 			await UpdateExcavatorTypePropertyTypesAsync(context, currentExcavatorType, newExcavatorType);
 		}
 
+		private void UpdateExcavatorPropertyTypeData(ExcavatorPropertyType currentExcavatorPropertyType, ExcavatorPropertyType newExcavatorPropertyType)
+		{
+			currentExcavatorPropertyType.Name = newExcavatorPropertyType.Name;
+			currentExcavatorPropertyType.InputType = newExcavatorPropertyType.InputType;
+		}
+
 		private static void UpdateUserData(User currentUser, User newUser)
 		{
 			currentUser.Username = newUser.Username;
@@ -1088,7 +1095,6 @@ namespace ServISData
 			currentUser.PhoneNumber = newUser.PhoneNumber;
 			currentUser.Email = newUser.Email;
 			currentUser.Residence = newUser.Residence;
-			//currentUser.IsTemporary = newUser.IsTemporary;
 		}
 
 		private static void UpdateAdditionalEquipmentData(ServISDbContext context, AdditionalEquipment currentAdditionalEquipment, AdditionalEquipment additionalEquipment)

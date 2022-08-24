@@ -5,12 +5,12 @@ namespace ServISData.Interfaces
 	public interface IServISApi
 	{
 		// Create/Update
-		public Task<Excavator?> SaveExcavatorAsync(Excavator excavator);
+		public Task<Excavator> SaveExcavatorAsync(Excavator excavator);
 		public Task<ExcavatorPhoto?> SaveExcavatorPhotoAsync(ExcavatorPhoto excavatorPhoto);
-		public Task<ExcavatorType?> SaveExcavatorTypeAsync(ExcavatorType excavatorType);
-		public Task<ExcavatorPropertyType?> SaveExcavatorPropertyTypeAsync(ExcavatorPropertyType excavatorPropertyType);
+		public Task<ExcavatorType> SaveExcavatorTypeAsync(ExcavatorType excavatorType);
+		public Task<ExcavatorPropertyType> SaveExcavatorPropertyTypeAsync(ExcavatorPropertyType excavatorPropertyType);
 		public Task<ExcavatorProperty?> SaveExcavatorPropertyAsync(ExcavatorProperty excavatorProperty);
-		public Task<SparePart?> SaveSparePartAsync(SparePart sparePart);
+		public Task<SparePart> SaveSparePartAsync(SparePart sparePart);
 
 		public Task<MainOffer?> SaveMainOfferAsync(MainOffer mainOffer);
 
