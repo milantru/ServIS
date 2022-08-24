@@ -110,7 +110,7 @@ namespace ServISData
 
 			if (excavatorType.Id == 0)
 			{
-				context.ExcavatorPropertyTypes.AttachRange(excavatorType.PropertyTypes);
+				context.AttachRange(excavatorType.PropertyTypes);
 
 				context.Add(excavatorType);
 			}
@@ -119,24 +119,9 @@ namespace ServISData
 				currentExcavatorType = await context.ExcavatorTypes
 					.Include(et => et.PropertyTypes)
 					.Include(et => et.ExcavatorsOfThisType)
-					.FirstOrDefaultAsync(et => et.Id == excavatorType.Id);
-				if (currentExcavatorType == null)
-				{
-					return null;
-				}
+					.FirstAsync(et => et.Id == excavatorType.Id);
 
-				currentExcavatorType.Brand = excavatorType.Brand;
-				currentExcavatorType.Category = excavatorType.Category;
-
-				var propertyTypesIds = excavatorType.PropertyTypes.Select(pt => pt.Id);
-				currentExcavatorType.PropertyTypes = await context.ExcavatorPropertyTypes
-					.Where(ept => propertyTypesIds.Contains(ept.Id))
-					.ToListAsync();
-
-				var excavatorIds = excavatorType.ExcavatorsOfThisType.Select(e => e.Id);
-				currentExcavatorType.ExcavatorsOfThisType = await context.Excavators
-					.Where(e => excavatorIds.Contains(e.Id))
-					.ToListAsync();
+				await UpdateExcavatorTypeDataAsync(context, currentExcavatorType, excavatorType);
 			}
 
 			await context.SaveChangesAsync();
@@ -822,7 +807,7 @@ namespace ServISData
 		public async Task DeleteExcavatorAsync(Excavator excavator)
 		{
 			var properties = excavator.Properties;
-			for (int i = properties.Count - 1; i >= 0 ; i--)
+			for (int i = properties.Count - 1; i >= 0; i--)
 			{
 				await DeleteExcavatorPropertyAsync(properties[i]);
 			}
@@ -963,7 +948,7 @@ namespace ServISData
 					newProperty.PropertyType.ExcavatorTypesWithThisProperty = null!;
 					currentExcavator.Properties.Add(newProperty);
 				}
-			}			
+			}
 		}
 
 		private async Task UpdateExcavatorSparePartsAsync(ServISDbContext context, Excavator currentExcavator, Excavator newExcavator)
@@ -987,6 +972,110 @@ namespace ServISData
 			await UpdateExcavatorTypeAsync(context, currentExcavator, newExcavator);
 
 			await UpdateExcavatorSparePartsAsync(context, currentExcavator, newExcavator);
+		}
+
+		private void UpdateExcavatorsByAddingProperty(List<Excavator> excavators, ExcavatorProperty property)
+		{
+			excavators.ForEach(excavator => excavator.Properties.Add(property));
+		}
+
+		private void AddNewlyCheckedPropertyTypes(
+			IList<ExcavatorPropertyType> currentPropertyTypes,
+			IList<ExcavatorPropertyType> newPropertyTypes,
+			List<Excavator> excavatorsOfThisType
+		)
+		{
+			var newPropertyTypesCount = newPropertyTypes.Count;
+			for (int i = 0; i < newPropertyTypesCount; i++)
+			{
+				var newPropertyType = newPropertyTypes[i];
+
+				var isNewPropertyTypeInCurrentPropertyTypes =
+					currentPropertyTypes.Any(currentPropertyType => currentPropertyType.Id == newPropertyType.Id);
+
+				if (!isNewPropertyTypeInCurrentPropertyTypes)
+				{
+					currentPropertyTypes.Add(newPropertyType);
+
+					var newProperty = new ExcavatorProperty
+					{
+						PropertyType = newPropertyType,
+						Value = ""
+					};
+					UpdateExcavatorsByAddingProperty(excavatorsOfThisType, newProperty);
+				}
+			}
+		}
+
+		private void UpdateExcavatorsByRemovingPropertyOfPropertyType(List<Excavator> excavators, ExcavatorPropertyType propertyType)
+		{
+			excavators.ForEach(excavator =>
+			{
+				var excavatorProperties = excavator.Properties;
+
+				for (int i = excavatorProperties.Count - 1; i >= 0; i--)
+				{
+					var property = excavatorProperties[i];
+
+					if (property.PropertyType.Id == propertyType.Id)
+					{
+						excavatorProperties.Remove(property);
+						break;
+					}
+				}
+			});
+		}
+
+		private void RemoveUncheckedPropertyTypes(
+			IList<ExcavatorPropertyType> currentPropertyTypes,
+			IList<ExcavatorPropertyType> newPropertyTypes,
+			List<Excavator> excavatorsToBeUpdated
+		)
+		{
+			for (int i = currentPropertyTypes.Count - 1; i >= 0; i--)
+			{
+				var currentPropertyType = currentPropertyTypes[i];
+
+				var isCurrentPropertyTypeInNewPropertyTypes =
+					newPropertyTypes.Any(newPropertyType => newPropertyType.Id == currentPropertyType.Id);
+
+				if (!isCurrentPropertyTypeInNewPropertyTypes)
+				{
+					UpdateExcavatorsByRemovingPropertyOfPropertyType(excavatorsToBeUpdated, currentPropertyType);
+
+					currentPropertyTypes.Remove(currentPropertyType);
+				}
+			}
+		}
+
+		private async Task UpdateExcavatorTypePropertyTypesAsync(ServISDbContext context, ExcavatorType currentExcavatorType, ExcavatorType newExcavatorType)
+		{
+			var currentPropertyTypes = currentExcavatorType.PropertyTypes;
+			var newPropertyTypes = newExcavatorType.PropertyTypes;
+
+			/* excavators of the updating type needs to be updated too...
+			 * Here's why:
+			 * Let's say we have excavator type T which has property types PT1, PT2. 
+			 * Let's also assume we have excavator E of type T. This means E has properties P1, P2 of type PT1, PT2 respectively.
+			 * When we change T in a way it has now property types PT1, PT3 (i.e. PT2 was deleted and PT3 was added),
+			 * it means E should lost P2 and gain property P3 of type PT3. */
+			var excavatorsOfUpdatingType = await context.Excavators
+				.Include(e => e.Properties)
+				.ThenInclude(ep => ep.PropertyType)
+				.Where(e => e.Type.Id == currentExcavatorType.Id) // currentExcavatorType.Id == newExcavatorType.Id so it doesn't matter which one we use
+				.ToListAsync();
+
+			RemoveUncheckedPropertyTypes(currentPropertyTypes, newPropertyTypes, excavatorsOfUpdatingType);
+
+			AddNewlyCheckedPropertyTypes(currentPropertyTypes, newPropertyTypes, excavatorsOfUpdatingType);
+		}
+
+		private async Task UpdateExcavatorTypeDataAsync(ServISDbContext context, ExcavatorType currentExcavatorType, ExcavatorType newExcavatorType)
+		{
+			currentExcavatorType.Brand = newExcavatorType.Brand;
+			currentExcavatorType.Category = newExcavatorType.Category;
+
+			await UpdateExcavatorTypePropertyTypesAsync(context, currentExcavatorType, newExcavatorType);
 		}
 
 		private static void UpdateUserData(User currentUser, User newUser)
