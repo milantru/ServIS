@@ -196,14 +196,7 @@ namespace ServISData
 					.Include(sp => sp.Excavators)
 					.FirstAsync(sp => sp.Id == sparePart.Id);
 
-				currentSparePart.CatalogNumber = sparePart.CatalogNumber;
-				currentSparePart.Name = sparePart.Name;
-
-				//currentSparePart.Excavators = sparePart.Excavators;
-				var ids = sparePart.Excavators.Select(e => e.Id);
-				currentSparePart.Excavators = context.Excavators
-					.Where(e => ids.Contains(e.Id))
-					.ToList();
+				UpdateSparePartData(context, currentSparePart, sparePart);
 			}
 
 			await context.SaveChangesAsync();
@@ -942,7 +935,7 @@ namespace ServISData
 			else
 			{
 				currentExcavator.Properties.Clear();
-
+				
 				var newProperties = newExcavator.Properties;
 				foreach (var newProperty in newProperties)
 				{
@@ -1083,6 +1076,54 @@ namespace ServISData
 		{
 			currentExcavatorPropertyType.Name = newExcavatorPropertyType.Name;
 			currentExcavatorPropertyType.InputType = newExcavatorPropertyType.InputType;
+		}
+
+		private void RemoveUncheckedSpareParts(IList<Excavator> currentExcavators, IList<Excavator> newExcavators)
+		{
+			for (int i = currentExcavators.Count - 1; i >= 0; i--)
+			{
+				var currentExcavator = currentExcavators[i];
+
+				var isCurrentExcavatorInNewExcavators =
+					newExcavators.Any(newExcavator => newExcavator.Id == currentExcavator.Id);
+
+				if (!isCurrentExcavatorInNewExcavators)
+				{
+					currentExcavators.Remove(currentExcavator);
+				}
+			}
+		}
+
+		private void AddNewlyCheckedSpareParts(IList<Excavator> currentExcavators, IList<Excavator> newExcavators)
+		{
+			var newExcavatorsCount = newExcavators.Count;
+			for (int i = 0; i < newExcavatorsCount; i++)
+			{
+				var newExcavator = newExcavators[i];
+
+				var isNewExcavatorInCurrentExcavators =
+					currentExcavators.Any(currentExcavator => currentExcavator.Id == newExcavator.Id);
+
+				if (!isNewExcavatorInCurrentExcavators)
+				{
+					currentExcavators.Add(newExcavator);
+				}
+			}
+		}
+
+		private void UpdateSparePartExcavators(IList<Excavator> currentExcavators, IList<Excavator> newExcavators)
+		{
+			RemoveUncheckedSpareParts(currentExcavators, newExcavators);
+
+			AddNewlyCheckedSpareParts(currentExcavators, newExcavators);
+		}
+
+		private void UpdateSparePartData(ServISDbContext context, SparePart currentSparePart, SparePart newSparePart)
+		{
+			currentSparePart.CatalogNumber = newSparePart.CatalogNumber;
+			currentSparePart.Name = newSparePart.Name;
+
+			UpdateSparePartExcavators(currentSparePart.Excavators, newSparePart.Excavators);
 		}
 
 		private static void UpdateUserData(User currentUser, User newUser)
