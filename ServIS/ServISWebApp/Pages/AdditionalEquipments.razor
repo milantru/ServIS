@@ -1,13 +1,11 @@
 ﻿@page "/pridavne-zariadenia"
 
-<h3>Prídavné zariadenia</h3>
-
 <AuthorizeView Roles="Administrator">
-	<a href="/admin/nove-pridavne-zariadenie">Pridať novú položku</a>
+	<a href="/admin/nove-pridavne-zariadenie">Pridať nové prídavné zariadenie</a>
 </AuthorizeView>
 
-<AdditionalEquipmentsLister />
+<AdditionalEquipmentsLister Title="Prídavné zariadenia" />
 
 @code {
-
+	
 }

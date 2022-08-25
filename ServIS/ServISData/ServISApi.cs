@@ -497,6 +497,7 @@ namespace ServISData
 			using var context = factory.CreateDbContext();
 
 			var query = context.AdditionalEquipments
+				.Include(ae => ae.Photos)
 				.Where(ae => excavatorCategory != null ? ae.ExcavatorCategory == excavatorCategory : true)
 				.Where(ae => category != null ? ae.Category == category : true)
 				.Where(ae => brand != null ? ae.Brand == brand : true);

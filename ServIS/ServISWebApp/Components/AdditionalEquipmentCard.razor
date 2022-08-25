@@ -1,19 +1,23 @@
 ﻿<div class="card mb-3 pos-rel" style="max-width: 540px;">
-	<div class="row g-0">
-		<div class="col-md-4">
-			<img src="@imgSrc" class="img-fluid rounded-start" alt="Fotka prídavného zariadenia @AdditionalEquipmentPhoto.AdditionalEquipment.Name">
-		</div>
-		<div class="col-md-8">
-			<div class="card-body">
-				<h5 class="card-title">@AdditionalEquipmentPhoto.AdditionalEquipment.Name</h5>
-				<p class="card-text">@AdditionalEquipmentPhoto.AdditionalEquipment.Description</p>
+	<a href="/pridavne-zariadenie/@AdditionalEquipment.Id">
+		<div class="row g-0">
+			<div class="col-md-4">
+				<img src="@imgSrc" class="img-fluid rounded-start" alt="Fotka prídavného zariadenia @AdditionalEquipment.Name">
+			</div>
+			<div class="col-md-8">
+				<div class="card-body">
+					<h5 class="card-title">@AdditionalEquipment.Name</h5>
+					<p class="card-text">@AdditionalEquipment.Description</p>
+				</div>
 			</div>
 		</div>
-	</div>
+	</a>
 	@if (OnDelete.HasDelegate)
 	{
 		<AuthorizeView Roles="Administrator">
-			<button class="btn btn-danger delete-btn" @onclick="() => OnDelete.InvokeAsync()">X</button>
+			<button class="btn btn-danger delete-btn" 
+					type="button"
+					@onclick="async () => await OnDelete.InvokeAsync()">X</button>
 		</AuthorizeView>
 	}
 </div>
@@ -21,9 +25,8 @@
 @code {
 	private string imgSrc = null!;
 
-	[EditorRequired]
-	[Parameter]
-	public AdditionalEquipmentPhoto AdditionalEquipmentPhoto { get; set; } = null!;
+	[EditorRequired, Parameter]
+	public AdditionalEquipment AdditionalEquipment { get; set; } = null!;
 
 	[Parameter]
 	public EventCallback OnDelete { get; set; }
@@ -32,6 +35,8 @@
 	{
 		base.OnParametersSet();
 
-		imgSrc = FileTools.GetDataUrlBase64String(AdditionalEquipmentPhoto.Photo, "images/jpeg");
+		var additionalEquipmentTitlePhoto = AdditionalEquipment.Photos.First(p => p.IsTitle);
+
+		imgSrc = FileTools.GetDataUrlBase64String(additionalEquipmentTitlePhoto.Photo, "images/jpeg");
 	}
 }

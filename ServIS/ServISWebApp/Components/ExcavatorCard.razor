@@ -12,7 +12,9 @@
 		@if (OnDelete.HasDelegate)
 		{
 			<AuthorizeView Roles="Administrator">
-				<button class="btn btn-danger delete-btn" type="button" @onclick="async () => await OnDelete.InvokeAsync()">X</button>
+				<button class="btn btn-danger delete-btn" 
+						type="button" 
+						@onclick="async () => await OnDelete.InvokeAsync()">X</button>
 			</AuthorizeView>
 		}
 	</div>
@@ -25,20 +27,14 @@
 	public Excavator Excavator { get; set; } = null!;
 
 	[Parameter]
-	public byte[] Image { get; set; } = null!;
-
-	[Parameter]
 	public EventCallback OnDelete { get; set; }
 
 	protected override void OnParametersSet()
 	{
 		base.OnParametersSet();
 
-		if (Image == null)
-		{
-			Image = Excavator.Photos.First(p => p.IsTitle).Photo;
-		}
+		var excavatorTitlePhoto = Excavator.Photos.First(p => p.IsTitle);
 
-		imgSrc = FileTools.GetDataUrlBase64String(Image, "images/jpeg");
+		imgSrc = FileTools.GetDataUrlBase64String(excavatorTitlePhoto.Photo, "images/jpeg");
 	}
 }

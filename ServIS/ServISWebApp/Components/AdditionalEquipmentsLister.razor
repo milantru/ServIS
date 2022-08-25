@@ -1,14 +1,22 @@
 ﻿@inject IServISApi api
 
+@if (Title != null)
+{
+	<h3>@Title</h3>
+}
+
 <div class="d-flex flex-wrap">
-	<Virtualize @ref="additionalEquipmentPhotosContainer" ItemsProvider="LoadAdditionalEquipmentPhotoAsync" Context="aep">
-		<AdditionalEquipmentCard AdditionalEquipmentPhoto="@aep" 
-								 OnDelete="() => DeleteAdditionalEquipment(aep.AdditionalEquipment)" />
+	<Virtualize @ref="additionalEquipmentPhotosContainer" ItemsProvider="LoadAdditionalEquipmentsAsync" Context="ae">
+		<AdditionalEquipmentCard AdditionalEquipment="ae"
+								 OnDelete="async () => await DeleteAdditionalEquipmentAsync(ae)" />
 	</Virtualize>
 </div>
 
 @code {
-	private Virtualize<AdditionalEquipmentPhoto> additionalEquipmentPhotosContainer = null!;
+	private Virtualize<AdditionalEquipment> additionalEquipmentPhotosContainer = null!;
+
+	[Parameter]
+	public string Title { get; set; } = null!;
 
 	[Parameter]
 	public string AdditionalEquipmentBrand { get; set; } = null!;
@@ -26,45 +34,32 @@
 		await additionalEquipmentPhotosContainer.RefreshDataAsync();
 	}
 
-	private async ValueTask<ItemsProviderResult<AdditionalEquipmentPhoto>> LoadAdditionalEquipmentPhotoAsync(ItemsProviderRequest request)
+	private async ValueTask<ItemsProviderResult<AdditionalEquipment>> LoadAdditionalEquipmentsAsync(ItemsProviderRequest request)
 	{
-		// number of additional equipments is equal to number of their title photos (each additional equipment has exactly 1 title photo)
 		if (AdditionalEquipmentsTotalCount == 0)
 		{
 			AdditionalEquipmentsTotalCount = await api.GetAdditionalEquipmentsCountAsync();
-		}
-		if (AdditionalEquipmentsTotalCount == 0)
-		{// in case there is no tracked excavator in the database
-			return new ItemsProviderResult<AdditionalEquipmentPhoto>();
+			if (AdditionalEquipmentsTotalCount == 0)
+			{// in case there is no additional equipment in the database
+				return new ItemsProviderResult<AdditionalEquipment>();
+			}
 		}
 
 		int additionalEquipmentsDisplayedCount = Math.Min(request.Count, AdditionalEquipmentsTotalCount - request.StartIndex);
 
 		var additionalEquipments = await api.GetAdditionalEquipmentsAsync(
-				additionalEquipmentsDisplayedCount, 
-				request.StartIndex, 
-				AdditionalEquipmentExcavatorCategory, 
-				AdditionalEquipmentCategory, 
+				additionalEquipmentsDisplayedCount,
+				request.StartIndex,
+				AdditionalEquipmentExcavatorCategory,
+				AdditionalEquipmentCategory,
 				AdditionalEquipmentBrand
 		);
 
-		var additionalEquipmentsTitlePhotos = new List<AdditionalEquipmentPhoto>();
-		foreach (var additionalEquipment in additionalEquipments)
-		{
-			var additionalEquipmentPhoto = await api.GetAdditionalEquipmentTitlePhotoAsync(additionalEquipment.Id);
-			if (additionalEquipmentPhoto == null)
-			{
-				// possible TODO: if photo is not available (e.g. due to some error, some "not found error" photo from wwwroot can be displayed instead)
-				throw new Exception("Missing Excavator photo.");
-			}
-			additionalEquipmentPhoto.AdditionalEquipment = additionalEquipment;
-			additionalEquipmentsTitlePhotos.Add(additionalEquipmentPhoto);
-		}
-
-		return new ItemsProviderResult<AdditionalEquipmentPhoto>(additionalEquipmentsTitlePhotos, AdditionalEquipmentsTotalCount);
+		return new ItemsProviderResult<AdditionalEquipment>(additionalEquipments, AdditionalEquipmentsTotalCount);
 	}
 
-	private async Task DeleteAdditionalEquipment(AdditionalEquipment additionalEquipment) {
+	private async Task DeleteAdditionalEquipmentAsync(AdditionalEquipment additionalEquipment)
+	{
 		await api.DeleteAdditionalEquipmentAsync(additionalEquipment);
 
 		await ReloadAdditionalEquipmentPhotosAsync();

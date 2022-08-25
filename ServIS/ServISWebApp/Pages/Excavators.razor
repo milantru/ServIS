@@ -12,9 +12,8 @@
 }
 else
 {
-	<h3>@ExcavatorType.Category- @ExcavatorType.Brand</h3>
-
-	<ExcavatorsLister ExcavatorType="@ExcavatorType" />
+	<ExcavatorsLister ExcavatorType="@ExcavatorType"
+				      Title="@($"{@ExcavatorType.Category}- {@ExcavatorType.Brand}")" />
 }
 
 @code {
@@ -27,11 +26,13 @@ else
 	{
 		await base.OnParametersSetAsync();
 
-		var excavatorType = await api.GetExcavatorTypeAsync(ExcavatorTypeId);
-		if (excavatorType == null)
+		try
+		{
+			ExcavatorType = await api.GetExcavatorTypeAsync(ExcavatorTypeId);
+		}
+		catch
 		{
 			throw new Exception($"Excavator type with id '{ExcavatorTypeId}' not found.");
 		}
-		ExcavatorType = excavatorType;
 	}
 }

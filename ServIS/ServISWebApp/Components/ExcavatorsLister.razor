@@ -1,35 +1,41 @@
 ﻿@inject IServISApi api
 
+@if (Title != null)
+{
+	<h3>@Title</h3>
+}
+
 <div class="d-flex flex-wrap">
-	<Virtualize @ref="excavatorPhotosContainer" ItemsProvider="LoadExcavatorsPhotosAsync" Context="ep">
-		<ExcavatorCard Excavator="@ep.Excavator"
-					   Image="@ep.Photo" 
-					   OnDelete="async () => await DeleteExcavatorAsync(ep.Excavator)" />
+	<Virtualize @ref="excavatorPhotosContainer" ItemsProvider="LoadExcavatorsAsync" Context="excavator">
+		<ExcavatorCard Excavator="excavator"
+					   OnDelete="async () => await DeleteExcavatorAsync(excavator)" />
 	</Virtualize>
 </div>
 
 @code {
-	private Virtualize<ExcavatorPhoto> excavatorPhotosContainer = null!;
+	private Virtualize<Excavator> excavatorPhotosContainer = null!;
 
 	[Parameter]
 	public ExcavatorType ExcavatorType { get; set; } = null!;
 
-	public int ExcavatorsTotalCount { get; set; } // excavators of given category (ExcavatorCategory)
+	[Parameter]
+	public string Title { get; set; } = null!;
+
+	public int ExcavatorsTotalCount { get; set; } // excavators of given type (ExcavatorType)
 
 	public async Task ReloadExcavatorsPhotosAsync()
 	{
 		await excavatorPhotosContainer.RefreshDataAsync();
 	}
 
-	private async ValueTask<ItemsProviderResult<ExcavatorPhoto>> LoadExcavatorsPhotosAsync(ItemsProviderRequest request)
+	private async ValueTask<ItemsProviderResult<Excavator>> LoadExcavatorsAsync(ItemsProviderRequest request)
 	{
-		// number of excavators is equal to number of their title photos (each excavator has exactly 1 title photo)
 		if (ExcavatorsTotalCount == 0)
 		{
 			ExcavatorsTotalCount = await api.GetExcavatorsCountAsync(ExcavatorType);
 			if (ExcavatorsTotalCount == 0)
 			{// in case there is no excavator in the database
-				return new ItemsProviderResult<ExcavatorPhoto>();
+				return new ItemsProviderResult<Excavator>();
 			}
 		}
 
@@ -37,21 +43,7 @@
 
 		var excavators = await api.GetExcavatorsAsync(excavatorsDisplayedCount, request.StartIndex, ExcavatorType);
 
-		var excavatorsTitlePhotos = new List<ExcavatorPhoto>(excavators.Count);
-		foreach (var excavator in excavators)
-		{
-			var excavatorPhotos = excavator.Photos;
-			foreach (var photo in excavatorPhotos)
-			{
-				if (photo.IsTitle)
-				{
-					excavatorsTitlePhotos.Add(photo);
-					break;
-				}
-			}
-		}
-
-		return new ItemsProviderResult<ExcavatorPhoto>(excavatorsTitlePhotos, ExcavatorsTotalCount);
+		return new ItemsProviderResult<Excavator>(excavators, ExcavatorsTotalCount);
 	}
 
 	private async Task DeleteExcavatorAsync(Excavator excavator)
