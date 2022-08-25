@@ -7,7 +7,7 @@
 
 <h3>Registrácia</h3>
 
-<EditForm Model="User" OnValidSubmit="RegisterUser">
+<EditForm Model="User" OnValidSubmit="RegisterUserAsync">
 	<DataAnnotationsValidator />
 	<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
 
@@ -45,7 +45,7 @@
 @code {
 	private User User { get; set; } = new();
 
-	private async Task RegisterUser()
+	private async Task RegisterUserAsync()
 	{
 		/* we dont really need to create newUser, we can just save User
 		 * but we would see on a brief moment password hash in the form,
@@ -63,7 +63,15 @@
 				Residence = User.Residence,
 				//IsTemporary = User.IsTemporary
 			};
-		await api.SaveUserAsync(newUser);
+
+		try
+		{
+			await api.SaveUserAsync(newUser);
+		}
+		catch
+		{
+			throw new Exception($"Failed to save user (registration failed).");
+		}
 
 		navMan.NavigateTo("/");
 	}
