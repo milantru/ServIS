@@ -236,7 +236,6 @@
 		{
 			if (excavatorPhoto.Id != 0)
 			{
-				excavatorPhoto.Excavator = null!;
 				await api.DeleteExcavatorPhotoAsync(excavatorPhoto);
 			}
 

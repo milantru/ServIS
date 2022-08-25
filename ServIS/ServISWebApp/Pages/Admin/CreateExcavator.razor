@@ -28,22 +28,29 @@ else
 		await base.OnParametersSetAsync();
 
 		if (ExcavatorTypeId.HasValue)
-		{
-			var excavatorTypeTmp = await api.GetExcavatorTypeAsync(ExcavatorTypeId.Value);
-			if (excavatorTypeTmp == null)
+		{// new excavator
+			ExcavatorType excavatorTypeTmp;
+			try
 			{
-				throw new Exception($"Excavator type with id {excavatorTypeTmp} was not found.");
+				excavatorTypeTmp = await api.GetExcavatorTypeAsync(ExcavatorTypeId.Value);
 			}
+			catch
+			{
+				throw new Exception($"Excavator type with id {ExcavatorTypeId.Value} not found.");
+			}
+
 			Excavator = new() { Type = excavatorTypeTmp };
 		}
 		else if (ExcavatorId.HasValue)
-		{
-			var excavatorTmp = await api.GetExcavatorAsync(ExcavatorId.Value);
-			if (excavatorTmp == null)
+		{// edit of existing excavator
+			try
 			{
-				throw new Exception($"Excavator with id {excavatorTmp} was not found.");
+				Excavator = await api.GetExcavatorAsync(ExcavatorId.Value);
 			}
-			Excavator = excavatorTmp;
+			catch
+			{
+				throw new Exception($"Excavator with id {ExcavatorId.Value} not found.");
+			}
 		}
 	}
 }
