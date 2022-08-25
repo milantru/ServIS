@@ -1,11 +1,10 @@
-﻿@using ServISWebApp.CssProviders
-@inject IServISApi api
-@inject IJSRuntime js
-@inject NavigationManager navMan
+﻿@inject IServISApi api
 
-@if (AdditionalEquipment != null && DisplayedAdditionalEquipmentPhotos != null)
+@using ServISWebApp.CssProviders
+
+@if (AdditionalEquipment != null && AdditionalEquipment.Photos != null)
 {
-	<EditForm Model="AdditionalEquipment" OnValidSubmit="SaveAdditionalEquipment">
+	<EditForm Model="AdditionalEquipment" OnValidSubmit="HandleValidSubmit">
 		<ObjectGraphDataAnnotationsValidator />
 		<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
 
@@ -13,7 +12,7 @@
 						 @bind-Photos="AdditionalEquipment.Photos"
 						 CreatePhoto="@((dataBytes) => 
 							new AdditionalEquipmentPhoto { Photo = dataBytes, AdditionalEquipment = AdditionalEquipment })"
-						 DeletePhotoAsync="@(async (photo) => await DeleteAdditionalEquipmentAsync(photo))"
+						 DeletePhotoAsync="@(async (photo) => await DeleteAdditionalEquipmentPhotoAsync(photo))"
 						 IsRequired="@(AdditionalEquipment.Id == 0)" />
 
 		<br />
@@ -44,14 +43,23 @@
 }
 
 @code {
-	[EditorRequired, Parameter]
+	[Parameter]
 	public AdditionalEquipment AdditionalEquipment { get; set; } = null!;
 
-	private List<AdditionalEquipmentPhoto> DisplayedAdditionalEquipmentPhotos { get; set; } = null!;
+	[Parameter]
+	public EventCallback<AdditionalEquipment> AdditionalEquipmentChanged { get; set; }
+
+	[Parameter]
+	public EventCallback AfterValidSubmit { get; set; }
 
 	protected override void OnParametersSet()
 	{
 		base.OnParametersSet();
+
+		if (AdditionalEquipment == null)
+		{
+			throw new Exception($"Parameter '{nameof(AdditionalEquipment)}' not provided.");
+		}
 
 		if (AdditionalEquipment.Id == 0 && AdditionalEquipment.Photos == null)
 		{
@@ -59,81 +67,45 @@
 		}
 	}
 
-	protected override async Task OnParametersSetAsync()
+	private async Task ResetAsync()
 	{
-		await base.OnParametersSetAsync();
+		AdditionalEquipment = new AdditionalEquipment { Photos = new List<AdditionalEquipmentPhoto>() };
 
-		if (AdditionalEquipment.Id != 0)
-		{
-			DisplayedAdditionalEquipmentPhotos = await api.GetAdditionalEquipmentPhotosAsync(AdditionalEquipment.Id);
-
-			foreach (var photo in DisplayedAdditionalEquipmentPhotos)
-			{
-				photo.AdditionalEquipment = AdditionalEquipment;
-			}
-		}
-		else
-		{
-			DisplayedAdditionalEquipmentPhotos = new();
-		}
+		await AdditionalEquipmentChanged.InvokeAsync(AdditionalEquipment);
 	}
 
-	private async Task HandleInputFileChange(InputFileChangeEventArgs e)
+	private async Task HandleValidSubmit()
 	{
-		var uploadedFiles = e.GetMultipleFiles();
-
-		foreach (var uploadedFile in uploadedFiles)
+		if (AdditionalEquipment.Photos.Count == 0)
 		{
-			if (!uploadedFile.IsValidImageFile(out string? errorMessage))
-			{
-				await js.InvokeVoidAsync("alert", errorMessage);
-				continue;
-			}
+			throw new Exception("No additional equipment photos provided.");
+		}
+		AdditionalEquipment.Photos[0].IsTitle = true;
 
-			var dataBytes = await uploadedFile.GetDataBytesAsync();
-			if (dataBytes == null)
-			{
-				// TODO: check if uploadedFile is image file, wrong format
-				throw new Exception("Something went wrong with showing uploaded photo.");
-			}
+		try
+		{
+			await api.SaveAdditionalEquipmentAsync(AdditionalEquipment);
+		}
+		catch { /* TODO */ }
 
-			var excavatorPhoto = new AdditionalEquipmentPhoto
-			{
-				Photo = dataBytes,
-				AdditionalEquipment = AdditionalEquipment,
-			};
-			DisplayedAdditionalEquipmentPhotos.Add(excavatorPhoto);
+		if (AfterValidSubmit.HasDelegate)
+		{
+			await AfterValidSubmit.InvokeAsync();
 		}
 
-		StateHasChanged();
+		await ResetAsync();
 	}
 
-	private async Task SaveAdditionalEquipment()
+	private async Task DeleteAdditionalEquipmentPhotoAsync(AdditionalEquipmentPhoto additionalEquipmentPhoto)
 	{
-		if (DisplayedAdditionalEquipmentPhotos == null || DisplayedAdditionalEquipmentPhotos.Count == 0)
-		{
-			throw new Exception("No photos provided. Cannot save additional equipment.");
-		}
-		DisplayedAdditionalEquipmentPhotos[0].IsTitle = true;
-
-		foreach (var photo in DisplayedAdditionalEquipmentPhotos)
-		{
-			await api.SaveAdditionalEquipmentPhotoAsync(photo); // this will also save additional equipment because photo contains it
-		}
-
-		navMan.NavigateTo("/pridavne-zariadenia");
-	}
-
-	private async Task DeleteAdditionalEquipmentAsync(AdditionalEquipmentPhoto additionalEquipmentPhoto)
-	{
-		if (DisplayedAdditionalEquipmentPhotos.Count > 1)
+		if (AdditionalEquipment.Photos.Count > 1)
 		{
 			if (additionalEquipmentPhoto.Id != 0)
 			{
 				await api.DeleteAdditionalEquipmentPhotoAsync(additionalEquipmentPhoto);
 			}
 
-			DisplayedAdditionalEquipmentPhotos.Remove(additionalEquipmentPhoto);
+			AdditionalEquipment.Photos.Remove(additionalEquipmentPhoto);
 
 			StateHasChanged();
 		}

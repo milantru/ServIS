@@ -1,10 +1,11 @@
 ﻿@page "/admin/nove-pridavne-zariadenie"
 
 @attribute [Authorize(Roles = "Administrator")]
+@inject NavigationManager navMan
 
 <h3>Prídavné zariadenia- vytvorenie nového záznamu</h3>
 
-<AdditionalEquipmentForm AdditionalEquipment="AdditionalEquipment" />
+<AdditionalEquipmentForm AdditionalEquipment="AdditionalEquipment" AfterValidSubmit="@(() => navMan.NavigateTo("/pridavne-zariadenia"))" />
 
 @code {
 	private AdditionalEquipment AdditionalEquipment { get; set; } = new();
