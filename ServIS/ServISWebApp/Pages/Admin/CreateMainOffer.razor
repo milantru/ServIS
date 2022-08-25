@@ -3,6 +3,7 @@
 
 @attribute [Authorize(Roles = "Administrator")]
 @inject IServISApi api
+@inject NavigationManager navMan
 
 @if (MainOffer == null)
 {
@@ -10,7 +11,7 @@
 }
 else
 {
-	<MainOfferForm MainOffer="MainOffer" />
+	<MainOfferForm MainOffer="MainOffer" AfterValidSubmit="@(() => navMan.NavigateTo("/"))" />
 }
 
 @code {
@@ -25,12 +26,14 @@ else
 
 		if (MainOfferId.HasValue)
 		{
-			var mainOfferTmp = await api.GetMainOfferAsync(MainOfferId.Value);
-			if (mainOfferTmp == null)
+			try
 			{
-				throw new Exception($"Main offer with id {mainOfferTmp} was not found.");
+				MainOffer = await api.GetMainOfferAsync(MainOfferId.Value);
 			}
-			MainOffer = mainOfferTmp;
+			catch
+			{
+				throw new Exception($"Main offer with id {MainOfferId.Value} not found.");
+			}
 		}
 		else
 		{

@@ -2,9 +2,8 @@
 @using ServISData.Interfaces
 @inject IServISApi api
 @inject IJSRuntime js
-@inject NavigationManager navMan
 
-@if (MainOffer != null)
+@if (MainOffer != null && MainOffer.ExcavatorType != null)
 {
 	<EditForm EditContext="@editContext" Model="MainOffer" OnValidSubmit="HandleValidSubmit">
 		<ObjectGraphDataAnnotationsValidator />
@@ -20,29 +19,41 @@
 			}
 			else
 			{
-				<img src="@FileTools.GetDataUrlBase64String(MainOffer.Photo, "image/jpeg")" />
+				<img src="@FileTools.GetDataUrlBase64String(MainOffer.Photo, "image/jpeg")" width="280" />
 			}
 		</div>
 
 		<ExcavatorTypeSelector @bind-ExcavatorType="MainOffer.ExcavatorType"  />
 
 		<label>Popis:</label>
-		<InputTextArea @bind-Value="@MainOffer.Description" />
+		<InputTextArea @bind-Value="MainOffer.Description" />
 		<ValidationMessage For="@(() => MainOffer.Description)" />
 
 		<button class="btn btn-success" type="submit">Uložiť</button>
+		<button class="btn btn-secondary" type="reset" @onclick="async () => await ResetAsync()">Reset</button>
 	</EditForm>
 }
 
 @code {
 	private EditContext editContext = null!;
 
-	[Parameter, EditorRequired]
+	[Parameter]
 	public MainOffer MainOffer { get; set; } = null!;
+
+	[Parameter]
+	public EventCallback<MainOffer> MainOfferChanged { get; set; }
+
+	[Parameter]
+	public EventCallback AfterValidSubmit { get; set; }
 
 	protected override void OnParametersSet()
 	{
 		base.OnParametersSet();
+
+		if (MainOffer == null)
+		{
+			throw new Exception($"Parameter '{nameof(MainOffer)}' not provided.");
+		}
 
 		if (MainOffer.Id == 0 && MainOffer.ExcavatorType == null)
 		{
@@ -71,10 +82,26 @@
 		StateHasChanged();
 	}
 
+	private async Task ResetAsync()
+	{
+		MainOffer = new MainOffer { ExcavatorType = new() };
+
+		await MainOfferChanged.InvokeAsync(MainOffer);
+	}
+
 	private async Task HandleValidSubmit()
 	{
-		await api.SaveMainOfferAsync(MainOffer);
+		try
+		{
+			await api.SaveMainOfferAsync(MainOffer);
+		}
+		catch { /* TODO */ }
 
-		navMan.NavigateTo("/");
+		if (AfterValidSubmit.HasDelegate)
+		{
+			await AfterValidSubmit.InvokeAsync();
+		}
+
+		await ResetAsync();
 	}
 }
