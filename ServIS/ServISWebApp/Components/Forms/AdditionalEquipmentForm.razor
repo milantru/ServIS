@@ -1,9 +1,9 @@
 ﻿@inject IServISApi api
 @using ServISWebApp.CssProviders
 
-@if (AdditionalEquipment != null && AdditionalEquipment.Photos != null)
+@if (isAdditionalEquipmentInitialized)
 {
-	<EditForm Model="AdditionalEquipment" OnValidSubmit="HandleValidSubmit">
+	<EditForm Model="AdditionalEquipment" OnValidSubmit="SaveAdditionalEquipmentAsync">
 		<ObjectGraphDataAnnotationsValidator />
 		<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
 
@@ -17,17 +17,29 @@
 		<br />
 		<br />
 
-		<label>Pre akú kategóriu strojov (pásové bagre, šmykom riadené nakladače...):</label>
-		<InputText @bind-Value="@AdditionalEquipment.ExcavatorCategory" />
-		<ValidationMessage For="@(() => AdditionalEquipment.ExcavatorCategory)" />
+		<ItemsSelector ItemType="ExcavatorCategory"
+				   @bind-SelectedItem="AdditionalEquipment.ExcavatorCategory"
+				   Items="AllExcavatorCategories"
+				   Label="Pre akú kategóriu strojov (pásové bagre, šmykom riadené nakladače...):"
+				   Context="excavatorCategory">
+			<OptionText>@excavatorCategory.Category</OptionText>
+		</ItemsSelector>
 
-		<label>Kategória:</label>
-		<InputText @bind-Value="@AdditionalEquipment.Category" />
-		<ValidationMessage For="@(() => AdditionalEquipment.Category)" />
+		<ItemsSelector ItemType="AdditionalEquipmentCategory"
+				   @bind-SelectedItem="AdditionalEquipment.Category"
+				   Items="AllAdditionalEquipmentCategories"
+				   Label="Kategória:"
+				   Context="additionalEquipmentCategory">
+			<OptionText>@additionalEquipmentCategory.Category</OptionText>
+		</ItemsSelector>
 
-		<label>Značka:</label>
-		<InputText @bind-Value="@AdditionalEquipment.Brand" />
-		<ValidationMessage For="@(() => AdditionalEquipment.Brand)" />
+		<ItemsSelector ItemType="AdditionalEquipmentBrand"
+					   @bind-SelectedItem="AdditionalEquipment.Brand"
+					   Items="AllAdditionalEquipmentBrands"
+					   Label="Značka:"
+					   Context="additionalEquipmentBrand">
+			<OptionText>@additionalEquipmentBrand.Brand</OptionText>
+		</ItemsSelector>
 
 		<label>Názov:</label>
 		<InputText @bind-Value="@AdditionalEquipment.Name" />
@@ -43,6 +55,8 @@
 }
 
 @code {
+	private bool isAdditionalEquipmentInitialized;
+
 	[Parameter]
 	public AdditionalEquipment AdditionalEquipment { get; set; } = null!;
 
@@ -51,6 +65,21 @@
 
 	[Parameter]
 	public EventCallback AfterValidSubmit { get; set; }
+
+	private List<ExcavatorCategory> AllExcavatorCategories { get; set; } = null!;
+
+	private List<AdditionalEquipmentCategory> AllAdditionalEquipmentCategories { get; set; } = null!;
+
+	private List<AdditionalEquipmentBrand> AllAdditionalEquipmentBrands { get; set; } = null!;
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+
+		AllExcavatorCategories = await api.GetExcavatorCategoriesAsync();
+		AllAdditionalEquipmentCategories = await api.GetAdditionalEquipmentCategoriesAsync();
+		AllAdditionalEquipmentBrands = await api.GetAdditionalEquipmentBrandsAsync();
+	}
 
 	protected override void OnParametersSet()
 	{
@@ -61,20 +90,30 @@
 			throw new Exception($"Parameter '{nameof(AdditionalEquipment)}' not provided.");
 		}
 
-		if (AdditionalEquipment.Id == 0 && AdditionalEquipment.Photos == null)
+		if (AdditionalEquipment.Id == 0)
 		{
-			AdditionalEquipment.Photos = new List<AdditionalEquipmentPhoto>();
+			InitAdditionalEquipment(AdditionalEquipment);
 		}
+		isAdditionalEquipmentInitialized = true;
+	}
+
+	private static void InitAdditionalEquipment(AdditionalEquipment additionalEquipment)
+	{
+		additionalEquipment.Photos ??= new List<AdditionalEquipmentPhoto>();
+		additionalEquipment.Brand ??= new();
+		additionalEquipment.Category ??= new();
+		additionalEquipment.ExcavatorCategory ??= new();
 	}
 
 	private async Task ResetAsync()
 	{
-		AdditionalEquipment = new AdditionalEquipment { Photos = new List<AdditionalEquipmentPhoto>() };
+		AdditionalEquipment = new();
+		InitAdditionalEquipment(AdditionalEquipment);
 
 		await AdditionalEquipmentChanged.InvokeAsync(AdditionalEquipment);
 	}
 
-	private async Task HandleValidSubmit()
+	private async Task SaveAdditionalEquipmentAsync()
 	{
 		if (AdditionalEquipment.Photos.Count == 0)
 		{

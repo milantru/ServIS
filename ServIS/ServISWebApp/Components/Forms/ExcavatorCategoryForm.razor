@@ -1,0 +1,61 @@
+﻿@inject IServISApi api
+@using ServISWebApp.CssProviders
+
+<EditForm Model="ExcavatorCategory" OnValidSubmit="SaveExcavatorCategoryAsync">
+	<DataAnnotationsValidator />
+	<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
+
+	<label>Názov kategórie:</label>
+	<InputText @bind-Value="ExcavatorCategory.Category" />
+	<ValidationMessage For="@(() => ExcavatorCategory.Category)" />
+
+	<button class="btn btn-success" type="submit">Uložiť</button>
+	<button class="btn btn-secondary" type="reset" @onclick="async () => await ResetAsync()">Reset</button>
+</EditForm>
+
+@code {
+	[Parameter]
+	public ExcavatorCategory ExcavatorCategory { get; set; } = null!;
+
+	[Parameter]
+	public EventCallback<ExcavatorCategory> ExcavatorCategoryChanged { get; set; }
+
+	[Parameter]
+	public EventCallback AfterValidSubmit { get; set; }
+
+	protected override void OnParametersSet()
+	{
+		base.OnParametersSet();
+
+		if (ExcavatorCategory == null)
+		{
+			throw new Exception($"Parameter '{nameof(ExcavatorCategory)}' not provided.");
+		}
+	}
+
+	private async Task ResetAsync()
+	{
+		ExcavatorCategory = new();
+
+		await ExcavatorCategoryChanged.InvokeAsync(ExcavatorCategory);
+	}
+
+	private async Task SaveExcavatorCategoryAsync()
+	{
+		try
+		{
+			await api.SaveExcavatorCategoryAsync(ExcavatorCategory);
+		}
+		catch
+		{
+			throw new Exception($"Failed to save excavator category with id '{ExcavatorCategory.Id}'.");
+		}
+
+		if (AfterValidSubmit.HasDelegate)
+		{
+			await AfterValidSubmit.InvokeAsync();
+		}
+
+		await ResetAsync();
+	}
+}

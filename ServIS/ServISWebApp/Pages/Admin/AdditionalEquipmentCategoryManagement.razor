@@ -1,0 +1,30 @@
+﻿@inherits ItemsManagement<AdditionalEquipmentCategory>
+@inject IServISApi api
+@using ServISWebApp.Components.Managements
+
+<h3>Správa kategórií prídavných zariadení</h3>
+
+<AdditionalEquipmentCategoryForm @bind-AdditionalEquipmentCategory="this.SelectedItem" AfterValidSubmit="async() => await this.ReloadItemsAsync()" />
+
+<ItemsTableLister ItemType="AdditionalEquipmentCategory"
+				  @ref="this.itemsLister"
+				  @bind-SelectedItem="this.SelectedItem"
+				  Title="Zoznam kategórií prídavných zariadení"
+				  GetItemsAsync="async (int numberOfAdditionalEquipmentCategories, int startIndex) =>
+									await api.GetAdditionalEquipmentCategoriesAsync(numberOfAdditionalEquipmentCategories, startIndex)"
+				  GetItemsTotalCountAsync="async () => await api.GetAdditionalEquipmentCategoriesCountAsync()"
+				  DeleteItemAsync="async (additionalEquipmentCategory) => await api.DeleteAdditionalEquipmentCategoryAsync(additionalEquipmentCategory)"
+				  Context="aec">
+	<HeadCols>
+		<th>Názov kategórie:</th>
+		<th>Počet príd. zar.:</th>
+	</HeadCols>
+	<BodyCols>
+		<td>@aec.Category</td>
+		<td>@aec.AdditionalEquipmentsOfThisCategory.Count</td>
+	</BodyCols>
+</ItemsTableLister>
+
+@code {
+
+}

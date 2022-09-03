@@ -5,6 +5,7 @@
 @inject IServISApi api
 @inject IJSRuntime js
 @using ServISWebApp.Auth
+@using ServISWebApp.Components.Managements
 @using ServISWebApp.CssProviders
 @using ServISWebApp.Pages.Admin
 @using System.Security.Claims
@@ -29,6 +30,22 @@
 
 			<TabPage TabLabel="Typy vlastností strojov">
 				<ExcavatorPropertyTypeManagement />
+			</TabPage>
+
+			<TabPage TabLabel="Kategórie strojov">
+				<ExcavatorCategoryManagement />
+			</TabPage>
+
+			<TabPage TabLabel="Značky strojov">
+				<ExcavatorBrandManagement />
+			</TabPage>
+
+			<TabPage TabLabel="Kategórie prídavných zariadení">
+				<AdditionalEquipmentCategoryManagement />
+			</TabPage>
+
+			<TabPage TabLabel="Značky prídavných zariadení">
+				<AdditionalEquipmentBrandManagement />
 			</TabPage>
 		</Authorized>
 	</AuthorizeView>

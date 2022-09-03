@@ -12,14 +12,14 @@ namespace ServISData.Models
 	{
 		public int Id { get; set; }
 
-		[Required(ErrorMessage = "Toto pole je povinné."), StringLength(30, ErrorMessage = "Max {1} znakov.")]
-		public string Brand { get; set; } = null!;
+		[Required, ValidateComplexType]
+		public ExcavatorBrand Brand { get; set; } = null!;
 
-		[Required(ErrorMessage = "Toto pole je povinné."), StringLength(40, ErrorMessage = "Max {1} znakov.")]
-		public string Category { get; set; } = null!;
+		[Required, ValidateComplexType]
+		public ExcavatorCategory Category { get; set; } = null!;
 
-		public IList<ExcavatorPropertyType> PropertyTypes { get; set; } = null!;
+		public ICollection<ExcavatorPropertyType> PropertyTypes { get; set; } = null!;
 
-		public IList<Excavator> ExcavatorsOfThisType { get; set; } = null!;
+		public ICollection<Excavator> ExcavatorsOfThisType { get; set; } = null!;
 	}
 }

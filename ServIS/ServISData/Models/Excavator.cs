@@ -21,12 +21,12 @@ namespace ServISData.Models
 		[Required, ValidateComplexType]
 		public ExcavatorType Type { get; set; } = null!;
 
-		public IList<ExcavatorProperty> Properties { get; set; } = null!;
+		public ICollection<ExcavatorProperty> Properties { get; set; } = null!;
 
 		//public IList<AcquiredExcavator> AcquiredExcavators { get; set; } = null!;
 
 		//public IList<AuctionOffer> AuctionOffers { get; set; } = null!;
 
-		public IList<SparePart> SpareParts { get; set; } = null!;
+		public ICollection<SparePart> SpareParts { get; set; } = null!;
 	}
 }

@@ -1,0 +1,32 @@
+﻿@inherits ItemsManagement<ExcavatorCategory>
+@inject IServISApi api
+@using ServISWebApp.Components.Managements
+
+<h3>Správa kategórií strojov</h3>
+
+<ExcavatorCategoryForm @bind-ExcavatorCategory="this.SelectedItem" AfterValidSubmit="async() => await this.ReloadItemsAsync()" />
+
+<ItemsTableLister ItemType="ExcavatorCategory"
+				  @ref="this.itemsLister"
+				  @bind-SelectedItem="this.SelectedItem"
+				  Title="Zoznam kategórií strojov"
+				  GetItemsAsync="async (int numberOfExcavatorCategories, int startIndex) =>
+									await api.GetExcavatorCategoriesAsync(numberOfExcavatorCategories, startIndex)"
+				  GetItemsTotalCountAsync="async () => await api.GetExcavatorCategoriesCountAsync()"
+				  DeleteItemAsync="async (excavatorCategory) => await api.DeleteExcavatorCategoryAsync(excavatorCategory)"
+				  Context="ec">
+	<HeadCols>
+		<th>Názov kategórie:</th>
+		<th>Počet strojov:</th>
+		<th>Počet príd. zar.:</th>
+	</HeadCols>
+	<BodyCols>
+		<td>@ec.Category</td>
+		<td>@ec.ExcavatorTypesOfThisCategory.SelectMany(e => e.ExcavatorsOfThisType).Count()</td>
+		<td>@ec.AdditionalEquipmentsOfThisCategory.Count</td>
+	</BodyCols>
+</ItemsTableLister>
+
+@code {
+
+}

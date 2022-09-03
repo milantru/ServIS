@@ -1,0 +1,61 @@
+﻿@inject IServISApi api
+@using ServISWebApp.CssProviders
+
+<EditForm Model="AdditionalEquipmentBrand" OnValidSubmit="SaveAdditionalEquipmentBrandAsync">
+	<DataAnnotationsValidator />
+	<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
+
+	<label>Názov značky:</label>
+	<InputText @bind-Value="AdditionalEquipmentBrand.Brand" />
+	<ValidationMessage For="@(() => AdditionalEquipmentBrand.Brand)" />
+
+	<button class="btn btn-success" type="submit">Uložiť</button>
+	<button class="btn btn-secondary" type="reset" @onclick="async () => await ResetAsync()">Reset</button>
+</EditForm>
+
+@code {
+	[Parameter]
+	public AdditionalEquipmentBrand AdditionalEquipmentBrand { get; set; } = null!;
+
+	[Parameter]
+	public EventCallback<AdditionalEquipmentBrand> AdditionalEquipmentBrandChanged { get; set; }
+
+	[Parameter]
+	public EventCallback AfterValidSubmit { get; set; }
+
+	protected override void OnParametersSet()
+	{
+		base.OnParametersSet();
+
+		if (AdditionalEquipmentBrand == null)
+		{
+			throw new Exception($"Parameter '{nameof(AdditionalEquipmentBrand)}' not provided.");
+		}
+	}
+
+	private async Task ResetAsync()
+	{
+		AdditionalEquipmentBrand = new();
+
+		await AdditionalEquipmentBrandChanged.InvokeAsync(AdditionalEquipmentBrand);
+	}
+
+	private async Task SaveAdditionalEquipmentBrandAsync()
+	{
+		try
+		{
+			await api.SaveAdditionalEquipmentBrandAsync(AdditionalEquipmentBrand);
+		}
+		catch
+		{
+			throw new Exception($"Failed to save additional equipment brand with id '{AdditionalEquipmentBrand.Id}'.");
+		}
+
+		if (AfterValidSubmit.HasDelegate)
+		{
+			await AfterValidSubmit.InvokeAsync();
+		}
+
+		await ResetAsync();
+	}
+}

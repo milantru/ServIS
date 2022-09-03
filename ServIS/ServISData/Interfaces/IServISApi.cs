@@ -6,11 +6,15 @@ namespace ServISData.Interfaces
 	{
 		// Create/Update
 		public Task<Excavator> SaveExcavatorAsync(Excavator excavator);
+		public Task<ExcavatorBrand> SaveExcavatorBrandAsync(ExcavatorBrand excavatorBrand);
+		public Task<ExcavatorCategory> SaveExcavatorCategoryAsync(ExcavatorCategory excavatorCategory);
 		public Task<ExcavatorType> SaveExcavatorTypeAsync(ExcavatorType excavatorType);
 		public Task<ExcavatorPropertyType> SaveExcavatorPropertyTypeAsync(ExcavatorPropertyType excavatorPropertyType);
 		public Task<SparePart> SaveSparePartAsync(SparePart sparePart);
 		public Task<MainOffer> SaveMainOfferAsync(MainOffer mainOffer);
 		public Task<AdditionalEquipment> SaveAdditionalEquipmentAsync(AdditionalEquipment additionalEquipment);
+		public Task<AdditionalEquipmentBrand> SaveAdditionalEquipmentBrandAsync(AdditionalEquipmentBrand additionalEquipmentBrand);
+		public Task<AdditionalEquipmentCategory> SaveAdditionalEquipmentCategoryAsync(AdditionalEquipmentCategory additionalEquipmentCategory);
 		public Task<User> SaveUserAsync(User user);
 		public Task<AuctionOffer> SaveAuctionOfferAsync(AuctionOffer auctionOffer);
 		public Task<AuctionBid> SaveAuctionBidAsync(AuctionBid auctionBid);
@@ -21,6 +25,10 @@ namespace ServISData.Interfaces
 		public Task<int> GetExcavatorsCountAsync(ExcavatorType? type = null);
 		public Task<List<ExcavatorPhoto>> GetExcavatorPhotosAsync(int excavatorId);
 		public Task<int> GetExcavatorPhotosCountAsync();
+		public Task<List<ExcavatorBrand>> GetExcavatorBrandsAsync(int? numberOfExcavatorBrands = null, int? startIndex = null);
+		public Task<int> GetExcavatorBrandsCountAsync();
+		public Task<List<ExcavatorCategory>> GetExcavatorCategoriesAsync(int? numberOfExcavatorCategories = null, int? startIndex = null);
+		public Task<int> GetExcavatorCategoriesCountAsync();
 		public Task<List<ExcavatorType>> GetExcavatorTypesAsync(int? numberOfExcavatorTypes = null, int? startIndex = null);
 		public Task<int> GetExcavatorTypesCountAsync();
 		public Task<List<ExcavatorPropertyType>> GetExcavatorPropertyTypesAsync(int? numberOfExcavatorPropertyTypes = null, int? startIndex = null);
@@ -33,12 +41,16 @@ namespace ServISData.Interfaces
 		public Task<SparePart> GetSparePartAsync(int id);
 		public Task<List<MainOffer>> GetMainOffersAsync();
 		public Task<MainOffer> GetMainOfferAsync(int id);
-		public Task<List<AdditionalEquipment>> GetAdditionalEquipmentsAsync(int? numberOfAdditionalEquipments = null, int? startIndex = null, string? excavatorCategory = null, string? category = null, string? brand = null);
-		public Task<int> GetAdditionalEquipmentsCountAsync();
+		public Task<List<AdditionalEquipment>> GetAdditionalEquipmentsAsync(int? numberOfAdditionalEquipments = null, int? startIndex = null, ExcavatorCategory? excavatorCategory = null, AdditionalEquipmentCategory? category = null, AdditionalEquipmentBrand? brand = null);
 		public Task<AdditionalEquipment> GetAdditionalEquipmentAsync(int id);
+		public Task<int> GetAdditionalEquipmentsCountAsync();
 		public Task<List<AdditionalEquipmentPhoto>> GetAdditionalEquipmentPhotosAsync(int additionalEquipmentId);
 		public Task<int> GetAdditionalEquipmentPhotosCountAsync();
 		public Task<AdditionalEquipmentPhoto> GetAdditionalEquipmentTitlePhotoAsync(int additionalEquipmentId);
+		public Task<List<AdditionalEquipmentBrand>> GetAdditionalEquipmentBrandsAsync(int? numberOfAdditionalEquipmentBrands = null, int? startIndex = null);
+		public Task<int> GetAdditionalEquipmentBrandsCountAsync();
+		public Task<List<AdditionalEquipmentCategory>> GetAdditionalEquipmentCategoriesAsync(int? numberOfAdditionalEquipmentCategories = null, int? startIndex = null);
+		public Task<int> GetAdditionalEquipmentCategoriesCountAsync();
 		public Task<User> GetUserAsync(int id);
 		public Task<User> GetUserAsync(string username);
 		public Task<List<AuctionOffer>> GetAuctionOffersAsync(int? numberOfAuctionOffers = null, int? startIndex = null);
@@ -51,6 +63,8 @@ namespace ServISData.Interfaces
 		// delete
 		public Task DeleteExcavatorAsync(Excavator excavator);
 		public Task DeleteExcavatorPhotoAsync(ExcavatorPhoto excavatorPhoto);
+		public Task DeleteExcavatorBrandAsync(ExcavatorBrand excavatorBrand);
+		public Task DeleteExcavatorCategoryAsync(ExcavatorCategory excavatorCategory);
 		public Task DeleteExcavatorTypeAsync(ExcavatorType excavatorType);
 		public Task DeleteExcavatorPropertyAsync(ExcavatorProperty excavatorProperty);
 		public Task DeleteExcavatorPropertyTypeAsync(ExcavatorPropertyType excavatorPropertyType);
@@ -58,6 +72,8 @@ namespace ServISData.Interfaces
 		public Task DeleteMainOfferAsync(MainOffer mainOffer);
 		public Task DeleteAdditionalEquipmentAsync(AdditionalEquipment additionalEquipment);
 		public Task DeleteAdditionalEquipmentPhotoAsync(AdditionalEquipmentPhoto additionalEquipmentPhoto);
+		public Task DeleteAdditionalEquipmentBrandAsync(AdditionalEquipmentBrand additionalEquipmentBrand);
+		public Task DeleteAdditionalEquipmentCategoryAsync(AdditionalEquipmentCategory additionalEquipmentCategory);
 		public Task DeleteUserAsync(User user);
 		public Task DeleteAuctionOfferAsync(AuctionOffer auctionOffer);
 		public Task DeleteAuctionBidAsync(AuctionBid auctionBid);

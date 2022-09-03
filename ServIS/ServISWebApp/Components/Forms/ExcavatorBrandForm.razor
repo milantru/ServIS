@@ -1,0 +1,61 @@
+﻿@inject IServISApi api
+@using ServISWebApp.CssProviders
+
+<EditForm Model="ExcavatorBrand" OnValidSubmit="SaveExcavatorBrandAsync">
+	<DataAnnotationsValidator />
+	<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
+
+	<label>Názov značky:</label>
+	<InputText @bind-Value="ExcavatorBrand.Brand" />
+	<ValidationMessage For="@(() => ExcavatorBrand.Brand)" />
+
+	<button class="btn btn-success" type="submit">Uložiť</button>
+	<button class="btn btn-secondary" type="reset" @onclick="async () => await ResetAsync()">Reset</button>
+</EditForm>
+
+@code {
+	[Parameter]
+	public ExcavatorBrand ExcavatorBrand { get; set; } = null!;
+
+	[Parameter]
+	public EventCallback<ExcavatorBrand> ExcavatorBrandChanged { get; set; }
+
+	[Parameter]
+	public EventCallback AfterValidSubmit { get; set; }
+
+	protected override void OnParametersSet()
+	{
+		base.OnParametersSet();
+
+		if (ExcavatorBrand == null)
+		{
+			throw new Exception($"Parameter '{nameof(ExcavatorBrand)}' not provided.");
+		}
+	}
+
+	private async Task ResetAsync()
+	{
+		ExcavatorBrand = new();
+
+		await ExcavatorBrandChanged.InvokeAsync(ExcavatorBrand);
+	}
+
+	private async Task SaveExcavatorBrandAsync()
+	{
+		try
+		{
+			await api.SaveExcavatorBrandAsync(ExcavatorBrand);
+		}
+		catch
+		{
+			throw new Exception($"Failed to save excavator brand with id '{ExcavatorBrand.Id}'.");
+		}
+
+		if (AfterValidSubmit.HasDelegate)
+		{
+			await AfterValidSubmit.InvokeAsync();
+		}
+
+		await ResetAsync();
+	}
+}

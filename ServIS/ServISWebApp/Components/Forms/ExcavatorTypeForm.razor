@@ -4,19 +4,27 @@
 
 <h3>Typy strojov- vytvorenie nového záznamu</h3>
 
-@if (ExcavatorType != null)
+@if (isExcavatorTypeInitialized)
 {
-	<EditForm Model="ExcavatorType" OnValidSubmit="HandleValidSubmit">
+	<EditForm Model="ExcavatorType" OnValidSubmit="SaveExcavatorTypeAsync">
 		<ObjectGraphDataAnnotationsValidator />
 		<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
 
-		<label>Značka:</label>
-		<InputText @bind-Value="ExcavatorType.Brand" />
-		<ValidationMessage For="@(() => ExcavatorType.Brand)" />
+		<ItemsSelector ItemType="ExcavatorBrand"
+					   @bind-SelectedItem="ExcavatorType.Brand"
+					   Items="AllExcavatorBrands"
+					   Label="Značka:"
+					   Context="excavatorBrand">
+			<OptionText>@excavatorBrand.Brand</OptionText>
+		</ItemsSelector>
 
-		<label>Kategória:</label>
-		<InputText @bind-Value="ExcavatorType.Category" />
-		<ValidationMessage For="@(() => ExcavatorType.Category)" />
+		<ItemsSelector ItemType="ExcavatorCategory"
+				   @bind-SelectedItem="ExcavatorType.Category"
+				   Items="AllExcavatorCategories"
+				   Label="Kategória:"
+				   Context="excavatorCategory">
+			<OptionText>@excavatorCategory.Category</OptionText>
+		</ItemsSelector>
 
 		<label>Typy vlastností:</label>
 		@if (AllPropertyTypes != null && AllPropertyTypesChecked != null && AllPropertyTypes.Count == AllPropertyTypesChecked.Count)
@@ -42,6 +50,8 @@
 }
 
 @code {
+	private bool isExcavatorTypeInitialized;
+
 	[Parameter]
 	public ExcavatorType ExcavatorType { get; set; } = null!;
 
@@ -51,12 +61,19 @@
 	[Parameter]
 	public EventCallback AfterValidSubmit { get; set; }
 
+	private List<ExcavatorBrand> AllExcavatorBrands { get; set; } = null!;
+
+	private List<ExcavatorCategory> AllExcavatorCategories { get; set; } = null!;
+
 	private List<ExcavatorPropertyType> AllPropertyTypes { get; set; } = null!;
 	private List<bool> AllPropertyTypesChecked { get; set; } = null!;
 
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
+
+		AllExcavatorBrands = await api.GetExcavatorBrandsAsync();
+		AllExcavatorCategories = await api.GetExcavatorCategoriesAsync();
 
 		AllPropertyTypes = await api.GetExcavatorPropertyTypesAsync();
 		AllPropertyTypesChecked = new bool[AllPropertyTypes.Count].ToList();
@@ -71,19 +88,15 @@
 			throw new Exception($"Parameter '{nameof(ExcavatorType)}' not provided.");
 		}
 
-		if (ExcavatorType.Id == 0 && 
-			ExcavatorType.PropertyTypes == null && 
-			ExcavatorType.ExcavatorsOfThisType == null)
+		if (ExcavatorType.Id == 0)
 		{
-			ExcavatorType.PropertyTypes = new List<ExcavatorPropertyType>();
-			ExcavatorType.ExcavatorsOfThisType = new List<Excavator>();
+			InitExcavatorType(ExcavatorType);
 		}
+		isExcavatorTypeInitialized = true;
 
 		if (AllPropertyTypes != null)
 		{
-			// ExcavatorType.PropertyTypes will not be null here, but compiler thinks otherwise 
-			// because of the preceding if, thats why ! is used here (to get rid of the error/warning)
-			var propertyTypes = ExcavatorType.PropertyTypes!;
+			var propertyTypes = ExcavatorType.PropertyTypes;
 			var propertyTypesIds = propertyTypes.Select(pt => pt.Id);
 			for (int i = 0; i < AllPropertyTypes.Count; i++)
 			{
@@ -91,6 +104,14 @@
 				AllPropertyTypesChecked[i] = excavatorTypeHasProperty;
 			}
 		}
+	}
+
+	private static void InitExcavatorType(ExcavatorType excavatorType)
+	{
+		excavatorType.Brand ??= new();
+		excavatorType.Category ??= new();
+		excavatorType.PropertyTypes ??= new List<ExcavatorPropertyType>();
+		excavatorType.ExcavatorsOfThisType ??= new List<Excavator>();
 	}
 
 	private async Task ResetAsync()
@@ -121,7 +142,7 @@
 		return checkedPropertyTypes;
 	}
 
-	private async Task HandleValidSubmit()
+	private async Task SaveExcavatorTypeAsync()
 	{
 		ExcavatorType.PropertyTypes = GetCheckedPropertyTypes();
 

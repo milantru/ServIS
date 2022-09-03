@@ -24,14 +24,13 @@ namespace ServISData
 			using var context = factory.CreateDbContext();
 			Excavator currentExcavator;
 
-			List<IList<Excavator>> excavatorsTmp = null!;
+			List<ICollection<Excavator>>? excavatorsTmp = null;
 			if (excavator.Id == 0)
 			{
 				context.Attach(excavator.Type);
-				excavatorsTmp = new List<IList<Excavator>>(excavator.SpareParts.Count);
-				for (int i = 0; i < excavator.SpareParts.Count; i++)
+				excavatorsTmp = new(excavator.SpareParts.Count);
+				foreach (var sparePart in excavator.SpareParts)
 				{
-					var sparePart = excavator.SpareParts[i];
 					excavatorsTmp.Add(sparePart.Excavators);
 					sparePart.Excavators = null!; // TODO: mere hotfix, but this is not pretty, should be changed!
 				}
@@ -55,13 +54,59 @@ namespace ServISData
 			await context.SaveChangesAsync();
 			if (excavatorsTmp != null)
 			{
-				for (int i = 0; i < excavator.SpareParts.Count; i++)
+				int i = 0;
+				foreach (var sparePart in excavator.SpareParts)
 				{
-					excavator.SpareParts[i].Excavators = excavatorsTmp[i];
+					sparePart.Excavators = excavatorsTmp[i];
+					i++;
 				}
 			}
 
 			return excavator;
+		}
+
+		public async Task<ExcavatorBrand> SaveExcavatorBrandAsync(ExcavatorBrand excavatorBrand)
+		{
+			using var context = factory.CreateDbContext();
+			ExcavatorBrand currentExcavatorBrand;
+
+			if (excavatorBrand.Id == 0)
+			{
+				context.Add(excavatorBrand);
+			}
+			else
+			{
+				currentExcavatorBrand = await context.ExcavatorBrands
+					.FirstAsync(eb => eb.Id == excavatorBrand.Id);
+
+				currentExcavatorBrand.Brand = excavatorBrand.Brand;
+			}
+
+			await context.SaveChangesAsync();
+
+			return excavatorBrand;
+		}
+
+		public async Task<ExcavatorCategory> SaveExcavatorCategoryAsync(ExcavatorCategory excavatorCategory)
+		{
+			using var context = factory.CreateDbContext();
+			ExcavatorCategory currentExcavatorCategory;
+
+			if (excavatorCategory.Id == 0)
+			{
+				context.Add(excavatorCategory);
+			}
+			else
+			{
+				currentExcavatorCategory = await context.ExcavatorCategories
+					.FirstAsync(ec => ec.Id == excavatorCategory.Id);
+
+				currentExcavatorCategory.Category = excavatorCategory.Category;
+			}
+
+			await context.SaveChangesAsync();
+
+			return excavatorCategory;
 		}
 
 		public async Task<ExcavatorType> SaveExcavatorTypeAsync(ExcavatorType excavatorType)
@@ -71,6 +116,8 @@ namespace ServISData
 
 			if (excavatorType.Id == 0)
 			{
+				context.Attach(excavatorType.Brand);
+				context.Attach(excavatorType.Category);
 				context.AttachRange(excavatorType.PropertyTypes);
 
 				context.Add(excavatorType);
@@ -78,9 +125,27 @@ namespace ServISData
 			else
 			{
 				currentExcavatorType = await context.ExcavatorTypes
+					.Include(et => et.Brand)
+					.Include(et => et.Category)
 					.Include(et => et.PropertyTypes)
 					.Include(et => et.ExcavatorsOfThisType)
+					.ThenInclude(e => e.Properties)
+					.ThenInclude(ep => ep.PropertyType)
 					.FirstAsync(et => et.Id == excavatorType.Id);
+
+				foreach (var propertyType in excavatorType.PropertyTypes)
+				{
+					/* #hotfix If this foreach does not make sense to you, well, fear not because you are not alone...
+					 * For some reason, sometimes excavator type didn't save. It didn't throw 
+					 * any exception or whatsoever, but... Let's say we have properties pA (unchecked) 
+					 * and pB (checked). We uncheck pB and check pA. We hit save and excavator type successfully
+					 * saves. Then we choose the same excavator type to edit- check pB, uncheck pA. We try to 
+					 * save the type again. When we choose the type again, we see that pB is still 
+					 * unchecked and pA checked. 
+					 * (This behaviour was spotted in ExcavatorTypeManagement component and it seems this
+					 * foreach solves it.)*/
+					propertyType.ExcavatorTypesWithThisProperty = null!;
+				}
 
 				await UpdateExcavatorTypeDataAsync(context, currentExcavatorType, excavatorType);
 			}
@@ -174,20 +239,71 @@ namespace ServISData
 
 			if (additionalEquipment.Id == 0)
 			{
+				context.Attach(additionalEquipment.Brand);
+				context.Attach(additionalEquipment.Category);
+				context.Attach(additionalEquipment.ExcavatorCategory);
+
 				context.Add(additionalEquipment);
 			}
 			else
 			{
 				currentAdditionalEquipment = await context.AdditionalEquipments
+					.Include(ae => ae.Brand)
+					.Include(ae => ae.Category)
+					.Include(ae => ae.ExcavatorCategory)
 					.Include(ae => ae.Photos)
 					.FirstAsync(ae => ae.Id == additionalEquipment.Id);
 
-				UpdateAdditionalEquipmentData(currentAdditionalEquipment, additionalEquipment);
+				await UpdateAdditionalEquipmentDataAsync(context, currentAdditionalEquipment, additionalEquipment);
 			}
 
 			await context.SaveChangesAsync();
 
 			return additionalEquipment;
+		}
+
+		public async Task<AdditionalEquipmentBrand> SaveAdditionalEquipmentBrandAsync(AdditionalEquipmentBrand additionalEquipmentBrand)
+		{
+			using var context = factory.CreateDbContext();
+			AdditionalEquipmentBrand currentAdditionalEquipmentBrand;
+
+			if (additionalEquipmentBrand.Id == 0)
+			{
+				context.Add(additionalEquipmentBrand);
+			}
+			else
+			{
+				currentAdditionalEquipmentBrand = await context.AdditionalEquipmentBrands
+					.FirstAsync(aeb => aeb.Id == additionalEquipmentBrand.Id);
+
+				currentAdditionalEquipmentBrand.Brand = additionalEquipmentBrand.Brand;
+			}
+
+			await context.SaveChangesAsync();
+
+			return additionalEquipmentBrand;
+		}
+
+		public async Task<AdditionalEquipmentCategory> SaveAdditionalEquipmentCategoryAsync(AdditionalEquipmentCategory additionalEquipmentCategory)
+		{
+			using var context = factory.CreateDbContext();
+			AdditionalEquipmentCategory currentAdditionalEquipmentCategory;
+
+			if (additionalEquipmentCategory.Id == 0)
+			{
+				context.Add(additionalEquipmentCategory);
+			}
+			else
+			{
+				currentAdditionalEquipmentCategory = await context.AdditionalEquipmentCategories
+					.FirstAsync(aec => aec.Id == additionalEquipmentCategory.Id);
+
+				currentAdditionalEquipmentCategory.Category = additionalEquipmentCategory.Category;
+			}
+
+			await context.SaveChangesAsync();
+
+			return additionalEquipmentCategory;
 		}
 
 		public async Task<User> SaveUserAsync(User user)
@@ -278,11 +394,14 @@ namespace ServISData
 			var query = context.Excavators
 				.Include(e => e.Photos)
 				.Include(e => e.Type)
+				.ThenInclude(et => et.Brand)
+				.Include(e => e.Type)
+				.ThenInclude(et => et.Category)
 				.Include(e => e.Properties)
 				.ThenInclude(e => e.PropertyType)
 				.Include(e => e.SpareParts)
-				.Where(e => category != null ? e.Type.Category == category : true)
-				.Where(e => brand != null ? e.Type.Brand == brand : true);
+				.Where(e => category != null ? e.Type.Category.Id == category.Id : true)
+				.Where(e => brand != null ? e.Type.Brand.Id == brand.Id : true);
 
 			var orderedQuery = query.OrderBy(e => e.Name)
 				.Skip(startIndex ?? 0);
@@ -301,9 +420,12 @@ namespace ServISData
 
 			return await context.Excavators
 				.Include(e => e.Photos)
-				.Include(e => e.Properties)
-				.ThenInclude(ep => ep.PropertyType)
 				.Include(e => e.Type)
+				.ThenInclude(et => et.Brand)
+				.Include(e => e.Type)
+				.ThenInclude(et => et.Category)
+				.Include(e => e.Properties)
+				.ThenInclude(e => e.PropertyType)
 				.Include(e => e.SpareParts)
 				.AsNoTracking()
 				.FirstAsync(e => e.Id == id);
@@ -343,6 +465,65 @@ namespace ServISData
 			return await context.ExcavatorPhotos.CountAsync();
 		}
 
+		public async Task<List<ExcavatorBrand>> GetExcavatorBrandsAsync(
+			int? numberOfExcavatorBrands = null,
+			int? startIndex = null
+		)
+		{
+			using var context = factory.CreateDbContext();
+
+			var query = context.ExcavatorBrands
+				.Include(eb => eb.ExcavatorTypesOfThisBrand)
+				.ThenInclude(e => e.ExcavatorsOfThisType);
+
+			var orderedQuery = query.OrderBy(eb => eb.Brand)
+				.Skip(startIndex ?? 0);
+
+			if (numberOfExcavatorBrands.HasValue)
+			{
+				orderedQuery = orderedQuery.Take(numberOfExcavatorBrands.Value);
+			}
+
+			return await orderedQuery.AsNoTracking().ToListAsync();
+		}
+
+		public async Task<int> GetExcavatorBrandsCountAsync()
+		{
+			using var context = factory.CreateDbContext();
+
+			return await context.ExcavatorBrands.CountAsync();
+		}
+
+		public async Task<List<ExcavatorCategory>> GetExcavatorCategoriesAsync(
+			int? numberOfExcavatorCategories = null,
+			int? startIndex = null
+		)
+		{
+			using var context = factory.CreateDbContext();
+
+			var query = context.ExcavatorCategories
+				.Include(ec => ec.ExcavatorTypesOfThisCategory)
+				.ThenInclude(e => e.ExcavatorsOfThisType)
+				.Include(ec => ec.AdditionalEquipmentsOfThisCategory);
+
+			var orderedQuery = query.OrderBy(ec => ec.Category)
+				.Skip(startIndex ?? 0);
+
+			if (numberOfExcavatorCategories.HasValue)
+			{
+				orderedQuery = orderedQuery.Take(numberOfExcavatorCategories.Value);
+			}
+
+			return await orderedQuery.AsNoTracking().ToListAsync();
+		}
+
+		public async Task<int> GetExcavatorCategoriesCountAsync()
+		{
+			using var context = factory.CreateDbContext();
+
+			return await context.ExcavatorCategories.CountAsync();
+		}
+
 		public async Task<List<ExcavatorType>> GetExcavatorTypesAsync(
 			int? numberOfExcavatorTypes = null,
 			int? startIndex = null
@@ -351,11 +532,14 @@ namespace ServISData
 			using var context = factory.CreateDbContext();
 
 			var query = context.ExcavatorTypes
+				.Include(et => et.Brand)
+				.Include(et => et.Category)
 				.Include(et => et.PropertyTypes)
 				.Include(et => et.ExcavatorsOfThisType)
 				.ThenInclude(e => e.Properties)
-				.Include(et => et.ExcavatorsOfThisType)
-				.ThenInclude(e => e.Photos)
+				//.ThenInclude(ep => ep.PropertyType)
+				//.Include(et => et.ExcavatorsOfThisType)
+				//.ThenInclude(e => e.Photos)
 				.Skip(startIndex ?? 0);
 
 			if (numberOfExcavatorTypes.HasValue)
@@ -404,6 +588,10 @@ namespace ServISData
 			using var context = factory.CreateDbContext();
 
 			return await context.ExcavatorTypes
+				//.Include(et => et.Brand)
+				//.Include(et => et.Category)
+				//.Include(et => et.ExcavatorsOfThisType)
+				//.Include(et => et.PropertyTypes)
 				.AsNoTracking()
 				.FirstAsync(et => et.Id == id);
 		}
@@ -472,6 +660,9 @@ namespace ServISData
 
 			return await context.MainOffers
 				.Include(mo => mo.ExcavatorType)
+				.ThenInclude(et => et.Brand)
+				.Include(mo => mo.ExcavatorType)
+				.ThenInclude(et => et.Category)
 				.AsNoTracking()
 				.ToListAsync();
 		}
@@ -482,6 +673,9 @@ namespace ServISData
 
 			return await context.MainOffers
 				.Include(mo => mo.ExcavatorType)
+				.ThenInclude(et => et.Brand)
+				.Include(mo => mo.ExcavatorType)
+				.ThenInclude(et => et.Category)
 				.AsNoTracking()
 				.FirstAsync(mo => mo.Id == id);
 		}
@@ -489,18 +683,21 @@ namespace ServISData
 		public async Task<List<AdditionalEquipment>> GetAdditionalEquipmentsAsync(
 			int? numberOfAdditionalEquipments = null,
 			int? startIndex = null,
-			string? excavatorCategory = null,
-			string? category = null,
-			string? brand = null
+			ExcavatorCategory? excavatorCategory = null,
+			AdditionalEquipmentCategory? category = null,
+			AdditionalEquipmentBrand? brand = null
 		)
 		{
 			using var context = factory.CreateDbContext();
 
 			var query = context.AdditionalEquipments
 				.Include(ae => ae.Photos)
-				.Where(ae => excavatorCategory != null ? ae.ExcavatorCategory == excavatorCategory : true)
-				.Where(ae => category != null ? ae.Category == category : true)
-				.Where(ae => brand != null ? ae.Brand == brand : true);
+				.Include(ae => ae.ExcavatorCategory)
+				.Include(ae => ae.Category)
+				.Include(ae => ae.Brand)
+				.Where(ae => excavatorCategory != null ? ae.ExcavatorCategory.Id == excavatorCategory.Id : true)
+				.Where(ae => category != null ? ae.Category.Id == category.Id : true)
+				.Where(ae => brand != null ? ae.Brand.Id == brand.Id : true);
 
 			var orderedQuery = query.OrderBy(ae => ae.Name)
 				.Skip(startIndex ?? 0);
@@ -527,6 +724,10 @@ namespace ServISData
 			using var context = factory.CreateDbContext();
 
 			return await context.AdditionalEquipments
+				.Include(ae => ae.Photos)
+				.Include(ae => ae.ExcavatorCategory)
+				.Include(ae => ae.Category)
+				.Include(ae => ae.Brand)
 				.AsNoTracking()
 				.FirstAsync(ae => ae.Id == id);
 		}
@@ -557,6 +758,62 @@ namespace ServISData
 				.Where(aep => aep.AdditionalEquipment.Id == additionalEquipmentId)
 				.AsNoTracking()
 				.FirstAsync(aep => aep.IsTitle);
+		}
+
+		public async Task<List<AdditionalEquipmentBrand>> GetAdditionalEquipmentBrandsAsync(
+			int? numberOfAdditionalEquipmentBrands = null,
+			int? startIndex = null
+		)
+		{
+			using var context = factory.CreateDbContext();
+
+			var query = context.AdditionalEquipmentBrands
+				.Include(aeb => aeb.AdditionalEquipmentsOfThisBrand);
+
+			var orderedQuery = query.OrderBy(aeb => aeb.Brand)
+				.Skip(startIndex ?? 0);
+
+			if (numberOfAdditionalEquipmentBrands.HasValue)
+			{
+				orderedQuery = orderedQuery.Take(numberOfAdditionalEquipmentBrands.Value);
+			}
+
+			return await orderedQuery.AsNoTracking().ToListAsync();
+		}
+
+		public async Task<int> GetAdditionalEquipmentBrandsCountAsync()
+		{
+			using var context = factory.CreateDbContext();
+
+			return await context.AdditionalEquipmentBrands.CountAsync();
+		}
+
+		public async Task<List<AdditionalEquipmentCategory>> GetAdditionalEquipmentCategoriesAsync(
+			int? numberOfAdditionalEquipmentCategories = null,
+			int? startIndex = null
+		)
+		{
+			using var context = factory.CreateDbContext();
+
+			var query = context.AdditionalEquipmentCategories
+				.Include(aec => aec.AdditionalEquipmentsOfThisCategory);
+
+			var orderedQuery = query.OrderBy(aec => aec.Category)
+				.Skip(startIndex ?? 0);
+
+			if (numberOfAdditionalEquipmentCategories.HasValue)
+			{
+				orderedQuery = orderedQuery.Take(numberOfAdditionalEquipmentCategories.Value);
+			}
+
+			return await orderedQuery.AsNoTracking().ToListAsync();
+		}
+
+		public async Task<int> GetAdditionalEquipmentCategoriesCountAsync()
+		{
+			using var context = factory.CreateDbContext();
+
+			return await context.AdditionalEquipmentCategories.CountAsync();
 		}
 
 		public async Task<User> GetUserAsync(int id)
@@ -647,9 +904,9 @@ namespace ServISData
 			var properties = excavator.Properties;
 			for (int i = properties.Count - 1; i >= 0; i--)
 			{
-				await DeleteExcavatorPropertyAsync(properties[i]);
+				await DeleteExcavatorPropertyAsync(properties.ElementAt(i));
 			}
-			properties.Clear();
+			excavator.Properties.Clear();
 
 			await DeleteItem(excavator);
 		}
@@ -661,6 +918,16 @@ namespace ServISData
 			await DeleteItem(excavatorPhoto);
 		}
 
+		public async Task DeleteExcavatorBrandAsync(ExcavatorBrand excavatorBrand)
+		{
+			await DeleteItem(excavatorBrand);
+		}
+
+		public async Task DeleteExcavatorCategoryAsync(ExcavatorCategory excavatorCategory)
+		{
+			await DeleteItem(excavatorCategory);
+		}
+
 		public async Task DeleteExcavatorTypeAsync(ExcavatorType excavatorType)
 		{
 			var excavatorsOfDeletingType = excavatorType.ExcavatorsOfThisType;
@@ -669,7 +936,7 @@ namespace ServISData
 			 * And because of this behaviour we don't really need to call .Clear(), but I'll leave it there just in case... */
 			for (int i = excavatorsOfDeletingType.Count - 1; i >= 0; i--)
 			{
-				await DeleteExcavatorAsync(excavatorsOfDeletingType[i]);
+				await DeleteExcavatorAsync(excavatorsOfDeletingType.ElementAt(i));
 			}
 			excavatorsOfDeletingType.Clear();
 
@@ -708,6 +975,16 @@ namespace ServISData
 			await DeleteItem(additionalEquipmentPhoto);
 		}
 
+		public async Task DeleteAdditionalEquipmentBrandAsync(AdditionalEquipmentBrand additionalEquipmentBrand)
+		{
+			await DeleteItem(additionalEquipmentBrand);
+		}
+
+		public async Task DeleteAdditionalEquipmentCategoryAsync(AdditionalEquipmentCategory additionalEquipmentCategory)
+		{
+			await DeleteItem(additionalEquipmentCategory);
+		}
+
 		public async Task DeleteUserAsync(User user)
 		{
 			await DeleteItem(user);
@@ -730,7 +1007,7 @@ namespace ServISData
 		}
 
 		// ---------- private methods ----------
-		private static void RemoveDeletedPhotos<PhotoType>(IList<PhotoType> currentPhotos, IList<PhotoType> newPhotos) 
+		private static void RemoveDeletedPhotos<PhotoType>(IList<PhotoType> currentPhotos, IList<PhotoType> newPhotos)
 			where PhotoType : IPhoto, IItem
 		{
 			for (int i = currentPhotos.Count - 1; i >= 0; i--)
@@ -744,7 +1021,7 @@ namespace ServISData
 			}
 		}
 
-		private static void AddNewlyAddedPhotos<PhotoType>(IList<PhotoType> currentPhotos, IList<PhotoType> newPhotos) 
+		private static void AddNewlyAddedPhotos<PhotoType>(IList<PhotoType> currentPhotos, IList<PhotoType> newPhotos)
 			where PhotoType : IPhoto, IItem
 		{
 			var newPhotosCount = newPhotos.Count;
@@ -758,7 +1035,7 @@ namespace ServISData
 			}
 		}
 
-		private static void UpdatePhotos<PhotoType>(IList<PhotoType> currentPhotos, IList<PhotoType> newPhotos) 
+		private static void UpdatePhotos<PhotoType>(IList<PhotoType> currentPhotos, IList<PhotoType> newPhotos)
 			where PhotoType : IPhoto, IItem
 		{
 			RemoveDeletedPhotos(currentPhotos, newPhotos);
@@ -789,7 +1066,7 @@ namespace ServISData
 			else
 			{
 				currentExcavator.Properties.Clear();
-				
+
 				var newProperties = newExcavator.Properties;
 				foreach (var newProperty in newProperties)
 				{
@@ -822,86 +1099,126 @@ namespace ServISData
 			await UpdateExcavatorSparePartsAsync(context, currentExcavator, newExcavator);
 		}
 
-		private static void UpdateExcavatorsByAddingProperty(List<Excavator> excavators, ExcavatorProperty property)
+		private static void UpdateExcavatorsByAddingProperty(ICollection<Excavator> excavators, ExcavatorProperty property)
 		{
-			excavators.ForEach(excavator => excavator.Properties.Add(property));
+			foreach (var excavator in excavators)
+			{
+				excavator.Properties.Add(property);
+			}
 		}
 
 		private static void AddNewlyCheckedPropertyTypes(
-			IList<ExcavatorPropertyType> currentPropertyTypes,
-			IList<ExcavatorPropertyType> newPropertyTypes,
-			List<Excavator> excavatorsOfThisType
+			ICollection<ExcavatorPropertyType> currentPropertyTypes,
+			ICollection<ExcavatorPropertyType> newPropertyTypes,
+			ICollection<Excavator> excavatorsOfThisType
 		)
 		{
-			var newPropertyTypesCount = newPropertyTypes.Count;
-			for (int i = 0; i < newPropertyTypesCount; i++)
+			var propertyTypesForAddition = newPropertyTypes.Where(newPropertyType =>
 			{
-				var newPropertyType = newPropertyTypes[i];
-
 				var isNewPropertyTypeInCurrentPropertyTypes =
 					currentPropertyTypes.Any(currentPropertyType => currentPropertyType.Id == newPropertyType.Id);
 
-				if (!isNewPropertyTypeInCurrentPropertyTypes)
-				{
-					currentPropertyTypes.Add(newPropertyType);
+				return !isNewPropertyTypeInCurrentPropertyTypes;
+			});
+			foreach (var propertyType in propertyTypesForAddition)
+			{
+				currentPropertyTypes.Add(propertyType);
 
-					var newProperty = new ExcavatorProperty
-					{
-						PropertyType = newPropertyType,
-						Value = ""
-					};
-					UpdateExcavatorsByAddingProperty(excavatorsOfThisType, newProperty);
-				}
+				var newProperty = new ExcavatorProperty
+				{
+					PropertyType = propertyType,
+					Value = ""
+				};
+				UpdateExcavatorsByAddingProperty(excavatorsOfThisType, newProperty);
 			}
+			//var newPropertyTypesCount = newPropertyTypes.Count;
+			//for (int i = 0; i < newPropertyTypesCount; i++)
+			//{
+			//	var newPropertyType = newPropertyTypes[i];
+
+			//	var isNewPropertyTypeInCurrentPropertyTypes =
+			//		currentPropertyTypes.Any(currentPropertyType => currentPropertyType.Id == newPropertyType.Id);
+
+			//	if (!isNewPropertyTypeInCurrentPropertyTypes)
+			//	{
+			//		currentPropertyTypes.Add(newPropertyType);
+
+			//		var newProperty = new ExcavatorProperty
+			//		{
+			//			PropertyType = newPropertyType,
+			//			Value = ""
+			//		};
+			//		UpdateExcavatorsByAddingProperty(excavatorsOfThisType, newProperty);
+			//	}
+			//}
 		}
 
 		private static void UpdateExcavatorsByRemovingPropertyOfPropertyType(
-			List<Excavator> excavators, 
+			ICollection<Excavator> excavators,
 			ExcavatorPropertyType propertyType
 		)
 		{
-			excavators.ForEach(excavator =>
+			foreach (var excavator in excavators)
 			{
 				var excavatorProperties = excavator.Properties;
 
-				for (int i = excavatorProperties.Count - 1; i >= 0; i--)
+				var propsForRemoval = excavator.Properties.Where(p => p.PropertyType.Id == propertyType.Id);
+				foreach (var prop in propsForRemoval)
 				{
-					var property = excavatorProperties[i];
-
-					if (property.PropertyType.Id == propertyType.Id)
-					{
-						excavatorProperties.Remove(property);
-						break;
-					}
+					excavatorProperties.Remove(prop);
 				}
-			});
-		}
+				//for (int i = excavatorProperties.Count - 1; i >= 0; i--)
+				//{
+				//	var property = excavatorProperties[i];
 
-		private static void RemoveUncheckedPropertyTypes(
-			IList<ExcavatorPropertyType> currentPropertyTypes,
-			IList<ExcavatorPropertyType> newPropertyTypes,
-			List<Excavator> excavatorsToBeUpdated
-		)
-		{
-			for (int i = currentPropertyTypes.Count - 1; i >= 0; i--)
-			{
-				var currentPropertyType = currentPropertyTypes[i];
-
-				var isCurrentPropertyTypeInNewPropertyTypes =
-					newPropertyTypes.Any(newPropertyType => newPropertyType.Id == currentPropertyType.Id);
-
-				if (!isCurrentPropertyTypeInNewPropertyTypes)
-				{
-					UpdateExcavatorsByRemovingPropertyOfPropertyType(excavatorsToBeUpdated, currentPropertyType);
-
-					currentPropertyTypes.Remove(currentPropertyType);
-				}
+				//	if (property.PropertyType.Id == propertyType.Id)
+				//	{
+				//		excavatorProperties.Remove(property);
+				//		break;
+				//		//property.PropertyType = null!;
+				//	}
+				//}
 			}
 		}
 
-		private static async Task UpdateExcavatorTypePropertyTypesAsync(
-			ServISDbContext context, 
-			ExcavatorType currentExcavatorType, 
+		private static void RemoveUncheckedPropertyTypes(
+			ICollection<ExcavatorPropertyType> currentPropertyTypes,
+			ICollection<ExcavatorPropertyType> newPropertyTypes,
+			ICollection<Excavator> excavatorsToBeUpdated
+		)
+		{
+			var propertyTypesForRemoval = currentPropertyTypes.Where(currentPropertyType =>
+			{
+				var isCurrentPropertyTypeInNewPropertyTypes =
+					newPropertyTypes.Any(newPropertyType => newPropertyType.Id == currentPropertyType.Id);
+
+				return !isCurrentPropertyTypeInNewPropertyTypes;
+			});
+
+			foreach (var propertyType in propertyTypesForRemoval)
+			{
+				UpdateExcavatorsByRemovingPropertyOfPropertyType(excavatorsToBeUpdated, propertyType);
+
+				currentPropertyTypes.Remove(propertyType);
+			}
+			//for (int i = currentPropertyTypes.Count - 1; i >= 0; i--)
+			//{
+			//	var currentPropertyType = currentPropertyTypes[i];
+
+			//	var isCurrentPropertyTypeInNewPropertyTypes =
+			//		newPropertyTypes.Any(newPropertyType => newPropertyType.Id == currentPropertyType.Id);
+
+			//	if (!isCurrentPropertyTypeInNewPropertyTypes)
+			//	{
+			//		UpdateExcavatorsByRemovingPropertyOfPropertyType(excavatorsToBeUpdated, currentPropertyType);
+
+			//		currentPropertyTypes.Remove(currentPropertyType);
+			//	}
+			//}
+		}
+
+		private static void UpdateExcavatorTypePropertyTypes(
+			ExcavatorType currentExcavatorType,
 			ExcavatorType newExcavatorType
 		)
 		{
@@ -914,11 +1231,7 @@ namespace ServISData
 			 * Let's also assume we have excavator E of type T. This means E has properties P1, P2 of type PT1, PT2 respectively.
 			 * When we change T in a way it has now property types PT1, PT3 (i.e. PT2 was deleted and PT3 was added),
 			 * it means E should lost P2 and gain property P3 of type PT3. */
-			var excavatorsOfUpdatingType = await context.Excavators
-				.Include(e => e.Properties)
-				.ThenInclude(ep => ep.PropertyType)
-				.Where(e => e.Type.Id == currentExcavatorType.Id) // currentExcavatorType.Id == newExcavatorType.Id so it doesn't matter which one we use
-				.ToListAsync();
+			var excavatorsOfUpdatingType = currentExcavatorType.ExcavatorsOfThisType;
 
 			RemoveUncheckedPropertyTypes(currentPropertyTypes, newPropertyTypes, excavatorsOfUpdatingType);
 
@@ -926,19 +1239,22 @@ namespace ServISData
 		}
 
 		private static async Task UpdateExcavatorTypeDataAsync(
-			ServISDbContext context, 
-			ExcavatorType currentExcavatorType, 
+			ServISDbContext context,
+			ExcavatorType currentExcavatorType,
 			ExcavatorType newExcavatorType
 		)
 		{
-			currentExcavatorType.Brand = newExcavatorType.Brand;
-			currentExcavatorType.Category = newExcavatorType.Category;
+			currentExcavatorType.Brand = await context.ExcavatorBrands
+				.FirstAsync(eb => eb.Id == newExcavatorType.Brand.Id);
 
-			await UpdateExcavatorTypePropertyTypesAsync(context, currentExcavatorType, newExcavatorType);
+			currentExcavatorType.Category = await context.ExcavatorCategories
+				.FirstAsync(ec => ec.Id == newExcavatorType.Category.Id);
+
+			UpdateExcavatorTypePropertyTypes(currentExcavatorType, newExcavatorType);
 		}
 
 		private static void UpdateExcavatorPropertyTypeData(
-			ExcavatorPropertyType currentExcavatorPropertyType, 
+			ExcavatorPropertyType currentExcavatorPropertyType,
 			ExcavatorPropertyType newExcavatorPropertyType
 		)
 		{
@@ -946,11 +1262,14 @@ namespace ServISData
 			currentExcavatorPropertyType.InputType = newExcavatorPropertyType.InputType;
 		}
 
-		private static void RemoveUncheckedSpareParts(IList<Excavator> currentExcavators, IList<Excavator> newExcavators)
+		private static void RemoveUncheckedSpareParts(
+			ICollection<Excavator> currentExcavators,
+			ICollection<Excavator> newExcavators
+		)
 		{
 			for (int i = currentExcavators.Count - 1; i >= 0; i--)
 			{
-				var currentExcavator = currentExcavators[i];
+				var currentExcavator = currentExcavators.ElementAt(i);
 
 				var isCurrentExcavatorInNewExcavators =
 					newExcavators.Any(newExcavator => newExcavator.Id == currentExcavator.Id);
@@ -962,12 +1281,16 @@ namespace ServISData
 			}
 		}
 
-		private static void AddNewlyCheckedSpareParts(IList<Excavator> currentExcavators, IList<Excavator> newExcavators)
+		private static void AddNewlyCheckedSpareParts(
+			ICollection<Excavator> currentExcavators,
+			ICollection<Excavator> newExcavators
+		)
 		{
 			var newExcavatorsCount = newExcavators.Count;
 			for (int i = 0; i < newExcavatorsCount; i++)
 			{
-				var newExcavator = newExcavators[i];
+				var newExcavator = newExcavators.ElementAt(i);
+				newExcavator.SpareParts = null!; // #hotfix
 
 				var isNewExcavatorInCurrentExcavators =
 					currentExcavators.Any(currentExcavator => currentExcavator.Id == newExcavator.Id);
@@ -979,7 +1302,10 @@ namespace ServISData
 			}
 		}
 
-		private static void UpdateSparePartExcavators(IList<Excavator> currentExcavators, IList<Excavator> newExcavators)
+		private static void UpdateSparePartExcavators(
+			ICollection<Excavator> currentExcavators,
+			ICollection<Excavator> newExcavators
+		)
 		{
 			RemoveUncheckedSpareParts(currentExcavators, newExcavators);
 
@@ -995,8 +1321,8 @@ namespace ServISData
 		}
 
 		private static async Task UpdateMainOfferDataAsync(
-			ServISDbContext context, 
-			MainOffer currentMainOffer, 
+			ServISDbContext context,
+			MainOffer currentMainOffer,
 			MainOffer newMainOffer
 		)
 		{
@@ -1019,16 +1345,23 @@ namespace ServISData
 			currentUser.Residence = newUser.Residence;
 		}
 
-		private static void UpdateAdditionalEquipmentData(
-			AdditionalEquipment currentAdditionalEquipment, 
+		private static async Task UpdateAdditionalEquipmentDataAsync(
+			ServISDbContext context,
+			AdditionalEquipment currentAdditionalEquipment,
 			AdditionalEquipment newAdditionalEquipment
 		)
 		{
-			currentAdditionalEquipment.ExcavatorCategory = newAdditionalEquipment.ExcavatorCategory;
-			currentAdditionalEquipment.Category = newAdditionalEquipment.Category;
-			currentAdditionalEquipment.Brand = newAdditionalEquipment.Brand;
 			currentAdditionalEquipment.Name = newAdditionalEquipment.Name;
 			currentAdditionalEquipment.Description = newAdditionalEquipment.Description;
+
+			currentAdditionalEquipment.ExcavatorCategory = await context.ExcavatorCategories
+				.FirstAsync(ec => ec.Id == newAdditionalEquipment.ExcavatorCategory.Id);
+
+			currentAdditionalEquipment.Category = await context.AdditionalEquipmentCategories
+				.FirstAsync(aec => aec.Id == newAdditionalEquipment.Category.Id);
+
+			currentAdditionalEquipment.Brand = await context.AdditionalEquipmentBrands
+				.FirstAsync(aeb => aeb.Id == newAdditionalEquipment.Brand.Id);
 
 			UpdatePhotos(currentAdditionalEquipment.Photos, newAdditionalEquipment.Photos);
 		}

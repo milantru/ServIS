@@ -1,0 +1,30 @@
+﻿@inherits ItemsManagement<AdditionalEquipmentBrand>
+@inject IServISApi api
+@using ServISWebApp.Components.Managements
+
+<h3>Správa značiek prídavných zariadení</h3>
+
+<AdditionalEquipmentBrandForm @bind-AdditionalEquipmentBrand="this.SelectedItem" AfterValidSubmit="async() => await this.ReloadItemsAsync()" />
+
+<ItemsTableLister ItemType="AdditionalEquipmentBrand"
+				  @ref="this.itemsLister"
+				  @bind-SelectedItem="this.SelectedItem"
+				  Title="Zoznam značiek prídavných zariadení"
+				  GetItemsAsync="async (numberOfAdditionalEquipmentBrands, startIndex) =>
+									await api.GetAdditionalEquipmentBrandsAsync(numberOfAdditionalEquipmentBrands, startIndex)"
+				  GetItemsTotalCountAsync="async () => await api.GetAdditionalEquipmentBrandsCountAsync()"
+				  DeleteItemAsync="async (additionalEquipmentBrand) => await api.DeleteAdditionalEquipmentBrandAsync(additionalEquipmentBrand)"
+				  Context="aeb">
+	<HeadCols>
+		<th>Názov značky:</th>
+		<th>Počet príd. zar.:</th>
+	</HeadCols>
+	<BodyCols>
+		<td>@aeb.Brand</td>
+		<td>@aeb.AdditionalEquipmentsOfThisBrand.Count</td>
+	</BodyCols>
+</ItemsTableLister>
+
+@code {
+
+}

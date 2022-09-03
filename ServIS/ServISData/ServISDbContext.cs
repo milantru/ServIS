@@ -10,10 +10,14 @@ namespace ServISData
 	{
 		public DbSet<AcquiredExcavator> AcquiredExcavators { get; set; } = null!;
 		public DbSet<AdditionalEquipment> AdditionalEquipments { get; set; } = null!;
+		public DbSet<AdditionalEquipmentBrand> AdditionalEquipmentBrands { get; set; } = null!;
+		public DbSet<AdditionalEquipmentCategory> AdditionalEquipmentCategories { get; set; } = null!;
 		public DbSet<AdditionalEquipmentPhoto> AdditionalEquipmentPhotos { get; set; } = null!;
 		public DbSet<AuctionBid> AuctionBids { get; set; } = null!;
 		public DbSet<AuctionOffer> AuctionOffers { get; set; } = null!;
 		public DbSet<Excavator> Excavators { get; set; } = null!;
+		public DbSet<ExcavatorBrand> ExcavatorBrands { get; set; } = null!;
+		public DbSet<ExcavatorCategory> ExcavatorCategories { get; set; } = null!;
 		public DbSet<ExcavatorPhoto> ExcavatorPhotos { get; set; } = null!;
 		public DbSet<ExcavatorProperty> ExcavatorProperties { get; set; } = null!;
 		public DbSet<ExcavatorPropertyType> ExcavatorPropertyTypes { get; set; } = null!;

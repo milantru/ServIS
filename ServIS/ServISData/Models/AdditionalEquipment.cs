@@ -8,14 +8,14 @@ namespace ServISData.Models
 	{
 		public int Id { get; set; }
 
-		[Required(ErrorMessage = "Toto pole je povinné."), StringLength(40, ErrorMessage ="Max {1} znakov.")]
-		public string ExcavatorCategory { get; set; } = null!;
+		[Required, ValidateComplexType]
+		public ExcavatorCategory ExcavatorCategory { get; set; } = null!;
 
-		[Required(ErrorMessage = "Toto pole je povinné."), StringLength(30, ErrorMessage = "Max {1} znakov.")]
-		public string Category { get; set; } = null!;
+		[Required, ValidateComplexType]
+		public AdditionalEquipmentCategory Category { get; set; } = null!;
 
-		[Required(ErrorMessage = "Toto pole je povinné."), StringLength(30, ErrorMessage = "Max {1} znakov.")]
-		public string Brand { get; set; } = null!;
+		[Required, ValidateComplexType]
+		public AdditionalEquipmentBrand Brand { get; set; } = null!;
 
 		[Required(ErrorMessage = "Toto pole je povinné."), StringLength(80, ErrorMessage = "Max {1} znakov.")]
 		public string Name { get; set; } = null!;

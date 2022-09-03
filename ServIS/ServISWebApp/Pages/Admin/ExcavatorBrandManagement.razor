@@ -1,0 +1,30 @@
+﻿@inherits ItemsManagement<ExcavatorBrand>
+@inject IServISApi api
+@using ServISWebApp.Components.Managements
+
+<h3>Správa značiek strojov</h3>
+
+<ExcavatorBrandForm @bind-ExcavatorBrand="this.SelectedItem" AfterValidSubmit="async() => await this.ReloadItemsAsync()" />
+
+<ItemsTableLister ItemType="ExcavatorBrand"
+				  @ref="this.itemsLister"
+				  @bind-SelectedItem="this.SelectedItem"
+				  Title="Zoznam značiek strojov"
+				  GetItemsAsync="async (numberOfExcavatorBrands, startIndex) =>
+									await api.GetExcavatorBrandsAsync(numberOfExcavatorBrands, startIndex)"
+				  GetItemsTotalCountAsync="async () => await api.GetExcavatorBrandsCountAsync()"
+				  DeleteItemAsync="async (excavatorBrand) => await api.DeleteExcavatorBrandAsync(excavatorBrand)"
+				  Context="eb">
+	<HeadCols>
+		<th>Názov značky:</th>
+		<th>Počet strojov:</th>
+	</HeadCols>
+	<BodyCols>
+		<td>@eb.Brand</td>
+		<td>@eb.ExcavatorTypesOfThisBrand.SelectMany(e => e.ExcavatorsOfThisType).Count()</td>
+	</BodyCols>
+</ItemsTableLister>
+
+@code {
+
+}
