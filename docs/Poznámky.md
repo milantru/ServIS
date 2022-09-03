@@ -241,3 +241,5 @@ return await context.Excavators
 ```
 
 Takto napísaný kód je validný, je to to čo som chcel, ale vtipné je na tom to, že Intellisense ukazovala že `ep` je `IList<ExcavatorProperty>` a nie `ExcavatorProperty`, takže mi to tvrdilo, že nemôžem dať `ep.PropertyType`. Ale môžem. Keď som to takto napísal, už aj IntelliSense ukazuje správne.
+
+**Prečo má `Excavator` `ExcavatorType` a `AdditionalEquipment` nie?** -> Je pravda, že pridaním takého objektu (akým je `ExcavatorType`) aj pre prídavné zariadenia by sa kód trochu viac "zuhľadil" (zmenšil by sa počet parametrov niektorých metód, napr. metódy `GetAdditionalEquipmentsAsync()`), ale ináč mi to zmysel nedáva. Pri strojoch je to z toho dôvodu, že `ExcavatorType` (dvojica typu a kategórie) určí typ vlastností stroja (`ExcavatorPropertyTypes`). Ale pri prídavných zariadeniach nič také nemáme.
