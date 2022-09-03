@@ -17,7 +17,7 @@
 
 				<p>@Excavator.Description</p>
 
-				<button onclick="@ToggleForm">Dopyt</button>
+				<button @onclick="ToggleForm">Dopyt</button>
 			</div>
 		</div>
 
@@ -98,12 +98,14 @@
 	{
 		await base.OnParametersSetAsync();
 
-		var excavator = await api.GetExcavatorAsync(ExcavatorId);
-		if (excavator == null)
+		try
+		{
+			Excavator = await api.GetExcavatorAsync(ExcavatorId);
+		}
+		catch
 		{
 			throw new Exception($"Excavator with id '{ExcavatorId}' was not found.");
 		}
-		Excavator = excavator;
 	}
 
 	private void ToggleForm()

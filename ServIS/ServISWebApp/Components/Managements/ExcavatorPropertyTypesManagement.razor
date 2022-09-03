@@ -1,19 +1,22 @@
-﻿@using ServISData
+﻿@inherits ItemsManagementBase<ExcavatorPropertyType>
 @inject IServISApi api
+@using ServISData
+@using ServISWebApp.Components.Managements
 
 <h3>Správa typov vlastností stroja</h3>
 
-<ExcavatorPropertyTypeForm @bind-PropertyType="SelectedExcavatorPropertyType" AfterValidSubmit="async () => await ReloadExcavatorPropertyTypesAsync()" />
+<ExcavatorPropertyTypeForm @bind-PropertyType="this.SelectedItem"
+						   AfterValidSubmit="async () => await this.ReloadItemsAsync()" />
 
 <ItemsTableLister ItemType="ExcavatorPropertyType"
-				  @ref="excavatorPropertyTypesLister"
-				  @bind-SelectedItem="SelectedExcavatorPropertyType"
+				  @ref="this.itemsLister"
+				  @bind-SelectedItem="this.SelectedItem"
 				  Title="Zoznam typov vlastností stroja"
-				  Context="ept"
 				  GetItemsAsync="async (int numberOfExcavatorPropertyTypes, int startIndex) =>
 									await api.GetExcavatorPropertyTypesAsync(numberOfExcavatorPropertyTypes, startIndex)"
 				  GetItemsTotalCountAsync="async () => await api.GetExcavatorPropertyTypesCountAsync()"
-				  DeleteItemAsync="async (excavatorPropertyType) => await api.DeleteExcavatorPropertyTypeAsync(excavatorPropertyType)">
+				  DeleteItemAsync="async (excavatorPropertyType) => await api.DeleteExcavatorPropertyTypeAsync(excavatorPropertyType)"
+				  Context="ept">
 	<HeadCols>
 		<th>Názov</th>
 		<th>Typ vlastnosti</th>
@@ -27,12 +30,5 @@
 </ItemsTableLister>
 
 @code {
-	private ItemsTableLister<ExcavatorPropertyType> excavatorPropertyTypesLister = null!;
 
-	public ExcavatorPropertyType SelectedExcavatorPropertyType { get; private set; } = new();
-
-	public async Task ReloadExcavatorPropertyTypesAsync()
-	{
-		await excavatorPropertyTypesLister.ReloadItemsAsync();
-	}
 }

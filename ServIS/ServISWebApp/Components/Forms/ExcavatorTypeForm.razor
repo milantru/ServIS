@@ -152,7 +152,10 @@
 		{
 			await api.SaveExcavatorTypeAsync(ExcavatorType);
 		}
-		catch { /* TODO */ }
+		catch
+		{
+			throw new Exception($"Failed to save excavator type with id '{ExcavatorType.Id}'.");
+		}
 		
 		if (AfterValidSubmit.HasDelegate)
 		{

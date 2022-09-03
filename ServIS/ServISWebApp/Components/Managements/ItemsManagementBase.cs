@@ -2,7 +2,7 @@
 
 namespace ServISWebApp.Components.Managements
 {
-	public abstract class ItemsManagement<ItemType> : ComponentBase where ItemType : class, new()
+	public abstract class ItemsManagementBase<ItemType> : ComponentBase where ItemType : class, new()
 	{
 		protected ItemsTableLister<ItemType> itemsLister = null!;
 

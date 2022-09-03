@@ -7,7 +7,7 @@
 
 @if (isExcavatorInitialized)
 {
-	<EditForm Model="Excavator" OnValidSubmit="HandleValidSubmit">
+	<EditForm Model="Excavator" OnValidSubmit="SaveExcavatorAsync">
 		<ObjectGraphDataAnnotationsValidator />
 		<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
 
@@ -57,7 +57,14 @@
 
 		<br />
 
-		<ExcavatorTypeSelector @bind-ExcavatorType="Excavator.Type" OnSelect="UpdateExcavatorProperties" />
+		<ItemsSelector ItemType="ExcavatorType"
+					   @bind-SelectedItem="Excavator.Type"
+					   Items="AllExcavatorTypes"
+					   OnSelect="UpdateExcavatorProperties"
+					   Label="Typy strojov:"
+					   Context="excavatorType">
+			<OptionText>@excavatorType.Category.Category (@excavatorType.Brand.Brand)</OptionText>
+		</ItemsSelector>
 
 		<br />
 
@@ -127,6 +134,8 @@
 	[Parameter]
 	public EventCallback AfterValidSubmit { get; set; }
 
+	private List<ExcavatorType> AllExcavatorTypes { get; set; } = null!;
+
 	// bool is in pair with spare part, it will tell us if spare part is checked
 	private List<SparePart> AllSpareParts { get; set; } = null!;
 	private List<bool> AllSparePartsChecked { get; set; } = null!;
@@ -134,6 +143,8 @@
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
+
+		AllExcavatorTypes = await api.GetExcavatorTypesAsync();
 
 		AllSpareParts = await api.GetSparePartsAsync();
 		AllSparePartsChecked = new bool[AllSpareParts.Count].ToList();
@@ -206,7 +217,7 @@
 		return checkedSpareParts;
 	}
 
-	private async Task HandleValidSubmit()
+	private async Task SaveExcavatorAsync()
 	{
 		if (Excavator.Photos.Count == 0)
 		{
@@ -220,7 +231,10 @@
 		{
 			await api.SaveExcavatorAsync(Excavator);
 		}
-		catch { /* TODO */ }
+		catch
+		{
+			throw new Exception($"Failed to save excavator with id '{Excavator.Id}'.");
+		}
 
 		if (AfterValidSubmit.HasDelegate)
 		{

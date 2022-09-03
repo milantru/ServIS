@@ -2,7 +2,7 @@
 {
 	<div id="photo-slider" class="carousel slide w-75">
 		<div class="carousel-indicators">
-			@for (int i = 0; i < ImagesCount; i++)
+			@for (int i = 0; i < Images.Count; i++)
 			{
 				int iCopy = i;
 
@@ -10,7 +10,7 @@
 			}
 		</div>
 		<div class="carousel-inner">
-			@for (int i = 0; i < ImagesCount; i++)
+			@for (int i = 0; i < Images.Count; i++)
 			{
 				<div class="carousel-item @GetCssActiveClass(i)">
 					<img src=@FileTools.GetDataUrlBase64String(Images[i], "images/jpeg") class="d-block img-fluid w-100" alt="Fotka @(i + 1)">
@@ -30,37 +30,30 @@
 
 @code {
 	private int index = 0;
-	private List<byte[]> images = null!;
 
 	[EditorRequired, Parameter]
-	public List<byte[]> Images
-	{
-		get => images;
-		set
-		{
-			if (value == null || value.Count == 0)
-			{
-				// possible TODO: maybe show some "missing photo" photo from static data instead of throwing exception
-				throw new Exception("No image provided for photo slider.");
-			}
+	public List<byte[]> Images { get; set; } = null!;
 
-			images = value;
-			ImagesCount = images.Count;
+	protected override void OnParametersSet()
+	{
+		base.OnParametersSet();
+
+		if (Images.Count == 0)
+		{
+			throw new Exception("No image provided for the photo slider.");
 		}
 	}
-
-	public int ImagesCount { get; private set; }
 
 	public void SlidePrev()
 	{
 		int tmp = index - 1;
 		if (tmp < 0)
 		{
-			index = ImagesCount + tmp;
+			index = Images.Count + tmp;
 		}
 		else
 		{
-			index = tmp % ImagesCount;
+			index = tmp % Images.Count;
 		}
 
 		StateHasChanged();
@@ -68,14 +61,14 @@
 
 	public void SlideNext()
 	{
-		index = (index + 1) % ImagesCount;
+		index = (index + 1) % Images.Count;
 
 		StateHasChanged();
 	}
 
 	public void SlideTo(int newIndex)
 	{
-		if (newIndex < 0 || newIndex >= ImagesCount)
+		if (newIndex < 0 || newIndex >= Images.Count)
 		{
 			throw new ArgumentOutOfRangeException("No image with this index.");
 		}

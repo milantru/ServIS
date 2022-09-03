@@ -125,7 +125,10 @@
 		{
 			await api.SaveAdditionalEquipmentAsync(AdditionalEquipment);
 		}
-		catch { /* TODO */ }
+		catch
+		{
+			throw new Exception($"Failed to save additional equipment with id '{AdditionalEquipment.Id}'.");
+		}
 
 		if (AfterValidSubmit.HasDelegate)
 		{

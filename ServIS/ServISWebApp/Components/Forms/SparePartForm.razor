@@ -5,7 +5,7 @@
 
 @if (SparePart != null)
 {
-	<EditForm Model="SparePart" OnValidSubmit="HandleValidSubmit">
+	<EditForm Model="SparePart" OnValidSubmit="SaveSparePartAsync">
 		<ObjectGraphDataAnnotationsValidator />
 		<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
 
@@ -118,7 +118,7 @@
         return checkedExcavators;
     }
 
-    private async Task HandleValidSubmit()
+    private async Task SaveSparePartAsync()
     {
         SparePart.Excavators = GetCheckedExcavators();
 
@@ -126,7 +126,10 @@
         {
             await api.SaveSparePartAsync(SparePart);
         }
-        catch { /* TODO */ }
+        catch
+        {
+            throw new Exception($"Failed to save spare part with id '{SparePart.Id}'.");
+        }
 
         if (AfterValidSubmit.HasDelegate)
         {

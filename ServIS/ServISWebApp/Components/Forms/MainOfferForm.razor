@@ -5,7 +5,7 @@
 
 @if (MainOffer != null && MainOffer.ExcavatorType != null)
 {
-	<EditForm EditContext="@editContext" Model="MainOffer" OnValidSubmit="HandleValidSubmit">
+	<EditForm EditContext="@editContext" Model="MainOffer" OnValidSubmit="SaveMainOfferAsync">
 		<ObjectGraphDataAnnotationsValidator />
 		<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
 
@@ -23,7 +23,13 @@
 			}
 		</div>
 
-		<ExcavatorTypeSelector @bind-ExcavatorType="MainOffer.ExcavatorType"  />
+		<ItemsSelector ItemType="ExcavatorType" 
+					   @bind-SelectedItem="MainOffer.ExcavatorType"
+					   Items="ExcavatorTypes"
+					   Label="Typy strojov" 
+				   Context="excavatorType">
+			<OptionText>@excavatorType.Category.Category (@excavatorType.Brand.Brand)</OptionText>
+		</ItemsSelector>
 
 		<label>Popis:</label>
 		<InputTextArea @bind-Value="MainOffer.Description" />
@@ -45,6 +51,22 @@
 
 	[Parameter]
 	public EventCallback AfterValidSubmit { get; set; }
+
+	private List<ExcavatorType> ExcavatorTypes { get; set; } = null!;
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+
+		try
+		{
+			ExcavatorTypes = await api.GetExcavatorTypesAsync();
+		}
+		catch
+		{
+			throw new Exception("Error retrieving excavator types.");
+		}
+	}
 
 	protected override void OnParametersSet()
 	{
@@ -89,13 +111,16 @@
 		await MainOfferChanged.InvokeAsync(MainOffer);
 	}
 
-	private async Task HandleValidSubmit()
+	private async Task SaveMainOfferAsync()
 	{
 		try
 		{
 			await api.SaveMainOfferAsync(MainOffer);
 		}
-		catch { /* TODO */ }
+		catch
+		{
+			throw new Exception($"Failed to save main offer with id '{MainOffer.Id}'.");
+		}
 
 		if (AfterValidSubmit.HasDelegate)
 		{

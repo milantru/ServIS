@@ -59,12 +59,14 @@ else
 	{
 		await base.OnInitializedAsync();
 
-		var mainOffersTmp = await api.GetMainOffersAsync();
-		if (mainOffersTmp == null)
+		try
+		{
+			MainOffers = await api.GetMainOffersAsync();
+		}
+		catch
 		{
 			throw new Exception("Error retrieving main offers.");
 		}
-		MainOffers = mainOffersTmp;
 	}
 
 	private async Task DeleteMainOfferAsync(MainOffer mainOffer)

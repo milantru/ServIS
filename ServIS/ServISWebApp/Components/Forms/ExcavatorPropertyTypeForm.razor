@@ -4,7 +4,7 @@
 
 @if (PropertyType != null)
 {
-	<EditForm Model="PropertyType" OnValidSubmit="HandleValidSubmitAsync">
+	<EditForm Model="PropertyType" OnValidSubmit="SaveExcavatorPropertyTypeAsync">
 		<DataAnnotationsValidator />
 		<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
 
@@ -75,13 +75,16 @@
 		await PropertyTypeChanged.InvokeAsync(PropertyType);
 	}
 
-	private async Task HandleValidSubmitAsync()
+	private async Task SaveExcavatorPropertyTypeAsync()
 	{
 		try
 		{
 			await api.SaveExcavatorPropertyTypeAsync(PropertyType);
 		}
-		catch { /* TODO */ }
+		catch
+		{
+			throw new Exception($"Failed to save excavator property type with id '{PropertyType.Id}'.");
+		}
 
 		if (AfterValidSubmit.HasDelegate)
 		{

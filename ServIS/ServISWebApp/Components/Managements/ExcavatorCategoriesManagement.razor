@@ -1,10 +1,11 @@
-﻿@inherits ItemsManagement<ExcavatorCategory>
+﻿@inherits ItemsManagementBase<ExcavatorCategory>
 @inject IServISApi api
 @using ServISWebApp.Components.Managements
 
 <h3>Správa kategórií strojov</h3>
 
-<ExcavatorCategoryForm @bind-ExcavatorCategory="this.SelectedItem" AfterValidSubmit="async() => await this.ReloadItemsAsync()" />
+<ExcavatorCategoryForm @bind-ExcavatorCategory="this.SelectedItem"
+					   AfterValidSubmit="async () => await this.ReloadItemsAsync()" />
 
 <ItemsTableLister ItemType="ExcavatorCategory"
 				  @ref="this.itemsLister"
