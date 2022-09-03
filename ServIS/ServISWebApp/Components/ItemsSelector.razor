@@ -1,0 +1,75 @@
+﻿@inject IServISApi api
+@typeparam ItemType where ItemType : class, IItem
+
+@if (Label != null)
+{
+	<label>@Label</label>
+}
+
+@if (Items == null)
+{
+	<p>Načítava sa...</p>
+}
+else if (Items.Count == 0)
+{
+	<p>Neexistujú žiadne položky na výber.</p>
+}
+else
+{
+	@if (SelectedItem != null)
+	{
+		<InputSelect Value="SelectedItem.Id"
+					 ValueExpression="() => SelectedItem.Id"
+					 ValueChanged="async (int itemId) => await SelectItem(itemId)">
+			@foreach (var item in Items)
+			{
+				<option value="@item.Id">@OptionText(item)</option>
+			}
+		</InputSelect>
+	}
+}
+
+@code {
+	[EditorRequired, Parameter]
+	public List<ItemType> Items { get; set; } = null!;
+
+	[EditorRequired, Parameter]
+	public RenderFragment<ItemType> OptionText { get; set; } = null!;
+
+	[Parameter]
+	public ItemType SelectedItem { get; set; } = null!;
+
+	[Parameter]
+	public EventCallback<ItemType> SelectedItemChanged { get; set; }
+
+	[Parameter]
+	public string? Label { get; set; }
+
+	[Parameter]
+	public EventCallback OnSelect { get; set; }
+
+	protected override void OnParametersSet()
+	{
+		base.OnParametersSet();
+
+		if (SelectedItem == null)
+		{
+			throw new Exception($"Parameter '{nameof(SelectedItem)}' not provided.");
+		}
+	}
+
+	private async Task SelectItem(int itemId)
+	{
+		var selectedItemTmp = Items.FirstOrDefault(i => i.Id == itemId);
+		if (selectedItemTmp != null)
+		{
+			SelectedItem = selectedItemTmp;
+			await SelectedItemChanged.InvokeAsync(SelectedItem);
+
+			if (OnSelect.HasDelegate)
+			{
+				await OnSelect.InvokeAsync();
+			}
+		}
+	}
+}
