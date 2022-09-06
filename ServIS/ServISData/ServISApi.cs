@@ -105,7 +105,7 @@ namespace ServISData
 			}
 
 			await context.SaveChangesAsync();
-
+			
 			return excavatorCategory;
 		}
 
@@ -588,8 +588,8 @@ namespace ServISData
 			using var context = factory.CreateDbContext();
 
 			return await context.ExcavatorTypes
-				//.Include(et => et.Brand)
-				//.Include(et => et.Category)
+				.Include(et => et.Brand)
+				.Include(et => et.Category)
 				//.Include(et => et.ExcavatorsOfThisType)
 				//.Include(et => et.PropertyTypes)
 				.AsNoTracking()
