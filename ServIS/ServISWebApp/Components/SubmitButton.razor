@@ -1,0 +1,9 @@
+﻿<button class="btn btn-success" @attributes="AdditionalAttributes" type="submit">@Text</button>
+
+@code {
+	[Parameter]
+	public string Text { get; set; } = "Submit";
+
+	[Parameter(CaptureUnmatchedValues = true)]
+	public IReadOnlyDictionary<string, object> AdditionalAttributes { get; set; } = null!;
+}
