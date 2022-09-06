@@ -31,6 +31,29 @@ main {
         text-overflow: ellipsis;
     }
 
+#contact-icon {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    padding: 4px;
+    box-shadow: black 0 0 10px; /* black is inverted white */
+    transition: all 0.35s ease-in;
+    filter: invert();
+    background-color: #0077FF; /* #0077FF is inverted #FF8800 */
+}
+
+#contact-container:hover #contact-icon {
+    transform: rotateY(180deg);
+}
+
+#phone-number {
+    color: #FF8800;
+    display: inline-block;
+    text-decoration: none;
+    text-shadow: white 1px 1px 12px;
+    margin: 10px 14px 0 2px;
+}
+
 @media (max-width: 640.98px) {
     .top-row:not(.auth) {
         display: none;
