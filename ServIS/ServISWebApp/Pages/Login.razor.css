@@ -1,0 +1,33 @@
+﻿#login {
+	min-width: 300px;
+	max-width: 32vw;
+	margin-right: auto;
+	margin-left: auto;
+	padding: 10px;
+	display: flex;
+	flex-direction: column;
+	align-content: center;
+}
+
+	#login h3 {
+		text-align: center;
+	}
+
+#login-data {
+	padding-left: 2px;
+}
+
+	#login-data .form-group {
+		padding: 8px;
+	}
+
+#input-password {
+	position: relative;
+}
+
+#visibility-toggle {
+	position: absolute;
+	top: 13px;
+	right: 12px;
+	cursor: pointer;
+}

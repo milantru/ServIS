@@ -1,5 +1,5 @@
 ﻿.card-main-box {
-    background-color: #cccccc;
+    background-color: #CCCCCC;
     border-radius: 18px;
     box-shadow: 1px 1px 10px gray;
 
@@ -38,13 +38,13 @@
 
 }
 .card-main-title-locust {
-    color: #ff8800;
+    color: #FF8800;
     text-shadow: 0px 0px 7px #ffa033;
 
 }
 .card-main-title-eurocomach {
     color: rgb(255, 59, 11);
-    text-shadow: 0px 0px 7px #ffa880;
+    text-shadow: 0px 0px 7px #FFA880;
 }
 
 .card-main-subtitle {
@@ -60,7 +60,7 @@
 }
 
 .card-main-text {
-    background-color: #cccccc;
+    background-color: #CCCCCC;
     color: white;
     display: none;
     font-size: 115%;
@@ -96,11 +96,11 @@
     transition: all 0.2s ease-in;
 }
 .card-main-button-locust a {
-    box-shadow: 0px 0px 10px #ff8800;
+    box-shadow: 0px 0px 10px #FF8800;
 }
 .card-main-button-locust a:hover {
-    box-shadow: 0px 0px 12px 3px #ff8800,
-                inset 0px 0px 2px 0.3px #ff8800;
+    box-shadow: 0px 0px 12px 3px #FF8800,
+                inset 0px 0px 2px 0.3px #FF8800;
 }
 .card-main-button-eurocomach a {
     box-shadow: 0px 0px 10px  rgb(255, 72, 0);

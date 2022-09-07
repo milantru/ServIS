@@ -1,0 +1,40 @@
+﻿#registration {
+	display: flex;
+	flex-direction: column;
+	align-content: center;
+	margin-right: auto;
+	margin-left: auto;
+	padding: 4px;
+}
+
+	#registration h3 {
+		margin-right: auto;
+		margin-left: auto;
+	}
+
+.form-group {
+	margin: 8px;
+}
+
+#btn-panel {
+	margin: 4px 0;
+}
+
+.form-group {
+	width: 45%;
+}
+
+.flex-no-wrap {
+	flex-wrap: nowrap;
+}
+
+@media (max-width: 950px) {
+	.flex-no-wrap {
+		flex-wrap: wrap;
+	}
+
+	.form-group {
+		width: 100%;
+		display: block;
+	}
+}

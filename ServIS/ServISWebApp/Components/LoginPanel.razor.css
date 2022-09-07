@@ -1,0 +1,60 @@
+﻿#login-panel {
+	background-color: white;
+	display: flex;
+	justify-content: space-between;
+	margin: 15px 12px -2px 12px;
+	padding: 2px;
+}
+
+	#login-panel a {
+		text-decoration: none;
+	}
+
+	#login-panel .login-panel-btn {
+		transition: background-color .15s ease-in-out;
+	}
+
+		#login-panel .login-panel-btn:hover {
+			background-color: rgba(255,136,0,0.5);
+		}
+
+.login-panel-btn {
+	color: white;
+	text-shadow: 
+		-1px -1px 0 rgba(255,136,0,0.15),
+		1px -1px 0 rgba(255,136,0,0.15),
+		-1px 1px 0 rgba(255,136,0,0.15),
+		1px 1px 0 rgba(255,136,0,0.15);
+	margin: 3px 8px;
+	padding: 5px;
+}
+
+#login-btn {
+	background-color: #4D4D4D;
+	padding-right: 12px;
+	padding-left: 12px;
+}
+
+#register-btn {
+	background-color: #808080;
+	padding-right: 8px;
+	padding-left: 8px;
+}
+
+#profile-btn {
+	background-color: #808080;
+	padding-right: 45px;
+	padding-left: 45px;
+}
+
+#logout {
+	padding-top: 2px;
+	margin-right: 8.5px;
+}
+
+@media (max-width: 640px) {
+	#login-panel {
+		max-width: 280px;
+		margin: 8px auto;
+	}
+}

@@ -5,42 +5,80 @@
 @using ServISWebApp.Auth
 @using ServISWebApp.CssProviders
 
-<h3>Registrácia</h3>
+<div id="registration" class="w-75 servis-border">
+	<h3>Registrácia</h3>
 
-<EditForm Model="User" OnValidSubmit="RegisterUserAsync">
-	<DataAnnotationsValidator />
-	<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
+	<EditForm Model="User" OnValidSubmit="RegisterUserAsync">
+		<DataAnnotationsValidator />
+		<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
 
-	<label>Prihlasovacie meno:</label>
-	<InputText @bind-Value="@User.Username" />
-	<ValidationMessage For="@(() => User.Username)" />
+		<div class="row">
+			<div class="d-flex">
+				<div class="form-group">
+					<label for="username">Prihlasovacie meno:</label>
+					<InputText @bind-Value="User.Username" id="username" />
+					<ValidationMessage For="@(() => User.Username)" />
+				</div>
+			</div>
+		</div>
 
-	<label>Heslo:</label>
-	<InputText @bind-Value="@User.Password" />
-	<ValidationMessage For="@(() => User.Password)" />
+		<div class="row">
+			<div class="d-flex">
+				<div class="form-group" col>
+					<label for="password">Heslo:</label>
+					<InputText @bind-Value="User.Password" id="password" />
+					<ValidationMessage For="@(() => User.Password)" />
+				</div>
+			</div>
+		</div>
 
-	<label>Meno:</label>
-	<InputText @bind-Value="@User.Name" />
-	<ValidationMessage For="@(() => User.Name)" />
+		<div class="row">
+			<div class="d-flex flex-no-wrap">
+				<div class="form-group">
+					<label for="name">Meno:</label>
+					<InputText @bind-Value="User.Name" id="name" />
+					<ValidationMessage For="@(() => User.Name)" />
+				</div>
 
-	<label>Priezvisko:</label>
-	<InputText @bind-Value="@User.Surname" />
-	<ValidationMessage For="@(() => User.Surname)" />
+				<div class="form-group">
+					<label for="surname">Priezvisko:</label>
+					<InputText @bind-Value="User.Surname" id="surname" />
+					<ValidationMessage For="@(() => User.Surname)" />
+				</div>
+			</div>
+		</div>
 
-	<label>Telefónne číslo:</label>
-	<InputText @bind-Value="@User.PhoneNumber" />
-	<ValidationMessage For="@(() => User.PhoneNumber)" />
+		<div class="row">
+			<div class="d-flex flex-no-wrap">
+				<div class="form-group">
+					<label for="email">Email:</label>
+					<InputText @bind-Value="User.Email" id="email" />
+					<ValidationMessage For="@(() => User.Email)" />
+				</div>
 
-	<label>Email:</label>
-	<InputText @bind-Value="@User.Email" />
-	<ValidationMessage For="@(() => User.Email)" />
+				<div class="form-group">
+					<label for="phone">Telefónne číslo:</label>
+					<InputText @bind-Value="User.PhoneNumber" id="phone" />
+					<ValidationMessage For="@(() => User.PhoneNumber)" />
+				</div>
+			</div>
+		</div>
 
-	<label>Mesto:</label>
-	<InputText @bind-Value="@User.Residence" />
-	<ValidationMessage For="@(() => User.Residence)" />
+		<div class="row">
+			<div class="d-flex">
+				<div class="form-group">
+					<label for="residence">Mesto:</label>
+					<InputText @bind-Value="User.Residence" id="residence" />
+					<ValidationMessage For="@(() => User.Residence)" />
+				</div>
+			</div>
+		</div>
 
-	<button class="btn btn-success" type="submit">Registrovať</button>
-</EditForm>
+		<div id="btn-panel" class="container-center-items-horizontal">
+			<SubmitButton Text="Registrovať" />
+		</div>
+	</EditForm>
+</div>
 
 @code {
 	private User User { get; set; } = new();
@@ -48,8 +86,8 @@
 	private async Task RegisterUserAsync()
 	{
 		/* we dont really need to create newUser, we can just save User
-		 * but we would see on a brief moment password hash in the form,
-		 * this way we wont see it */
+			* but we would see on a brief moment password hash in the form,
+			* this way we wont see it */
 		var newUser = new User
 			{
 				Id = User.Id,

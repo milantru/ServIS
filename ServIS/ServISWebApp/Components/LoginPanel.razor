@@ -2,23 +2,21 @@
 @inject NavigationManager navMan
 @using ServISWebApp.Auth
 
-<div>
-	<h3 class="text-primary">LoginPanel</h3>
-
+<div id="login-panel" class="servis-outline">
 	<AuthorizeView>
 		<Authorized>
-			<a href="/profil">Profil</a>
-			<a href="javascript:void(0)" @onclick="Logout">Odhlásiť</a>
+			<a href="/profil" id="profile-btn" class="login-panel-btn servis-outline">Profil</a>
+			<a href="javascript:void(0)" id="logout" class="d-flex align-items-center" @onclick="LogoutAsync">Odhlásiť</a>
 		</Authorized>
 		<NotAuthorized>
-			<a href="/prihlasovanie">Prihlásiť</a>
-			<a href="/registracia">Registrovať</a>
+			<a href="/prihlasovanie" id="login-btn" class="login-panel-btn servis-outline">Prihlásiť</a>
+			<a href="/registracia" id="register-btn" class="login-panel-btn servis-outline">Registrovať</a>
 		</NotAuthorized>
 	</AuthorizeView>
 </div>
 
 @code {
-	private async Task Logout()
+	private async Task LogoutAsync()
 	{
 		var customAuthStateProvider = (CustomAuthenticationStateProvider)authStateProvider;
 		await customAuthStateProvider.UpdateAuthenticationState(null);
