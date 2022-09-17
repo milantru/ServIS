@@ -59,15 +59,16 @@
 			}
 			else
 			{
-				@* We need to specify Context="c" otherwise we get an error because AuthorizeView and EditForm use the same name for Context *@
+				@* We need to specify Context="c" otherwise we get an error 
+				   because AuthorizeView and EditForm use the same name for Context *@
 				<EditForm Model="User" Context="c" OnValidSubmit="SaveUserAsync">
 					<DataAnnotationsValidator />
 					<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
 
 					<h5>Prihlasovacie údaje</h5>
-					<div class="form-gorup">
+					<div class="form-group">
 						<label>Prihlasovacie meno</label>
-						<InputText @bind-Value="@User.Username" />
+						<InputText @bind-Value="User.Username" />
 						<ValidationMessage For="@(() => User.Username)" />
 
 						<h6>Zmena hesla</h6>
@@ -83,25 +84,25 @@
 					<br />
 
 					<h5>Ostatné údaje</h5>
-					<div class="form-gorup">
+					<div class="form-group">
 						<label>Krstné meno</label>
-						<InputText @bind-Value="@User.Name" />
+						<InputText @bind-Value="User.Name" />
 						<ValidationMessage For="@(() => User.Name)" />
 
 						<label>Priezvisko</label>
-						<InputText @bind-Value="@User.Surname" />
+						<InputText @bind-Value="User.Surname" />
 						<ValidationMessage For="@(() => User.Surname)" />
 
 						<label>Telefónne číslo</label>
-						<InputText @bind-Value="@User.PhoneNumber" />
+						<InputText @bind-Value="User.PhoneNumber" />
 						<ValidationMessage For="@(() => User.PhoneNumber)" />
 
 						<label>Email</label>
-						<InputText @bind-Value="@User.Email" />
+						<InputText @bind-Value="User.Email" />
 						<ValidationMessage For="@(() => User.Email)" />
 
 						<label>Mesto</label>
-						<InputText @bind-Value="@User.Residence" />
+						<InputText @bind-Value="User.Residence" />
 						<ValidationMessage For="@(() => User.Residence)" />
 					</div>
 
