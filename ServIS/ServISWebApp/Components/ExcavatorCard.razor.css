@@ -1,4 +1,15 @@
-﻿.excavator-card-content {
+﻿a {
+	text-decoration: none;
+}
+
+.card-content {
 	width: 18rem;
 	margin: 0 10px 10px 0;
+}
+
+.card-title {
+	text-align: center;
+	margin-top: 8px;
+	color: grey;
+	font-size: 125%;
 }
