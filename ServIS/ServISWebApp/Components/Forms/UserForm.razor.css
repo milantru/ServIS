@@ -1,13 +1,12 @@
-﻿#registration {
+﻿#user-form {
 	display: flex;
 	flex-direction: column;
 	align-content: center;
-	margin-right: auto;
-	margin-left: auto;
+	margin: 12px auto;
 	padding: 4px;
 }
 
-	#registration h3 {
+	#user-form h3 {
 		margin-right: auto;
 		margin-left: auto;
 	}

@@ -51,72 +51,19 @@
 	</AuthorizeView>
 	<AuthorizeView>
 		<TabPage TabLabel="Moje údaje">
-			<h4>Moje údaje</h4>
-
 			@if (User == null)
 			{
 				<p>Načítáva sa...</p>
 			}
 			else
 			{
-				@* We need to specify Context="c" otherwise we get an error 
-				   because AuthorizeView and EditForm use the same name for Context *@
-				<EditForm Model="User" Context="c" OnValidSubmit="SaveUserAsync">
-					<DataAnnotationsValidator />
-					<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
-
-					<h5>Prihlasovacie údaje</h5>
-					<div class="form-group">
-						<label>Prihlasovacie meno</label>
-						<InputText @bind-Value="User.Username" />
-						<ValidationMessage For="@(() => User.Username)" />
-
-						<h6>Zmena hesla</h6>
-						<div>
-							<label>Staré heslo</label>
-							<InputPassword @bind-Value="oldPassword" />
-
-							<label>Nové heslo</label>
-							<InputPassword @bind-Value="newPassword" />
-						</div>
-					</div>
-
-					<br />
-
-					<h5>Ostatné údaje</h5>
-					<div class="form-group">
-						<label>Krstné meno</label>
-						<InputText @bind-Value="User.Name" />
-						<ValidationMessage For="@(() => User.Name)" />
-
-						<label>Priezvisko</label>
-						<InputText @bind-Value="User.Surname" />
-						<ValidationMessage For="@(() => User.Surname)" />
-
-						<label>Telefónne číslo</label>
-						<InputText @bind-Value="User.PhoneNumber" />
-						<ValidationMessage For="@(() => User.PhoneNumber)" />
-
-						<label>Email</label>
-						<InputText @bind-Value="User.Email" />
-						<ValidationMessage For="@(() => User.Email)" />
-
-						<label>Mesto</label>
-						<InputText @bind-Value="User.Residence" />
-						<ValidationMessage For="@(() => User.Residence)" />
-					</div>
-
-					<SubmitButton Text="Uložiť zmeny" />
-				</EditForm>
+				<UserForm User="@User" OnSave="@(async () => await js.InvokeVoidAsync("alert", "Údaje úspešne zmenené."))" />
 			}
 		</TabPage>
 	</AuthorizeView>
 </TabControl>
 
 @code {
-	private string oldPassword = "";
-	private string newPassword = "";
-
 	private User User { get; set; } = null!;
 
 	protected override async Task OnInitializedAsync()
@@ -138,32 +85,5 @@
 		{
 			throw new Exception($"Failed to load user with id '{userId}'.");
 		}
-	}
-
-	private async Task SaveUserAsync()
-	{
-		if (newPassword != "")
-		{
-			if (!PasswordHasher.AreCredentialsCorrect(User.Password, oldPassword))
-			{
-				await js.InvokeVoidAsync("alert", "Nemôžem uložiť- nesprávne heslo.");
-				return;
-			}
-			User.Password = PasswordHasher.Hash(newPassword);
-		}
-
-		try
-		{
-			await api.SaveUserAsync(User);
-		}
-		catch
-		{
-			throw new Exception($"Failed to save user with id '{User.Id}'.");
-		}
-
-		var customAuthStateProvider = (CustomAuthenticationStateProvider)authStateProvider;
-		await customAuthStateProvider.UpdateAuthenticationState(new UserSessionStorage(User));
-
-		await js.InvokeVoidAsync("alert", "Údaje úspešne zmenené.");
 	}
 }

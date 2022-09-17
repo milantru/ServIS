@@ -1,0 +1,186 @@
+﻿@inject IServISApi api
+@inject IJSRuntime js
+@using ServISWebApp.Auth
+@using ServISWebApp.CssProviders
+@using System.ComponentModel.DataAnnotations
+
+<div id="user-form" class="w-75 servis-border">
+	<h3>@(User.Id == 0 ? "Registrácia" : "Moje údaje")</h3>
+
+	<EditForm Model="User" OnValidSubmit="SaveUserAsync">
+		<DataAnnotationsValidator />
+		<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
+
+		<div class="row">
+			<div class="d-flex">
+				<div class="form-group">
+					<label for="username">Prihlasovacie meno:</label>
+					<InputText @bind-Value="User.Username" id="username" />
+					<ValidationMessage For="@(() => User.Username)" />
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="d-flex flex-no-wrap">
+				<div class="form-group">
+					<label for="password">@GetPasswordLabel():</label>
+					<InputPassword @bind-Value="PasswordField" id="password" autocomplete="new-password" />
+					<ValidationMessage For="@(() => User.Password)" />
+				</div>
+
+				<div class="form-group">
+					<label for="password-again">Znova heslo:</label>
+					<InputPassword @bind-Value="PasswordAgainField" id="password-again" />
+				</div>
+			</div>
+		</div>
+
+		<br />
+
+		<div class="row">
+			<div class="d-flex flex-no-wrap">
+				<div class="form-group">
+					<label for="name">Meno:</label>
+					<InputText @bind-Value="User.Name" id="name" />
+					<ValidationMessage For="@(() => User.Name)" />
+				</div>
+
+				<div class="form-group">
+					<label for="surname">Priezvisko:</label>
+					<InputText @bind-Value="User.Surname" id="surname" />
+					<ValidationMessage For="@(() => User.Surname)" />
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="d-flex flex-no-wrap">
+				<div class="form-group">
+					<label for="email">Email:</label>
+					<InputText @bind-Value="User.Email" id="email" />
+					<ValidationMessage For="@(() => User.Email)" />
+				</div>
+
+				<div class="form-group">
+					<label for="phone">Telefónne číslo:</label>
+					<InputText @bind-Value="User.PhoneNumber" id="phone" />
+					<ValidationMessage For="@(() => User.PhoneNumber)" />
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="d-flex">
+				<div class="form-group">
+					<label for="residence">Mesto:</label>
+					<InputText @bind-Value="User.Residence" id="residence" />
+					<ValidationMessage For="@(() => User.Residence)" />
+				</div>
+			</div>
+		</div>
+
+		<div id="btn-panel" class="container-center-items-horizontal">
+			<SubmitButton Text="@(User.Id == 0 ? "Registrovať" : "Uložiť")" />
+		</div>
+	</EditForm>
+</div>
+
+@code {
+	private string currentPassword = string.Empty;
+	private string passwordField = string.Empty;
+
+	[Parameter]
+	public User User { get; set; } = null!;
+
+	[Parameter]
+	public EventCallback<User> UserChanged { get; set; }
+
+	[Parameter]
+	public EventCallback OnSave { get; set; }
+
+	private string PasswordField
+	{
+		get => passwordField;
+		set
+		{
+			passwordField = value;
+			if (string.IsNullOrEmpty(passwordField))
+			{
+				User.Password = currentPassword;
+			}
+			else
+			{
+				User.Password = passwordField;
+			}
+		}
+	}
+
+	private string PasswordAgainField { get; set; } = string.Empty;
+
+	protected override void OnParametersSet()
+	{
+		base.OnParametersSet();
+
+		if (User.Id != 0)
+		{
+			currentPassword = User.Password;
+		}
+	}
+
+	private async Task SaveUserAsync(EditContext editContext)
+	{
+		if (User.Id != 0 && !editContext.IsModified())
+		{
+			await js.InvokeVoidAsync("alert", "Neboli vykonané žiadne zmeny.");
+			return;
+		}
+
+		if (PasswordField != PasswordAgainField)
+		{
+			await js.InvokeVoidAsync("alert", $"Obsah políčok '{GetPasswordLabel()}' a 'Znova heslo' nie sú rovnaké.");
+			return;
+		}
+		if (NewPasswordIsTheSameAsOld())
+		{
+			await js.InvokeVoidAsync("alert", "Nové heslo nemôže byť staré heslo.");
+			return;
+		}
+
+		if (!string.IsNullOrEmpty(PasswordField))
+		{
+			User.Password = PasswordHasher.Hash(PasswordField);
+
+			currentPassword = User.Password;
+			PasswordField = string.Empty;
+			PasswordAgainField = string.Empty;
+		}
+
+		try
+		{
+			await api.SaveUserAsync(User);
+		}
+		catch
+		{
+			throw new Exception($"Failed to save user with id '{User.Id}'.");
+		}
+
+		if (UserChanged.HasDelegate)
+		{
+			await UserChanged.InvokeAsync(User);
+		}
+
+		if (OnSave.HasDelegate)
+		{
+			await OnSave.InvokeAsync();
+		}
+
+		editContext.MarkAsUnmodified();
+	}
+
+	private string GetPasswordLabel() => User.Id == 0 ? "Heslo" : "Nové heslo";
+
+	private bool NewPasswordIsTheSameAsOld() =>
+		// existing user && typed something to password field && the thing he typed has the same hash as his current password
+		User.Id != 0 && User.Password != currentPassword && PasswordHasher.AreCredentialsCorrect(currentPassword, PasswordField);
+}
