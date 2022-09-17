@@ -73,22 +73,10 @@
 						<h6>Zmena hesla</h6>
 						<div>
 							<label>Staré heslo</label>
-							<div style="position:relative;">
-								<InputText @bind-Value="@oldPassword" type="@(isOldPasswordVisible ? "text" : "password")" />
-								<input class="toggle-password-visibility"
-									   type="checkbox"
-									   checked="@isOldPasswordVisible"
-									   @onclick="() => isOldPasswordVisible = !isOldPasswordVisible" />
-							</div>
+							<InputPassword @bind-Value="oldPassword" />
 
 							<label>Nové heslo</label>
-							<div style="position:relative;">
-								<InputText @bind-Value="@newPassword" type="@(isNewPasswordVisible ? "text" : "password")" />
-								<input class="toggle-password-visibility"
-									   type="checkbox"
-									   checked="@isNewPasswordVisible"
-									   @onclick="() => isNewPasswordVisible = !isNewPasswordVisible" />
-							</div>
+							<InputPassword @bind-Value="newPassword" />
 						</div>
 					</div>
 
@@ -127,8 +115,6 @@
 @code {
 	private string oldPassword = "";
 	private string newPassword = "";
-	private bool isOldPasswordVisible;
-	private bool isNewPasswordVisible;
 
 	private User User { get; set; } = null!;
 

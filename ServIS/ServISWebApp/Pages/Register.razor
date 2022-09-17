@@ -26,7 +26,7 @@
 			<div class="d-flex">
 				<div class="form-group" col>
 					<label for="password">Heslo:</label>
-					<InputText @bind-Value="User.Password" id="password" />
+					<InputPassword @bind-Value="User.Password" id="password" />
 					<ValidationMessage For="@(() => User.Password)" />
 				</div>
 			</div>

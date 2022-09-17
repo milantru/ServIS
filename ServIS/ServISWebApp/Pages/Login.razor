@@ -18,21 +18,7 @@
 
 			<div class="form-group">
 				<label for="password">Heslo</label><br />
-				<div id="input-password">
-					<InputText @bind-Value="@loginData.Password"
-							   type="@(isPasswordVisible ? "text" : "password")"
-							   id="password"
-							   class="form-control" />
-					@*
-					In icon element we have attribute style where we set "right" to
-					{the value of "right" in .razor.css file in rule for #visibility-toggle - 1},
-					because for some reason when clicked, the icon moved a bit...
-					*@
-					<i id="visibility-toggle"
-					   class="fas @(isPasswordVisible ? "fa-eye" : "fa-eye-slash")"
-					   style="@(isPasswordVisible ? "" : "right: 11px;")"
-					   @onclick="() => isPasswordVisible = !isPasswordVisible"></i>
-				</div>
+				<InputPassword @bind-Value="loginData.Password" />
 			</div>
 
 			<div class="container-center-items-horizontal">
@@ -44,7 +30,6 @@
 
 
 @code {
-	private bool isPasswordVisible;
 	private LoginData loginData = new();
 
 	private async Task AuthenticateAsync()

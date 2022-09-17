@@ -20,14 +20,3 @@
 	#login-data .form-group {
 		padding: 8px;
 	}
-
-#input-password {
-	position: relative;
-}
-
-#visibility-toggle {
-	position: absolute;
-	top: 13px;
-	right: 12px;
-	cursor: pointer;
-}
