@@ -239,6 +239,11 @@ namespace ServISData
 
 			if (additionalEquipment.Id == 0)
 			{
+				additionalEquipment.Brand.AdditionalEquipmentsOfThisBrand = null!;
+				additionalEquipment.Category.AdditionalEquipmentsOfThisCategory = null!;
+				additionalEquipment.ExcavatorCategory.AdditionalEquipmentsOfThisCategory = null!;
+				additionalEquipment.ExcavatorCategory.ExcavatorTypesOfThisCategory = null!;
+
 				context.Attach(additionalEquipment.Brand);
 				context.Attach(additionalEquipment.Category);
 				context.Attach(additionalEquipment.ExcavatorCategory);
