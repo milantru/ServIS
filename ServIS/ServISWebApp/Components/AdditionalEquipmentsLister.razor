@@ -5,7 +5,7 @@
 	<h3>@Title</h3>
 }
 
-<div class="d-flex flex-wrap">
+<div class="d-flex flex-wrap justify-content-between">
 	<Virtualize @ref="additionalEquipmentPhotosContainer" ItemsProvider="LoadAdditionalEquipmentsAsync" Context="ae">
 		<AdditionalEquipmentCard AdditionalEquipment="ae"
 								 OnDelete="async () => await DeleteAdditionalEquipmentAsync(ae)" />

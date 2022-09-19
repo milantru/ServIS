@@ -1,0 +1,15 @@
+﻿a {
+	text-decoration: none;
+}
+
+.card-container {
+	max-width: 45%;
+}
+
+.card-title {
+	color: black;
+}
+
+.card-text {
+	color: grey;
+}
