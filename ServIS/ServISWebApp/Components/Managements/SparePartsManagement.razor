@@ -4,13 +4,14 @@
 
 <h3>Správa náhradných dielov</h3>
 
+<h4>Vytvorenie nového záznamu</h4>
 <SparePartForm @bind-SparePart="this.SelectedItem"
 			   AfterValidSubmit="async () => await this.ReloadItemsAsync()" />
 
+<h4>Zoznam náhradných dielov</h4>
 <ItemsTableLister ItemType="SparePart"
 				  @ref="this.itemsLister"
 				  @bind-SelectedItem="this.SelectedItem"
-				  Title="Zoznam náhradných dielov"
 				  GetItemsAsync="async (int numberOfSpareParts, int startIndex) =>
 									await api.GetSparePartsAsync(numberOfSpareParts, startIndex)"
 				  GetItemsTotalCountAsync="async () => await api.GetSparePartsCountAsync()"

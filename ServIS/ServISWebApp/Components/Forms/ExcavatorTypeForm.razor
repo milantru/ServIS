@@ -2,51 +2,59 @@
 @using ServISWebApp.CssProviders
 @inject IServISApi api
 
-<h3>Typy strojov- vytvorenie nového záznamu</h3>
-
 @if (isExcavatorTypeInitialized)
 {
-	<EditForm Model="ExcavatorType" OnValidSubmit="SaveExcavatorTypeAsync">
+	<EditForm Model="ExcavatorType" OnValidSubmit="SaveExcavatorTypeAsync" class="form-space-items">
 		<ObjectGraphDataAnnotationsValidator />
 		<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
 
-		<ItemsSelector ItemType="ExcavatorBrand"
-					   @bind-SelectedItem="ExcavatorType.Brand"
-					   Items="AllExcavatorBrands"
-					   Label="Značka:"
-					   Context="excavatorBrand">
-			<OptionText>@excavatorBrand.Brand</OptionText>
-		</ItemsSelector>
+		<div class="form-group">
+			<label for="excavator-brand">Značka:</label>
+			<ItemsSelector ItemType="ExcavatorBrand"
+						   @bind-SelectedItem="ExcavatorType.Brand"
+						   Items="AllExcavatorBrands"
+						   Context="excavatorBrand"
+						   id="excavator-brand">
+				<OptionText>@excavatorBrand.Brand</OptionText>
+			</ItemsSelector>
+		</div>
 
-		<ItemsSelector ItemType="ExcavatorCategory"
-				   @bind-SelectedItem="ExcavatorType.Category"
-				   Items="AllExcavatorCategories"
-				   Label="Kategória:"
-				   Context="excavatorCategory">
-			<OptionText>@excavatorCategory.Category</OptionText>
-		</ItemsSelector>
+		<div class="form-group">
+			<label for="excavator-category">Kategória:</label>
+			<ItemsSelector ItemType="ExcavatorCategory"
+						   @bind-SelectedItem="ExcavatorType.Category"
+						   Items="AllExcavatorCategories"
+						   Context="excavatorCategory"
+						   id="excavator-category">
+				<OptionText>@excavatorCategory.Category</OptionText>
+			</ItemsSelector>
+		</div>
 
-		<label>Typy vlastností:</label>
-		@if (AllPropertyTypes != null && AllPropertyTypesChecked != null && AllPropertyTypes.Count == AllPropertyTypesChecked.Count)
-		{
-			<ChecklistTable ItemType="ExcavatorPropertyType"
-							Items="AllPropertyTypes" 
-							@bind-ItemsChecked="AllPropertyTypesChecked" 
-							Context="propertyType" >
-				<HeaderCols>
-					<th>Názov vlastnosti</th>
-					<th>Typ vlastnosti</th>
-				</HeaderCols>
-				<BodyCols>
-					<td>@propertyType.Name</td>
-					<td>@propertyType.InputType.GetLabel()</td>
-				</BodyCols>
-			</ChecklistTable>
-		}
+		<div class="form-group">
+			<label>Typy vlastností:</label>
+			@if (AllPropertyTypes != null && AllPropertyTypesChecked != null && AllPropertyTypes.Count == AllPropertyTypesChecked.Count)
+			{
+				<ChecklistTable ItemType="ExcavatorPropertyType"
+								Items="AllPropertyTypes"
+								@bind-ItemsChecked="AllPropertyTypesChecked"
+								Context="propertyType">
+					<HeaderCols>
+						<th>Názov vlastnosti</th>
+						<th>Typ vlastnosti</th>
+					</HeaderCols>
+					<BodyCols>
+						<td>@propertyType.Name</td>
+						<td>@propertyType.InputType.GetLabel()</td>
+					</BodyCols>
+				</ChecklistTable>
+			}
+		</div>
 
-		<SubmitButton Text="Uložiť" />
-		<button class="btn btn-secondary" type="button" @onclick="async () => await ResetAsync()">Reset</button>
-	</EditForm>	
+		<div>
+			<SubmitButton Text="Uložiť" />
+			<button class="btn btn-secondary" type="button" @onclick="async () => await ResetAsync()">Reset</button>
+		</div>
+	</EditForm>
 }
 
 @code {
@@ -156,7 +164,7 @@
 		{
 			throw new Exception($"Failed to save excavator type with id '{ExcavatorType.Id}'.");
 		}
-		
+
 		if (AfterValidSubmit.HasDelegate)
 		{
 			await AfterValidSubmit.InvokeAsync();

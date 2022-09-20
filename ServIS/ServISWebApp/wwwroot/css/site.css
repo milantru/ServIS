@@ -68,6 +68,10 @@ a, .btn-link {
 	position: relative;
 }
 
+.form-space-items > * {
+	margin: 5px;
+}
+
 /* borders and outlines */
 .servis-outline {
 	border: 1px solid #FF8800;

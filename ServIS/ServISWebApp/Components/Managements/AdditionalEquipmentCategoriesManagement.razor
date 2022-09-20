@@ -4,13 +4,14 @@
 
 <h3>Správa kategórií prídavných zariadení</h3>
 
+<h4>Vytvorenie nového záznamu</h4>
 <AdditionalEquipmentCategoryForm @bind-AdditionalEquipmentCategory="this.SelectedItem"
 								 AfterValidSubmit="async () => await this.ReloadItemsAsync()" />
 
+<h4>Zoznam kategórií prídavných zariadení</h4>
 <ItemsTableLister ItemType="AdditionalEquipmentCategory"
 				  @ref="this.itemsLister"
 				  @bind-SelectedItem="this.SelectedItem"
-				  Title="Zoznam kategórií prídavných zariadení"
 				  GetItemsAsync="async (int numberOfAdditionalEquipmentCategories, int startIndex) =>
 									await api.GetAdditionalEquipmentCategoriesAsync(numberOfAdditionalEquipmentCategories, startIndex)"
 				  GetItemsTotalCountAsync="async () => await api.GetAdditionalEquipmentCategoriesCountAsync()"

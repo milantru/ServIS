@@ -1,11 +1,6 @@
 ﻿@inject IServISApi api
 @typeparam ItemType where ItemType : class, IItem
 
-@if (Label != null)
-{
-	<label>@Label</label>
-}
-
 @if (Items == null)
 {
 	<p>Načítava sa...</p>
@@ -20,7 +15,8 @@ else
 	{
 		<InputSelect Value="SelectedItem.Id"
 					 ValueExpression="() => SelectedItem.Id"
-					 ValueChanged="async (int itemId) => await SelectItem(itemId)">
+					 ValueChanged="async (int itemId) => await SelectItem(itemId)"
+					 @attributes="AdditionalAttributes">
 			@foreach (var item in Items)
 			{
 				<option value="@item.Id">@OptionText(item)</option>
@@ -43,10 +39,10 @@ else
 	public EventCallback<ItemType> SelectedItemChanged { get; set; }
 
 	[Parameter]
-	public string? Label { get; set; }
-
-	[Parameter]
 	public EventCallback OnSelect { get; set; }
+
+	[Parameter(CaptureUnmatchedValues = true)]
+	public IReadOnlyDictionary<string, object> AdditionalAttributes { get; set; } = null!;
 
 	protected override void OnParametersSet()
 	{

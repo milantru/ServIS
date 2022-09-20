@@ -3,15 +3,16 @@
 @using ServISData
 @using ServISWebApp.Components.Managements
 
-<h3>Správa typov vlastností stroja</h3>
+<h3>Správa typov vlastností strojov</h3>
 
+<h4>Vytvorenie nového záznamu</h4>
 <ExcavatorPropertyTypeForm @bind-PropertyType="this.SelectedItem"
 						   AfterValidSubmit="async () => await this.ReloadItemsAsync()" />
 
+<h4>Zoznam typov vlastností strojov</h4>
 <ItemsTableLister ItemType="ExcavatorPropertyType"
 				  @ref="this.itemsLister"
 				  @bind-SelectedItem="this.SelectedItem"
-				  Title="Zoznam typov vlastností stroja"
 				  GetItemsAsync="async (int numberOfExcavatorPropertyTypes, int startIndex) =>
 									await api.GetExcavatorPropertyTypesAsync(numberOfExcavatorPropertyTypes, startIndex)"
 				  GetItemsTotalCountAsync="async () => await api.GetExcavatorPropertyTypesCountAsync()"

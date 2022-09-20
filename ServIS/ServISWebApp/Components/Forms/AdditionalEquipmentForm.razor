@@ -3,54 +3,70 @@
 
 @if (isAdditionalEquipmentInitialized)
 {
-	<EditForm Model="AdditionalEquipment" OnValidSubmit="SaveAdditionalEquipmentAsync">
+	<EditForm Model="AdditionalEquipment" OnValidSubmit="SaveAdditionalEquipmentAsync" class="form-space-items">
 		<ObjectGraphDataAnnotationsValidator />
 		<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
 
-		<InputItemPhotos PhotoType="AdditionalEquipmentPhoto"
-						 @bind-Photos="AdditionalEquipment.Photos"
-						 CreatePhoto="@((dataBytes) => 
-							new AdditionalEquipmentPhoto { Photo = dataBytes, AdditionalEquipment = AdditionalEquipment })"
-						 DeletePhotoAsync="@(async (photo) => await DeleteAdditionalEquipmentPhotoAsync(photo))"
-						 IsRequired="@(AdditionalEquipment.Id == 0)" />
+		<div class="form-group">
+			<InputItemPhotos PhotoType="AdditionalEquipmentPhoto"
+							 @bind-Photos="AdditionalEquipment.Photos"
+							 CreatePhoto="@((dataBytes) => 
+								new AdditionalEquipmentPhoto { Photo = dataBytes, AdditionalEquipment = AdditionalEquipment })"
+							 DeletePhotoAsync="@(async (photo) => await DeleteAdditionalEquipmentPhotoAsync(photo))"
+							 IsRequired="@(AdditionalEquipment.Id == 0)" />
+		</div>
 
 		<br />
-		<br />
 
-		<ItemsSelector ItemType="ExcavatorCategory"
-				   @bind-SelectedItem="AdditionalEquipment.ExcavatorCategory"
-				   Items="AllExcavatorCategories"
-				   Label="Pre akú kategóriu strojov (pásové bagre, šmykom riadené nakladače...):"
-				   Context="excavatorCategory">
-			<OptionText>@excavatorCategory.Category</OptionText>
-		</ItemsSelector>
+		<div class="form-group">
+			<label for="excavator-category">Pre akú kategóriu strojov:</label>
+			<ItemsSelector ItemType="ExcavatorCategory"
+					   @bind-SelectedItem="AdditionalEquipment.ExcavatorCategory"
+					   Items="AllExcavatorCategories"
+					   Context="excavatorCategory"
+					   id="excavator-category">
+				<OptionText>@excavatorCategory.Category</OptionText>
+			</ItemsSelector>
+		</div>
 
-		<ItemsSelector ItemType="AdditionalEquipmentCategory"
-				   @bind-SelectedItem="AdditionalEquipment.Category"
-				   Items="AllAdditionalEquipmentCategories"
-				   Label="Kategória:"
-				   Context="additionalEquipmentCategory">
-			<OptionText>@additionalEquipmentCategory.Category</OptionText>
-		</ItemsSelector>
+		<div class="form-group">
+			<label for="additional-equipment-category">Kategória:</label>
+			<ItemsSelector ItemType="AdditionalEquipmentCategory"
+					   @bind-SelectedItem="AdditionalEquipment.Category"
+					   Items="AllAdditionalEquipmentCategories"
+					   Context="additionalEquipmentCategory"
+					   id="additional-equipment-category">
+				<OptionText>@additionalEquipmentCategory.Category</OptionText>
+			</ItemsSelector>
+		</div>
 
-		<ItemsSelector ItemType="AdditionalEquipmentBrand"
-					   @bind-SelectedItem="AdditionalEquipment.Brand"
-					   Items="AllAdditionalEquipmentBrands"
-					   Label="Značka:"
-					   Context="additionalEquipmentBrand">
-			<OptionText>@additionalEquipmentBrand.Brand</OptionText>
-		</ItemsSelector>
+		<div class="form-group">
+			<label for="additional-equipment-brand">Značka:</label>
+			<ItemsSelector ItemType="AdditionalEquipmentBrand"
+						   @bind-SelectedItem="AdditionalEquipment.Brand"
+						   Items="AllAdditionalEquipmentBrands"
+						   Context="additionalEquipmentBrand"
+						   id="additional-equipment-brand">
+				<OptionText>@additionalEquipmentBrand.Brand</OptionText>
+			</ItemsSelector>
+		</div>
 
-		<label>Názov:</label>
-		<InputText @bind-Value="@AdditionalEquipment.Name" />
-		<ValidationMessage For="@(() => AdditionalEquipment.Name)" />
+		<div class="form-group">
+			<label for="name">Názov:</label>
+			<InputText @bind-Value="@AdditionalEquipment.Name" id="name" />
+			<ValidationMessage For="@(() => AdditionalEquipment.Name)" />
+		</div>
 
-		<label>Popis:</label>
-		<InputTextArea @bind-Value="@AdditionalEquipment.Description" />
-		<ValidationMessage For="@(() => AdditionalEquipment.Description)" />
+		<div class="form-group">
+			<label for="description">Popis:</label>
+			<InputTextArea @bind-Value="@AdditionalEquipment.Description" id="description" />
+			<ValidationMessage For="@(() => AdditionalEquipment.Description)" />
+		</div>
 
-		<SubmitButton Text="Uložiť" />
-		<button class="btn btn-secondary" type="reset" @onclick="async () => await ResetAsync()">Reset</button>
+		<div>
+			<SubmitButton Text="Uložiť" />
+			<button class="btn btn-secondary" type="reset" @onclick="async () => await ResetAsync()">Reset</button>
+		</div>
 	</EditForm>
 }
 

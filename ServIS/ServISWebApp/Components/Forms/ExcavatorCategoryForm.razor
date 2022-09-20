@@ -1,16 +1,20 @@
 ﻿@inject IServISApi api
 @using ServISWebApp.CssProviders
 
-<EditForm Model="ExcavatorCategory" OnValidSubmit="SaveExcavatorCategoryAsync">
+<EditForm Model="ExcavatorCategory" OnValidSubmit="SaveExcavatorCategoryAsync" class="form-space-items">
 	<DataAnnotationsValidator />
 	<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
 
-	<label>Názov kategórie:</label>
-	<InputText @bind-Value="ExcavatorCategory.Category" />
-	<ValidationMessage For="@(() => ExcavatorCategory.Category)" />
+	<div class="form-group">
+		<label for="excavator-category">Názov kategórie:</label>
+		<InputText @bind-Value="ExcavatorCategory.Category" id="excavator-category" />
+		<ValidationMessage For="@(() => ExcavatorCategory.Category)" />
+	</div>
 
-	<SubmitButton Text="Uložiť" />
-	<button class="btn btn-secondary" type="reset" @onclick="async () => await ResetAsync()">Reset</button>
+	<div>
+		<SubmitButton Text="Uložiť" />
+		<button class="btn btn-secondary" type="reset" @onclick="async () => await ResetAsync()">Reset</button>
+	</div>
 </EditForm>
 
 @code {

@@ -3,3 +3,13 @@
 	top: 35%;
 	right: 32px;
 }
+
+.w-50-100 {
+	width: 50%;
+}
+
+@media (max-width: 1359px) {
+	.w-50-100 {
+		width: 100%;
+	}
+}

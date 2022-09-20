@@ -4,13 +4,14 @@
 
 <h3>Správa typov strojov</h3>
 
+<h4>Vytvorenie nového záznamu</h4>
 <ExcavatorTypeForm @bind-ExcavatorType="this.SelectedItem"
 				   AfterValidSubmit="async () => await this.ReloadItemsAsync()" />
 
+<h4>Zoznam typov strojov</h4>
 <ItemsTableLister ItemType="ExcavatorType"
 				  @ref="this.itemsLister"
 				  @bind-SelectedItem="this.SelectedItem"
-				  Title="Zoznam typov strojov"
 				  GetItemsAsync="async (int numberOfExcavatorTypes, int startIndex) =>
 									await api.GetExcavatorTypesAsync(numberOfExcavatorTypes, startIndex)"
 				  GetItemsTotalCountAsync="async () => await api.GetExcavatorTypesCountAsync()"
@@ -29,5 +30,5 @@
 </ItemsTableLister>
 
 @code {
-	
+
 }

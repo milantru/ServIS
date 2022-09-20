@@ -1,40 +1,46 @@
 ﻿@using ServISWebApp.CssProviders
 @inject IServISApi api
 
-<h3>Náhradné diely- vytvorenie nového záznamu</h3>
-
 @if (SparePart != null)
 {
-	<EditForm Model="SparePart" OnValidSubmit="SaveSparePartAsync">
+	<EditForm Model="SparePart" OnValidSubmit="SaveSparePartAsync" class="form-space-items">
 		<ObjectGraphDataAnnotationsValidator />
 		<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
 
-		<label>Katalógové číslo:</label>
-		<InputNumber @bind-Value=@SparePart.CatalogNumber />
-		<ValidationMessage For=@(() => SparePart.CatalogNumber) />
+        <div class="form-group">
+		    <label for="catalog-number">Katalógové číslo:</label>
+		    <InputNumber @bind-Value="SparePart.CatalogNumber" id="catalog-number" />
+		    <ValidationMessage For=@(() => SparePart.CatalogNumber) />
+        </div>
 
-		<label>Názov:</label>
-		<InputText @bind-Value=SparePart.Name />
-		<ValidationMessage For=@(() => SparePart.Name) />
+        <div class="form-group">
+		    <label for="name">Názov:</label>
+		    <InputText @bind-Value="SparePart.Name" id="name" />
+		    <ValidationMessage For=@(() => SparePart.Name) />
+        </div>
 
-        <label>Stroje obsahujúce diel:</label>
-		@if (AllExcavators != null && AllExcavatorsChecked != null && AllExcavators.Count == AllExcavatorsChecked.Count)
-		{
-            <ChecklistTable ItemType="Excavator"
-							Items="AllExcavators" 
-							@bind-ItemsChecked="AllExcavatorsChecked" 
-							Context="excavator" >
-				<HeaderCols>
-					<th>Názov:</th>
-				</HeaderCols>
-				<BodyCols>
-					<td>@excavator.Name</td>
-				</BodyCols>
-			</ChecklistTable>
-		}
+        <div class="form-group">
+            <label>Stroje obsahujúce diel:</label>
+		    @if (AllExcavators != null && AllExcavatorsChecked != null && AllExcavators.Count == AllExcavatorsChecked.Count)
+		    {
+                <ChecklistTable ItemType="Excavator"
+							    Items="AllExcavators" 
+							    @bind-ItemsChecked="AllExcavatorsChecked" 
+							    Context="excavator" >
+				    <HeaderCols>
+					    <th>Názov:</th>
+				    </HeaderCols>
+				    <BodyCols>
+					    <td>@excavator.Name</td>
+				    </BodyCols>
+			    </ChecklistTable>
+		    }
+        </div>
 
-        <SubmitButton Text="Uložiť" />
-		<button class="btn btn-secondary" type="reset" @onclick="async () => await ResetAsync()">Reset</button>
+        <div>
+            <SubmitButton Text="Uložiť" />
+		    <button class="btn btn-secondary" type="reset" @onclick="async () => await ResetAsync()">Reset</button>
+        </div>
 	</EditForm>
 }
 

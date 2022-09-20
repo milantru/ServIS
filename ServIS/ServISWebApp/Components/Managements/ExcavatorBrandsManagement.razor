@@ -4,13 +4,14 @@
 
 <h3>Správa značiek strojov</h3>
 
+<h4>Vytvorenie nového záznamu</h4>
 <ExcavatorBrandForm @bind-ExcavatorBrand="this.SelectedItem"
 					AfterValidSubmit="async () => await this.ReloadItemsAsync()" />
 
+<h4>Zoznam značiek strojov</h4>
 <ItemsTableLister ItemType="ExcavatorBrand"
 				  @ref="this.itemsLister"
 				  @bind-SelectedItem="this.SelectedItem"
-				  Title="Zoznam značiek strojov"
 				  GetItemsAsync="async (numberOfExcavatorBrands, startIndex) =>
 									await api.GetExcavatorBrandsAsync(numberOfExcavatorBrands, startIndex)"
 				  GetItemsTotalCountAsync="async () => await api.GetExcavatorBrandsCountAsync()"

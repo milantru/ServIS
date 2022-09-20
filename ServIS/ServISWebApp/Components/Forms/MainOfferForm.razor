@@ -5,38 +5,47 @@
 
 @if (MainOffer != null && MainOffer.ExcavatorType != null)
 {
-	<EditForm EditContext="@editContext" Model="MainOffer" OnValidSubmit="SaveMainOfferAsync">
+	<EditForm EditContext="@editContext" Model="MainOffer" OnValidSubmit="SaveMainOfferAsync" class="form-space-items">
 		<ObjectGraphDataAnnotationsValidator />
 		<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
 
-		<InputFile OnChange="HandleInputFileChangeAsync" />
-		<div>
-			Nahraná fotka:<br />
+		<div class="form-group">
+			<InputFile OnChange="HandleInputFileChangeAsync" />
+			<div>
+				Nahraná fotka:<br />
 
-			@if (MainOffer.Photo == null)
-			{
-				<p>Nie je nahraná žiadná fotka.</p>
-			}
-			else
-			{
-				<img src="@FileTools.GetDataUrlBase64String(MainOffer.Photo, "image/jpeg")" width="280" />
-			}
+				@if (MainOffer.Photo == null)
+				{
+					<p>Nie je nahraná žiadná fotka.</p>
+				}
+				else
+				{
+					<img src="@FileTools.GetDataUrlBase64String(MainOffer.Photo, "image/jpeg")" width="280" />
+				}
+			</div>
 		</div>
 
-		<ItemsSelector ItemType="ExcavatorType" 
-					   @bind-SelectedItem="MainOffer.ExcavatorType"
-					   Items="ExcavatorTypes"
-					   Label="Typy strojov" 
-				   Context="excavatorType">
-			<OptionText>@excavatorType.Category.Category (@excavatorType.Brand.Brand)</OptionText>
-		</ItemsSelector>
+		<div class="form-group">
+			<label for="excavator-type">Typy strojov:</label>
+			<ItemsSelector ItemType="ExcavatorType" 
+						   @bind-SelectedItem="MainOffer.ExcavatorType"
+						   Items="ExcavatorTypes"
+						   Context="excavatorType"
+						   id="excavator-type">
+				<OptionText>@excavatorType.Category.Category (@excavatorType.Brand.Brand)</OptionText>
+			</ItemsSelector>
+		</div>
 
-		<label>Popis:</label>
-		<InputTextArea @bind-Value="MainOffer.Description" />
-		<ValidationMessage For="@(() => MainOffer.Description)" />
+		<div class="form-group">
+			<label for="description">Popis:</label>
+			<InputTextArea @bind-Value="MainOffer.Description" id="description" />
+			<ValidationMessage For="@(() => MainOffer.Description)" />
+		</div>
 
-		<SubmitButton Text="Uložiť" />
-		<button class="btn btn-secondary" type="reset" @onclick="async () => await ResetAsync()">Reset</button>
+		<div>
+			<SubmitButton Text="Uložiť" />
+			<button class="btn btn-secondary" type="reset" @onclick="async () => await ResetAsync()">Reset</button>
+		</div>
 	</EditForm>
 }
 

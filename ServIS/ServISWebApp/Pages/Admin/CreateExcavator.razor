@@ -5,6 +5,8 @@
 @inject IServISApi api
 @inject NavigationManager navMan
 
+<h3>Stroje- @(ExcavatorTypeId.HasValue ? "vytvorenie nového" : "úprava existujúceho") záznamu</h3>
+
 @if (Excavator == null)
 {
 	<p>Načítava sa...</p>

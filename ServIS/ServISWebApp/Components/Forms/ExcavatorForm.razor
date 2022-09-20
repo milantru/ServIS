@@ -7,118 +7,135 @@
 
 @if (isExcavatorInitialized)
 {
-	<EditForm Model="Excavator" OnValidSubmit="SaveExcavatorAsync">
+	<EditForm Model="Excavator" OnValidSubmit="SaveExcavatorAsync" class="form-space-items">
 		<ObjectGraphDataAnnotationsValidator />
 		<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
 
-		<InputItemPhotos PhotoType="ExcavatorPhoto"
-						 @bind-Photos="Excavator.Photos"
-						 CreatePhoto="@((dataBytes) => 
-							new ExcavatorPhoto { Photo = dataBytes, Excavator = Excavator })"
-						 DeletePhotoAsync="@(async (photo) => await DeletePhotoAsync(photo))"
-						 IsRequired="@(Excavator.Id == 0)" />
+		<div class="form-group">
+			<InputItemPhotos PhotoType="ExcavatorPhoto"
+							 @bind-Photos="Excavator.Photos"
+							 CreatePhoto="@((dataBytes) => 
+								new ExcavatorPhoto { Photo = dataBytes, Excavator = Excavator })"
+							 DeletePhotoAsync="@(async (photo) => await DeletePhotoAsync(photo))"
+							 IsRequired="@(Excavator.Id == 0)" />
+		</div>
+
+		<div class="form-group">
+			<label for="name">Názov:</label>
+			<InputText @bind-Value="@Excavator.Name" id="name" />
+			<ValidationMessage For="@(() => Excavator.Name)" />
+		</div>
+
+		<div class="form-group">
+			<label for="description">Popis:</label>
+			<InputTextArea @bind-Value="@Excavator.Description" id="description" />
+			<ValidationMessage For="@(() => Excavator.Description)" />
+		</div>
+
+		<div class="form-check">
+			<label for="auction-only" class="form-check-label">Je IBA pre aukciu</label>
+			<input type="checkbox"
+				   checked="@Excavator.IsForAuctionOnly"
+				   @bind-value="@Excavator.IsForAuctionOnly"
+				   class="form-check-input"
+				   id="auction-only" />
+			@*<InputCheckbox @bind-Value="@TrackedExcavator.IsForAuctionOnly" class="form-check-input"/>*@
+			<ValidationMessage For="@(() => Excavator.IsForAuctionOnly)" />
+		</div>
 
 		<br />
 
-		<label>Názov:</label>
-		<InputText @bind-Value="@Excavator.Name" />
-		<ValidationMessage For="@(() => Excavator.Name)" />
-
-		<label>Popis:</label>
-		<InputTextArea @bind-Value="@Excavator.Description" />
-		<ValidationMessage For="@(() => Excavator.Description)" />
-
-		<label>Je IBA pre aukciu:</label>
-		<input type="checkbox"
-			   checked="@Excavator.IsForAuctionOnly"
-			   @bind-value="@Excavator.IsForAuctionOnly" />
-		@*<InputCheckbox @bind-Value="@TrackedExcavator.IsForAuctionOnly" class="form-check-input"/>*@
-		<ValidationMessage For="@(() => Excavator.IsForAuctionOnly)" />
-
-		<br />
-
-		<label>Náhradné diely v stroji:</label>
-		@if (AllSpareParts != null && AllSparePartsChecked != null && AllSpareParts.Count == AllSparePartsChecked.Count)
-		{
-			<ChecklistTable ItemType="SparePart"
-							Items="AllSpareParts"
-							@bind-ItemsChecked="AllSparePartsChecked"
-							Context="sp">
-				<HeaderCols>
-					<th>Katalógové číslo</th>
-					<th>Názov</th>
-				</HeaderCols>
-				<BodyCols>
-					<td>@sp.CatalogNumber</td>
-					<td>@sp.Name</td>
-				</BodyCols>
-			</ChecklistTable>
-		}
+		<div class="form-group">
+			<label>Náhradné diely v stroji:</label>
+			@if (AllSpareParts != null && AllSparePartsChecked != null && AllSpareParts.Count == AllSparePartsChecked.Count)
+			{
+				<ChecklistTable ItemType="SparePart"
+								Items="AllSpareParts"
+								@bind-ItemsChecked="AllSparePartsChecked"
+								Context="sp">
+					<HeaderCols>
+						<th>Katalógové číslo</th>
+						<th>Názov</th>
+					</HeaderCols>
+					<BodyCols>
+						<td>@sp.CatalogNumber</td>
+						<td>@sp.Name</td>
+					</BodyCols>
+				</ChecklistTable>
+			}
+		</div>
 
 		<br />
 
-		<ItemsSelector ItemType="ExcavatorType"
-					   @bind-SelectedItem="Excavator.Type"
-					   Items="AllExcavatorTypes"
-					   OnSelect="UpdateExcavatorProperties"
-					   Label="Typy strojov:"
-					   Context="excavatorType">
-			<OptionText>@excavatorType.Category.Category (@excavatorType.Brand.Brand)</OptionText>
-		</ItemsSelector>
+		<div class="form-group">
+			<label for="excavator-type">Typy strojov:</label>
+			<ItemsSelector ItemType="ExcavatorType"
+						   @bind-SelectedItem="Excavator.Type"
+						   Items="AllExcavatorTypes"
+						   OnSelect="UpdateExcavatorProperties"
+						   Context="excavatorType"
+						   id="excavator-type">
+				<OptionText>@excavatorType.Category.Category (@excavatorType.Brand.Brand)</OptionText>
+			</ItemsSelector>
+		</div>
 
 		<br />
 
-		<h6>Špecifické vlastnosti:</h6>
-		@if (Excavator.Properties.Count == 0)
-		{
-			<p>Tento typ stroja nemá žiadne vlastnosti</p>
-		}
-		else
-		{
-			<table>
-				<thead>
-					<tr>
-						<th>Názov vlastnosti</th>
-						<th>Hodnota</th>
-					</tr>
-				</thead>
-				<tbody>
-					@foreach (var property in Excavator.Properties)
-					{
-						var propertyType = property.PropertyType;
-						var propertyInputType = propertyType.InputType;
+		<div class="form-group">
+			<label>Špecifické vlastnosti:</label>
+			@if (Excavator.Properties.Count == 0)
+			{
+				<p>Tento typ stroja nemá žiadne vlastnosti</p>
+			}
+			else
+			{
+				<table>
+					<thead>
 						<tr>
-							<td><label>@propertyType.Name</label></td>
-
-							@switch (propertyInputType)
-							{
-								case InputType.Date:
-									@*<td><InputDate TValue="string" @bind-Value="property.Value" /></td>*@
-									<td><input type="datetime" @bind-value="property.Value" /></td>
-									break;
-								case InputType.Number:
-									@*<td><InputNumber TValue="string" @bind-Value="property.Value" /></td>*@
-									<td><input type="number" @bind-value="property.Value" /></td>
-									break;
-								case InputType.Text:
-									<td><InputText @bind-Value="property.Value" /></td>
-									break;
-								case InputType.TextArea:
-									<td><InputTextArea @bind-Value="property.Value" /></td>
-									break;
-								case InputType.Unset:
-									throw new Exception("Excavator property input type is unset.");
-								default:
-									throw new Exception("Unknown excavator property input type.");
-							}
+							<th>Názov vlastnosti</th>
+							<th>Hodnota</th>
 						</tr>
-					}
-				</tbody>
-			</table>
-		}
+					</thead>
+					<tbody>
+						@foreach (var property in Excavator.Properties)
+						{
+							var propertyType = property.PropertyType;
+							var propertyInputType = propertyType.InputType;
+							<tr>
+								<td><label>@propertyType.Name</label></td>
 
-		<SubmitButton Text="Uložiť" />
-		<button class="btn btn-secondary" type="reset" @onclick="async () => await ResetAsync()">Reset</button>
+								@switch (propertyInputType)
+								{
+									case InputType.Date:
+										@*<td><InputDate TValue="string" @bind-Value="property.Value" /></td>*@
+										<td><input type="datetime" @bind-value="property.Value" /></td>
+										break;
+									case InputType.Number:
+										@*<td><InputNumber TValue="string" @bind-Value="property.Value" /></td>*@
+										<td><input type="number" @bind-value="property.Value" /></td>
+										break;
+									case InputType.Text:
+										<td><InputText @bind-Value="property.Value" /></td>
+										break;
+									case InputType.TextArea:
+										<td><InputTextArea @bind-Value="property.Value" /></td>
+										break;
+									case InputType.Unset:
+										throw new Exception("Excavator property input type is unset.");
+									default:
+										throw new Exception("Unknown excavator property input type.");
+								}
+							</tr>
+						}
+					</tbody>
+				</table>
+			}
+		</div>
+
+		<div>
+			<SubmitButton Text="Uložiť" />
+			<button class="btn btn-secondary" type="reset" @onclick="async () => await ResetAsync()">Reset</button>
+		</div>
 	</EditForm>
 }
 

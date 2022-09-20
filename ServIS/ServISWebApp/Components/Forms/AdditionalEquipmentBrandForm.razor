@@ -1,16 +1,20 @@
 ﻿@inject IServISApi api
 @using ServISWebApp.CssProviders
 
-<EditForm Model="AdditionalEquipmentBrand" OnValidSubmit="SaveAdditionalEquipmentBrandAsync">
+<EditForm Model="AdditionalEquipmentBrand" OnValidSubmit="SaveAdditionalEquipmentBrandAsync" class="form-space-items">
 	<DataAnnotationsValidator />
 	<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
 
-	<label>Názov značky:</label>
-	<InputText @bind-Value="AdditionalEquipmentBrand.Brand" />
-	<ValidationMessage For="@(() => AdditionalEquipmentBrand.Brand)" />
+	<div class="form-group">
+		<label for="additional-equipment-brand">Názov značky:</label>
+		<InputText @bind-Value="AdditionalEquipmentBrand.Brand" id="additional-equipment-brand" />
+		<ValidationMessage For="@(() => AdditionalEquipmentBrand.Brand)" />
+	</div>
 
-	<SubmitButton Text="Uložiť" />
-	<button class="btn btn-secondary" type="reset" @onclick="async () => await ResetAsync()">Reset</button>
+	<div>
+		<SubmitButton Text="Uložiť" />
+		<button class="btn btn-secondary" type="reset" @onclick="async () => await ResetAsync()">Reset</button>
+	</div>
 </EditForm>
 
 @code {

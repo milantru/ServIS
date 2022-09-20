@@ -4,13 +4,14 @@
 
 <h3>Správa značiek prídavných zariadení</h3>
 
+<h4>Vytvorenie nového záznamu</h4>
 <AdditionalEquipmentBrandForm @bind-AdditionalEquipmentBrand="this.SelectedItem"
 							  AfterValidSubmit="async () => await this.ReloadItemsAsync()" />
 
+<h4>Zoznam značiek prídavných zariadení</h4>
 <ItemsTableLister ItemType="AdditionalEquipmentBrand"
 				  @ref="this.itemsLister"
 				  @bind-SelectedItem="this.SelectedItem"
-				  Title="Zoznam značiek prídavných zariadení"
 				  GetItemsAsync="async (numberOfAdditionalEquipmentBrands, startIndex) =>
 									await api.GetAdditionalEquipmentBrandsAsync(numberOfAdditionalEquipmentBrands, startIndex)"
 				  GetItemsTotalCountAsync="async () => await api.GetAdditionalEquipmentBrandsCountAsync()"

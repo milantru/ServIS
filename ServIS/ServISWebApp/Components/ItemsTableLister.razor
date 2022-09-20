@@ -1,38 +1,40 @@
 ﻿@typeparam ItemType where ItemType : class, new()
 
-@if (Title != null)
-{
-	<h3>@Title</h3>
-}
-
-<table class="table table-sm">
-	@if (HeadCols != null)
+<div>
+	@if (Title != null)
 	{
-		<thead>
-			<tr>
-				@HeadCols
-
-				<th></th> @*This column is here for the Select and Delete buttons*@
-			</tr>
-		</thead>
+		<h3>@Title</h3>
 	}
-	<tbody>
-		<Virtualize @ref="itemsContainer" ItemsProvider="LoadItemsAsync" Context="item" OverscanCount="3" >
-			<tr class="@GetRowCss(item)">
-				@if (BodyCols != null)
-				{
-					@BodyCols(item)
-				}
 
-				<td class="input-group">
-					<button class="btn btn-primary" type="button" @onclick="async () => await SelectAsync(item)">Vyber</button>
+	<table class="table table-sm">
+		@if (HeadCols != null)
+		{
+			<thead>
+				<tr>
+					@HeadCols
 
-					<button class="btn btn-danger" type="button" @onclick="async () => await DeleteAsync(item)">Vymaž</button>
-				</td>
-			</tr>
-		</Virtualize>
-	</tbody>
-</table>
+					<th></th> @*This column is here for the Select and Delete buttons*@
+				</tr>
+			</thead>
+		}
+		<tbody>
+			<Virtualize @ref="itemsContainer" ItemsProvider="LoadItemsAsync" Context="item" OverscanCount="3" >
+				<tr class="@GetRowCss(item)">
+					@if (BodyCols != null)
+					{
+						@BodyCols(item)
+					}
+
+					<td class="input-group">
+						<button class="btn btn-primary" type="button" @onclick="async () => await SelectAsync(item)">Vyber</button>
+
+						<button class="btn btn-danger" type="button" @onclick="async () => await DeleteAsync(item)">Vymaž</button>
+					</td>
+				</tr>
+			</Virtualize>
+		</tbody>
+	</table>
+</div>
 
 @code {
 	private Virtualize<ItemType> itemsContainer = null!;

@@ -4,31 +4,37 @@
 
 @if (PropertyType != null)
 {
-	<EditForm Model="PropertyType" OnValidSubmit="SaveExcavatorPropertyTypeAsync">
+	<EditForm Model="PropertyType" OnValidSubmit="SaveExcavatorPropertyTypeAsync" class="form-space-items">
 		<DataAnnotationsValidator />
 		<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
 
-		<label>Názov vlastnosti:</label>
-		<InputText @bind-Value="PropertyType.Name" />
-		<ValidationMessage For="@(() => PropertyType.Name)" />
+		<div class="form-group">
+			<label for="name">Názov vlastnosti:</label>
+			<InputText @bind-Value="PropertyType.Name" id="name" />
+			<ValidationMessage For="@(() => PropertyType.Name)" />
+		</div>
 
-		<label>Typ vlastnosti:</label>
-		<InputSelect @bind-Value="PropertyType.InputType">
-			@if (InputTypes == null)
-			{
-				<p>Načítava sa...</p>
-			}
-			else
-			{
-				@foreach (var inputType in InputTypes)
+		<div class="form-group">
+			<label for="property-type">Typ vlastnosti:</label>
+			<InputSelect @bind-Value="PropertyType.InputType" id="property-type">
+				@if (InputTypes == null)
 				{
-					<option value="@inputType">@inputType.GetLabel()</option>
+					<p>Načítava sa...</p>
 				}
-			}
-		</InputSelect>
+				else
+				{
+					@foreach (var inputType in InputTypes)
+					{
+						<option value="@inputType">@inputType.GetLabel()</option>
+					}
+				}
+			</InputSelect>
+		</div>
 
-		<SubmitButton Text="Uložiť" />
-		<button class="btn btn-secondary" type="button" @onclick="async () => await ResetAsync()">Reset</button>
+		<div>
+			<SubmitButton Text="Uložiť" />
+			<button class="btn btn-secondary" type="button" @onclick="async () => await ResetAsync()">Reset</button>
+		</div>
 	</EditForm>
 }
 
