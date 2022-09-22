@@ -1,4 +1,5 @@
 ﻿@inject IServISApi api
+@inject SfDialogService dialogService
 
 @if (Title != null)
 {
@@ -60,6 +61,22 @@
 
 	private async Task DeleteAdditionalEquipmentAsync(AdditionalEquipment additionalEquipment)
 	{
+		var dialogButtonOptions = new DialogButtonOptions { Content = "Zrušiť" };
+		var dialogOptions = new DialogOptions
+			{
+				ShowCloseIcon = true,
+				CancelButtonOptions = dialogButtonOptions
+			};
+		var isDeletionConfirmed = await dialogService.ConfirmAsync(
+			content: "Naozaj chcete toto prídavné zariadenie vymazať natrvalo?",
+			title: "Vymazať prídavné zariadenie natrvalo",
+			options: dialogOptions
+		);
+		if (!isDeletionConfirmed)
+		{
+			return;
+		}
+
 		await api.DeleteAdditionalEquipmentAsync(additionalEquipment);
 
 		await ReloadAdditionalEquipmentPhotosAsync();

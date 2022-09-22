@@ -1,6 +1,7 @@
 ﻿@page "/"
 
 @inject IServISApi api
+@inject SfDialogService dialogService
 
 <PageTitle>B-Servis | Domov</PageTitle>
 
@@ -71,6 +72,22 @@ else
 
 	private async Task DeleteMainOfferAsync(MainOffer mainOffer)
 	{
+		var dialogButtonOptions = new DialogButtonOptions { Content = "Zrušiť" };
+		var dialogOptions = new DialogOptions
+			{
+				ShowCloseIcon = true,
+				CancelButtonOptions = dialogButtonOptions
+			};
+		var isDeletionConfirmed = await dialogService.ConfirmAsync(
+			content: "Naozaj chcete túto ponuku vymazať natrvalo?",
+			title: "Vymazať ponuku natrvalo",
+			options: dialogOptions
+		);
+		if (!isDeletionConfirmed)
+		{
+			return;
+		}
+
 		await api.DeleteMainOfferAsync(mainOffer);
 		MainOffers.Remove(mainOffer);
 
