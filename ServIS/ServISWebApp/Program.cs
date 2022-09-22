@@ -6,6 +6,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.AspNetCore.Components.Authorization;
 using ServISWebApp.Auth;
+using Syncfusion.Licensing;
+using Syncfusion.Blazor;
+using Syncfusion.Blazor.Popups;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,8 +25,14 @@ builder.Services.AddDbContextFactory<ServISDbContext>(options =>
 	}
 );
 builder.Services.AddScoped<IServISApi, ServISApi>();
+builder.Services.AddScoped<SfDialogService>();
+builder.Services.AddSyncfusionBlazor();
 
 var app = builder.Build();
+
+// Register Syncfusion license
+var syncfusionLicenceKey = builder.Configuration["SyncfusionLicenceKey"];
+SyncfusionLicenseProvider.RegisterLicense(syncfusionLicenceKey);
 
 // Apply migration
 var factory = app.Services.GetService<IDbContextFactory<ServISDbContext>>();

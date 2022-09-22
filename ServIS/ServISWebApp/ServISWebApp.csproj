@@ -4,6 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>caf838ad-46c6-4cb3-a8b9-b71aee4b2426</UserSecretsId>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -24,6 +25,11 @@
   <ItemGroup>
     <Content Include="Components\MainCard.razor.css" />
     <Content Include="Pages\Index.razor.css" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Syncfusion.Blazor.Popups" Version="20.2.0.50" />
+    <PackageReference Include="Syncfusion.Blazor.Themes" Version="20.2.0.50" />
   </ItemGroup>
 
   <ItemGroup>
