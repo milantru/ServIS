@@ -9,6 +9,7 @@ using ServISWebApp.Auth;
 using Syncfusion.Licensing;
 using Syncfusion.Blazor;
 using Syncfusion.Blazor.Popups;
+using ServISWebApp.Shared;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,8 +28,11 @@ builder.Services.AddDbContextFactory<ServISDbContext>(options =>
 builder.Services.AddScoped<IServISApi, ServISApi>();
 builder.Services.AddScoped<SfDialogService>();
 builder.Services.AddSyncfusionBlazor();
+builder.Services.AddSingleton(typeof(ISyncfusionStringLocalizer), typeof(SyncfusionLocalizer));
 
 var app = builder.Build();
+
+app.UseRequestLocalization("sk");
 
 // Register Syncfusion license
 var syncfusionLicenceKey = builder.Configuration["SyncfusionLicenceKey"];

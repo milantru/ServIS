@@ -1,4 +1,5 @@
-﻿@inject IServISApi api
+﻿@using ServISData.DataOperations
+@inject IServISApi api
 @inject SfDialogService dialogService
 
 @if (Title != null)
@@ -42,7 +43,14 @@
 
 		int excavatorsDisplayedCount = Math.Min(request.Count, ExcavatorsTotalCount - request.StartIndex);
 
-		var excavators = await api.GetExcavatorsAsync(excavatorsDisplayedCount, request.StartIndex, ExcavatorType);
+		var dataOperations = new MyDataOperations<Excavator>(
+			new MyDataOperations<Excavator>.Configuration
+				{
+					Skip = request.StartIndex,
+					Take = excavatorsDisplayedCount,
+					SpecialOperations = (items) => items.Where(item => item.Type.Id == ExcavatorType.Id)
+				});
+		var excavators = await api.GetExcavatorsAsync(dataOperations);
 
 		return new ItemsProviderResult<Excavator>(excavators, ExcavatorsTotalCount);
 	}

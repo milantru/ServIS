@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ServISData.DataOperations;
 
 namespace ServISData
 {
@@ -105,7 +106,7 @@ namespace ServISData
 			}
 
 			await context.SaveChangesAsync();
-			
+
 			return excavatorCategory;
 		}
 
@@ -387,14 +388,10 @@ namespace ServISData
 
 		// Read
 		public async Task<List<Excavator>> GetExcavatorsAsync(
-			int? numberOfExcavators = null,
-			int? startIndex = null,
-			ExcavatorType? type = null
+			DataOperations<Excavator>? dataOperations = null
 		)
 		{
 			using var context = factory.CreateDbContext();
-			var brand = type?.Brand;
-			var category = type?.Category;
 
 			var query = context.Excavators
 				.Include(e => e.Photos)
@@ -405,18 +402,17 @@ namespace ServISData
 				.Include(e => e.Properties)
 				.ThenInclude(e => e.PropertyType)
 				.Include(e => e.SpareParts)
-				.Where(e => category != null ? e.Type.Category.Id == category.Id : true)
-				.Where(e => brand != null ? e.Type.Brand.Id == brand.Id : true);
+				.AsQueryable();
 
-			var orderedQuery = query.OrderBy(e => e.Name)
-				.Skip(startIndex ?? 0);
-
-			if (numberOfExcavators.HasValue)
+			if (dataOperations != null)
 			{
-				orderedQuery = orderedQuery.Take(numberOfExcavators.Value);
+				query = dataOperations.PerformDataOperations(query);
+
 			}
 
-			return await orderedQuery.AsNoTracking().ToListAsync();
+			// return query.AsNoTracking().ToListAsync();
+			await Task.CompletedTask;
+			return query.AsNoTracking().ToList();
 		}
 
 		public async Task<Excavator> GetExcavatorAsync(int id)
@@ -471,25 +467,22 @@ namespace ServISData
 		}
 
 		public async Task<List<ExcavatorBrand>> GetExcavatorBrandsAsync(
-			int? numberOfExcavatorBrands = null,
-			int? startIndex = null
+			DataOperations<ExcavatorBrand>? dataOperations = null
 		)
 		{
 			using var context = factory.CreateDbContext();
 
 			var query = context.ExcavatorBrands
 				.Include(eb => eb.ExcavatorTypesOfThisBrand)
-				.ThenInclude(e => e.ExcavatorsOfThisType);
+				.ThenInclude(e => e.ExcavatorsOfThisType)
+				.AsQueryable();
 
-			var orderedQuery = query.OrderBy(eb => eb.Brand)
-				.Skip(startIndex ?? 0);
-
-			if (numberOfExcavatorBrands.HasValue)
+			if (dataOperations != null)
 			{
-				orderedQuery = orderedQuery.Take(numberOfExcavatorBrands.Value);
+				query = dataOperations.PerformDataOperations(query);
 			}
 
-			return await orderedQuery.AsNoTracking().ToListAsync();
+			return await query.AsNoTracking().ToListAsync();
 		}
 
 		public async Task<int> GetExcavatorBrandsCountAsync()
@@ -500,8 +493,7 @@ namespace ServISData
 		}
 
 		public async Task<List<ExcavatorCategory>> GetExcavatorCategoriesAsync(
-			int? numberOfExcavatorCategories = null,
-			int? startIndex = null
+			DataOperations<ExcavatorCategory>? dataOperations = null
 		)
 		{
 			using var context = factory.CreateDbContext();
@@ -509,17 +501,15 @@ namespace ServISData
 			var query = context.ExcavatorCategories
 				.Include(ec => ec.ExcavatorTypesOfThisCategory)
 				.ThenInclude(e => e.ExcavatorsOfThisType)
-				.Include(ec => ec.AdditionalEquipmentsOfThisCategory);
+				.Include(ec => ec.AdditionalEquipmentsOfThisCategory)
+				.AsQueryable();
 
-			var orderedQuery = query.OrderBy(ec => ec.Category)
-				.Skip(startIndex ?? 0);
-
-			if (numberOfExcavatorCategories.HasValue)
+			if (dataOperations != null)
 			{
-				orderedQuery = orderedQuery.Take(numberOfExcavatorCategories.Value);
+				query = dataOperations.PerformDataOperations(query);
 			}
 
-			return await orderedQuery.AsNoTracking().ToListAsync();
+			return await query.AsNoTracking().ToListAsync();
 		}
 
 		public async Task<int> GetExcavatorCategoriesCountAsync()
@@ -530,8 +520,7 @@ namespace ServISData
 		}
 
 		public async Task<List<ExcavatorType>> GetExcavatorTypesAsync(
-			int? numberOfExcavatorTypes = null,
-			int? startIndex = null
+			DataOperations<ExcavatorType>? dataOperations = null
 		)
 		{
 			using var context = factory.CreateDbContext();
@@ -545,11 +534,11 @@ namespace ServISData
 				//.ThenInclude(ep => ep.PropertyType)
 				//.Include(et => et.ExcavatorsOfThisType)
 				//.ThenInclude(e => e.Photos)
-				.Skip(startIndex ?? 0);
+				.AsQueryable();
 
-			if (numberOfExcavatorTypes.HasValue)
+			if (dataOperations != null)
 			{
-				query = query.Take(numberOfExcavatorTypes.Value);
+				query = dataOperations.PerformDataOperations(query);
 			}
 
 			return await query.AsNoTracking().ToListAsync();
@@ -563,19 +552,18 @@ namespace ServISData
 		}
 
 		public async Task<List<ExcavatorPropertyType>> GetExcavatorPropertyTypesAsync(
-			int? numberOfExcavatorPropertyTypes = null,
-			int? startIndex = null
+			DataOperations<ExcavatorPropertyType>? dataOperations = null
 		)
 		{
 			using var context = factory.CreateDbContext();
 
 			var query = context.ExcavatorPropertyTypes
 				.Include(ept => ept.ExcavatorTypesWithThisProperty)
-				.Skip(startIndex ?? 0);
+				.AsQueryable();
 
-			if (numberOfExcavatorPropertyTypes.HasValue)
+			if (dataOperations != null)
 			{
-				query = query.Take(numberOfExcavatorPropertyTypes.Value);
+				query = dataOperations.PerformDataOperations(query);
 			}
 
 			return await query.AsNoTracking().ToListAsync();
@@ -613,19 +601,18 @@ namespace ServISData
 		}
 
 		public async Task<List<SparePart>> GetSparePartsAsync(
-			int? numberOfSpareParts = null,
-			int? startIndex = null
+			DataOperations<SparePart>? dataOperations = null
 		)
 		{
 			using var context = factory.CreateDbContext();
 
 			var query = context.SpareParts
 				.Include(sp => sp.Excavators)
-				.Skip(startIndex ?? 0);
+				.AsQueryable();
 
-			if (numberOfSpareParts.HasValue)
+			if (dataOperations != null)
 			{
-				query = query.Take(numberOfSpareParts.Value);
+				query = dataOperations.PerformDataOperations(query);
 			}
 
 			return await query.AsNoTracking().ToListAsync();
@@ -686,11 +673,7 @@ namespace ServISData
 		}
 
 		public async Task<List<AdditionalEquipment>> GetAdditionalEquipmentsAsync(
-			int? numberOfAdditionalEquipments = null,
-			int? startIndex = null,
-			ExcavatorCategory? excavatorCategory = null,
-			AdditionalEquipmentCategory? category = null,
-			AdditionalEquipmentBrand? brand = null
+			DataOperations<AdditionalEquipment>? dataOperations = null
 		)
 		{
 			using var context = factory.CreateDbContext();
@@ -700,21 +683,16 @@ namespace ServISData
 				.Include(ae => ae.ExcavatorCategory)
 				.Include(ae => ae.Category)
 				.Include(ae => ae.Brand)
-				.Where(ae => excavatorCategory != null ? ae.ExcavatorCategory.Id == excavatorCategory.Id : true)
-				.Where(ae => category != null ? ae.Category.Id == category.Id : true)
-				.Where(ae => brand != null ? ae.Brand.Id == brand.Id : true);
+				.AsQueryable();
 
-			var orderedQuery = query.OrderBy(ae => ae.Name)
-				.Skip(startIndex ?? 0);
-
-			if (numberOfAdditionalEquipments.HasValue)
+			if (dataOperations != null)
 			{
-				orderedQuery = orderedQuery.Take(numberOfAdditionalEquipments.Value);
+				query = dataOperations.PerformDataOperations(query);
 			}
 
-			return await orderedQuery
-				.AsNoTracking()
-				.ToListAsync();
+			await Task.CompletedTask;
+			return query.AsNoTracking().ToList();
+			//return await query.AsNoTracking().ToListAsync();
 		}
 
 		public async Task<int> GetAdditionalEquipmentsCountAsync()
@@ -766,24 +744,21 @@ namespace ServISData
 		}
 
 		public async Task<List<AdditionalEquipmentBrand>> GetAdditionalEquipmentBrandsAsync(
-			int? numberOfAdditionalEquipmentBrands = null,
-			int? startIndex = null
+			DataOperations<AdditionalEquipmentBrand>? dataOperations = null
 		)
 		{
 			using var context = factory.CreateDbContext();
 
 			var query = context.AdditionalEquipmentBrands
-				.Include(aeb => aeb.AdditionalEquipmentsOfThisBrand);
+				.Include(aeb => aeb.AdditionalEquipmentsOfThisBrand)
+				.AsQueryable();
 
-			var orderedQuery = query.OrderBy(aeb => aeb.Brand)
-				.Skip(startIndex ?? 0);
-
-			if (numberOfAdditionalEquipmentBrands.HasValue)
+			if (dataOperations != null)
 			{
-				orderedQuery = orderedQuery.Take(numberOfAdditionalEquipmentBrands.Value);
+				query = dataOperations.PerformDataOperations(query);
 			}
 
-			return await orderedQuery.AsNoTracking().ToListAsync();
+			return await query.AsNoTracking().ToListAsync();
 		}
 
 		public async Task<int> GetAdditionalEquipmentBrandsCountAsync()
@@ -794,24 +769,21 @@ namespace ServISData
 		}
 
 		public async Task<List<AdditionalEquipmentCategory>> GetAdditionalEquipmentCategoriesAsync(
-			int? numberOfAdditionalEquipmentCategories = null,
-			int? startIndex = null
+			DataOperations<AdditionalEquipmentCategory>? dataOperations = null
 		)
 		{
 			using var context = factory.CreateDbContext();
 
 			var query = context.AdditionalEquipmentCategories
-				.Include(aec => aec.AdditionalEquipmentsOfThisCategory);
+				.Include(aec => aec.AdditionalEquipmentsOfThisCategory)
+				.AsQueryable();
 
-			var orderedQuery = query.OrderBy(aec => aec.Category)
-				.Skip(startIndex ?? 0);
-
-			if (numberOfAdditionalEquipmentCategories.HasValue)
+			if (dataOperations != null)
 			{
-				orderedQuery = orderedQuery.Take(numberOfAdditionalEquipmentCategories.Value);
+				query = dataOperations.PerformDataOperations(query);
 			}
 
-			return await orderedQuery.AsNoTracking().ToListAsync();
+			return await query.AsNoTracking().ToListAsync();
 		}
 
 		public async Task<int> GetAdditionalEquipmentCategoriesCountAsync()
@@ -839,18 +811,19 @@ namespace ServISData
 				.FirstAsync(c => c.Username == username);
 		}
 
-		public async Task<List<AuctionOffer>> GetAuctionOffersAsync(int? numberOfAuctionOffers = null, int? startIndex = null)
+		public async Task<List<AuctionOffer>> GetAuctionOffersAsync(
+			DataOperations<AuctionOffer>? dataOperations = null	
+		)
 		{
 			using var context = factory.CreateDbContext();
 
 			var query = context.AuctionOffers
 				.Include(ao => ao.Excavator)
-				.OrderBy(ao => ao.Excavator.Name)
-				.Skip(startIndex ?? 0);
+				.AsQueryable();
 
-			if (numberOfAuctionOffers.HasValue)
+			if (dataOperations != null)
 			{
-				query = query.Take(numberOfAuctionOffers.Value);
+				query = dataOperations.PerformDataOperations(query);
 			}
 
 			return await query.AsNoTracking().ToListAsync();

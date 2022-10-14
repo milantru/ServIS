@@ -1,18 +1,19 @@
-﻿@using ServISData
-@using ServISWebApp.CssProviders
+﻿@inherits FormBase<ExcavatorType>
 @inject IServISApi api
+@using ServISData
+@using ServISWebApp.CssProviders
 
 @if (isExcavatorTypeInitialized)
 {
-	<EditForm Model="ExcavatorType" OnValidSubmit="SaveExcavatorTypeAsync" class="form-space-items">
+	<EditForm Model="@Item" OnValidSubmit="SaveItemAsync" class="form-space-items">
 		<ObjectGraphDataAnnotationsValidator />
 		<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
 
 		<div class="form-group">
 			<label for="excavator-brand">Značka:</label>
 			<ItemsSelector ItemType="ExcavatorBrand"
-						   @bind-SelectedItem="ExcavatorType.Brand"
-						   Items="AllExcavatorBrands"
+						   @bind-SelectedItem="Item.Brand"
+						   Items="@AllExcavatorBrands"
 						   Context="excavatorBrand"
 						   id="excavator-brand">
 				<OptionText>@excavatorBrand.Brand</OptionText>
@@ -22,8 +23,8 @@
 		<div class="form-group">
 			<label for="excavator-category">Kategória:</label>
 			<ItemsSelector ItemType="ExcavatorCategory"
-						   @bind-SelectedItem="ExcavatorType.Category"
-						   Items="AllExcavatorCategories"
+						   @bind-SelectedItem="Item.Category"
+						   Items="@AllExcavatorCategories"
 						   Context="excavatorCategory"
 						   id="excavator-category">
 				<OptionText>@excavatorCategory.Category</OptionText>
@@ -35,7 +36,7 @@
 			@if (AllPropertyTypes != null && AllPropertyTypesChecked != null && AllPropertyTypes.Count == AllPropertyTypesChecked.Count)
 			{
 				<ChecklistTable ItemType="ExcavatorPropertyType"
-								Items="AllPropertyTypes"
+								Items="@AllPropertyTypes"
 								@bind-ItemsChecked="AllPropertyTypesChecked"
 								Context="propertyType">
 					<HeaderCols>
@@ -52,22 +53,13 @@
 
 		<div>
 			<SubmitButton Text="Uložiť" />
-			<button class="btn btn-secondary" type="button" @onclick="async () => await ResetAsync()">Reset</button>
+			<button class="btn btn-secondary" type="button" @onclick="ResetAsync">Reset</button>
 		</div>
 	</EditForm>
 }
 
 @code {
 	private bool isExcavatorTypeInitialized;
-
-	[Parameter]
-	public ExcavatorType ExcavatorType { get; set; } = null!;
-
-	[Parameter]
-	public EventCallback<ExcavatorType> ExcavatorTypeChanged { get; set; }
-
-	[Parameter]
-	public EventCallback AfterValidSubmit { get; set; }
 
 	private List<ExcavatorBrand> AllExcavatorBrands { get; set; } = null!;
 
@@ -91,20 +83,20 @@
 	{
 		base.OnParametersSet();
 
-		if (ExcavatorType == null)
+		if (Item == null)
 		{
-			throw new Exception($"Parameter '{nameof(ExcavatorType)}' not provided.");
+			throw new Exception($"Parameter '{nameof(Item)}' not provided.");
 		}
 
-		if (ExcavatorType.Id == 0)
+		if (Item.Id == 0)
 		{
-			InitExcavatorType(ExcavatorType);
+			InitExcavatorType(Item);
 		}
 		isExcavatorTypeInitialized = true;
 
 		if (AllPropertyTypes != null)
 		{
-			var propertyTypes = ExcavatorType.PropertyTypes;
+			var propertyTypes = Item.PropertyTypes;
 			var propertyTypesIds = propertyTypes.Select(pt => pt.Id);
 			for (int i = 0; i < AllPropertyTypes.Count; i++)
 			{
@@ -114,24 +106,46 @@
 		}
 	}
 
-	private static void InitExcavatorType(ExcavatorType excavatorType)
+	public override async Task ResetAsync()
 	{
-		excavatorType.Brand ??= new();
-		excavatorType.Category ??= new();
-		excavatorType.PropertyTypes ??= new List<ExcavatorPropertyType>();
-		excavatorType.ExcavatorsOfThisType ??= new List<Excavator>();
-	}
-
-	private async Task ResetAsync()
-	{
-		ExcavatorType = new();
+		Item = new();
+		InitExcavatorType(Item);
 
 		for (int i = 0; i < AllPropertyTypesChecked.Count; i++)
 		{
 			AllPropertyTypesChecked[i] = false;
 		}
 
-		await ExcavatorTypeChanged.InvokeAsync(ExcavatorType);
+		if (ItemChanged.HasDelegate)
+		{
+			await ItemChanged.InvokeAsync(Item);
+		}
+	}
+
+	public override async Task SaveItemAsync()
+	{
+		Item.PropertyTypes = GetCheckedPropertyTypes();
+
+		try
+		{
+			await api.SaveExcavatorTypeAsync(Item);
+		}
+		catch
+		{
+			throw new Exception($"Failed to save excavator type with id '{Item.Id}'.");
+		}
+
+		if (OnSave.HasDelegate)
+		{
+			await OnSave.InvokeAsync();
+		}
+
+		if (AfterSaveAsync != null)
+		{
+			await AfterSaveAsync();
+		}
+
+		await ResetAsync();
 	}
 
 	private List<ExcavatorPropertyType> GetCheckedPropertyTypes()
@@ -150,26 +164,11 @@
 		return checkedPropertyTypes;
 	}
 
-	private async Task SaveExcavatorTypeAsync()
+	private static void InitExcavatorType(ExcavatorType excavatorType)
 	{
-		ExcavatorType.PropertyTypes = GetCheckedPropertyTypes();
-
-		// await ExcavatorTypeChanged.InvokeAsync();
-
-		try
-		{
-			await api.SaveExcavatorTypeAsync(ExcavatorType);
-		}
-		catch
-		{
-			throw new Exception($"Failed to save excavator type with id '{ExcavatorType.Id}'.");
-		}
-
-		if (AfterValidSubmit.HasDelegate)
-		{
-			await AfterValidSubmit.InvokeAsync();
-		}
-
-		await ResetAsync();
+		excavatorType.Brand ??= new();
+		excavatorType.Category ??= new();
+		excavatorType.PropertyTypes ??= new List<ExcavatorPropertyType>();
+		excavatorType.ExcavatorsOfThisType ??= new List<Excavator>();
 	}
 }

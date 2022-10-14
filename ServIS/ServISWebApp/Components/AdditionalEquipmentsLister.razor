@@ -1,4 +1,5 @@
-﻿@inject IServISApi api
+﻿@using ServISData.DataOperations
+@inject IServISApi api
 @inject SfDialogService dialogService
 
 @if (Title != null)
@@ -48,13 +49,19 @@
 
 		int additionalEquipmentsDisplayedCount = Math.Min(request.Count, AdditionalEquipmentsTotalCount - request.StartIndex);
 
-		var additionalEquipments = await api.GetAdditionalEquipmentsAsync(
-				additionalEquipmentsDisplayedCount,
-				request.StartIndex,
-				AdditionalEquipmentExcavatorCategory,
-				AdditionalEquipmentCategory,
-				AdditionalEquipmentBrand
+		var dataOperations = new MyDataOperations<AdditionalEquipment>(
+			new MyDataOperations<AdditionalEquipment>.Configuration
+					{
+						Skip = request.StartIndex,
+						Take = additionalEquipmentsDisplayedCount,
+						SpecialOperations = (items) => items.Where(item =>
+							AdditionalEquipmentCategory == null ? true : item.Category.Id == AdditionalEquipmentCategory.Id &&
+							AdditionalEquipmentBrand == null ? true : item.Brand.Id == AdditionalEquipmentBrand.Id &&
+							AdditionalEquipmentExcavatorCategory == null ? true : item.ExcavatorCategory.Id == AdditionalEquipmentExcavatorCategory.Id
+						)
+					}
 		);
+		var additionalEquipments = await api.GetAdditionalEquipmentsAsync(dataOperations);
 
 		return new ItemsProviderResult<AdditionalEquipment>(additionalEquipments, AdditionalEquipmentsTotalCount);
 	}

@@ -1,63 +1,63 @@
-﻿@inject IServISApi api
+﻿@inherits FormBase<ExcavatorCategory>
+@inject IServISApi api
 @using ServISWebApp.CssProviders
 
-<EditForm Model="ExcavatorCategory" OnValidSubmit="SaveExcavatorCategoryAsync" class="form-space-items">
+<EditForm Model="@Item" OnValidSubmit="SaveItemAsync" class="form-space-items">
 	<DataAnnotationsValidator />
 	<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
 
 	<div class="form-group">
 		<label for="excavator-category">Názov kategórie:</label>
-		<InputText @bind-Value="ExcavatorCategory.Category" id="excavator-category" />
-		<ValidationMessage For="@(() => ExcavatorCategory.Category)" />
+		<InputText @bind-Value="Item.Category" id="excavator-category" />
+		<ValidationMessage For="@(() => Item.Category)" />
 	</div>
 
 	<div>
 		<SubmitButton Text="Uložiť" />
-		<button class="btn btn-secondary" type="reset" @onclick="async () => await ResetAsync()">Reset</button>
+		<button class="btn btn-secondary" type="reset" @onclick="ResetAsync">Reset</button>
 	</div>
 </EditForm>
 
 @code {
-	[Parameter]
-	public ExcavatorCategory ExcavatorCategory { get; set; } = null!;
-
-	[Parameter]
-	public EventCallback<ExcavatorCategory> ExcavatorCategoryChanged { get; set; }
-
-	[Parameter]
-	public EventCallback AfterValidSubmit { get; set; }
-
 	protected override void OnParametersSet()
 	{
 		base.OnParametersSet();
 
-		if (ExcavatorCategory == null)
+		if (Item == null)
 		{
-			throw new Exception($"Parameter '{nameof(ExcavatorCategory)}' not provided.");
+			throw new Exception($"Parameter '{nameof(Item)}' not provided.");
 		}
 	}
 
-	private async Task ResetAsync()
+	public override async Task ResetAsync()
 	{
-		ExcavatorCategory = new();
+		Item = new();
 
-		await ExcavatorCategoryChanged.InvokeAsync(ExcavatorCategory);
+		if (ItemChanged.HasDelegate)
+		{
+			await ItemChanged.InvokeAsync(Item);
+		}
 	}
 
-	private async Task SaveExcavatorCategoryAsync()
+	public override async Task SaveItemAsync()
 	{
 		try
 		{
-			await api.SaveExcavatorCategoryAsync(ExcavatorCategory);
+			await api.SaveExcavatorCategoryAsync(Item);
 		}
 		catch
 		{
-			throw new Exception($"Failed to save excavator category with id '{ExcavatorCategory.Id}'.");
+			throw new Exception($"Failed to save excavator category with id '{Item.Id}'.");
 		}
 
-		if (AfterValidSubmit.HasDelegate)
+		if (OnSave.HasDelegate)
 		{
-			await AfterValidSubmit.InvokeAsync();
+			await OnSave.InvokeAsync();
+		}
+
+		if (AfterSaveAsync != null)
+		{
+			await AfterSaveAsync();
 		}
 
 		await ResetAsync();

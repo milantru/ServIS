@@ -1,63 +1,63 @@
-﻿@inject IServISApi api
+﻿@inherits FormBase<AdditionalEquipmentCategory>
+@inject IServISApi api
 @using ServISWebApp.CssProviders
 
-<EditForm Model="AdditionalEquipmentCategory" OnValidSubmit="SaveAdditionalEquipmentCategoryAsync" class="form-space-items">
+<EditForm Model="@Item" OnValidSubmit="SaveItemAsync" class="form-space-items">
 	<DataAnnotationsValidator />
 	<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
 
 	<div class="form-group">
 		<label for="additional-equipment-category">Názov kategórie:</label>
-		<InputText @bind-Value="AdditionalEquipmentCategory.Category" id="additional-equipment-category" />
-		<ValidationMessage For="@(() => AdditionalEquipmentCategory.Category)" />
+		<InputText @bind-Value="Item.Category" id="additional-equipment-category" />
+		<ValidationMessage For="@(() => Item.Category)" />
 	</div>
 
 	<div>
 		<SubmitButton Text="Uložiť" />
-		<button class="btn btn-secondary" type="reset" @onclick="async () => await ResetAsync()">Reset</button>
+		<button class="btn btn-secondary" type="reset" @onclick="ResetAsync">Reset</button>
 	</div>
 </EditForm>
 
 @code {
-	[Parameter]
-	public AdditionalEquipmentCategory AdditionalEquipmentCategory { get; set; } = null!;
-
-	[Parameter]
-	public EventCallback<AdditionalEquipmentCategory> AdditionalEquipmentCategoryChanged { get; set; }
-
-	[Parameter]
-	public EventCallback AfterValidSubmit { get; set; }
-
 	protected override void OnParametersSet()
 	{
 		base.OnParametersSet();
 
-		if (AdditionalEquipmentCategory == null)
+		if (Item == null)
 		{
-			throw new Exception($"Parameter '{nameof(AdditionalEquipmentCategory)}' not provided.");
+			throw new Exception($"Parameter '{nameof(Item)}' not provided.");
 		}
 	}
 
-	private async Task ResetAsync()
+	public override async Task ResetAsync()
 	{
-		AdditionalEquipmentCategory = new();
+		Item = new();
 
-		await AdditionalEquipmentCategoryChanged.InvokeAsync(AdditionalEquipmentCategory);
+		if (ItemChanged.HasDelegate)
+		{
+			await ItemChanged.InvokeAsync(Item);
+		}
 	}
 
-	private async Task SaveAdditionalEquipmentCategoryAsync()
+	public override async Task SaveItemAsync()
 	{
 		try
 		{
-			await api.SaveAdditionalEquipmentCategoryAsync(AdditionalEquipmentCategory);
+			await api.SaveAdditionalEquipmentCategoryAsync(Item);
 		}
 		catch
 		{
-			throw new Exception($"Failed to save additional equipment category with id '{AdditionalEquipmentCategory.Id}'.");
+			throw new Exception($"Failed to save additional equipment category with id '{Item.Id}'.");
 		}
 
-		if (AfterValidSubmit.HasDelegate)
+		if (OnSave.HasDelegate)
 		{
-			await AfterValidSubmit.InvokeAsync();
+			await OnSave.InvokeAsync();
+		}
+
+		if (AfterSaveAsync != null)
+		{
+			await AfterSaveAsync();
 		}
 
 		await ResetAsync();

@@ -1,63 +1,63 @@
-﻿@inject IServISApi api
+﻿@inherits FormBase<ExcavatorBrand>
+@inject IServISApi api
 @using ServISWebApp.CssProviders
 
-<EditForm Model="ExcavatorBrand" OnValidSubmit="SaveExcavatorBrandAsync" class="form-space-items">
+<EditForm Model="@Item" OnValidSubmit="SaveItemAsync" class="form-space-items">
 	<DataAnnotationsValidator />
 	<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
 
 	<div class="form-group">
 		<label for="excavator-brand">Názov značky:</label>
-		<InputText @bind-Value="ExcavatorBrand.Brand" id="excavator-brand" />
-		<ValidationMessage For="@(() => ExcavatorBrand.Brand)" />
+		<InputText @bind-Value="Item.Brand" id="excavator-brand" />
+		<ValidationMessage For="@(() => Item.Brand)" />
 	</div>
 
 	<div>
 		<SubmitButton Text="Uložiť" />
-		<button class="btn btn-secondary" type="reset" @onclick="async () => await ResetAsync()">Reset</button>
+		<button class="btn btn-secondary" type="reset" @onclick="ResetAsync">Reset</button>
 	</div>
 </EditForm>
 
 @code {
-	[Parameter]
-	public ExcavatorBrand ExcavatorBrand { get; set; } = null!;
-
-	[Parameter]
-	public EventCallback<ExcavatorBrand> ExcavatorBrandChanged { get; set; }
-
-	[Parameter]
-	public EventCallback AfterValidSubmit { get; set; }
-
 	protected override void OnParametersSet()
 	{
 		base.OnParametersSet();
 
-		if (ExcavatorBrand == null)
+		if (Item == null)
 		{
-			throw new Exception($"Parameter '{nameof(ExcavatorBrand)}' not provided.");
+			throw new Exception($"Parameter '{nameof(Item)}' not provided.");
 		}
 	}
 
-	private async Task ResetAsync()
+	public override async Task ResetAsync()
 	{
-		ExcavatorBrand = new();
+		Item = new();
 
-		await ExcavatorBrandChanged.InvokeAsync(ExcavatorBrand);
+		if (ItemChanged.HasDelegate)
+		{
+			await ItemChanged.InvokeAsync(Item);
+		}
 	}
 
-	private async Task SaveExcavatorBrandAsync()
+	public override async Task SaveItemAsync()
 	{
 		try
 		{
-			await api.SaveExcavatorBrandAsync(ExcavatorBrand);
+			await api.SaveExcavatorBrandAsync(Item);
 		}
 		catch
 		{
-			throw new Exception($"Failed to save excavator brand with id '{ExcavatorBrand.Id}'.");
+			throw new Exception($"Failed to save excavator brand with id '{Item.Id}'.");
 		}
 
-		if (AfterValidSubmit.HasDelegate)
+		if (OnSave.HasDelegate)
 		{
-			await AfterValidSubmit.InvokeAsync();
+			await OnSave.InvokeAsync();
+		}
+
+		if (AfterSaveAsync != null)
+		{
+			await AfterSaveAsync();
 		}
 
 		await ResetAsync();

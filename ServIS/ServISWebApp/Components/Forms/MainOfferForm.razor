@@ -1,11 +1,12 @@
-﻿@using ServISWebApp.CssProviders
-@using ServISData.Interfaces
+﻿@inherits FormBase<MainOffer>
 @inject IServISApi api
 @inject IJSRuntime js
+@using ServISWebApp.CssProviders
+@using ServISData.Interfaces
 
-@if (MainOffer != null && MainOffer.ExcavatorType != null)
+@if (Item != null && Item.ExcavatorType != null)
 {
-	<EditForm EditContext="@editContext" Model="MainOffer" OnValidSubmit="SaveMainOfferAsync" class="form-space-items">
+	<EditForm EditContext="@editContext" Model="@Item" OnValidSubmit="SaveItemAsync" class="form-space-items">
 		<ObjectGraphDataAnnotationsValidator />
 		<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
 
@@ -14,13 +15,13 @@
 			<div>
 				Nahraná fotka:<br />
 
-				@if (MainOffer.Photo == null)
+				@if (Item.Photo == null)
 				{
 					<p>Nie je nahraná žiadná fotka.</p>
 				}
 				else
 				{
-					<img src="@FileTools.GetDataUrlBase64String(MainOffer.Photo, "image/jpeg")" width="280" />
+					<img src="@FileTools.GetDataUrlBase64String(Item.Photo, "image/jpeg")" width="280" />
 				}
 			</div>
 		</div>
@@ -28,8 +29,8 @@
 		<div class="form-group">
 			<label for="excavator-type">Typy strojov:</label>
 			<ItemsSelector ItemType="ExcavatorType" 
-						   @bind-SelectedItem="MainOffer.ExcavatorType"
-						   Items="ExcavatorTypes"
+						   @bind-SelectedItem="Item.ExcavatorType"
+						   Items="@ExcavatorTypes"
 						   Context="excavatorType"
 						   id="excavator-type">
 				<OptionText>@excavatorType.Category.Category (@excavatorType.Brand.Brand)</OptionText>
@@ -38,28 +39,19 @@
 
 		<div class="form-group">
 			<label for="description">Popis:</label>
-			<InputTextArea @bind-Value="MainOffer.Description" id="description" />
-			<ValidationMessage For="@(() => MainOffer.Description)" />
+			<InputTextArea @bind-Value="Item.Description" id="description" />
+			<ValidationMessage For="@(() => Item.Description)" />
 		</div>
 
 		<div>
 			<SubmitButton Text="Uložiť" />
-			<button class="btn btn-secondary" type="reset" @onclick="async () => await ResetAsync()">Reset</button>
+			<button class="btn btn-secondary" type="reset" @onclick="ResetAsync">Reset</button>
 		</div>
 	</EditForm>
 }
 
 @code {
 	private EditContext editContext = null!;
-
-	[Parameter]
-	public MainOffer MainOffer { get; set; } = null!;
-
-	[Parameter]
-	public EventCallback<MainOffer> MainOfferChanged { get; set; }
-
-	[Parameter]
-	public EventCallback AfterValidSubmit { get; set; }
 
 	private List<ExcavatorType> ExcavatorTypes { get; set; } = null!;
 
@@ -81,15 +73,50 @@
 	{
 		base.OnParametersSet();
 
-		if (MainOffer == null)
+		if (Item == null)
 		{
-			throw new Exception($"Parameter '{nameof(MainOffer)}' not provided.");
+			throw new Exception($"Parameter '{nameof(Item)}' not provided.");
 		}
 
-		if (MainOffer.Id == 0 && MainOffer.ExcavatorType == null)
+		if (Item.Id == 0)
 		{
-			MainOffer.ExcavatorType = new();
+			InitMainOffer(Item);
 		}
+	}
+
+	public override async Task ResetAsync()
+	{
+		Item = new MainOffer();
+		InitMainOffer(Item);
+
+		if (ItemChanged.HasDelegate)
+		{
+			await ItemChanged.InvokeAsync(Item);
+		}
+	}
+
+	public override async Task SaveItemAsync()
+	{
+		try
+		{
+			await api.SaveMainOfferAsync(Item);
+		}
+		catch
+		{
+			throw new Exception($"Failed to save main offer with id '{Item.Id}'.");
+		}
+
+		if (OnSave.HasDelegate)
+		{
+			await OnSave.InvokeAsync();
+		}
+
+		if (AfterSaveAsync != null)
+		{
+			await AfterSaveAsync();
+		}
+
+		await ResetAsync();
 	}
 
 	private async Task HandleInputFileChangeAsync(InputFileChangeEventArgs e)
@@ -108,34 +135,13 @@
 			throw new Exception("Something went wrong with uploading photo.");
 		}
 
-		MainOffer.Photo = dataBytes;
+		Item.Photo = dataBytes;
 
 		StateHasChanged();
 	}
 
-	private async Task ResetAsync()
+	private static void InitMainOffer(MainOffer mainOffer)
 	{
-		MainOffer = new MainOffer { ExcavatorType = new() };
-
-		await MainOfferChanged.InvokeAsync(MainOffer);
-	}
-
-	private async Task SaveMainOfferAsync()
-	{
-		try
-		{
-			await api.SaveMainOfferAsync(MainOffer);
-		}
-		catch
-		{
-			throw new Exception($"Failed to save main offer with id '{MainOffer.Id}'.");
-		}
-
-		if (AfterValidSubmit.HasDelegate)
-		{
-			await AfterValidSubmit.InvokeAsync();
-		}
-
-		await ResetAsync();
+		mainOffer.ExcavatorType ??= new();
 	}
 }

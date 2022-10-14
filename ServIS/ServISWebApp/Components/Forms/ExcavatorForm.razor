@@ -1,4 +1,5 @@
-﻿@inject IServISApi api
+﻿@inherits FormBase<Excavator>
+@inject IServISApi api
 @inject IJSRuntime js
 @using ServISData
 @using ServISWebApp.CssProviders;
@@ -7,40 +8,40 @@
 
 @if (isExcavatorInitialized)
 {
-	<EditForm Model="Excavator" OnValidSubmit="SaveExcavatorAsync" class="form-space-items">
+	<EditForm Model="@Item" OnValidSubmit="SaveItemAsync" class="form-space-items">
 		<ObjectGraphDataAnnotationsValidator />
 		<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
 
 		<div class="form-group">
 			<InputItemPhotos PhotoType="ExcavatorPhoto"
-							 @bind-Photos="Excavator.Photos"
+							 @bind-Photos="Item.Photos"
 							 CreatePhoto="@((dataBytes) => 
-								new ExcavatorPhoto { Photo = dataBytes, Excavator = Excavator })"
-							 DeletePhotoAsync="@(async (photo) => await DeletePhotoAsync(photo))"
-							 IsRequired="@(Excavator.Id == 0)" />
+								new ExcavatorPhoto { Photo = dataBytes, Excavator = Item })"
+							 DeletePhotoAsync="DeletePhotoAsync"
+							 IsRequired="@(Item.Id == 0)" />
 		</div>
 
 		<div class="form-group">
 			<label for="name">Názov:</label>
-			<InputText @bind-Value="@Excavator.Name" id="name" />
-			<ValidationMessage For="@(() => Excavator.Name)" />
+			<InputText @bind-Value="Item.Name" id="name" />
+			<ValidationMessage For="@(() => Item.Name)" />
 		</div>
 
 		<div class="form-group">
 			<label for="description">Popis:</label>
-			<InputTextArea @bind-Value="@Excavator.Description" id="description" />
-			<ValidationMessage For="@(() => Excavator.Description)" />
+			<InputTextArea @bind-Value="Item.Description" id="description" />
+			<ValidationMessage For="@(() => Item.Description)" />
 		</div>
 
 		<div class="form-check">
 			<label for="auction-only" class="form-check-label">Je IBA pre aukciu</label>
 			<input type="checkbox"
-				   checked="@Excavator.IsForAuctionOnly"
-				   @bind-value="@Excavator.IsForAuctionOnly"
+				   checked="@Item.IsForAuctionOnly"
+				   @bind-value="Item.IsForAuctionOnly"
 				   class="form-check-input"
 				   id="auction-only" />
 			@*<InputCheckbox @bind-Value="@TrackedExcavator.IsForAuctionOnly" class="form-check-input"/>*@
-			<ValidationMessage For="@(() => Excavator.IsForAuctionOnly)" />
+			<ValidationMessage For="@(() => Item.IsForAuctionOnly)" />
 		</div>
 
 		<br />
@@ -50,7 +51,7 @@
 			@if (AllSpareParts != null && AllSparePartsChecked != null && AllSpareParts.Count == AllSparePartsChecked.Count)
 			{
 				<ChecklistTable ItemType="SparePart"
-								Items="AllSpareParts"
+								Items="@AllSpareParts"
 								@bind-ItemsChecked="AllSparePartsChecked"
 								Context="sp">
 					<HeaderCols>
@@ -70,8 +71,8 @@
 		<div class="form-group">
 			<label for="excavator-type">Typy strojov:</label>
 			<ItemsSelector ItemType="ExcavatorType"
-						   @bind-SelectedItem="Excavator.Type"
-						   Items="AllExcavatorTypes"
+						   @bind-SelectedItem="Item.Type"
+						   Items="@AllExcavatorTypes"
 						   OnSelect="UpdateExcavatorProperties"
 						   Context="excavatorType"
 						   id="excavator-type">
@@ -83,7 +84,7 @@
 
 		<div class="form-group">
 			<label>Špecifické vlastnosti:</label>
-			@if (Excavator.Properties.Count == 0)
+			@if (Item.Properties.Count == 0)
 			{
 				<p>Tento typ stroja nemá žiadne vlastnosti</p>
 			}
@@ -97,7 +98,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						@foreach (var property in Excavator.Properties)
+						@foreach (var property in Item.Properties)
 						{
 							var propertyType = property.PropertyType;
 							var propertyInputType = propertyType.InputType;
@@ -134,7 +135,7 @@
 
 		<div>
 			<SubmitButton Text="Uložiť" />
-			<button class="btn btn-secondary" type="reset" @onclick="async () => await ResetAsync()">Reset</button>
+			<button class="btn btn-secondary" type="reset" @onclick="ResetAsync">Reset</button>
 		</div>
 	</EditForm>
 }
@@ -142,17 +143,7 @@
 @code {
 	private bool isExcavatorInitialized;
 
-	[Parameter]
-	public Excavator Excavator { get; set; } = null!;
-
-	[Parameter]
-	public EventCallback<Excavator> ExcavatorChanged { get; set; }
-
-	[Parameter]
-	public EventCallback AfterValidSubmit { get; set; }
-
 	private List<ExcavatorType> AllExcavatorTypes { get; set; } = null!;
-
 	// bool is in pair with spare part, it will tell us if spare part is checked
 	private List<SparePart> AllSpareParts { get; set; } = null!;
 	private List<bool> AllSparePartsChecked { get; set; } = null!;
@@ -171,25 +162,25 @@
 	{
 		base.OnParametersSet();
 
-		if (Excavator == null)
+		if (Item == null)
 		{
-			throw new Exception($"Parameter '{nameof(Excavator)}' not provided.");
+			throw new Exception($"Parameter '{nameof(Item)}' not provided.");
 		}
 
-		if (Excavator.Id == 0)
+		if (Item.Id == 0)
 		{
-			InitExcavator(Excavator);
+			InitExcavator(Item);
 		}
 		isExcavatorInitialized = true;
 
 		if (AllSpareParts != null)
 		{
-			if (Excavator.SpareParts == null)
+			if (Item.SpareParts == null)
 			{// Excavator.SpareParts will not be null here, but compiler doesn't see it, so we need this if
-				throw new Exception($"{nameof(Excavator.SpareParts)} cannot be null here.");
+				throw new Exception($"{nameof(Item.SpareParts)} cannot be null here.");
 			}
 
-			var excavatorsSparePartsIds = Excavator.SpareParts.Select(sp => sp.Id);
+			var excavatorsSparePartsIds = Item.SpareParts.Select(sp => sp.Id);
 			for (int i = 0; i < AllSpareParts.Count; i++)
 			{
 				bool excavatorHasSparePart = excavatorsSparePartsIds.Contains(AllSpareParts[i].Id);
@@ -198,25 +189,60 @@
 		}
 	}
 
-	private static void InitExcavator(Excavator excavator)
+	public override async Task ResetAsync()
 	{
-		excavator.Photos ??= new List<ExcavatorPhoto>();
-		excavator.Type ??= new ExcavatorType();
-		excavator.Properties ??= new List<ExcavatorProperty>();
-		excavator.SpareParts ??= new List<SparePart>();
-	}
-
-	private async Task ResetAsync()
-	{
-		Excavator = new();
-		InitExcavator(Excavator);
+		Item = new();
+		InitExcavator(Item);
 
 		for (int i = 0; i < AllSparePartsChecked.Count; i++)
 		{
 			AllSparePartsChecked[i] = false;
 		}
 
-		await ExcavatorChanged.InvokeAsync(Excavator);
+		if (ItemChanged.HasDelegate)
+		{
+			await ItemChanged.InvokeAsync(Item);
+		}
+	}
+
+	public override async Task SaveItemAsync()
+	{
+		if (Item.Photos.Count == 0)
+		{
+			throw new Exception("No excavator photos provided.");
+		}
+		Item.Photos[0].IsTitle = true; // the first uploaded image is the title photo
+
+		Item.SpareParts = GetCheckedSpareParts();
+
+		try
+		{
+			await api.SaveExcavatorAsync(Item);
+		}
+		catch
+		{
+			throw new Exception($"Failed to save excavator with id '{Item.Id}'.");
+		}
+
+		if (OnSave.HasDelegate)
+		{
+			await OnSave.InvokeAsync();
+		}
+
+		if (AfterSaveAsync != null)
+		{
+			await AfterSaveAsync();
+		}
+
+		await ResetAsync();
+	}
+
+	private static void InitExcavator(Excavator excavator)
+	{
+		excavator.Photos ??= new List<ExcavatorPhoto>();
+		excavator.Type ??= new ExcavatorType();
+		excavator.Properties ??= new List<ExcavatorProperty>();
+		excavator.SpareParts ??= new List<SparePart>();
 	}
 
 	private List<SparePart> GetCheckedSpareParts()
@@ -234,43 +260,17 @@
 		return checkedSpareParts;
 	}
 
-	private async Task SaveExcavatorAsync()
-	{
-		if (Excavator.Photos.Count == 0)
-		{
-			throw new Exception("No excavator photos provided.");
-		}
-		Excavator.Photos[0].IsTitle = true; // the first uploaded image is the title photo
-
-		Excavator.SpareParts = GetCheckedSpareParts();
-
-		try
-		{
-			await api.SaveExcavatorAsync(Excavator);
-		}
-		catch
-		{
-			throw new Exception($"Failed to save excavator with id '{Excavator.Id}'.");
-		}
-
-		if (AfterValidSubmit.HasDelegate)
-		{
-			await AfterValidSubmit.InvokeAsync();
-		}
-
-		await ResetAsync();
-	}
 
 	private async Task DeletePhotoAsync(ExcavatorPhoto excavatorPhoto)
 	{
-		if (Excavator.Photos.Count > 1)
+		if (Item.Photos.Count > 1)
 		{
 			if (excavatorPhoto.Id != 0)
 			{
 				await api.DeleteExcavatorPhotoAsync(excavatorPhoto);
 			}
 
-			Excavator.Photos.Remove(excavatorPhoto);
+			Item.Photos.Remove(excavatorPhoto);
 
 			StateHasChanged();
 		}
@@ -278,10 +278,10 @@
 
 	private void UpdateExcavatorProperties()
 	{
-		Excavator.Properties.Clear();
-		foreach (var propertyType in Excavator.Type.PropertyTypes)
+		Item.Properties.Clear();
+		foreach (var propertyType in Item.Type.PropertyTypes)
 		{
-			Excavator.Properties.Add(new ExcavatorProperty
+			Item.Properties.Add(new ExcavatorProperty
 				{
 					PropertyType = propertyType,
 				});

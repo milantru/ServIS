@@ -13,7 +13,7 @@
 }
 else
 {
-	<MainOfferForm MainOffer="MainOffer" AfterValidSubmit="@(() => navMan.NavigateTo("/"))" />
+	<MainOfferForm Item="@MainOffer" OnSave="@(() => navMan.NavigateTo("/"))" />
 }
 
 @code {

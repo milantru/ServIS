@@ -1,4 +1,5 @@
-﻿using ServISData.Models;
+﻿using ServISData.DataOperations;
+using ServISData.Models;
 
 namespace ServISData.Interfaces
 {
@@ -20,40 +21,40 @@ namespace ServISData.Interfaces
 		public Task<AuctionBid> SaveAuctionBidAsync(AuctionBid auctionBid);
 
 		// Read
-		public Task<List<Excavator>> GetExcavatorsAsync(int? numberOfExcavators = null, int? startIndex = null, ExcavatorType? type = null);
+		public Task<List<Excavator>> GetExcavatorsAsync(DataOperations<Excavator>? dataOperations = null);
 		public Task<Excavator> GetExcavatorAsync(int id);
 		public Task<int> GetExcavatorsCountAsync(ExcavatorType? type = null);
 		public Task<List<ExcavatorPhoto>> GetExcavatorPhotosAsync(int excavatorId);
 		public Task<int> GetExcavatorPhotosCountAsync();
-		public Task<List<ExcavatorBrand>> GetExcavatorBrandsAsync(int? numberOfExcavatorBrands = null, int? startIndex = null);
+		public Task<List<ExcavatorBrand>> GetExcavatorBrandsAsync(DataOperations<ExcavatorBrand>? dataOperations = null);
 		public Task<int> GetExcavatorBrandsCountAsync();
-		public Task<List<ExcavatorCategory>> GetExcavatorCategoriesAsync(int? numberOfExcavatorCategories = null, int? startIndex = null);
+		public Task<List<ExcavatorCategory>> GetExcavatorCategoriesAsync(DataOperations<ExcavatorCategory>? dataOperations = null);
 		public Task<int> GetExcavatorCategoriesCountAsync();
-		public Task<List<ExcavatorType>> GetExcavatorTypesAsync(int? numberOfExcavatorTypes = null, int? startIndex = null);
+		public Task<List<ExcavatorType>> GetExcavatorTypesAsync(DataOperations<ExcavatorType>? dataOperations = null);
 		public Task<int> GetExcavatorTypesCountAsync();
-		public Task<List<ExcavatorPropertyType>> GetExcavatorPropertyTypesAsync(int? numberOfExcavatorPropertyTypes = null, int? startIndex = null);
+		public Task<List<ExcavatorPropertyType>> GetExcavatorPropertyTypesAsync(DataOperations<ExcavatorPropertyType>? dataOperations = null);
 		public Task<int> GetExcavatorPropertyTypesCountAsync();
 		public Task<ExcavatorType> GetExcavatorTypeAsync(int id);
 		public Task<ExcavatorPhoto> GetExcavatorTitlePhotoAsync(int excavatorId);
-		public Task<List<SparePart>> GetSparePartsAsync(int? numberOfSpareParts = null, int? startIndex = null);
+		public Task<List<SparePart>> GetSparePartsAsync(DataOperations<SparePart>? dataOperations = null);
 		public Task<List<SparePart>> GetSparePartsAsync(int excavatorId);
 		public Task<int> GetSparePartsCountAsync();
 		public Task<SparePart> GetSparePartAsync(int id);
 		public Task<List<MainOffer>> GetMainOffersAsync();
 		public Task<MainOffer> GetMainOfferAsync(int id);
-		public Task<List<AdditionalEquipment>> GetAdditionalEquipmentsAsync(int? numberOfAdditionalEquipments = null, int? startIndex = null, ExcavatorCategory? excavatorCategory = null, AdditionalEquipmentCategory? category = null, AdditionalEquipmentBrand? brand = null);
+		public Task<List<AdditionalEquipment>> GetAdditionalEquipmentsAsync(DataOperations<AdditionalEquipment>? dataOperations = null);
 		public Task<AdditionalEquipment> GetAdditionalEquipmentAsync(int id);
 		public Task<int> GetAdditionalEquipmentsCountAsync();
 		public Task<List<AdditionalEquipmentPhoto>> GetAdditionalEquipmentPhotosAsync(int additionalEquipmentId);
 		public Task<int> GetAdditionalEquipmentPhotosCountAsync();
 		public Task<AdditionalEquipmentPhoto> GetAdditionalEquipmentTitlePhotoAsync(int additionalEquipmentId);
-		public Task<List<AdditionalEquipmentBrand>> GetAdditionalEquipmentBrandsAsync(int? numberOfAdditionalEquipmentBrands = null, int? startIndex = null);
+		public Task<List<AdditionalEquipmentBrand>> GetAdditionalEquipmentBrandsAsync(DataOperations<AdditionalEquipmentBrand>? dataOperations = null);
 		public Task<int> GetAdditionalEquipmentBrandsCountAsync();
-		public Task<List<AdditionalEquipmentCategory>> GetAdditionalEquipmentCategoriesAsync(int? numberOfAdditionalEquipmentCategories = null, int? startIndex = null);
+		public Task<List<AdditionalEquipmentCategory>> GetAdditionalEquipmentCategoriesAsync(DataOperations<AdditionalEquipmentCategory>? dataOperations = null);
 		public Task<int> GetAdditionalEquipmentCategoriesCountAsync();
 		public Task<User> GetUserAsync(int id);
 		public Task<User> GetUserAsync(string username);
-		public Task<List<AuctionOffer>> GetAuctionOffersAsync(int? numberOfAuctionOffers = null, int? startIndex = null);
+		public Task<List<AuctionOffer>> GetAuctionOffersAsync(DataOperations<AuctionOffer>? dataOperations = null);
 		public Task<int> GetAuctionOffersCountAsync();
 		public Task<AuctionOffer> GetAuctionOfferAsync(int id);
 		public Task<List<AuctionBid>> GetAuctionBidsAsync(int auctionOfferId);

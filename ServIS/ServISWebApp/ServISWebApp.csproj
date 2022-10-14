@@ -28,12 +28,28 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Syncfusion.Blazor.Grid" Version="20.2.0.50" />
     <PackageReference Include="Syncfusion.Blazor.Popups" Version="20.2.0.50" />
     <PackageReference Include="Syncfusion.Blazor.Themes" Version="20.2.0.50" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\ServISData\ServISData.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Resources\SfResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SfResources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\SfResources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>SfResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

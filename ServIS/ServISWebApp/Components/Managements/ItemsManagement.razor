@@ -1,0 +1,180 @@
+﻿@typeparam ItemType where ItemType : class, IItem, new()
+@typeparam ItemFormType where ItemFormType : FormBase<ItemType>
+
+@inject IServISApi api
+@inject SfDialogService dialogService
+@using ServISWebApp.Components.Managements
+@using Syncfusion.Blazor.Data
+@using Syncfusion.Blazor.Navigations
+
+@if (!string.IsNullOrEmpty(Title))
+{
+	<h3>@Title</h3>
+}
+
+<SfDialog @bind-Visible="@IsFormVisible" IsModal="true" ShowCloseIcon="true" AllowDragging="true" Width="@formModalWidth">
+	<DialogTemplates>
+		<Header>Pridanie nového záznamu</Header>
+		<Content>
+			<DynamicComponent Type="@typeof(ItemFormType)" Parameters="@parametersForCreatingItem" />
+		</Content>
+	</DialogTemplates>
+</SfDialog>
+
+<SfGrid @ref="grid" TValue="ItemType" Toolbar="@toolbar" AllowSorting="true" AllowMultiSorting="true" AllowPaging="true">
+	<SfDataManager Adaptor="Adaptors.CustomAdaptor">
+		<CustomDataAdaptor ItemType="ItemType" GetItemsAsync="GetItemsAsync" GetItemsCountAsync="GetItemsCountAsync" />
+	</SfDataManager>
+
+	<GridEvents TValue="ItemType" OnToolbarClick="OnToolbarClick" CommandClicked="OnCommandButtonClickAsync" />
+
+	@*<GridSearchSettings IgnoreAccent="true" IgnoreCase="true" />*@
+
+	<GridEditSettings AllowAdding="true"
+					  AllowEditing="true"
+					  AllowDeleting="true"
+					  Mode="EditMode.Dialog"
+					  Dialog="@(new DialogSettings() { Width = formModalWidth })"
+					  ShowDeleteConfirmDialog="true">
+		<HeaderTemplate>Editácia záznamu</HeaderTemplate>
+		<Template>
+			<DynamicComponent Type="@typeof(ItemFormType)" Parameters="@(GetParametersForEditingItem(context))" />
+		</Template>
+		<FooterTemplate></FooterTemplate>
+	</GridEditSettings>
+
+	@*<GridSortSettings>
+	<GridSortColumns>
+	<GridSortColumn Field="@PrimaryColumn.Field" Direction="SortDirection.Ascending" />
+	</GridSortColumns>
+	</GridSortSettings>*@
+
+	<GridPageSettings PageSize="@PageSize" />
+
+	<GridColumns>
+		@*This primary column must be here, even though it is not visible, because without it the edit does not work (won't close modal and rerender)*@
+		<GridColumn Field="@primaryField" IsPrimaryKey="true" Visible="false" AllowFiltering="false" AllowSearching="false" />
+
+		@*@foreach (var column in Columns)
+		{
+			<GridColumn Field="@(column.Field)" HeaderText="@(column.HeaderText)" />
+		}*@
+
+		@if (MyGridColumns != null)
+		{
+			@MyGridColumns
+		}
+
+		<GridColumn HeaderText="Akcie" TextAlign="TextAlign.Center" AutoFit="true">
+			<GridCommandColumns>
+				<GridCommandColumn Type="CommandButtonType.Edit" ButtonOption="@(new CommandButtonOptions { IconCss = "e-icons e-edit", CssClass = "e-flat" })" />
+				<GridCommandColumn ID="delete-cmd-btn" ButtonOption="@(new CommandButtonOptions { IconCss = "e-icons e-delete", CssClass = "e-flat" })" />
+			</GridCommandColumns>
+		</GridColumn>
+	</GridColumns>
+</SfGrid>
+
+@code {
+	// CustomAdd is used instead of standard syncfusion's Add because Close button didn't work
+	private readonly List<object> toolbar = new List<object>() {
+		new ItemModel { Text = "pridať", TooltipText = "pridať", PrefixIcon = "fas fa-plus plus-padding", Id = "CustomAdd" }, "Search"
+	};
+	private readonly string formModalWidth = "20%";
+	private string primaryField { get; set; } = null!;
+	private IDictionary<string, object> parametersForCreatingItem = new Dictionary<string, object>(2);
+	private IDictionary<string, object> parametersForEditingItem = new Dictionary<string, object>(2);
+	private SfGrid<ItemType> grid = null!;
+
+	[Parameter]
+	public RenderFragment MyGridColumns { get; set; } = null!;
+
+	[Parameter, EditorRequired]
+	public Func<ServISData.DataOperations.DataOperations<ItemType>?, Task<List<ItemType>>> GetItemsAsync { get; set; } = null!;
+
+	[Parameter, EditorRequired]
+	public Func<Task<int>> GetItemsCountAsync { get; set; } = null!;
+
+	[Parameter, EditorRequired]
+	public Func<ItemType, Task> DeleteItemAsync { get; set; } = null!;
+
+	[Parameter]
+	public string Title { get; set; } = null!;
+
+	[Parameter]
+	public int PageSize { get; set; } = 5;
+
+	private bool IsFormVisible { get; set; }
+
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+
+		SetPrimaryField();
+
+		parametersForCreatingItem.Add(nameof(FormBase<ItemType>.Item), new ItemType());
+		parametersForCreatingItem.Add(nameof(FormBase<ItemType>.AfterSaveAsync), () => AddNewItemAsync());
+
+		parametersForEditingItem.Add(nameof(FormBase<ItemType>.AfterSaveAsync), () => EndEditAsync());
+	}
+
+	private void SetPrimaryField()
+	{
+		// I wanted to do nameof(ItemType.Id), but it gave me error CS0704: Cannot do non-virtual lookup... 
+		// So I came up with this solution using tmp variable.
+		var tmp = new ItemType();
+		primaryField = nameof(tmp.Id);
+	}
+
+	private IDictionary<string, object> GetParametersForEditingItem(object item)
+	{
+		// item could be of type ItemType, but then we would have to make pointless casts from object to ItemType and then back to object
+		parametersForEditingItem[nameof(FormBase<ItemType>.Item)] = item;
+
+		return parametersForEditingItem;
+	}
+
+	private async Task EndEditAsync()
+	{
+		await grid.EndEditAsync();
+	}
+
+	private void OnToolbarClick(Syncfusion.Blazor.Navigations.ClickEventArgs args)
+	{
+
+		if (args.Item.Id == "CustomAdd")
+		{
+			IsFormVisible = true;
+		}
+	}
+
+	private async Task OnCommandButtonClickAsync(CommandClickEventArgs<ItemType> args)
+	{
+
+		if (args.CommandColumn.ID == "delete-cmd-btn")
+		{
+
+			var dialogOptions = new DialogOptions { ShowCloseIcon = true };
+			var deletionConfirmed = await dialogService.ConfirmAsync(
+				"Naozaj chcete tento záznam vymazať natrvalo?", "Vymazať záznam", dialogOptions
+			);
+			if (!deletionConfirmed)
+			{
+				return;
+			}
+
+			var item = args.RowData;
+			await DeleteItemAsync(item);
+			await grid.Refresh();
+		}
+	}
+
+	private async Task AddNewItemAsync()
+	{
+		// its ok to cast to ItemType because under key nameof(FormBase<ItemType>.Item) I store inly ItemType object
+		// and as ItemType is class, no (un)boxing is needed
+		await grid.AddRecordAsync((ItemType)parametersForCreatingItem[nameof(FormBase<ItemType>.Item)]);
+		parametersForCreatingItem[nameof(FormBase<ItemType>.Item)] = new ItemType();
+		IsFormVisible = false;
+		StateHasChanged();
+	}
+}

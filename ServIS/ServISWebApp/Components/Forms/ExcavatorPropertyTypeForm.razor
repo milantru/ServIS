@@ -1,22 +1,23 @@
-﻿@inject IServISApi api
+﻿@inherits FormBase<ExcavatorPropertyType>
+@inject IServISApi api
 @using ServISData
 @using ServISWebApp.CssProviders
 
-@if (PropertyType != null)
+@if (Item != null)
 {
-	<EditForm Model="PropertyType" OnValidSubmit="SaveExcavatorPropertyTypeAsync" class="form-space-items">
+	<EditForm Model="@Item" OnValidSubmit="SaveItemAsync" class="form-space-items">
 		<DataAnnotationsValidator />
 		<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
 
 		<div class="form-group">
 			<label for="name">Názov vlastnosti:</label>
-			<InputText @bind-Value="PropertyType.Name" id="name" />
-			<ValidationMessage For="@(() => PropertyType.Name)" />
+			<InputText @bind-Value="Item.Name" id="name" />
+			<ValidationMessage For="@(() => Item.Name)" />
 		</div>
 
 		<div class="form-group">
 			<label for="property-type">Typ vlastnosti:</label>
-			<InputSelect @bind-Value="PropertyType.InputType" id="property-type">
+			<InputSelect @bind-Value="Item.InputType" id="property-type">
 				@if (InputTypes == null)
 				{
 					<p>Načítava sa...</p>
@@ -33,21 +34,12 @@
 
 		<div>
 			<SubmitButton Text="Uložiť" />
-			<button class="btn btn-secondary" type="button" @onclick="async () => await ResetAsync()">Reset</button>
+			<button class="btn btn-secondary" type="button" @onclick="ResetAsync">Reset</button>
 		</div>
 	</EditForm>
 }
 
 @code {
-	[Parameter]
-	public ExcavatorPropertyType PropertyType { get; set; } = null!;
-
-	[Parameter]
-	public EventCallback<ExcavatorPropertyType> PropertyTypeChanged { get; set; }
-
-	[Parameter]
-	public EventCallback AfterValidSubmit { get; set; }
-
 	private InputType[] InputTypes { get; set; } = null!;
 
 	protected override async Task OnInitializedAsync()
@@ -63,40 +55,57 @@
 	{
 		base.OnParametersSet();
 
-		if (PropertyType == null)
+		if (Item == null)
 		{
-			throw new Exception($"Parameter '{nameof(PropertyType)}' not provided.");
+			throw new Exception($"Parameter '{nameof(Item)}' not provided.");
 		}
 
-		if (PropertyType.Id == 0 && PropertyType.ExcavatorTypesWithThisProperty == null)
+		if (Item.Id == 0)
 		{
-			PropertyType.ExcavatorTypesWithThisProperty = new List<ExcavatorType>();
+			InitExcavatorPropertyType(Item);
 		}
 	}
 
-	private async Task ResetAsync()
+	public override async Task ResetAsync()
 	{
-		PropertyType = new();
+		Item = new();
+		if (Item.Id == 0)
+		{
+			InitExcavatorPropertyType(Item);
+		}
 
-		await PropertyTypeChanged.InvokeAsync(PropertyType);
+		if (ItemChanged.HasDelegate)
+		{
+			await ItemChanged.InvokeAsync(Item);
+		}
 	}
 
-	private async Task SaveExcavatorPropertyTypeAsync()
+	public override async Task SaveItemAsync()
 	{
 		try
 		{
-			await api.SaveExcavatorPropertyTypeAsync(PropertyType);
+			await api.SaveExcavatorPropertyTypeAsync(Item);
 		}
 		catch
 		{
-			throw new Exception($"Failed to save excavator property type with id '{PropertyType.Id}'.");
+			throw new Exception($"Failed to save excavator property type with id '{Item.Id}'.");
 		}
 
-		if (AfterValidSubmit.HasDelegate)
+		if (OnSave.HasDelegate)
 		{
-			await AfterValidSubmit.InvokeAsync();
+			await OnSave.InvokeAsync();
+		}
+		
+		if (AfterSaveAsync != null)
+		{
+			await AfterSaveAsync();
 		}
 
 		await ResetAsync();
+	}
+
+	private static void InitExcavatorPropertyType(ExcavatorPropertyType excavatorPropertyType)
+	{
+		excavatorPropertyType.ExcavatorTypesWithThisProperty ??= new List<ExcavatorType>();
 	}
 }

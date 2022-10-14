@@ -1,5 +1,6 @@
-﻿@inject SfDialogService dialogService
-@typeparam ItemType where ItemType : class, new()
+﻿@using ServISData.DataOperations
+@inject SfDialogService dialogService
+@typeparam ItemType where ItemType : class, IItem, new()
 
 <div>
 	@if (Title != null)
@@ -19,7 +20,7 @@
 			</thead>
 		}
 		<tbody>
-			<Virtualize @ref="itemsContainer" ItemsProvider="LoadItemsAsync" Context="item" OverscanCount="3" >
+			<Virtualize @ref="itemsContainer" ItemsProvider="LoadItemsAsync" Context="item" OverscanCount="3">
 				<tr class="@GetRowCss(item)">
 					@if (BodyCols != null)
 					{
@@ -39,9 +40,10 @@
 
 @code {
 	private Virtualize<ItemType> itemsContainer = null!;
+	private bool isCountRequiredForReload;
 
 	[Parameter, EditorRequired]
-	public Func<int, int, Task<List<ItemType>>> GetItemsAsync { get; set; } = null!;
+	public Func<DataOperations<ItemType>?, Task<List<ItemType>>> GetItemsAsync { get; set; } = null!;
 
 	[Parameter, EditorRequired]
 	public Func<Task<int>> GetItemsTotalCountAsync { get; set; } = null!;
@@ -113,14 +115,16 @@
 
 	public async Task ReloadItemsAsync()
 	{
+		isCountRequiredForReload = true;
 		await itemsContainer.RefreshDataAsync();
 	}
 
 	private async ValueTask<ItemsProviderResult<ItemType>> LoadItemsAsync(ItemsProviderRequest request)
 	{
-		if (ItemsTotalCount == 0)
+		if (ItemsTotalCount == 0 || isCountRequiredForReload)
 		{
 			ItemsTotalCount = await GetItemsTotalCountAsync();
+			isCountRequiredForReload = false;
 		}
 		if (ItemsTotalCount == 0)
 		{// in case there is no spare part in the database
@@ -129,7 +133,8 @@
 
 		int itemsDisplayedCount = Math.Min(request.Count, ItemsTotalCount - request.StartIndex);
 
-		var items = await GetItemsAsync(itemsDisplayedCount, request.StartIndex);
+		var dataOperations = new PagingOperation<ItemType>(request.StartIndex, itemsDisplayedCount);
+		var items = await GetItemsAsync(dataOperations);
 
 		return new ItemsProviderResult<ItemType>(items, ItemsTotalCount);
 	}

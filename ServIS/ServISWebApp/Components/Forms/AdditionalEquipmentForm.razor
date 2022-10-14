@@ -1,19 +1,20 @@
-﻿@inject IServISApi api
+﻿@inherits FormBase<AdditionalEquipment>
+@inject IServISApi api
 @using ServISWebApp.CssProviders
 
 @if (isAdditionalEquipmentInitialized)
 {
-	<EditForm Model="AdditionalEquipment" OnValidSubmit="SaveAdditionalEquipmentAsync" class="form-space-items">
+	<EditForm Model="@Item" OnValidSubmit="SaveItemAsync" class="form-space-items">
 		<ObjectGraphDataAnnotationsValidator />
 		<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
 
 		<div class="form-group">
 			<InputItemPhotos PhotoType="AdditionalEquipmentPhoto"
-							 @bind-Photos="AdditionalEquipment.Photos"
+							 @bind-Photos="Item.Photos"
 							 CreatePhoto="@((dataBytes) => 
-								new AdditionalEquipmentPhoto { Photo = dataBytes, AdditionalEquipment = AdditionalEquipment })"
-							 DeletePhotoAsync="@(async (photo) => await DeleteAdditionalEquipmentPhotoAsync(photo))"
-							 IsRequired="@(AdditionalEquipment.Id == 0)" />
+								new AdditionalEquipmentPhoto { Photo = dataBytes, AdditionalEquipment = Item })"
+							 DeletePhotoAsync="DeleteAdditionalEquipmentPhotoAsync"
+							 IsRequired="@(Item.Id == 0)" />
 		</div>
 
 		<br />
@@ -21,7 +22,7 @@
 		<div class="form-group">
 			<label for="excavator-category">Pre akú kategóriu strojov:</label>
 			<ItemsSelector ItemType="ExcavatorCategory"
-					   @bind-SelectedItem="AdditionalEquipment.ExcavatorCategory"
+					   @bind-SelectedItem="Item.ExcavatorCategory"
 					   Items="AllExcavatorCategories"
 					   Context="excavatorCategory"
 					   id="excavator-category">
@@ -32,7 +33,7 @@
 		<div class="form-group">
 			<label for="additional-equipment-category">Kategória:</label>
 			<ItemsSelector ItemType="AdditionalEquipmentCategory"
-					   @bind-SelectedItem="AdditionalEquipment.Category"
+					   @bind-SelectedItem="Item.Category"
 					   Items="AllAdditionalEquipmentCategories"
 					   Context="additionalEquipmentCategory"
 					   id="additional-equipment-category">
@@ -43,7 +44,7 @@
 		<div class="form-group">
 			<label for="additional-equipment-brand">Značka:</label>
 			<ItemsSelector ItemType="AdditionalEquipmentBrand"
-						   @bind-SelectedItem="AdditionalEquipment.Brand"
+						   @bind-SelectedItem="Item.Brand"
 						   Items="AllAdditionalEquipmentBrands"
 						   Context="additionalEquipmentBrand"
 						   id="additional-equipment-brand">
@@ -53,34 +54,25 @@
 
 		<div class="form-group">
 			<label for="name">Názov:</label>
-			<InputText @bind-Value="@AdditionalEquipment.Name" id="name" />
-			<ValidationMessage For="@(() => AdditionalEquipment.Name)" />
+			<InputText @bind-Value="@Item.Name" id="name" />
+			<ValidationMessage For="@(() => Item.Name)" />
 		</div>
 
 		<div class="form-group">
 			<label for="description">Popis:</label>
-			<InputTextArea @bind-Value="@AdditionalEquipment.Description" id="description" />
-			<ValidationMessage For="@(() => AdditionalEquipment.Description)" />
+			<InputTextArea @bind-Value="@Item.Description" id="description" />
+			<ValidationMessage For="@(() => Item.Description)" />
 		</div>
 
 		<div>
 			<SubmitButton Text="Uložiť" />
-			<button class="btn btn-secondary" type="reset" @onclick="async () => await ResetAsync()">Reset</button>
+			<button class="btn btn-secondary" type="reset" @onclick="ResetAsync">Reset</button>
 		</div>
 	</EditForm>
 }
 
 @code {
 	private bool isAdditionalEquipmentInitialized;
-
-	[Parameter]
-	public AdditionalEquipment AdditionalEquipment { get; set; } = null!;
-
-	[Parameter]
-	public EventCallback<AdditionalEquipment> AdditionalEquipmentChanged { get; set; }
-
-	[Parameter]
-	public EventCallback AfterValidSubmit { get; set; }
 
 	private List<ExcavatorCategory> AllExcavatorCategories { get; set; } = null!;
 
@@ -101,16 +93,57 @@
 	{
 		base.OnParametersSet();
 
-		if (AdditionalEquipment == null)
+		if (Item == null)
 		{
-			throw new Exception($"Parameter '{nameof(AdditionalEquipment)}' not provided.");
+			throw new Exception($"Parameter '{nameof(Item)}' not provided.");
 		}
 
-		if (AdditionalEquipment.Id == 0)
+		if (Item.Id == 0)
 		{
-			InitAdditionalEquipment(AdditionalEquipment);
+			InitAdditionalEquipment(Item);
 		}
 		isAdditionalEquipmentInitialized = true;
+	}
+
+	public override async Task ResetAsync()
+	{
+		Item = new();
+		InitAdditionalEquipment(Item);
+
+		if (ItemChanged.HasDelegate)
+		{
+			await ItemChanged.InvokeAsync(Item);
+		}
+	}
+
+	public override async Task SaveItemAsync()
+	{
+		if (Item.Photos.Count == 0)
+		{
+			throw new Exception("No additional equipment photos provided.");
+		}
+		Item.Photos[0].IsTitle = true;
+
+		try
+		{
+			await api.SaveAdditionalEquipmentAsync(Item);
+		}
+		catch
+		{
+			throw new Exception($"Failed to save additional equipment with id '{Item.Id}'.");
+		}
+
+		if (OnSave.HasDelegate)
+		{
+			await OnSave.InvokeAsync();
+		}
+
+		if (AfterSaveAsync != null)
+		{
+			await AfterSaveAsync();
+		}
+
+		await ResetAsync();
 	}
 
 	private static void InitAdditionalEquipment(AdditionalEquipment additionalEquipment)
@@ -121,49 +154,16 @@
 		additionalEquipment.ExcavatorCategory ??= new();
 	}
 
-	private async Task ResetAsync()
-	{
-		AdditionalEquipment = new();
-		InitAdditionalEquipment(AdditionalEquipment);
-
-		await AdditionalEquipmentChanged.InvokeAsync(AdditionalEquipment);
-	}
-
-	private async Task SaveAdditionalEquipmentAsync()
-	{
-		if (AdditionalEquipment.Photos.Count == 0)
-		{
-			throw new Exception("No additional equipment photos provided.");
-		}
-		AdditionalEquipment.Photos[0].IsTitle = true;
-
-		try
-		{
-			await api.SaveAdditionalEquipmentAsync(AdditionalEquipment);
-		}
-		catch
-		{
-			throw new Exception($"Failed to save additional equipment with id '{AdditionalEquipment.Id}'.");
-		}
-
-		if (AfterValidSubmit.HasDelegate)
-		{
-			await AfterValidSubmit.InvokeAsync();
-		}
-
-		await ResetAsync();
-	}
-
 	private async Task DeleteAdditionalEquipmentPhotoAsync(AdditionalEquipmentPhoto additionalEquipmentPhoto)
 	{
-		if (AdditionalEquipment.Photos.Count > 1)
+		if (Item.Photos.Count > 1)
 		{
 			if (additionalEquipmentPhoto.Id != 0)
 			{
 				await api.DeleteAdditionalEquipmentPhotoAsync(additionalEquipmentPhoto);
 			}
 
-			AdditionalEquipment.Photos.Remove(additionalEquipmentPhoto);
+			Item.Photos.Remove(additionalEquipmentPhoto);
 
 			StateHasChanged();
 		}

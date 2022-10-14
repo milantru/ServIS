@@ -1,0 +1,78 @@
+﻿@inherits DataAdaptor<ItemType>
+@inject IServISApi api
+@typeparam ItemType where ItemType : class, IItem
+@using System.Text.Json.Serialization
+@using ServISData.DataOperations
+@using Syncfusion.Blazor.Data
+
+<CascadingValue Value="@this">
+	@ChildContent
+</CascadingValue>
+
+@code {
+	[Parameter, EditorRequired]
+	public Func<DataOperations<ItemType>?, Task<List<ItemType>>> GetItemsAsync { get; set; } = null!;
+
+	[Parameter, EditorRequired]
+	public Func<Task<int>> GetItemsCountAsync { get; set; } = null!;
+
+	[Parameter, JsonIgnore]
+	public RenderFragment ChildContent { get; set; } = null!;
+
+	public override async Task<object> ReadAsync(DataManagerRequest dataManagerRequest, string key = null!)
+	{
+		//var config = new MyDataOperations<ItemType>.Configuration();
+		//SetConfig(config, dataManagerRequest);
+
+		//var dataOperations = new MyDataOperations<ItemType>(config);
+		var dataOperations = new SyncfusionDataOperations<ItemType>(dataManagerRequest);
+		IEnumerable<ItemType> items = await GetItemsAsync(dataOperations);
+
+		if (dataManagerRequest.RequiresCounts)
+		{
+			var dataResult = new DataResult
+				{
+					Result = items,
+					Count = await GetItemsCountAsync(),
+				};
+
+			if (dataManagerRequest.Aggregates != null)
+			{
+				dataResult.Aggregates = DataUtil.PerformAggregation(items, dataManagerRequest.Aggregates);
+			}
+
+			return dataResult;
+		}
+		else
+		{
+			return items;
+		}
+	}
+
+	private void SetConfig(MyDataOperations<ItemType>.Configuration config, DataManagerRequest dataManagerRequest)
+	{
+		if (dataManagerRequest.Search != null && dataManagerRequest.Search.Count > 0)
+		{
+			config.SearchingValue = dataManagerRequest.Search[0].Key;
+			config.FieldsForSearching = dataManagerRequest.Search[0].Fields.ToArray();
+		}
+		if (dataManagerRequest.Where != null && dataManagerRequest.Where.Count > 0)
+		{
+			config.FieldValuePairsForFiltering = dataManagerRequest.Where[0].predicates.Select(p => (p.Field, p.value.ToString() ?? "")).ToArray();
+		}
+		if (dataManagerRequest.Sorted != null && dataManagerRequest.Sorted.Count > 0)
+		{
+			config.FieldValuePairsForSorting = new[] {
+				(dataManagerRequest.Sorted[0].Name, dataManagerRequest.Sorted[0].Direction == "ASC" ? ServISData.DataOperations.SortOrder.Ascending : ServISData.DataOperations.SortOrder.Descending)
+	};
+		}
+		if (dataManagerRequest.Skip != 0)
+		{
+			config.Skip = dataManagerRequest.Skip;
+		}
+		if (dataManagerRequest.Take != 0)
+		{
+			config.Skip = dataManagerRequest.Take;
+		}
+	}
+}
