@@ -1,12 +1,45 @@
 ﻿@page "/admin/nove-pridavne-zariadenie"
+@page "/admin/uprava-pridavneho-zariadenia/{AdditionalEquipmentId}"
 
 @attribute [Authorize(Roles = "Administrator")]
+@inject IServISApi api
 @inject NavigationManager navMan
 
-<h3>Prídavné zariadenia- vytvorenie nového záznamu</h3>
+<h3>Prídavné zariadenia- @(AdditionalEquipmentId.HasValue ? "vytvorenie nového" : "úprava existujúceho") záznamu</h3>
 
-<AdditionalEquipmentForm Item="@AdditionalEquipment" OnSave="@(() => navMan.NavigateTo("/pridavne-zariadenia"))" />
+@if (AdditionalEquipment == null)
+{
+	<p>Načítava sa...</p>
+}
+else
+{
+	<AdditionalEquipmentForm Item="@AdditionalEquipment" OnSave="@(() => navMan.NavigateTo("/pridavne-zariadenia"))" />
+}
 
 @code {
-	private AdditionalEquipment AdditionalEquipment { get; set; } = new();
+	[Parameter]
+	public int? AdditionalEquipmentId { get; set; } = null!;
+
+	private AdditionalEquipment AdditionalEquipment { get; set; } = null!;
+
+	protected override async Task OnParametersSetAsync()
+	{
+		await base.OnParametersSetAsync();
+
+		if (AdditionalEquipmentId.HasValue)
+		{// edit of existing additional equipment
+			try
+			{
+				AdditionalEquipment = await api.GetAdditionalEquipmentAsync(AdditionalEquipmentId.Value);
+			}
+			catch
+			{
+				throw new Exception($"Additional equipment with id {AdditionalEquipmentId.Value} not found.");
+			}
+		}
+		else
+		{
+			AdditionalEquipment = new();
+		}
+	}
 }
