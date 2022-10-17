@@ -13,7 +13,7 @@
 }
 else
 {
-	<ExcavatorForm @bind-Excavator="Excavator" AfterValidSubmit="@(() => navMan.NavigateTo($"/typ-stroja/{Excavator.Type.Id}"))" />
+	<ExcavatorForm @bind-Excavator="Excavator" OnSave="@(() => navMan.NavigateTo($"/typ-stroja/{Excavator.Type.Id}"))" />
 }
 
 @code {
@@ -23,7 +23,7 @@ else
 	[Parameter]
 	public int? ExcavatorId { get; set; } = null!;
 
-	public Excavator Excavator { get; private set; } = null!;
+	private Excavator Excavator { get; set; } = null!;
 
 	protected override async Task OnParametersSetAsync()
 	{

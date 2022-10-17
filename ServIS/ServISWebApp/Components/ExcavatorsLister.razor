@@ -18,10 +18,10 @@
 	private Virtualize<Excavator> excavatorPhotosContainer = null!;
 
 	[Parameter]
-	public ExcavatorType ExcavatorType { get; set; } = null!;
+	public string Title { get; set; } = null!;
 
 	[Parameter]
-	public string Title { get; set; } = null!;
+	public ExcavatorType ExcavatorType { get; set; } = null!;
 
 	public int ExcavatorsTotalCount { get; set; } // excavators of given type (ExcavatorType)
 
