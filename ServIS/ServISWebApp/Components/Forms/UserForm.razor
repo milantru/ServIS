@@ -14,7 +14,7 @@
 		<div class="row">
 			<div class="d-flex">
 				<div class="form-group">
-					<label for="username">Prihlasovacie meno:</label>
+					<label @ref="username" for="username">Prihlasovacie meno:</label>
 					<InputText @bind-Value="User.Username" id="username" />
 					<ValidationMessage For="@(() => User.Username)" />
 				</div>
@@ -87,6 +87,7 @@
 </div>
 
 @code {
+	private ElementReference username;
 	private string currentPassword = string.Empty;
 	private string passwordField = string.Empty;
 
@@ -125,6 +126,16 @@
 		if (User.Id != 0)
 		{
 			currentPassword = User.Password;
+		}
+	}
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		await base.OnAfterRenderAsync(firstRender);
+
+		if (firstRender && User.Id == 0)
+		{
+			await username.FocusAsync();
 		}
 	}
 

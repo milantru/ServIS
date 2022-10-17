@@ -12,7 +12,7 @@
 	<div id="login-data">
 		<EditForm Model="loginData" OnValidSubmit="AuthenticateAsync">
 			<div class="form-group">
-				<label for="username">Prihlasovacie meno</label><br />
+				<label @ref="username" for="username">Prihlasovacie meno</label><br />
 				<InputText @bind-Value="@loginData.Username" id="username" class="form-control" />
 			</div>
 
@@ -30,7 +30,18 @@
 
 
 @code {
+	private ElementReference username;
 	private LoginData loginData = new();
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		await base.OnAfterRenderAsync(firstRender);
+
+		if (firstRender)
+		{
+			await username.FocusAsync();
+		}
+	}
 
 	private async Task AuthenticateAsync()
 	{
