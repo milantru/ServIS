@@ -11,20 +11,17 @@
 		margin-left: auto;
 	}
 
+.flex-no-wrap {
+	flex-wrap: nowrap;
+}
+
 .form-group {
 	margin: 8px;
+	width: 45%;
 }
 
 #btn-panel {
 	margin: 4px 0;
-}
-
-.form-group {
-	width: 45%;
-}
-
-.flex-no-wrap {
-	flex-wrap: nowrap;
 }
 
 @media (max-width: 950px) {
