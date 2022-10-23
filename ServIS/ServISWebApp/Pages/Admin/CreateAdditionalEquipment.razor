@@ -1,5 +1,5 @@
 ﻿@page "/admin/nove-pridavne-zariadenie"
-@page "/admin/uprava-pridavneho-zariadenia/{AdditionalEquipmentId}"
+@page "/admin/uprava-pridavneho-zariadenia/{AdditionalEquipmentId:int}"
 
 @attribute [Authorize(Roles = "Administrator")]
 @inject IServISApi api
