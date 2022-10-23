@@ -1,0 +1,141 @@
+﻿@inject AuthenticationStateProvider authStateProvider
+@inject IServISApi api
+@using ServISWebApp.Auth
+@using ServISWebApp.CssProviders
+@using System.Security.Claims
+
+<div id="demand-form" class="w-75 servis-border" style="display: @(isFormHidden ? "none" : "block");">
+	<EditForm EditContext="editContext" Model="DemandInfo" OnValidSubmit="_SendFormData" class="form-space-items">
+		<DataAnnotationsValidator />
+		<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
+
+		@*There is Context="ctx" just because I was getting an error (it seems EditForm and and AuthorizeView both use 'context' as Context so I had to rename it)*@
+		<AuthorizeView Context="ctx">
+			<NotAuthorized>
+				<div class="row">
+					<div class="form-group w-100">
+						<p id="disclaimer">
+							Ak u nás máte vytvorený účet, prosím prihláste sa <a href="/prihlasovanie">tu</a> a vyhnite sa tak vypĺňaniu údajov o Vás (Meno, Priezvisko...).
+							Ak u nás účet ešte nemáte, zvážte registráciu, ktorú nájdete <a href="/registracia">tu</a>.
+						</p>
+					</div>
+				</div>
+				<div class="row">
+					<div class="d-flex flex-no-wrap">
+						<div class="form-group">
+							<label>Meno:</label>
+							<InputText @bind-Value="DemandInfo.User.Name" />
+							<ValidationMessage For="@(() => DemandInfo.User.Name)" />
+						</div>
+
+						<div class="form-group">
+							<label>Priezvisko:</label>
+							<InputText @bind-Value="DemandInfo.User.Surname" />
+							<ValidationMessage For="@(() => DemandInfo.User.Surname)" />
+						</div>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="d-flex flex-no-wrap">
+						<div class="form-group">
+							<label>Telefónne číslo:</label>
+							<InputText @bind-Value="DemandInfo.User.PhoneNumber" />
+							<ValidationMessage For="@(() => DemandInfo.User.PhoneNumber)" />
+						</div>
+
+						<div class="form-group">
+							<label>Email:</label>
+							<InputText @bind-Value="DemandInfo.User.Email" />
+							<ValidationMessage For="@(() => DemandInfo.User.Email)" />
+						</div>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="d-flex">
+						<div class="form-group">
+							<label>Mesto:</label>
+							<InputText @bind-Value="DemandInfo.User.Residence" />
+							<ValidationMessage For="@(() => DemandInfo.User.Residence)" />
+						</div>
+					</div>
+				</div>
+			</NotAuthorized>
+		</AuthorizeView>
+
+		<div class="row">
+			<div class="d-flex">
+				<div class="form-group w-100">
+					<label>Správa:</label>
+					<InputTextArea @bind-Value="DemandInfo.Message" placeholder="Dobrý deň. Mal by som záujem/Chcel by som sa opýtať..." rows="7" />
+				</div>
+			</div>
+		</div>
+
+		<div id="btn-panel" class="container-center-items-horizontal">
+			<SubmitButton Text="Odoslať" />
+		</div>
+	</EditForm>
+</div>
+
+@code {
+	private bool isFormHidden = true;
+	private EditContext editContext = null!;
+
+	[EditorRequired, Parameter]
+	public IItem DemandedItem { get; set; } = null!;
+
+	private DemandForm.Demand DemandInfo { get; set; } = new();
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+
+		var customAuthStateProvider = (CustomAuthenticationStateProvider)authStateProvider;
+		var authState = await customAuthStateProvider.GetAuthenticationStateAsync();
+
+		var isUserAuthenticated = authState?.User.Identity?.IsAuthenticated ?? false;
+		if (isUserAuthenticated)
+		{
+			int userId = 0;
+			try
+			{
+				// its ok to use ! here because authState is not null (otherwise isUserAuthenticated wouldn't be true)
+				userId = int.Parse(authState!.User.Claims.First(c => c.Type == ClaimTypes.PrimarySid).Value);
+				DemandInfo.User = await api.GetUserAsync(userId);
+			}
+			catch
+			{
+				throw new Exception($"Failed getting user with id '{userId}'.");
+			}
+		}
+	}
+
+	public void ToggleForm()
+	{
+		isFormHidden = !isFormHidden;
+
+		StateHasChanged();
+	}
+
+	public void SendFormData()
+	{
+		if (editContext.Validate())
+		{
+			_SendFormData();
+		}
+	}
+
+	private void _SendFormData()
+	{
+		// TODO
+		throw new NotImplementedException();
+	}
+
+	private class Demand
+	{
+		public User User { get; set; } = new();
+		public string Message { get; set; } = string.Empty;
+	}
+}
