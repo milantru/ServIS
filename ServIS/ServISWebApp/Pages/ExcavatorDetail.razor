@@ -2,7 +2,6 @@
 
 @inject IServISApi api
 @inject NavigationManager navMan
-@using ServISWebApp.CssProviders
 
 @if (Excavator != null)
 {
@@ -23,39 +22,9 @@
 
 		<br />
 
-		<div hidden=@isFormHidden class="row">
+		<div class="row">
 			<div class="col">
-				<EditForm @ref="Form" Model="Data" OnValidSubmit="SendFormData">
-					<DataAnnotationsValidator />
-					<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
-
-					<label>Meno:</label>
-					<InputText @bind-Value="@Data.User.Name" />
-					<ValidationMessage For="@(() => Data.User.Name)" />
-
-					<label>Priezvisko:</label>
-					<InputText @bind-Value="@Data.User.Surname" />
-					<ValidationMessage For="@(() => Data.User.Surname)" />
-
-					<label>Telefónne číslo:</label>
-					<InputText @bind-Value="@Data.User.PhoneNumber" />
-					<ValidationMessage For="@(() => Data.User.PhoneNumber)" />
-
-					<label>Email:</label>
-					<InputText @bind-Value="@Data.User.Email" />
-					<ValidationMessage For="@(() => Data.User.Email)" />
-
-					<label>Mesto:</label>
-					<InputText @bind-Value="@Data.User.Residence" />
-					<ValidationMessage For="@(() => Data.User.Residence)" />
-
-					<label>Správa:</label>
-					<InputTextArea @bind-Value="@Data.Message" />
-
-					<SubmitButton Text="Odoslať" />
-				</EditForm>
-
-				<br />
+				<DemandForm @ref="demandForm" DemandedItem="@Excavator" />
 			</div>
 		</div>
 
@@ -83,16 +52,12 @@
 }
 
 @code {
-	private bool isFormHidden = true;
+	private DemandForm demandForm = null!;
 
 	[Parameter]
 	public int ExcavatorId { get; set; }
 
-	public Excavator Excavator { get; private set; } = null!;
-
-	private EditForm Form { get; set; } = null!;
-
-	private FormFields Data { get; set; } = new();
+	private Excavator Excavator { get; set; } = null!;
 
 	protected override async Task OnParametersSetAsync()
 	{
@@ -108,24 +73,9 @@
 		}
 	}
 
-	private void ToggleForm()
+	public void ToggleForm()
 	{
-		isFormHidden = !isFormHidden;
-
-		StateHasChanged();
-	}
-
-	private void SendFormData()
-	{
-		//Data.Customer.Username = "";
-		//Data.Customer.Password = "";
-		//Data.User.IsTemporary = true;
-	}
-
-	private class FormFields
-	{
-		public User User { get; set; } = new();
-		public string Message { get; set; } = "";
+		demandForm.ToggleForm();
 	}
 
 	private List<byte[]> GetImages() => Excavator.Photos.Select(p => p.Photo).ToList();
