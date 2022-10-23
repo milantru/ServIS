@@ -1,0 +1,91 @@
+﻿@page "/pridavne-zariadenie/{AdditionalEquipmentId:int}"
+
+@inject IServISApi api
+@inject NavigationManager navMan
+
+@if (AdditionalEquipment != null)
+{
+	<div class="container">
+		<div class="row">
+			<div class="col">
+				<PhotoSlider Images="GetImages()" />
+			</div>
+
+			<div class="col">
+				<h4>@AdditionalEquipment.Name</h4>
+
+				<p>@AdditionalEquipment.Description</p>
+
+				<button @onclick="ToggleForm">Dopyt</button>
+			</div>
+		</div>
+
+		<br />
+
+		<div class="row">
+			<div class="col">
+				<DemandForm @ref="demandForm" DemandedItem="@AdditionalEquipment" />
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col">
+				<table class="table">
+					<tbody>
+						<tr>
+							<td>Pre stroje kategórie</td>
+							<td>@AdditionalEquipment.ExcavatorCategory.Category</td>
+						</tr>
+						<tr>
+							<td>Kategória</td>
+							<td>@AdditionalEquipment.Category.Category</td>
+						</tr>
+						<tr>
+							<td>Značka</td>
+							<td>@AdditionalEquipment.Brand.Brand</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+		<AuthorizeView Roles="Administrator">
+			<button class="btn btn-secondary" @onclick="GoToAdditionalEquipmentEditPage">Uprav</button>
+		</AuthorizeView>
+	</div>
+}
+
+@code {
+	private DemandForm demandForm = null!;
+
+	[Parameter]
+	public int AdditionalEquipmentId { get; set; }
+
+	private AdditionalEquipment AdditionalEquipment { get; set; } = null!;
+
+	protected override async Task OnParametersSetAsync()
+	{
+		await base.OnParametersSetAsync();
+
+		try
+		{
+			AdditionalEquipment = await api.GetAdditionalEquipmentAsync(AdditionalEquipmentId);
+		}
+		catch
+		{
+			throw new Exception($"AdditionalEquipment with id '{AdditionalEquipmentId}' was not found.");
+		}
+	}
+
+	public void ToggleForm()
+	{
+		demandForm.ToggleForm();
+	}
+
+	private List<byte[]> GetImages() => AdditionalEquipment.Photos.Select(p => p.Photo).ToList();
+
+	private void GoToAdditionalEquipmentEditPage()
+	{
+		navMan.NavigateTo($"/admin/uprava-pridavneho-zariadenia/{AdditionalEquipment.Id}");
+	}
+}
