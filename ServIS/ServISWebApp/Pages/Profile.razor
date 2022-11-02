@@ -45,7 +45,8 @@
 								 Title="Správa strojov"
 								 GetItemsAsync="api.GetExcavatorsAsync"
 								 GetItemsCountAsync="() => api.GetExcavatorsCountAsync()"
-								 DeleteItemAsync="api.DeleteExcavatorAsync">
+								 DeleteItemAsync="api.DeleteExcavatorAsync"
+								 FormModalWidth="50%" >
 					<MyGridColumns>
 						<GridColumn Field="@nameof(Excavator.Name)" HeaderText="Názov" />
 						<GridColumn Field="@($"{nameof(Excavator.Type)}.{nameof(ExcavatorType.Category)}.{nameof(ExcavatorCategory.Category)}")" HeaderText="Kategória" />

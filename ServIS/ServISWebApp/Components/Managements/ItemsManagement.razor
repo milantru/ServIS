@@ -12,7 +12,7 @@
 	<h3>@Title</h3>
 }
 
-<SfDialog @bind-Visible="@IsFormVisible" IsModal="true" ShowCloseIcon="true" AllowDragging="true" Width="@formModalWidth">
+<SfDialog @bind-Visible="@IsFormVisible" IsModal="true" ShowCloseIcon="true" AllowDragging="true" Width="@FormModalWidth">
 	<DialogTemplates>
 		<Header>Pridanie nového záznamu</Header>
 		<Content>
@@ -34,7 +34,7 @@
 					  AllowEditing="true"
 					  AllowDeleting="true"
 					  Mode="EditMode.Dialog"
-					  Dialog="@(new DialogSettings() { Width = formModalWidth })"
+					  Dialog="@(new DialogSettings() { Width = FormModalWidth })"
 					  ShowDeleteConfirmDialog="true">
 		<HeaderTemplate>Editácia záznamu</HeaderTemplate>
 		<Template>
@@ -79,7 +79,6 @@
 	private readonly List<object> toolbar = new List<object>() {
 		new ItemModel { Text = "pridať", TooltipText = "pridať", PrefixIcon = "fas fa-plus plus-padding", Id = "CustomAdd" }, "Search"
 	};
-	private readonly string formModalWidth = "20%";
 	private string primaryField { get; set; } = null!;
 	private IDictionary<string, object> parametersForCreatingItem = new Dictionary<string, object>(2);
 	private IDictionary<string, object> parametersForEditingItem = new Dictionary<string, object>(2);
@@ -102,6 +101,9 @@
 
 	[Parameter]
 	public int PageSize { get; set; } = 5;
+
+	[Parameter]
+	public string FormModalWidth { get; set; } = "30%";
 
 	private bool IsFormVisible { get; set; }
 
