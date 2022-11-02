@@ -13,7 +13,7 @@
 }
 else
 {
-	<ExcavatorForm @bind-Excavator="Excavator" OnSave="@(() => navMan.NavigateTo($"/typ-stroja/{Excavator.Type.Id}"))" />
+	<ExcavatorForm @bind-Item="Excavator" OnSave="@(() => navMan.NavigateTo($"/typ-stroja/{Excavator.Type.Id}"))" />
 }
 
 @code {
