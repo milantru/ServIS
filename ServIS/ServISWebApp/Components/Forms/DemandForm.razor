@@ -1,11 +1,12 @@
 ﻿@inject AuthenticationStateProvider authStateProvider
+@inject IConfiguration config
 @inject IServISApi api
 @using ServISWebApp.Auth
 @using ServISWebApp.CssProviders
 @using System.Security.Claims
 
 <div id="demand-form" class="w-75 servis-border" style="display: @(isFormHidden ? "none" : "block");">
-	<EditForm EditContext="editContext" Model="DemandInfo" OnValidSubmit="_SendFormData" class="form-space-items">
+	<EditForm EditContext="editContext" Model="DemandInfo" OnValidSubmit="_SendFormDataAsync" class="form-space-items">
 		<DataAnnotationsValidator />
 		<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
 
@@ -82,11 +83,20 @@
 @code {
 	private bool isFormHidden = true;
 	private EditContext editContext = null!;
+	private EmailSender emailSender = null!;
 
 	[EditorRequired, Parameter]
 	public IItem DemandedItem { get; set; } = null!;
 
 	private DemandForm.Demand DemandInfo { get; set; } = new();
+
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+
+		var toAddress = config["EmailAddress"];
+		emailSender = new EmailSender(toAddress);
+	}
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -119,18 +129,20 @@
 		StateHasChanged();
 	}
 
-	public void SendFormData()
+	public async Task SendFormDataAsync()
 	{
 		if (editContext.Validate())
 		{
-			_SendFormData();
+			await _SendFormDataAsync();
 		}
 	}
 
-	private void _SendFormData()
+	private async Task _SendFormDataAsync()
 	{
-		// TODO
-		throw new NotImplementedException();
+		var toAddress = DemandInfo.User.Email;
+		var message = DemandInfo.Message;
+
+		await emailSender.SendAsync(toAddress, message);
 	}
 
 	private class Demand
