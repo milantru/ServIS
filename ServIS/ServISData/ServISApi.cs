@@ -119,6 +119,11 @@ namespace ServISData
 			{
 				context.Attach(excavatorType.Brand);
 				context.Attach(excavatorType.Category);
+
+				for (int i = 0; i < excavatorType.PropertyTypes.Count; i++)
+				{
+					excavatorType.PropertyTypes.ElementAt(i).ExcavatorTypesWithThisProperty = null!;
+                }
 				context.AttachRange(excavatorType.PropertyTypes);
 
 				context.Add(excavatorType);
