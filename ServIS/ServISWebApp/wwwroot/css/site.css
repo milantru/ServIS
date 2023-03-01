@@ -105,3 +105,9 @@ a, .btn-link {
 	left: 0;
 	border-radius: 50%;
 }
+
+.icon-btn {
+	border: 1px solid #FF8800;
+	border-radius: 25px;
+	color: darkorange;
+}
