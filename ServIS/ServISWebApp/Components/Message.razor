@@ -1,0 +1,57 @@
+﻿@if (Email is null)
+{
+	<p>Načítava sa...</p>
+}
+else
+{
+	<div class="message">
+		<div class="panel">
+			<span class="sender"><b>@Email.FromName</b> &lt;@Email.FromAddress&gt;</span>
+			<span class="date">@Email.DateTime.ToString("ddd d.M.yyyy (H:m)")</span>
+		</div>
+		<div>
+			<div class="apply-newlines">@MainMessage</div>
+			@if (!string.IsNullOrEmpty(PreviousMessages))
+			{
+				<button class="prev-msgs-toggle" @onclick="() => previousMessagesHidden = !previousMessagesHidden">. . .</button>
+
+				<div hidden="@previousMessagesHidden" class="previous-messages apply-newlines">@PreviousMessages</div>
+			}
+		</div>
+	</div>
+}
+
+@code {
+	private bool previousMessagesHidden = true;
+
+	[Parameter]
+	public Email Email { get; set; } = null!;
+
+	private string MainMessage { get; set; } = null!;
+	private string PreviousMessages { get; set; } = null!;
+
+	protected override void OnParametersSet()
+	{
+		base.OnParametersSet();
+
+		SplitMainAndPreviousMessages();
+	}
+
+	private void SplitMainAndPreviousMessages()
+	{
+		var text = Email.Text;
+		var endOfMainMessageIndex = text.IndexOf("\r\n\r\n");
+
+		if (endOfMainMessageIndex == -1)
+		{
+			MainMessage = text;
+			PreviousMessages = string.Empty;
+		}
+		else
+		{
+			MainMessage = text.Substring(0, endOfMainMessageIndex);
+			// +-2 is due to "\r\n" I don't want it there (causes too much space), one "\r\n" is sufficient
+			PreviousMessages = text.Substring(endOfMainMessageIndex + 2, text.Length - endOfMainMessageIndex - 2);
+		}
+	}
+}
