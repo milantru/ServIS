@@ -1,0 +1,10 @@
+﻿@* style attr is here because in this icons case it seemed to me that icon inside button is a bit off
+I wanted to center it, but creating a new css file just for this felt like too much *@
+<button class="icon-btn" 
+		style="padding-top: 2px; padding-left: 8px;" 
+		@onclick="OnClick"><i class="fas fa-arrow-left"></i></button>
+
+@code {
+	[Parameter]
+	public EventCallback OnClick { get; set; }
+}

@@ -1,0 +1,35 @@
+﻿<button class="icon-btn" @onclick="HandleClickAsync"><i class="far fa-@GetCssClass()square"></i></button>
+
+@code {
+	private bool isChecked;
+
+	[Parameter]
+	public bool UseMinus { get; set; }
+
+	[Parameter]
+	public EventCallback OnClick { get; set; }
+
+	public async Task HandleClickAsync()
+	{
+		if (UseMinus)
+		{
+			isChecked = false;
+		}
+		else
+		{
+			isChecked = !isChecked;
+		}
+
+		await OnClick.InvokeAsync();
+	}
+
+	private string GetCssClass()
+	{
+		if (UseMinus)
+		{
+			return "minus-";
+		}
+
+		return isChecked ? "check-" : "";
+	}
+}
