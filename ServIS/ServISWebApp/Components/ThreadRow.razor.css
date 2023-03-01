@@ -1,0 +1,68 @@
+﻿.thread-row {
+	position: relative;
+	display: flex;
+	width: 100%;
+	height: 45px;
+	min-width: 588px;
+	padding: 5px;
+	border-radius: 2px;
+	border-bottom: 1px solid rgb(255,136,0);
+}
+
+	.thread-row:first-child {
+		border-top: 1px solid rgb(255,136,0);
+	}
+
+	.thread-row:hover {
+		box-shadow: 
+			inset 1px 0 0 orange, 
+			inset -1px 0 0 orange, 
+			0 0.5px 1px 0 rgb(255,136,0, 0.75),
+			0 1px 3px 1px rgb(255,136,0, 0.75);
+	}
+
+	.thread-row > input {
+		position: absolute;
+		align-self: center;
+		z-index: 1;
+		margin-left: 6px;
+	}
+
+	.thread-row > div {
+		display: flex;
+		flex-wrap: nowrap;
+		cursor: pointer;
+		padding-left: 28px
+	}
+
+.seen {
+	background-color: #cccccccc;
+}
+
+.cols {
+	width: 100%;
+}
+
+	.cols > div {
+		padding-top: 5px;
+		display: flex;
+	}
+
+.from {
+	width: 200px;
+}
+
+.preview-text {
+	width: calc(100% - (200px + 100px)); /* 100% - width of the .from and .date */
+	white-space: normal;
+	overflow: hidden;
+	text-overflow: clip;
+	margin-top: 1px; /* without this rule the overflown text is visible */
+}
+
+.date {
+	width: 100px;
+	position: absolute;
+	right: 5px;
+	justify-content: flex-end;
+}

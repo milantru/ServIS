@@ -1,0 +1,60 @@
+﻿@using MailKit;
+
+@if (LatestThreadMessage is null)
+{
+	<p>Načítava sa...</p>
+}
+else
+{
+	<div class="thread-row @(LatestThreadMessage.Flags!.Value.HasFlag(MessageFlags.Seen) ? "seen" : "")">
+		<input type="checkbox" checked="@IsChecked" @onchange="OnCheckUncheck" />
+		<div class="cols" @onclick="OnClick">
+			<div class="from">@LatestThreadMessage.Envelope.From.Mailboxes.First().Name</div>
+			<div class="preview-text">@RemoveInjectedUrl(LatestThreadMessage.PreviewText)</div>
+			<div class="date">@LatestThreadMessage.Date.DateTime.ToShortDateString()</div>
+		</div>
+	</div>
+}
+
+@code {
+	[Parameter]
+	public IMessageSummary LatestThreadMessage { get; set; } = null!;
+
+	[Parameter]
+	public bool IsChecked { get; set; }
+
+	[Parameter]
+	public EmailManager EmailManager { get; set; } = null!;
+
+	[Parameter]
+	public EventCallback OnClick { get; set; }
+
+	[Parameter]
+	public EventCallback OnCheckUncheck { get; set; }
+
+	private string RemoveInjectedUrl(string text)
+	{
+		var fromAddress = LatestThreadMessage.Envelope.From.Mailboxes.First().Address;
+		if (fromAddress != EmailManager.EmailAddress)
+		{// email was not sent from this app
+			return text;
+		}
+
+		var tagName = "requested_item_url";
+
+		var openTagIndex = text.IndexOf($"<{tagName}>");
+		if (openTagIndex == -1)
+		{// there isn't injected url
+			return text;
+		}
+		var openTagLen = tagName.Length + 2; // +2 for <>
+
+		var closeTagIndex = text.IndexOf($"</{tagName}>");
+		var closeTagLen = tagName.Length + 3; // +3 for </>
+
+		var injectedInfoLen = (closeTagIndex + closeTagLen) - openTagIndex; // open, end tag and url between them
+		var textWithoutInjectedUrl = text.Remove(openTagIndex, injectedInfoLen);
+
+		return textWithoutInjectedUrl;
+	}
+}
