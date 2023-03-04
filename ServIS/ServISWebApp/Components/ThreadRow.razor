@@ -6,17 +6,21 @@
 }
 else
 {
-	<div class="thread-row @(LatestThreadMessage.Flags!.Value.HasFlag(MessageFlags.Seen) ? "seen" : "")">
+	<div class="thread-row @(seen ? "seen" : "")">
 		<input type="checkbox" checked="@IsChecked" @onchange="OnCheckUncheck" />
 		<div class="cols" @onclick="OnClick">
-			<div class="from">@LatestThreadMessage.Envelope.From.Mailboxes.First().Name</div>
-			<div class="preview-text">@RemoveInjectedUrl(LatestThreadMessage.PreviewText)</div>
-			<div class="date">@LatestThreadMessage.Date.DateTime.ToShortDateString()</div>
+			<div class="from @(seen ? "" : "bold")">@LatestThreadMessage.Envelope.From.Mailboxes.First().Name</div>
+			<div class="preview-text">
+				<span class="subject @(seen ? "" : "bold")">@LatestThreadMessage.NormalizedSubject</span>-@RemoveInjectedUrl(LatestThreadMessage.PreviewText)
+			</div>
+			<div class="date @(seen ? "" : "bold")">@LatestThreadMessage.Date.DateTime.ToShortDateString()</div>
 		</div>
 	</div>
 }
 
 @code {
+	private bool seen;
+
 	[Parameter]
 	public IMessageSummary LatestThreadMessage { get; set; } = null!;
 
@@ -31,6 +35,16 @@ else
 
 	[Parameter]
 	public EventCallback OnCheckUncheck { get; set; }
+
+	protected override void OnParametersSet()
+	{
+		base.OnParametersSet();
+
+		if (LatestThreadMessage.Flags.HasValue)
+		{
+			seen = LatestThreadMessage.Flags.Value.HasFlag(MessageFlags.Seen);
+		}
+	}
 
 	private string RemoveInjectedUrl(string text)
 	{

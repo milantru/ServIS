@@ -58,6 +58,12 @@
 	overflow: hidden;
 	text-overflow: clip;
 	margin-top: 1px; /* without this rule the overflown text is visible */
+	color: #555555;
+}
+
+.subject {
+	white-space: nowrap;
+	color: black;
 }
 
 .date {
@@ -65,4 +71,8 @@
 	position: absolute;
 	right: 5px;
 	justify-content: flex-end;
+}
+
+.bold {
+	font-weight: 600;
 }
