@@ -1,0 +1,192 @@
+﻿@inject SfDialogService dialogService
+@using MailKit;
+
+@if (Threads is null)
+{
+	<p>Načítava sa...</p>
+}
+else if (Threads.Count == 0)
+{
+	<p>Nemáte žiadne správy.</p>
+}
+else
+{
+	<div>
+		<div class="btns">
+			<CheckSquareIconButton UseMinus="@(CheckedThreads.Count > 0 && CheckedThreads.Count < Threads.Count)" 
+								   OnClick="CheckUncheckAllThreads" />
+			<ReloadIconButton OnClick="OnReload" />
+	
+			@if (CheckedThreads.Count > 0)
+			{
+				<DeleteIconButton OnClick="DeleteSelectedThreadsAsync" />
+
+				@* It is ok to cast to bool, null is returned only if 
+				there are no checked threads, but we check it here in if. *@
+				<MarkAsReadUnreadIconButton ShowOpenEnvelopeIcon="@((bool)ShouldMarkAsRead()!)" 
+											OnClick="MarkAsReadUnreadAsync" />
+			}
+		</div>
+		<div class="thread-rows">
+			@for (int i = Threads.Count - 1; i >= 0; i--)
+			{
+				var thread = Threads[i];
+				<ThreadRow LatestThreadMessage="@thread.Messages.Last()"
+						   IsChecked="@(CheckedThreads.Contains(thread))"
+						   EmailManager="@EmailManager"
+						   OnClick="async () => await OnThreadClick.InvokeAsync(thread)" 
+						   OnCheckUncheck="() => CheckUncheckThread(thread)" />
+			}
+		</div>
+	</div>
+}
+
+@code {
+	[Parameter]
+	public List<Thread> Threads { get; set; } = null!;
+
+	[Parameter]
+	public EventCallback<List<Thread>> ThreadsChanged { get; set; }
+
+	[Parameter]
+	public EmailManager EmailManager { get; set; } = null!;
+
+	[Parameter]
+	public EventCallback<Thread> OnThreadClick { get; set; }
+
+	[Parameter]
+	public EventCallback OnReload { get; set; }
+
+	private List<Thread> CheckedThreads { get; set; } = new();
+
+	private void CheckUncheckThread(Thread thread)
+	{
+		if (CheckedThreads.Contains(thread))
+		{
+			CheckedThreads.Remove(thread);
+		}
+		else
+		{
+			CheckedThreads.Add(thread);
+		}
+	}
+
+	private void CheckUncheckAllThreads()
+	{
+		if (CheckedThreads.Count == 0)
+		{
+			CheckedThreads.AddRange(Threads);
+		}
+		else
+		{
+			CheckedThreads.Clear();
+		}
+	}
+
+	private async Task DeleteSelectedThreadsAsync()
+	{
+		var dialogButtonOptions = new DialogButtonOptions { Content = "Zrušiť" };
+		var dialogOptions = new DialogOptions
+			{
+				ShowCloseIcon = true,
+				CancelButtonOptions = dialogButtonOptions
+			};
+		var deletionConfirmed = await dialogService.ConfirmAsync(
+			"Naozaj chcete vymazať všetky vybrané správy?", "Vymazať", dialogOptions
+		);
+		if (!deletionConfirmed)
+		{
+			return;
+		}
+
+		foreach (var thread in CheckedThreads)
+		{
+			foreach (var message in thread.Messages)
+			{
+				await EmailManager.DeleteEmailAsync(message.UniqueId);
+			}
+			Threads.Remove(thread);
+		}
+		CheckedThreads.Clear();
+
+		await ThreadsChanged.InvokeAsync(Threads);
+	}
+
+	private bool? ShouldMarkAsRead()
+	{
+		if (CheckedThreads.Count == 0)
+		{
+			return null; // there is no message to be marked as (un)read
+		}
+
+		// I assume every thread has to have at least 1 message, so it is OK to use `!`
+		bool firstIsRead = CheckedThreads[0].Messages.Last().Flags!.Value.HasFlag(MessageFlags.Seen);
+		for (int i = 1; i < CheckedThreads.Count; i++)
+		{
+			var anotherIsRead = CheckedThreads[i].Messages.Last().Flags!.Value.HasFlag(MessageFlags.Seen);
+			if (firstIsRead != anotherIsRead)
+			{
+				return true;
+			}
+		}
+
+		return !firstIsRead;
+	}
+
+	private async Task MarkAsReadUnreadAsync()
+	{
+		var shouldMarkAsRead = ShouldMarkAsRead();
+		if (!shouldMarkAsRead.HasValue)
+		{
+			return;
+		}
+
+		foreach (var thread in CheckedThreads)
+		{
+			var lastMessage = thread.Messages.Last();
+			if (shouldMarkAsRead.Value == lastMessage.Flags!.Value.HasFlag(MessageFlags.Seen))
+			{
+				/* If we want to mark message as read and it is already read, 
+				 * then why bother sending request for marking it as read 
+				 * (the same goes for unread). */
+				continue;
+			}
+
+			if (shouldMarkAsRead.Value)
+			{
+				if (thread.Messages.Count > 1 && !thread.Messages[thread.Messages.Count - 2].Flags!.Value.HasFlag(MessageFlags.Seen))
+				{
+					/* Special case...
+					* Normally, when we only use the app, looking at and marking the last message is enough.
+					* But imagine situation... There are multiple emails in the same thread
+					* that are unread. In the app we check the thread and mark it as read. In the app everything
+					* should look fine. However, IF we decide to look at gmail we might see something weird.
+					* The last message in the thread is read but the previous ones (of the same thread) are unread.
+					* And this behavior is not desired. Thus, this special case if statement was made...
+					* If the last message of the thread should be marked as read and the previous (the penultimate) one
+					* is already read then only the last one needs to be marked, bit if it is NOT read then we
+					* mark every message in the thread as read.
+					*
+					* This special case needs to be solved only when we are marking as read, marking as unread doesn't
+					* need this behavior because when we mark checked thread (message) as unread, only the last message
+					* is marked as unread (it is sufficient, this is how the app works, and it doesn't look weird on gmail).
+					*/
+					var uids = thread.Messages.Select(m => m.UniqueId).ToList();
+					await EmailManager.MarkEmailAsReadAsync(uids);
+					thread.Messages = (await EmailManager.GetMessageSummariesAsync(uids)).ToList();
+					await ThreadsChanged.InvokeAsync(Threads);
+					return;
+				}
+				
+				await EmailManager.MarkEmailAsReadAsync(lastMessage.UniqueId);
+			}
+			else
+			{
+				await EmailManager.MarkEmailAsUnreadAsync(lastMessage.UniqueId);
+			}
+
+			thread.Messages[thread.Messages.Count - 1] = await EmailManager.GetMessageSummaryAsync(lastMessage.UniqueId);
+			await ThreadsChanged.InvokeAsync(Threads);
+		}
+	}
+}
