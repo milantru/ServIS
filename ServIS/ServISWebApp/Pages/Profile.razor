@@ -26,6 +26,10 @@
 	<TabControl>
 		<AuthorizeView Roles="Administrator">
 			<Authorized>
+				<TabPage TabLabel="Správy">
+					<Messages />
+				</TabPage>
+
 				<TabPage TabLabel="Náhradné diely">
 					<ItemsManagement ItemType="SparePart"
 									 ItemFormType="SparePartForm"
@@ -154,10 +158,6 @@
 							</ItemsManagement>
 						</div>
 					</div>
-				</TabPage>
-
-				<TabPage TabLabel="Správy">
-					<Messages />
 				</TabPage>
 			</Authorized>
 		</AuthorizeView>
