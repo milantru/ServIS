@@ -41,7 +41,7 @@
 	{
 		await base.OnInitializedAsync();
 
-		emailManager = new EmailManager(config["EmailAddress"], config["EmailAppPassword"]);
+		emailManager = new EmailManager(config["EmailName"], config["EmailAddress"], config["EmailAppPassword"]);
 
 		await LoadThreadsAsync();
 
