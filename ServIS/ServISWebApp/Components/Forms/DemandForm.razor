@@ -1,4 +1,5 @@
 ﻿@inject AuthenticationStateProvider authStateProvider
+@inject NavigationManager navMan
 @inject IConfiguration config
 @inject IServISApi api
 @using ServISWebApp.Auth
@@ -10,7 +11,8 @@
 		<DataAnnotationsValidator />
 		<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
 
-		@*There is Context="ctx" just because I was getting an error (it seems EditForm and and AuthorizeView both use 'context' as Context so I had to rename it)*@
+		@* There is Context="ctx" just because I was getting an error (it seems EditForm 
+		   and and AuthorizeView both use 'context' as Context so I had to rename it) *@
 		<AuthorizeView Context="ctx">
 			<NotAuthorized>
 				<div class="row">
@@ -83,10 +85,10 @@
 @code {
 	private bool isFormHidden = true;
 	private EditContext editContext = null!;
-	private EmailSender emailSender = null!;
+	private EmailManager emailManager = null!;
 
 	[EditorRequired, Parameter]
-	public IItem DemandedItem { get; set; } = null!;
+	public string DemandedItemName { get; set; } = null!;
 
 	private DemandForm.Demand DemandInfo { get; set; } = new();
 
@@ -94,8 +96,7 @@
 	{
 		base.OnInitialized();
 
-		var toAddress = config["EmailAddress"];
-		emailSender = new EmailSender(toAddress);
+		emailManager = new EmailManager(config["EmailName"], config["EmailAddress"], config["EmailAppPassword"]);
 	}
 
 	protected override async Task OnInitializedAsync()
@@ -139,10 +140,20 @@
 
 	private async Task _SendFormDataAsync()
 	{
-		var toAddress = DemandInfo.User.Email;
-		var message = DemandInfo.Message;
+		var additionalInfo = $"<requested_item_url>{navMan.Uri}</requested_item_url>";
+		
+		var email = new Email
+			{
+				FromName = $"{DemandInfo.User.Name} {DemandInfo.User.Surname}",
+				FromAddress = DemandInfo.User.Email,
+				ToName = "ServiS App",
+				ToAddress = emailManager.EmailAddress,
+				DateTime = DateTime.Now,
+				Subject = $"Dopyt: {DemandedItemName}",
+				Text = additionalInfo + DemandInfo.Message
+			};
 
-		await emailSender.SendAsync(toAddress, message);
+		await emailManager.SendEmailAsync(email);
 	}
 
 	private class Demand
