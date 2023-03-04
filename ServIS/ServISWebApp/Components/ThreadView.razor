@@ -1,0 +1,206 @@
+﻿@using MailKit;
+
+@if (Emails is null)
+{
+	<p>Načítava sa...</p>
+}
+else if (Emails.Count > 0)
+{
+	@* I assume there is always at least 1 email in `Emails`
+		(because I doubt thread can exist without at least 1 message),
+		so `else` would be sufficient, right? Then why `else if`...
+		Well, due to some actions like deleting there can be (temporary) state (before back action triggers)
+		when`Emails.Count` is indeed 0 and following code would end up throwing an exception.
+		This `else if ` is simple solution of this problem. *@
+	<div>
+		<div class="top-panel">
+			<BackIconButton OnClick="OnBack" />
+			<DeleteIconButton OnClick="DeleteThreadAsync" />
+			<MarkAsReadUnreadIconButton OnClick="MarkAsUnreadAsync" />
+
+			<span class="subject">@Emails.Last().Subject</span>
+		</div>
+		<div>
+			@if (isUrlExtractionComplete)
+			{
+				<div class="first-msg-container">
+					<div class="msg-part">
+						<Message Email="@Emails.First()" />
+					</div>
+					<div class="required-item-window-part">
+						<a href="@requestedItemUrl" target="_blank"><iframe src="@requestedItemUrl"></iframe></a>
+					</div>
+				</div>
+				@if (Emails.Count > 1)
+				{
+					@foreach (var email in Emails.Skip(1))
+					{
+						<Message Email="@email" />
+					}
+				}
+			}
+			else
+			{
+				<p>Načítava sa...</p>
+			}
+		</div>
+		<div class="reply-container">
+			<textarea @bind="ReplyText"></textarea>
+			<button @onclick="SendReplyAsync">Poslať</button>
+		</div>
+	</div>
+}
+
+@code {
+	private string? requestedItemUrl;
+	/* `isUrlExtractionComplete` exists to solve the problem with extracting
+		*  the url from the first message. There was a problem that injected url
+		*  blinked (was seen by the user) and then disappeared (when the extraction was
+		*  complete). This field ensures that this blink of injected url doesn't occur. */
+	private bool isUrlExtractionComplete;
+
+	[Parameter]
+	public List<IMessageSummary>? Messages { get; set; }
+
+	// this parameter is here so we dont have to make new email manager each time we open some thread
+	[Parameter]
+	public EmailManager EmailManager { get; set; } = null!;
+
+	[Parameter]
+	public EventCallback OnBack { get; set; }
+
+	[Parameter]
+	public EventCallback OnSent { get; set; }
+
+	[Parameter]
+	public EventCallback OnReloadRequest { get; set; }
+
+	private List<Email> Emails { get; set; } = null!;
+
+	private string ReplyText { get; set; } = string.Empty;
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+
+		var lastMessageIsUnread = Messages is not null && 
+		(Messages.Last().Flags.HasValue && !Messages.Last().Flags!.Value.HasFlag(MessageFlags.Seen));
+		if (lastMessageIsUnread)
+		{
+			await MarkThreadAsReadAsync();
+		}
+	}
+
+	protected override async Task OnParametersSetAsync()
+	{
+		await base.OnParametersSetAsync();
+
+		await LoadEmailsAsync();
+
+		ExtractRequestedItemUrl();
+	}
+
+	private async Task LoadEmailsAsync()
+	{
+		if (Messages is null)
+		{
+			return;
+		}
+		var uids = Messages.Select(msgSumm => msgSumm.UniqueId).ToList();
+		Emails = await EmailManager.GetEmailsAsync(uids);
+	}
+
+	private async Task SendReplyAsync()
+	{
+		// Uid of `replyEmail` is invalid
+		var replyEmail = await EmailManager.ReplyToAsync(Emails.Last(), ReplyText);
+
+		ReplyText = string.Empty;
+
+		await OnSent.InvokeAsync();
+	}
+
+	private void ExtractRequestedItemUrl()
+	{
+		if (Emails == null || Emails.Count == 0)
+		{
+			requestedItemUrl = null;
+			return;
+		}
+
+		var firstEmail = Emails.First();
+		/* We want to know whether the email was sent from our app, and therefore if it is
+		 * safe to parse. We look to `IMessageSummary` instead of `Email` because in `Email`
+		 * there is correct from addres (by correct I mean here that it is the address of the user
+		 * who sent the message). On the other hand, in `IMessageSummary` there is from address
+		 * of the sender (what I'm trying to say is that when user sends message from the app, it
+		 * is sent from us/our app/from our email address, that's why in `IMessageSummary` there is
+		 * our email address in from field).
+		 * Also, it is ok to use `!` here because of the preceding `if`. `Emails` is made from `Messages`.
+		 * It means that if `Emails` is not empty, so is `Messages`. */
+		var fromAddress = Messages!.First().Envelope.From.Mailboxes.First().Address;
+		if (fromAddress != EmailManager.EmailAddress)
+		{// email was not sent from this app
+			requestedItemUrl = null;
+			isUrlExtractionComplete = true;
+			return;
+		}
+		var text = firstEmail.Text;
+
+		var tagName = "requested_item_url";
+
+		var openTagIndex = text.IndexOf($"<{tagName}>");
+		if (openTagIndex == -1)
+		{// there isn't url
+			requestedItemUrl = null;
+			isUrlExtractionComplete = true;
+			return;
+		}
+		var openTagLen = tagName.Length + 2; // +2 for <>
+
+		var closeTagIndex = text.IndexOf($"</{tagName}>");
+		var closeTagLen = tagName.Length + 3; // +3 for </>
+
+		var urlIndex = openTagIndex + openTagLen;
+		var urlLen = closeTagIndex - urlIndex;
+		requestedItemUrl = text.Substring(urlIndex, urlLen);
+
+		var injectedInfoLen = (closeTagIndex + closeTagLen) - openTagIndex; // open, end tag and url between them
+		firstEmail.Text = text.Remove(openTagIndex, injectedInfoLen);
+
+		isUrlExtractionComplete = true;
+	}
+
+	private async Task DeleteThreadAsync()
+	{
+		var uids = Emails.Select(e => e.Uid).ToList();
+
+		await EmailManager.DeleteEmailAsync(uids);
+		Emails.Clear();
+		Messages!.Clear();
+
+		await OnReloadRequest.InvokeAsync();
+
+		await OnBack.InvokeAsync();
+
+	}
+
+	private async Task MarkThreadAsReadAsync()
+	{
+		// Called only from `OnInitializedAsync` (where check exists) so it is OK to use `!`
+		var uids = Messages!.Select(msgSumm => msgSumm.UniqueId).ToList();
+		await EmailManager.MarkEmailAsReadAsync(uids);
+		await OnReloadRequest.InvokeAsync();
+	}
+
+	private async Task MarkAsUnreadAsync()
+	{
+		var lastEmail = Emails.Last();
+
+		await EmailManager.MarkEmailAsUnreadAsync(lastEmail);
+
+		await OnReloadRequest.InvokeAsync();
+
+		await OnBack.InvokeAsync();
+	}
+}

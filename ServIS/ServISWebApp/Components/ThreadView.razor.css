@@ -1,0 +1,104 @@
+﻿::deep .top-panel * {
+	margin: 0 1px 5px 0;
+}
+
+.subject {
+	margin-left: 3px;
+	font-size: large;
+}
+
+.first-msg-container {
+	display: flex;
+	flex-wrap: nowrap;
+	min-height: 350px;
+}
+
+.msg-part {
+	width: 50%;
+	min-height: 100%;
+	padding-right: 3px;
+}
+
+.required-item-window-part {
+	width: 50%;
+	min-height: 100%;
+}
+
+	.required-item-window-part > a {
+		display: block;
+		width: 100%;
+		height: 100%;
+	}
+
+		.required-item-window-part > a > iframe {
+			width: 100%;
+			height: 100%;
+			pointer-events: none;
+			border: 1px solid grey;
+			border-radius: 5px;
+		}
+
+		.required-item-window-part > a:hover > iframe {
+			border: 1px solid #ff8000;
+		}
+
+.reply-container {
+	margin-top: 10px;
+}
+
+	.reply-container textarea {
+		width: 100%;
+		height: 23vh;
+		border-radius: 5px;
+		margin: 2px 0 4px 0;
+		padding: 9px 12px;
+	}
+
+		.reply-container textarea:focus {
+			outline-color: #ff880088;
+		}
+
+	.reply-container button {
+		border: 1px solid #555555;
+		border-radius: 25px;
+		color: #555555;
+		padding: 4px 14px;
+		margin: 1px 0 13px 0;
+	}
+
+		.reply-container button:hover {
+			border: 1px solid #ff8800;
+			color: #ff8800;
+		}
+
+@media (max-width: 1330px) {
+	.first-msg-container {
+		flex-wrap: wrap;
+		flex-direction: column-reverse;
+	}
+
+	.msg-part {
+		width: 100%;
+	}
+
+	.required-item-window-part {
+		width: 641px; /* this is set accoring to breaking point when navbar goes up */
+		height: 320px;
+		margin-left: auto;
+		margin-right: auto;
+	}
+
+		.required-item-window-part > a {
+			/* For some reason even though outside of media query this "a" element 
+			has height set to 100% it is not stretching... That's why it is here
+			manually set to the same value as height in rule above (its container
+			.required-item-window-part) */
+			height: 320px;
+		}
+}
+
+@media (max-width: 641px) {
+	.required-item-window-part {
+		max-width: 100%;
+	}
+}
