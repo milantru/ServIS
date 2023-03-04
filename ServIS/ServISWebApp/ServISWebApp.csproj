@@ -19,11 +19,13 @@
 
   <ItemGroup>
     <None Remove="Components\MainCard.razor.css" />
+    <None Remove="Components\ThreadRow.razor.css" />
     <None Remove="Pages\Index.razor.css" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="Components\MainCard.razor.css" />
+    <Content Include="Components\ThreadRow.razor.css" />
     <Content Include="Pages\Index.razor.css" />
   </ItemGroup>
 
