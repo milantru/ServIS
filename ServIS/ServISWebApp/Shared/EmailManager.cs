@@ -17,10 +17,12 @@ namespace ServISWebApp.Shared
 															MessageSummaryItems.Flags |
 															MessageSummaryItems.Envelope;
 
+		public string EmailName { get; private init; } = null!;
 		public string EmailAddress { get; private init; } = null!;
 
-		public EmailManager(string emailAddress, string emailPassword)
+		public EmailManager(string emailName, string emailAddress, string emailPassword)
 		{
+			EmailName = emailName;
 			EmailAddress = emailAddress;
 			this.emailPassword = emailPassword;
 		}
