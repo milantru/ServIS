@@ -1,5 +1,4 @@
-﻿@inject AuthenticationStateProvider authStateProvider
-@inject NavigationManager navMan
+﻿@inject NavigationManager navMan
 @inject IConfiguration config
 @inject IServISApi api
 @using ServISWebApp.Auth
@@ -87,6 +86,9 @@
 	private EditContext editContext = null!;
 	private EmailManager emailManager = null!;
 
+	[CascadingParameter]
+	public Task<AuthenticationState> AuthenticationStateAsync { get; set; } = null!;
+
 	[EditorRequired, Parameter]
 	public string DemandedItemName { get; set; } = null!;
 
@@ -99,12 +101,11 @@
 		emailManager = new EmailManager(config["EmailName"], config["EmailAddress"], config["EmailAppPassword"]);
 	}
 
-	protected override async Task OnInitializedAsync()
+	protected override async Task OnParametersSetAsync()
 	{
-		await base.OnInitializedAsync();
+		await base.OnParametersSetAsync();
 
-		var customAuthStateProvider = (CustomAuthenticationStateProvider)authStateProvider;
-		var authState = await customAuthStateProvider.GetAuthenticationStateAsync();
+		var authState = await AuthenticationStateAsync;
 
 		var isUserAuthenticated = authState?.User.Identity?.IsAuthenticated ?? false;
 		if (isUserAuthenticated)
@@ -120,6 +121,10 @@
 			{
 				throw new Exception($"Failed getting user with id '{userId}'.");
 			}
+		}
+		else
+		{
+			DemandInfo = new();
 		}
 	}
 
