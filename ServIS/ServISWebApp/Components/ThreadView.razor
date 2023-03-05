@@ -45,8 +45,8 @@ else if (Emails.Count > 0)
 			}
 		</div>
 		<div class="reply-container">
-			<textarea @bind="ReplyText"></textarea>
-			<button @onclick="SendReplyAsync">Poslať</button>
+			<textarea @bind="ReplyText" @bind:event="oninput"></textarea>
+			<button disabled="@(ReplyText.Length == 0)" @onclick="SendReplyAsync">Poslať</button>
 		</div>
 	</div>
 }
@@ -112,10 +112,19 @@ else if (Emails.Count > 0)
 
 	private async Task SendReplyAsync()
 	{
-		// Uid of `replyEmail` is invalid
-		var replyEmail = await EmailManager.ReplyToAsync(Emails.Last(), ReplyText);
+		if (ReplyText.Length == 0)
+		{
+			return;
+		}
 
+		/* There was a problem that admin could double click on send button and reply 
+		 * was sent twice. Checking for reply length and using tmp variable is enough
+		 * to solve the problem. */
+		var replyTextTmp = ReplyText;
 		ReplyText = string.Empty;
+
+		// Uid of `replyEmail` is invalid
+		var replyEmail = await EmailManager.ReplyToAsync(Emails.Last(), replyTextTmp);
 
 		await OnSent.InvokeAsync();
 	}

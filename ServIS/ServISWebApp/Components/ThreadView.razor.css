@@ -59,16 +59,21 @@
 		}
 
 	.reply-container button {
+		color: #555555;
 		border: 1px solid #555555;
 		border-radius: 25px;
-		color: #555555;
 		padding: 4px 14px;
 		margin: 1px 0 13px 0;
 	}
 
 		.reply-container button:hover {
-			border: 1px solid #ff8800;
 			color: #ff8800;
+			border: 1px solid #ff8800;
+		}
+
+		.reply-container button[disabled] {
+			color: #555555;
+			border: 1px solid #555555;
 		}
 
 @media (max-width: 1330px) {
