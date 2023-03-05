@@ -4,10 +4,11 @@
 @using ServISWebApp.Auth
 @using ServISWebApp.CssProviders
 @using System.Security.Claims
+@using System.ComponentModel.DataAnnotations;
 
 <div id="demand-form" class="w-75 servis-border" style="display: @(isFormHidden ? "none" : "block");">
-	<EditForm EditContext="editContext" Model="DemandInfo" OnValidSubmit="_SendFormDataAsync" class="form-space-items">
-		<DataAnnotationsValidator />
+	<EditForm Model="DemandInfo" OnValidSubmit="SendFormDataAsync" class="form-space-items">
+		<ObjectGraphDataAnnotationsValidator />
 		<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
 
 		@* There is Context="ctx" just because I was getting an error (it seems EditForm 
@@ -71,6 +72,7 @@
 				<div class="form-group w-100">
 					<label>Správa:</label>
 					<InputTextArea @bind-Value="DemandInfo.Message" placeholder="Dobrý deň. Mal by som záujem/Chcel by som sa opýtať..." rows="7" />
+					<ValidationMessage For="@(() => DemandInfo.Message)" />
 				</div>
 			</div>
 		</div>
@@ -83,8 +85,8 @@
 
 @code {
 	private bool isFormHidden = true;
-	private EditContext editContext = null!;
 	private EmailManager emailManager = null!;
+	private AuthenticationState authState = null!;
 
 	[CascadingParameter]
 	public Task<AuthenticationState> AuthenticationStateAsync { get; set; } = null!;
@@ -105,7 +107,21 @@
 	{
 		await base.OnParametersSetAsync();
 
-		var authState = await AuthenticationStateAsync;
+		authState = await AuthenticationStateAsync;
+
+		await ResetDemandInfoAsync();
+	}
+
+	public void ToggleForm()
+	{
+		isFormHidden = !isFormHidden;
+
+		StateHasChanged();
+	}
+
+	private async Task ResetDemandInfoAsync()
+	{
+		DemandInfo = new();
 
 		var isUserAuthenticated = authState?.User.Identity?.IsAuthenticated ?? false;
 		if (isUserAuthenticated)
@@ -122,48 +138,36 @@
 				throw new Exception($"Failed getting user with id '{userId}'.");
 			}
 		}
-		else
-		{
-			DemandInfo = new();
-		}
 	}
 
-	public void ToggleForm()
-	{
-		isFormHidden = !isFormHidden;
-
-		StateHasChanged();
-	}
-
-	public async Task SendFormDataAsync()
-	{
-		if (editContext.Validate())
-		{
-			await _SendFormDataAsync();
-		}
-	}
-
-	private async Task _SendFormDataAsync()
+	private async Task SendFormDataAsync()
 	{
 		var additionalInfo = $"<requested_item_url>{navMan.Uri}</requested_item_url>";
-		
+
 		var email = new Email
 			{
 				FromName = $"{DemandInfo.User.Name} {DemandInfo.User.Surname}",
 				FromAddress = DemandInfo.User.Email,
-				ToName = "ServiS App",
+				ToName = emailManager.EmailName,
 				ToAddress = emailManager.EmailAddress,
 				DateTime = DateTime.Now,
 				Subject = $"Dopyt: {DemandedItemName}",
 				Text = additionalInfo + DemandInfo.Message
 			};
 
+		await ResetDemandInfoAsync();
+
 		await emailManager.SendEmailAsync(email);
 	}
 
 	private class Demand
 	{
-		public User User { get; set; } = new();
+		/* We have to set some dummy values to `Username` and `Password` properties
+		 * or else form's validation would stop us from submitting. */
+		[ValidateComplexType]
+		public User User { get; set; } = new() { Username = "DemandFormDummyUsername", Password = "DemandFormDummyPassword123" };
+
+		[Required(AllowEmptyStrings = false, ErrorMessage = "Správa nesmie byť prázdna.")]
 		public string Message { get; set; } = string.Empty;
 	}
 }
