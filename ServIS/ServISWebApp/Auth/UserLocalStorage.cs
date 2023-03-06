@@ -2,11 +2,11 @@
 
 namespace ServISWebApp.Auth
 {
-	public class UserSessionStorage
+	public class UserLocalStorage
 	{
 		public User User { get; set; }
 
-		public UserSessionStorage(User user)
+		public UserLocalStorage(User user)
 		{
 			User = user;
 		}

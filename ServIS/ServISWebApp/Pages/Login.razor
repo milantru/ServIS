@@ -63,7 +63,7 @@
 		}
 
 		var customAuthStateProvider = (CustomAuthenticationStateProvider)authStateProvider;
-		await customAuthStateProvider.UpdateAuthenticationState(new UserSessionStorage(user));
+		await customAuthStateProvider.UpdateAuthenticationState(new UserLocalStorage(user));
 
 		navMan.NavigateTo("/", true);
 	}

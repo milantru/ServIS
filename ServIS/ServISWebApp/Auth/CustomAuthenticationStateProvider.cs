@@ -7,30 +7,31 @@ namespace ServISWebApp.Auth
 {
 	public class CustomAuthenticationStateProvider : AuthenticationStateProvider
 	{
-		private readonly ProtectedSessionStorage sessionStorage;
+		private readonly ProtectedLocalStorage localStorage;
 		private ClaimsPrincipal anonymous = new ClaimsPrincipal(new ClaimsIdentity());
 
 		public CustomAuthenticationStateProvider(ProtectedSessionStorage sessionStorage)
+			ProtectedLocalStorage localStorage,
 		{
-			this.sessionStorage = sessionStorage;
+			this.localStorage = localStorage;
 		}
 
 		public override async Task<AuthenticationState> GetAuthenticationStateAsync()
 		{
 			try
 			{
-				var userSessionStorageResult = await sessionStorage.GetAsync<UserSessionStorage>(nameof(UserSessionStorage));
-				var userSessionStorage = userSessionStorageResult.Success ? userSessionStorageResult.Value : null;
-				if (userSessionStorage == null)
+				var userLocalStorageResult = await localStorage.GetAsync<UserLocalStorage>(nameof(UserLocalStorage));
+				var userLocalStorage = userLocalStorageResult.Success ? userLocalStorageResult.Value : null;
+				if (userLocalStorage == null)
 				{
 					return await Task.FromResult(new AuthenticationState(anonymous));
 				}
 
 				var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim>
 				{
-					new Claim(ClaimTypes.PrimarySid, userSessionStorage.User.Id.ToString()),
+					new Claim(ClaimTypes.PrimarySid, userLocalStorage.User.Id.ToString()),
 
-					new Claim(ClaimTypes.Role, userSessionStorage.User.Role)
+					new Claim(ClaimTypes.Role, userLocalStorage.User.Role)
 				}, "CustomAuth"));
 
 				return await Task.FromResult(new AuthenticationState(claimsPrincipal));
@@ -41,23 +42,23 @@ namespace ServISWebApp.Auth
 			}
 		}
 
-		public async Task UpdateAuthenticationState(UserSessionStorage? userSessionStorage)
+		public async Task UpdateAuthenticationState(UserLocalStorage? userLocalStorage)
 		{
 			ClaimsPrincipal claimsPrincipal;
 
-			if (userSessionStorage != null)
+			if (userLocalStorage != null)
 			{// login
-				await sessionStorage.SetAsync(nameof(UserSessionStorage), userSessionStorage);
+				await localStorage.SetAsync(nameof(UserLocalStorage), userLocalStorage);
 				claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim>
 				{
-					new Claim(ClaimTypes.PrimarySid, userSessionStorage.User.Id.ToString()),
+					new Claim(ClaimTypes.PrimarySid, userLocalStorage.User.Id.ToString()),
 
-					new Claim(ClaimTypes.Role, userSessionStorage.User.Role)
+					new Claim(ClaimTypes.Role, userLocalStorage.User.Role)
 				}, "CustomAuth"));
 			}
 			else
 			{// logout
-				await sessionStorage.DeleteAsync(nameof(UserSessionStorage));
+				await localStorage.DeleteAsync(nameof(UserLocalStorage));
 				claimsPrincipal = anonymous;
 			}
 
