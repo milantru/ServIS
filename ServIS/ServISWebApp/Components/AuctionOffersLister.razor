@@ -1,0 +1,63 @@
+﻿@inject IServISApi api
+@inject SfDialogService dialogService
+
+@if (Title != null)
+{
+	<h3>@Title</h3>
+}
+
+@if (AuctionOffers == null)
+{
+	<p>Načítava sa...</p>
+}
+else if (AuctionOffers.Count == 0)
+{
+	<p>Momentálne neexistujú žiadne aukčné ponuky.</p>
+}
+else
+{
+	<div class="d-flex flex-wrap justify-content-around my-container">
+		@foreach (var auctionOffer in AuctionOffers)
+		{
+			<AuctionOfferCard AuctionOffer="auctionOffer"
+								OnDelete="async () => await DeleteAuctionOfferAsync(auctionOffer)" />
+		}
+	</div>
+}
+
+@code {
+	[Parameter]
+	public string Title { get; set; } = null!;
+
+	private List<AuctionOffer> AuctionOffers { get; set; } = null!;
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+
+		AuctionOffers = await api.GetAuctionOffersAsync();
+	}
+
+	private async Task DeleteAuctionOfferAsync(AuctionOffer auctionOffer)
+	{
+		var dialogButtonOptions = new DialogButtonOptions { Content = "Zrušiť" };
+		var dialogOptions = new DialogOptions
+			{
+				ShowCloseIcon = true,
+				CancelButtonOptions = dialogButtonOptions
+			};
+		var isDeletionConfirmed = await dialogService.ConfirmAsync(
+			content: "Naozaj chcete túto aukčnú ponuku vymazať natrvalo?",
+			title: "Vymazať aukčnú ponuku natrvalo",
+			options: dialogOptions
+		);
+		if (!isDeletionConfirmed)
+		{
+			return;
+		}
+
+		await api.DeleteAuctionOfferAsync(auctionOffer);
+
+		AuctionOffers.Remove(auctionOffer);
+	}
+}
