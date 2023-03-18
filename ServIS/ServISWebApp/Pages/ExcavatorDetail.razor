@@ -3,15 +3,17 @@
 @inject IServISApi api
 @inject NavigationManager navMan
 
-@if (Excavator != null)
+@if (excavatorExists && Excavator != null)
 {
 	<div class="container">
-		<div class="row">
-			<div class="col">
-				<PhotoSlider Images="GetImages()" />
+		<div class="row img-and-desc-container">
+			<div class="col img-container">
+				<div class="img">
+					<PhotoSlider Images="GetImages()" />
+				</div>
 			</div>
 
-			<div class="col">
+			<div class="col desc">
 				<h4>@Excavator.Name</h4>
 
 				<p>@Excavator.Description</p>
@@ -50,8 +52,13 @@
 		</AuthorizeView>
 	</div>
 }
+else if (!excavatorExists)
+{
+	<p>Tento stroj neexistuje.</p>
+}
 
 @code {
+	private bool excavatorExists = true;
 	private DemandForm demandForm = null!;
 
 	[Parameter]
@@ -69,7 +76,8 @@
 		}
 		catch
 		{
-			throw new Exception($"Excavator with id '{ExcavatorId}' was not found.");
+			Console.WriteLine($"Excavator with id '{ExcavatorId}' was not found.");
+			excavatorExists = false;
 		}
 	}
 

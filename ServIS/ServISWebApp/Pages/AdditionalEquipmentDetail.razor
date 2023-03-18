@@ -3,15 +3,17 @@
 @inject IServISApi api
 @inject NavigationManager navMan
 
-@if (AdditionalEquipment != null)
+@if (additionalEquipmentExists && AdditionalEquipment != null)
 {
 	<div class="container">
-		<div class="row">
-			<div class="col">
-				<PhotoSlider Images="GetImages()" />
+		<div class="row img-and-desc-container">
+			<div class="col img-container">
+				<div class="img">
+					<PhotoSlider Images="GetImages()" />
+				</div>
 			</div>
 
-			<div class="col">
+			<div class="col desc">
 				<h4>@AdditionalEquipment.Name</h4>
 
 				<p>@AdditionalEquipment.Description</p>
@@ -54,8 +56,13 @@
 		</AuthorizeView>
 	</div>
 }
+else if (!additionalEquipmentExists)
+{
+	<p>Toto prídavné zariadenie neexistuje.</p>
+}
 
 @code {
+	private bool additionalEquipmentExists = true;
 	private DemandForm demandForm = null!;
 
 	[Parameter]
@@ -73,7 +80,8 @@
 		}
 		catch
 		{
-			throw new Exception($"AdditionalEquipment with id '{AdditionalEquipmentId}' was not found.");
+			Console.WriteLine($"AdditionalEquipment with id '{AdditionalEquipmentId}' was not found.");
+			additionalEquipmentExists = false;
 		}
 	}
 
