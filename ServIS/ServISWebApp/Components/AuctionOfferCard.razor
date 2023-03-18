@@ -1,0 +1,67 @@
+﻿@implements IDisposable
+@using System.Timers;
+@using ServISWebApp.BackgroundServices;
+
+@if (AuctionOffer is not null)
+{
+	<div class="pos-rel servis-outline card-container">
+		<a href="aukcna-ponuka/@AuctionOffer.Id">
+			<img src="@imgSrc">
+			<div class="panel">
+				<div class="heading">@AuctionOffer.Excavator.Name</div>
+				<div class="countdown servis-outline">@GetCountdown()</div>
+			</div>
+		</a>
+		@if (OnDelete.HasDelegate)
+		{
+			<AuthorizeView Roles="Administrator">
+				<button class="btn btn-danger delete-btn"
+						type="button"
+						@onclick="OnDelete">X</button>
+			</AuthorizeView>
+		}
+	</div>
+}
+
+@code {
+	private string imgSrc = null!;
+
+	[EditorRequired, Parameter]
+	public AuctionOffer AuctionOffer { get; set; } = null!;
+
+	[Parameter]
+	public EventCallback OnDelete { get; set; }
+
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+
+		TimerService.UpdateEverySecondEvent += NotifyStateHasChanged;
+	}
+
+	protected override void OnParametersSet()
+	{
+		base.OnParametersSet();
+
+		var excavatorTitlePhoto = AuctionOffer.Excavator.Photos.First(p => p.IsTitle);
+		imgSrc = FileTools.GetDataUrlBase64String(excavatorTitlePhoto.Photo, "images/jpeg");
+	}
+
+	public void Dispose()
+	{
+		TimerService.UpdateEverySecondEvent -= NotifyStateHasChanged;
+	}
+
+	private async Task NotifyStateHasChanged() => await InvokeAsync(() => StateHasChanged());
+
+	private string GetCountdown()
+	{
+		var timeRemaining = AuctionOffer.OfferEnd - DateTime.Now;
+		if (timeRemaining <= TimeSpan.Zero)
+		{
+			return "Koniec aukcie";
+		}
+
+		return $"{timeRemaining:%d}d {timeRemaining:%h}h {timeRemaining:%m}m {timeRemaining:%s}s";
+	}
+}

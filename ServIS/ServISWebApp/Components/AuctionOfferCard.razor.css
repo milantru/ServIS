@@ -1,0 +1,60 @@
+﻿a {
+	color: black;
+	text-decoration: none;
+}
+
+.card-container {
+	background-color: #cccccc;
+	width: 250px;
+	height: 310px;
+	border-radius: 25px;
+}
+
+	.card-container img {
+		width: 100%;
+		border-top-left-radius: 25px; /* the same value as in .card-container */
+		border-top-right-radius: 25px; /* the same value as in .card-container */
+	}
+
+	.card-container:hover {
+		box-shadow: 1px 1px 3px 0.5px #ff8000, -1px -1px 3px 0.5px #ff8000;
+		transition: box-shadow 0.3s ease-out;
+	}
+
+.panel {
+	position: relative;
+	width: 100%;
+	display: flex;
+	justify-content: center;
+}
+
+.heading {
+	background-color: grey;
+	text-align: center;
+	font-size: 20px;
+	padding: 6px;
+	width: 100%;
+	color: whitesmoke;
+	outline: 1px solid #ff8000;
+}
+
+.countdown {
+	background-color: grey;
+	border-radius: 25px;
+	min-width: 150px;
+	max-width: 250px; /* same as .card-container */
+	text-align: center;
+	padding: 9px 14px;
+	position: absolute;
+	top: 120%;
+	font-size: 18px;
+	color: whitesmoke;
+	font-size: 17px;
+	transition: transform 0.3s ease-out;
+}
+
+.card-container:hover .countdown {
+	box-shadow: 1px 1px 3px 0.2px #ff8000, -1px -1px 3px 0.2px #ff8000; /* same as in .card-container:hover */
+	transition: all 0.3s ease-out; /* same as in .card-container:hover */
+	transform: scale(1.035, 1.035);
+}
