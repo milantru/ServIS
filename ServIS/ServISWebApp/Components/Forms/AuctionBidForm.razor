@@ -1,0 +1,224 @@
+﻿@implements IDisposable
+@inject NavigationManager navMan
+@inject IConfiguration config
+@inject IServISApi api
+@using ServISWebApp.Auth
+@using ServISWebApp.CssProviders
+@using System.Security.Claims
+@using System.ComponentModel.DataAnnotations
+
+@if (editContext != null && !isFormHidden)
+{
+	<div id="auction-bid-form" class="w-75 servis-border">
+		<EditForm EditContext="editContext" OnValidSubmit="SendBidAsync" class="form-space-items">
+			<ObjectGraphDataAnnotationsValidator />
+			<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
+
+			@* There is Context="ctx" just because I was getting an error (it seems EditForm
+			and and AuthorizeView both use 'context' as Context so I had to rename it) *@
+			<AuthorizeView Context="ctx">
+				<NotAuthorized>
+					<div class="row">
+						<div class="form-group w-100">
+							<p id="disclaimer">
+								Ak u nás máte vytvorený účet, prosím prihláste sa <a href="/prihlasovanie">tu</a> a vyhnite sa tak vypĺňaniu údajov o Vás (Meno, Priezvisko...).
+								Ak u nás účet ešte nemáte, zvážte registráciu, ktorú nájdete <a href="/registracia">tu</a>.
+							</p>
+						</div>
+					</div>
+					<div class="row">
+						<div class="d-flex flex-no-wrap">
+							<div class="form-group">
+								<label>Meno:</label>
+								<InputText @bind-Value="AuctionBid.User.Name" />
+								<ValidationMessage For="@(() => AuctionBid.User.Name)" />
+							</div>
+
+							<div class="form-group">
+								<label>Priezvisko:</label>
+								<InputText @bind-Value="AuctionBid.User.Surname" />
+								<ValidationMessage For="@(() => AuctionBid.User.Surname)" />
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="d-flex flex-no-wrap">
+							<div class="form-group">
+								<label>Telefónne číslo:</label>
+								<InputText @bind-Value="AuctionBid.User.PhoneNumber" />
+								<ValidationMessage For="@(() => AuctionBid.User.PhoneNumber)" />
+							</div>
+
+							<div class="form-group">
+								<label>Email:</label>
+								<InputText @bind-Value="AuctionBid.User.Email" />
+								<ValidationMessage For="@(() => AuctionBid.User.Email)" />
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="d-flex">
+							<div class="form-group">
+								<label>Mesto:</label>
+								<InputText @bind-Value="AuctionBid.User.Residence" />
+								<ValidationMessage For="@(() => AuctionBid.User.Residence)" />
+							</div>
+						</div>
+					</div>
+				</NotAuthorized>
+			</AuthorizeView>
+
+			<div class="row">
+				<div class="d-flex">
+					<div class="form-group">
+						<label>Cena, ktorú ponúkate:</label>
+						<InputNumber @bind-Value="AuctionBid.Bid" />
+						<ValidationMessage For="@(() => AuctionBid.Bid)" />
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="form-group">
+					<div id="btn-panel">
+						<SubmitButton Text="Ponúknuť" />
+					</div>
+				</div>
+			</div>
+		</EditForm>
+	</div>
+}
+
+@code {
+	private const int minDiff = 100;
+	private EditContext editContext = null!;
+	private ValidationMessageStore? messageStore;
+	private bool isFormHidden = true;
+	private AuthenticationState authState = null!;
+
+	[CascadingParameter]
+	public Task<AuthenticationState> AuthenticationStateAsync { get; set; } = null!;
+
+	[EditorRequired, Parameter]
+	public string DemandedItemName { get; set; } = null!;
+
+	[EditorRequired, Parameter]
+	public AuctionOffer AuctionOffer { get; set; } = null!;
+
+	private AuctionBid AuctionBid { get; set; } = new();
+
+	protected override async Task OnParametersSetAsync()
+	{
+		await base.OnParametersSetAsync();
+
+		authState = await AuthenticationStateAsync;
+
+		await InitAucionBidAsync();
+		InitEditContext();
+	}
+
+	public void ToggleForm()
+	{
+		isFormHidden = !isFormHidden;
+
+		StateHasChanged();
+	}
+
+	public void Dispose()
+	{
+		if (editContext is not null)
+		{
+			editContext.OnValidationRequested -= HandleValidationRequested;
+		}
+	}
+
+	/// <returns>decimal number if bid is not high enough indicating the minimal value required (incl.);
+	/// null otherwise</returns>
+	private async Task<decimal?> IsBidHighEnough()
+	{
+		decimal currentMaxBid;
+		/* I assume when we are creating auction bid for some auction offer, this offer already exists,
+		 * therefore `AuctionOffer.Id` is not 0 */
+		var maxAuctionBid = await api.GetMaxAuctionBidAsync(AuctionOffer.Id);
+		if (maxAuctionBid is null)
+		{// there are no bids yet (so there cant be max bid)
+			currentMaxBid = AuctionOffer.StartingBid;
+		}
+		else
+		{
+			currentMaxBid = maxAuctionBid.Bid;
+		}
+
+		var minValue = currentMaxBid + minDiff;
+
+		return AuctionBid.Bid >= minValue ? null : minValue;
+	}
+
+	private async void HandleValidationRequested(object? sender, ValidationRequestedEventArgs args)
+	{
+		messageStore?.Clear();
+
+		var minBidValue = await IsBidHighEnough();
+		if (minBidValue.HasValue)
+		{
+			messageStore?.Add(() => AuctionBid.Bid, $"Minimálna hodnota je {minBidValue.Value} €.");
+		}
+	}
+
+	private async Task InitAucionBidAsync()
+	{
+		AuctionBid = new() { AuctionOffer = AuctionOffer };
+		var anonymousUser = new User() { Username = "Anonym", Password = "Anonym123" };
+
+		var isUserAuthenticated = authState?.User.Identity?.IsAuthenticated ?? false;
+		if (isUserAuthenticated)
+		{
+			int userId = 0;
+			try
+			{
+				// its ok to use ! here because authState is not null (otherwise isUserAuthenticated wouldn't be true)
+				userId = int.Parse(authState!.User.Claims.First(c => c.Type == ClaimTypes.PrimarySid).Value);
+				AuctionBid.User = await api.GetUserAsync(userId);
+			}
+			catch
+			{
+				Console.WriteLine($"Failed getting user with id '{userId}'.");
+				AuctionBid.User = anonymousUser;
+			}
+		}
+		else
+		{
+			AuctionBid.User = anonymousUser;
+		}
+	}
+
+	private void InitEditContext()
+	{
+		editContext = new(AuctionBid);
+		editContext.OnValidationRequested += HandleValidationRequested;
+		messageStore = new(editContext);
+	}
+
+	private async Task SendBidAsync()
+	{
+		var minBidValue = await IsBidHighEnough();
+		if (minBidValue.HasValue)
+		{// field with bid is not valid
+			return;
+		}
+
+		try
+		{
+			await api.SaveAuctionBidAsync(AuctionBid);
+		}
+		catch
+		{
+			throw new Exception("Couldn't save auction bid.");
+		}
+
+		await InitAucionBidAsync();
+		InitEditContext();
+	}
+}

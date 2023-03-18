@@ -1,0 +1,34 @@
+﻿#auction-bid-form {
+	margin-right: auto;
+	margin-left: auto;
+}
+
+#disclaimer {
+	font-size: x-small;
+	color: grey;
+	margin-bottom: -5px;
+}
+
+.flex-no-wrap {
+	flex-wrap: nowrap;
+}
+
+.form-group {
+	margin: 8px;
+	width: 45%;
+}
+
+#btn-panel {
+	margin-bottom: 9px;
+}
+
+@media (max-width: 950px) {
+	.flex-no-wrap {
+		flex-wrap: wrap;
+	}
+
+	.form-group {
+		width: 100%;
+		display: block;
+	}
+}
