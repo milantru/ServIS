@@ -5,7 +5,7 @@
 @inject IServISApi api
 @inject NavigationManager navMan
 
-<h3>Hlavné ponuky- @(!MainOfferId.HasValue ? "vytvorenie nového" : "úprava existujúceho") záznamu</h3>
+<h3>Hlavné ponuky- @(MainOfferId.HasValue ? "úprava existujúceho" : "vytvorenie nového") záznamu</h3>
 
 @if (MainOffer == null)
 {

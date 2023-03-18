@@ -5,6 +5,8 @@
 @inject IServISApi api
 @inject NavigationManager navMan
 
+<h3>Prídavné zariadenia- @(AuctionOfferId.HasValue ? "úprava existujúceho" : "vytvorenie nového") záznamu</h3>
+
 @if (AuctionOffer == null)
 {
 	<p>Načítava sa...</p>
