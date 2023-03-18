@@ -824,6 +824,7 @@ namespace ServISData
 
 			var query = context.AuctionOffers
 				.Include(ao => ao.Excavator)
+				.ThenInclude(e => e.Photos)
 				.AsQueryable();
 
 			if (dataOperations != null)
@@ -831,7 +832,9 @@ namespace ServISData
 				query = dataOperations.PerformDataOperations(query);
 			}
 
-			return await query.AsNoTracking().ToListAsync();
+			//return await query.AsNoTracking().ToListAsync();
+			await Task.CompletedTask;
+			return query.AsNoTracking().ToList();
 		}
 
 		public async Task<int> GetAuctionOffersCountAsync()
@@ -847,6 +850,18 @@ namespace ServISData
 
 			return await context.AuctionOffers
 				.Include(ao => ao.Excavator)
+				.ThenInclude(e => e.Photos)
+				.Include(ao => ao.Excavator)
+				.ThenInclude(e => e.Properties)
+				.ThenInclude(ep => ep.PropertyType)
+				.Include(ao => ao.Excavator)
+				.ThenInclude(e => e.Type)
+				.ThenInclude(et => et.Category)
+				.Include(ao => ao.Excavator)
+				.ThenInclude(e => e.Type)
+				.ThenInclude(et => et.Brand)
+				.Include(ao => ao.Excavator)
+				.ThenInclude(e => e.SpareParts)
 				.AsNoTracking()
 				.FirstAsync(ao => ao.Id == id);
 		}
@@ -879,6 +894,19 @@ namespace ServISData
 			using var context = factory.CreateDbContext();
 
 			return await context.AuctionBids.CountAsync();
+		}
+
+		public async Task<AuctionBid?> GetMaxAuctionBidAsync(int auctionOfferId)
+		{
+			using var context = factory.CreateDbContext();
+
+			return await context.AuctionBids
+				.Include(ab => ab.User)
+				.Include(ab => ab.AuctionOffer)
+				.ThenInclude(ao => ao.Excavator)
+				.Where(ab => ab.AuctionOffer.Id == auctionOfferId)
+				.OrderByDescending(ab => ab.Bid) // MaxBy didnt work for some reason
+				.FirstOrDefaultAsync();
 		}
 
 		// delete

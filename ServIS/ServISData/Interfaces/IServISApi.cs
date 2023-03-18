@@ -60,6 +60,7 @@ namespace ServISData.Interfaces
 		public Task<List<AuctionBid>> GetAuctionBidsAsync(int auctionOfferId);
 		public Task<AuctionBid> GetAuctionBidAsync(int id);
 		public Task<int> GetAuctionBidsCountAsync();
+		public Task<AuctionBid?> GetMaxAuctionBidAsync(int auctionOfferId);
 
 		// delete
 		public Task DeleteExcavatorAsync(Excavator excavator);
