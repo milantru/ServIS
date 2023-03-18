@@ -18,5 +18,7 @@ namespace ServISData.Models
 
 		[Column(TypeName = "decimal(11,2)")]
 		public decimal StartingBid { get; set; }
+
+		public bool IsEvaluated { get; set; }
 	}
 }

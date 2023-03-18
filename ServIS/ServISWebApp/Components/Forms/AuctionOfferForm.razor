@@ -62,7 +62,7 @@
 			<div class="row">
 				<div class="form-group w-100">
 					<div id="btn-panel">
-						<SubmitButton Text="Uložiť" />
+						<SubmitButton Text="@(Item.IsEvaluated ? "Uložiť a spustiť odznova" : "Uložiť")" />
 						<button class="btn btn-secondary" type="reset" @onclick="ResetAsync">Reset</button>
 					</div>
 				</div>
@@ -111,8 +111,16 @@
 
 	public override async Task SaveItemAsync()
 	{
-		var heh = editContext.Validate();
-		var hah=editContext.GetValidationMessages();
+		if (Item.IsEvaluated)
+		{// it's a restart of the auction offer
+			var auctionBids = await api.GetAuctionBidsAsync(Item.Id);
+			foreach (var auctionBid in auctionBids)
+			{
+				_ = api.DeleteAuctionBidAsync(auctionBid);
+			}
+			Item.IsEvaluated = false;
+		}
+
 		try
 		{
 			await api.SaveAuctionOfferAsync(Item);
