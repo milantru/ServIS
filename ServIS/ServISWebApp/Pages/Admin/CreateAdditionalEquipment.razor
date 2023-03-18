@@ -5,15 +5,15 @@
 @inject IServISApi api
 @inject NavigationManager navMan
 
-<h3>Prídavné zariadenia- @(AdditionalEquipmentId.HasValue ? "vytvorenie nového" : "úprava existujúceho") záznamu</h3>
+<h3>Prídavné zariadenia- @(AdditionalEquipmentId.HasValue ? "úprava existujúceho" : "vytvorenie nového") záznamu</h3>
 
 @if (AdditionalEquipment == null)
 {
-	<p>Načítava sa...</p>
+		<p>Načítava sa...</p>
 }
 else
 {
-	<AdditionalEquipmentForm Item="@AdditionalEquipment" OnSave="@(() => navMan.NavigateTo("/pridavne-zariadenia"))" />
+		<AdditionalEquipmentForm Item="@AdditionalEquipment" OnSave="@(() => navMan.NavigateTo("/pridavne-zariadenia"))" />
 }
 
 @code {
