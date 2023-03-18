@@ -1,0 +1,39 @@
+﻿#auction-offer-form {
+	display: flex;
+	flex-direction: column;
+	align-content: center;
+	margin: 12px auto;
+	padding: 4px;
+}
+
+.flex-no-wrap {
+	flex-wrap: nowrap;
+}
+
+.form-group {
+	margin: 8px;
+	width: 45%;
+}
+
+#btn-panel {
+	margin: 4px 0;
+}
+
+.w-50-100 {
+	width: 50%;
+}
+
+@media (max-width: 950px) {
+	.flex-no-wrap {
+		flex-wrap: wrap;
+	}
+
+	.form-group {
+		width: 100%;
+		display: block;
+	}
+
+	.w-50-100 {
+		width: 100%;
+	}
+}

@@ -1,0 +1,143 @@
+﻿@inherits FormBase<AuctionOffer>
+@inject IServISApi api
+@inject IJSRuntime js
+@using ServISWebApp.CssProviders
+@using ServISData.Interfaces
+@using Syncfusion.Blazor.Calendars
+@using Syncfusion.Blazor.Inputs
+
+@if (Item != null)
+{
+	<div id="auction-offer-form" class="w-75 servis-border">
+		<EditForm EditContext="@editContext" OnValidSubmit="SaveItemAsync">
+			<ObjectGraphDataAnnotationsValidator />
+			<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
+
+			<div class="row">
+				<div class="d-flex flex-no-wrap">
+					<div class="form-group w-50-100">
+						<label for="starting-bid">Počiatočná cena:</label>
+						<SfNumericTextBox TValue="decimal"
+									  @bind-Value="Item.StartingBid"
+									  ID="starting-bid" />
+						<ValidationMessage For="@(() => Item.StartingBid)" />
+					</div>
+
+					<div class="form-group w-50-100">
+						<label for="offer-end">Koniec aukcie:</label>
+						<SfDateTimePicker TValue="DateTime"
+									  @bind-Value="Item.OfferEnd"
+									  ID="offer-end" />
+						<ValidationMessage For="@(() => Item.OfferEnd)" />
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="d-flex">
+					<div class="form-group w-100">
+						<label for="description">Popis:</label>
+						<InputTextArea @bind-Value="Item.Description" id="description" rows="7" />
+						<ValidationMessage For="@(() => Item.Description)" />
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="d-flex">
+					<div class="form-group w-100">
+						<label for="excavator">Stroje:</label>
+						<ItemsSelector ItemType="Excavator"
+									   @bind-SelectedItem="Item.Excavator"
+									   Items="@Excavators"
+									   Context="excavator"
+									   id="excavator">
+							<OptionText>@excavator.Name</OptionText>
+						</ItemsSelector>
+						<ValidationMessage For="@(() => Item.Excavator)" />
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="form-group w-100">
+					<div id="btn-panel">
+						<SubmitButton Text="Uložiť" />
+						<button class="btn btn-secondary" type="reset" @onclick="ResetAsync">Reset</button>
+					</div>
+				</div>
+			</div>
+		</EditForm>
+	</div>
+}
+
+@code {
+	private EditContext editContext = null!;
+	private List<Excavator> Excavators { get; set; } = null!;
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+
+		Excavators = await api.GetExcavatorsAsync();
+	}
+
+	protected override void OnParametersSet()
+	{
+		base.OnParametersSet();
+
+		if (Item == null)
+		{
+			throw new Exception($"Parameter '{nameof(Item)}' not provided.");
+		}
+
+		if (Item.Id == 0)
+		{
+			InitAuctionOffer(Item);
+		}
+		editContext = new(Item);
+	}
+
+	public override async Task ResetAsync()
+	{
+		Item = new AuctionOffer();
+		InitAuctionOffer(Item);
+
+		if (ItemChanged.HasDelegate)
+		{
+			await ItemChanged.InvokeAsync(Item);
+		}
+	}
+
+	public override async Task SaveItemAsync()
+	{
+		var heh = editContext.Validate();
+		var hah=editContext.GetValidationMessages();
+		try
+		{
+			await api.SaveAuctionOfferAsync(Item);
+		}
+		catch
+		{
+			throw new Exception($"Failed to save auction offer with id '{Item.Id}'.");
+		}
+
+		if (OnSave.HasDelegate)
+		{
+			await OnSave.InvokeAsync();
+		}
+
+		if (AfterSaveAsync != null)
+		{
+			await AfterSaveAsync();
+		}
+
+		await ResetAsync();
+	}
+
+	private static void InitAuctionOffer(AuctionOffer auctionOffer)
+	{
+		auctionOffer.OfferEnd = DateTime.Now;
+		auctionOffer.Excavator ??= new();
+	}
+}
