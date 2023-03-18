@@ -1,0 +1,53 @@
+﻿.img-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 350px;
+	margin: 50px 0;
+}
+
+.img {
+	width: 75%;
+}
+
+.desc {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	padding: 0 12px;
+}
+
+	.desc h4 {
+		margin-bottom: 20px;
+	}
+
+	.desc button {
+		width: 120px;
+		height: 32px;
+		margin-top: 2px;
+		border-radius: 25px;
+		color: #333333;
+		border: 1px solid #333333;
+	}
+
+		.desc button:hover {
+			color: #ff8000;
+			border: 1px solid #ff8800;
+		}
+
+		.desc button[disabled] {
+			color: grey;
+			border: 1px solid grey;
+		}
+
+@media (max-width: 850px) {
+	.img-and-desc-container {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.img-container {
+		min-height: 380px;
+		margin: 5px;
+	}
+}
