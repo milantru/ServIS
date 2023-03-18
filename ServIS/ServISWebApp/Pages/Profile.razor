@@ -1,7 +1,6 @@
 @page "/profil"
 
 @attribute [Authorize(Roles = "Administrator,User")]
-@inject AuthenticationStateProvider authStateProvider
 @inject IServISApi api
 @inject IJSRuntime js
 @using ServISData
@@ -12,180 +11,191 @@
 @using System.Security.Claims
 @using System.Text.Json
 
-<div class="container-fluid">
-	@* class column-disabled-search is here and not in .razor.css file 
-	   because when it was there the class was not applied *@
-	<style>
-		.column-disabled-search {
-			font-style: italic;
-		}
-	</style>
+@if (!authFailed){
+	<div class="container-fluid">
+		@* class column-disabled-search is here and not in .razor.css file 
+		   because when it was there the class was not applied *@
+		<style>
+			.column-disabled-search {
+				font-style: italic;
+			}
+		</style>
 
-	<h3>Profil</h3>
+		<h3>Profil</h3>
 
-	<TabControl>
-		<AuthorizeView Roles="Administrator">
-			<Authorized>
-				<TabPage TabLabel="Správy">
-					<Messages />
-				</TabPage>
+		<TabControl>
+			<AuthorizeView Roles="Administrator">
+				<Authorized>
+					<TabPage TabLabel="Správy">
+						<Messages />
+					</TabPage>
 
-				<TabPage TabLabel="Náhradné diely">
-					<ItemsManagement ItemType="SparePart"
-									 ItemFormType="SparePartForm"
-									 Title="Správa náhradných dielov"
-									 GetItemsAsync="api.GetSparePartsAsync"
-									 GetItemsCountAsync="api.GetSparePartsCountAsync"
-									 DeleteItemAsync="api.DeleteSparePartAsync">
-						<MyGridColumns>
-							<GridColumn Field="@nameof(SparePart.CatalogNumber)" HeaderText="Katalógové číslo" />
-							<GridColumn Field="@nameof(SparePart.Name)" HeaderText="Názov" />
-							<GridColumn Field="@($"{nameof(SparePart.Excavators)}.{nameof(ICollection<Excavator>.Count)}")" HeaderText="Počet strojov s dielom*" AllowSearching="false" CustomAttributes="@customAttributes" />
-						</MyGridColumns>
-					</ItemsManagement>
-				</TabPage>
+					<TabPage TabLabel="Náhradné diely">
+						<ItemsManagement ItemType="SparePart"
+										 ItemFormType="SparePartForm"
+										 Title="Správa náhradných dielov"
+										 GetItemsAsync="api.GetSparePartsAsync"
+										 GetItemsCountAsync="api.GetSparePartsCountAsync"
+										 DeleteItemAsync="api.DeleteSparePartAsync">
+							<MyGridColumns>
+								<GridColumn Field="@nameof(SparePart.CatalogNumber)" HeaderText="Katalógové číslo" />
+								<GridColumn Field="@nameof(SparePart.Name)" HeaderText="Názov" />
+								<GridColumn Field="@($"{nameof(SparePart.Excavators)}.{nameof(ICollection<Excavator>.Count)}")" HeaderText="Počet strojov s dielom*" AllowSearching="false" CustomAttributes="@customAttributes" />
+							</MyGridColumns>
+						</ItemsManagement>
+					</TabPage>
 
-				<TabPage TabLabel="Stroje">
-					<ItemsManagement ItemType="Excavator"
-									 ItemFormType="ExcavatorForm"
-									 Title="Správa strojov"
-									 GetItemsAsync="api.GetExcavatorsAsync"
-									 GetItemsCountAsync="() => api.GetExcavatorsCountAsync()"
-									 DeleteItemAsync="api.DeleteExcavatorAsync"
-									 FormModalWidth="50%" >
-						<MyGridColumns>
-							<GridColumn Field="@nameof(Excavator.Name)" HeaderText="Názov" />
-							<GridColumn Field="@($"{nameof(Excavator.Type)}.{nameof(ExcavatorType.Category)}.{nameof(ExcavatorCategory.Category)}")" HeaderText="Kategória" />
-							<GridColumn Field="@($"{nameof(Excavator.Type)}.{nameof(ExcavatorType.Brand)}.{nameof(ExcavatorBrand.Brand)}")" HeaderText="Značka" />
-						</MyGridColumns>
-					</ItemsManagement>
-				</TabPage>
+					<TabPage TabLabel="Stroje">
+						<ItemsManagement ItemType="Excavator"
+										 ItemFormType="ExcavatorForm"
+										 Title="Správa strojov"
+										 GetItemsAsync="api.GetExcavatorsAsync"
+										 GetItemsCountAsync="() => api.GetExcavatorsCountAsync()"
+										 DeleteItemAsync="api.DeleteExcavatorAsync"
+										 FormModalWidth="50%" >
+							<MyGridColumns>
+								<GridColumn Field="@nameof(Excavator.Name)" HeaderText="Názov" />
+								<GridColumn Field="@($"{nameof(Excavator.Type)}.{nameof(ExcavatorType.Category)}.{nameof(ExcavatorCategory.Category)}")" HeaderText="Kategória" />
+								<GridColumn Field="@($"{nameof(Excavator.Type)}.{nameof(ExcavatorType.Brand)}.{nameof(ExcavatorBrand.Brand)}")" HeaderText="Značka" />
+							</MyGridColumns>
+						</ItemsManagement>
+					</TabPage>
 
-				<TabPage TabLabel="Typy strojov">
-					<ItemsManagement ItemType="ExcavatorType"
-									 ItemFormType="ExcavatorTypeForm"
-									 Title="Správa typov strojov"
-									 GetItemsAsync="api.GetExcavatorTypesAsync"
-									 GetItemsCountAsync="api.GetExcavatorTypesCountAsync"
-									 DeleteItemAsync="api.DeleteExcavatorTypeAsync">
-						<MyGridColumns>
-							<GridColumn Field="@($"{nameof(ExcavatorType.Brand)}.{nameof(ExcavatorBrand.Brand)}")" HeaderText="Značka" />
-							<GridColumn Field="@($"{nameof(ExcavatorType.Category)}.{nameof(ExcavatorCategory.Category)}")" HeaderText="Kategória" />
-							<GridColumn Field="@($"{nameof(ExcavatorType.ExcavatorsOfThisType)}.{nameof(ICollection<Excavator>.Count)}")" HeaderText="Počet strojov" />
-						</MyGridColumns>
-					</ItemsManagement>
-				</TabPage>
+					<TabPage TabLabel="Typy strojov">
+						<ItemsManagement ItemType="ExcavatorType"
+										 ItemFormType="ExcavatorTypeForm"
+										 Title="Správa typov strojov"
+										 GetItemsAsync="api.GetExcavatorTypesAsync"
+										 GetItemsCountAsync="api.GetExcavatorTypesCountAsync"
+										 DeleteItemAsync="api.DeleteExcavatorTypeAsync">
+							<MyGridColumns>
+								<GridColumn Field="@($"{nameof(ExcavatorType.Brand)}.{nameof(ExcavatorBrand.Brand)}")" HeaderText="Značka" />
+								<GridColumn Field="@($"{nameof(ExcavatorType.Category)}.{nameof(ExcavatorCategory.Category)}")" HeaderText="Kategória" />
+								<GridColumn Field="@($"{nameof(ExcavatorType.ExcavatorsOfThisType)}.{nameof(ICollection<Excavator>.Count)}")" HeaderText="Počet strojov" />
+							</MyGridColumns>
+						</ItemsManagement>
+					</TabPage>
 
-				<TabPage TabLabel="Typy vlastností strojov">
-					<ItemsManagement ItemType="ExcavatorPropertyType"
-									 ItemFormType="ExcavatorPropertyTypeForm"
-									 Title="Správa typov vlastností strojov"
-									 GetItemsAsync="api.GetExcavatorPropertyTypesAsync"
-									 GetItemsCountAsync="api.GetExcavatorPropertyTypesCountAsync"
-									 DeleteItemAsync="api.DeleteExcavatorPropertyTypeAsync">
-						<MyGridColumns>
-							<GridColumn Field="@nameof(ExcavatorPropertyType.Name)" HeaderText="Názov" />
-							<GridColumn Field="@nameof(ExcavatorPropertyType.InputType)" HeaderText="Typ vlastnosti*" Context="ept" AllowSearching="false" CustomAttributes="@customAttributes">
-								<Template>@(((ExcavatorPropertyType)ept).InputType.GetLabel())</Template>
-							</GridColumn>
-							<GridColumn Field="@($"{nameof(ExcavatorPropertyType.ExcavatorTypesWithThisProperty)}.{nameof(ICollection<ExcavatorType>.Count)}")" HeaderText="Počet typov strojov s touto vlastnosťou*" AllowSearching="false" CustomAttributes="@customAttributes" />
-						</MyGridColumns>
-					</ItemsManagement>
-				</TabPage>
+					<TabPage TabLabel="Typy vlastností strojov">
+						<ItemsManagement ItemType="ExcavatorPropertyType"
+										 ItemFormType="ExcavatorPropertyTypeForm"
+										 Title="Správa typov vlastností strojov"
+										 GetItemsAsync="api.GetExcavatorPropertyTypesAsync"
+										 GetItemsCountAsync="api.GetExcavatorPropertyTypesCountAsync"
+										 DeleteItemAsync="api.DeleteExcavatorPropertyTypeAsync">
+							<MyGridColumns>
+								<GridColumn Field="@nameof(ExcavatorPropertyType.Name)" HeaderText="Názov" />
+								<GridColumn Field="@nameof(ExcavatorPropertyType.InputType)" HeaderText="Typ vlastnosti*" Context="ept" AllowSearching="false" CustomAttributes="@customAttributes">
+									<Template>@(((ExcavatorPropertyType)ept).InputType.GetLabel())</Template>
+								</GridColumn>
+								<GridColumn Field="@($"{nameof(ExcavatorPropertyType.ExcavatorTypesWithThisProperty)}.{nameof(ICollection<ExcavatorType>.Count)}")" HeaderText="Počet typov strojov s touto vlastnosťou*" AllowSearching="false" CustomAttributes="@customAttributes" />
+							</MyGridColumns>
+						</ItemsManagement>
+					</TabPage>
 
-				<TabPage TabLabel="Kategórie a značky strojov">
-					<div class="d-flex flex-wrap">
-						<div class="w-50-100">
-							<ItemsManagement ItemType="ExcavatorCategory"
-											 ItemFormType="ExcavatorCategoryForm"
-											 Title="Správa kategórií strojov"
-											 GetItemsAsync="api.GetExcavatorCategoriesAsync"
-											 GetItemsCountAsync="api.GetExcavatorCategoriesCountAsync"
-											 DeleteItemAsync="api.DeleteExcavatorCategoryAsync">
-								<MyGridColumns>
-									<GridColumn Field="@nameof(ExcavatorCategory.Category)" HeaderText="Názov kategórie" />
-									<GridColumn Field="@nameof(ExcavatorCategory.ExcavatorTypesOfThisCategory)" HeaderText="Počet strojov*" Context="ec" AllowSearching="false" CustomAttributes="@customAttributes">
-										<Template>@(((ExcavatorCategory)ec).ExcavatorTypesOfThisCategory.SelectMany(e => e.ExcavatorsOfThisType).Count())</Template>
-									</GridColumn>
-									<GridColumn Field="@($"{nameof(ExcavatorCategory.AdditionalEquipmentsOfThisCategory)}.{nameof(ICollection<AdditionalEquipment>.Count)}")" HeaderText="Počet príd. zar." />
-								</MyGridColumns>
-							</ItemsManagement>
+					<TabPage TabLabel="Kategórie a značky strojov">
+						<div class="d-flex flex-wrap">
+							<div class="w-50-100">
+								<ItemsManagement ItemType="ExcavatorCategory"
+												 ItemFormType="ExcavatorCategoryForm"
+												 Title="Správa kategórií strojov"
+												 GetItemsAsync="api.GetExcavatorCategoriesAsync"
+												 GetItemsCountAsync="api.GetExcavatorCategoriesCountAsync"
+												 DeleteItemAsync="api.DeleteExcavatorCategoryAsync">
+									<MyGridColumns>
+										<GridColumn Field="@nameof(ExcavatorCategory.Category)" HeaderText="Názov kategórie" />
+										<GridColumn Field="@nameof(ExcavatorCategory.ExcavatorTypesOfThisCategory)" HeaderText="Počet strojov*" Context="ec" AllowSearching="false" CustomAttributes="@customAttributes">
+											<Template>@(((ExcavatorCategory)ec).ExcavatorTypesOfThisCategory.SelectMany(e => e.ExcavatorsOfThisType).Count())</Template>
+										</GridColumn>
+										<GridColumn Field="@($"{nameof(ExcavatorCategory.AdditionalEquipmentsOfThisCategory)}.{nameof(ICollection<AdditionalEquipment>.Count)}")" HeaderText="Počet príd. zar." />
+									</MyGridColumns>
+								</ItemsManagement>
+							</div>
+							<div class="w-50-100">
+								<ItemsManagement ItemType="ExcavatorBrand"
+												 ItemFormType="ExcavatorBrandForm"
+												 Title="Správa značiek strojov"
+												 GetItemsAsync="api.GetExcavatorBrandsAsync"
+												 GetItemsCountAsync="api.GetExcavatorBrandsCountAsync"
+												 DeleteItemAsync="api.DeleteExcavatorBrandAsync">
+									<MyGridColumns>
+										<GridColumn Field="@nameof(ExcavatorBrand.Brand)" HeaderText="Názov značky" />
+										<GridColumn Field="@nameof(ExcavatorBrand.ExcavatorTypesOfThisBrand)" HeaderText="Počet strojov*" Context="eb" AllowSearching="false" CustomAttributes="@customAttributes">
+											<Template>@(((ExcavatorBrand)eb).ExcavatorTypesOfThisBrand.SelectMany(e => e.ExcavatorsOfThisType).Count())</Template>
+										</GridColumn>
+									</MyGridColumns>
+								</ItemsManagement>
+							</div>
 						</div>
-						<div class="w-50-100">
-							<ItemsManagement ItemType="ExcavatorBrand"
-											 ItemFormType="ExcavatorBrandForm"
-											 Title="Správa značiek strojov"
-											 GetItemsAsync="api.GetExcavatorBrandsAsync"
-											 GetItemsCountAsync="api.GetExcavatorBrandsCountAsync"
-											 DeleteItemAsync="api.DeleteExcavatorBrandAsync">
-								<MyGridColumns>
-									<GridColumn Field="@nameof(ExcavatorBrand.Brand)" HeaderText="Názov značky" />
-									<GridColumn Field="@nameof(ExcavatorBrand.ExcavatorTypesOfThisBrand)" HeaderText="Počet strojov*" Context="eb" AllowSearching="false" CustomAttributes="@customAttributes">
-										<Template>@(((ExcavatorBrand)eb).ExcavatorTypesOfThisBrand.SelectMany(e => e.ExcavatorsOfThisType).Count())</Template>
-									</GridColumn>
-								</MyGridColumns>
-							</ItemsManagement>
-						</div>
-					</div>
-				</TabPage>
+					</TabPage>
 
-				<TabPage TabLabel="Kategórie a značky príd. zar.">
-					<div class="d-flex flex-wrap">
-						<div class="w-50-100">
-							<ItemsManagement ItemType="AdditionalEquipmentCategory"
-											 ItemFormType="AdditionalEquipmentCategoryForm"
-											 Title="Správa kategórií prídavných zariadení"
-											 GetItemsAsync="api.GetAdditionalEquipmentCategoriesAsync"
-											 GetItemsCountAsync="api.GetAdditionalEquipmentCategoriesCountAsync"
-											 DeleteItemAsync="api.DeleteAdditionalEquipmentCategoryAsync">
-								<MyGridColumns>
-									<GridColumn Field="@nameof(AdditionalEquipmentCategory.Category)" HeaderText="Názov kategórie" />
-									<GridColumn Field="@($"{nameof(AdditionalEquipmentCategory.AdditionalEquipmentsOfThisCategory)}.{nameof(ICollection<AdditionalEquipment>.Count)}")" HeaderText="Počet príd. zar." />
-								</MyGridColumns>
-							</ItemsManagement>
+					<TabPage TabLabel="Kategórie a značky príd. zar.">
+						<div class="d-flex flex-wrap">
+							<div class="w-50-100">
+								<ItemsManagement ItemType="AdditionalEquipmentCategory"
+												 ItemFormType="AdditionalEquipmentCategoryForm"
+												 Title="Správa kategórií prídavných zariadení"
+												 GetItemsAsync="api.GetAdditionalEquipmentCategoriesAsync"
+												 GetItemsCountAsync="api.GetAdditionalEquipmentCategoriesCountAsync"
+												 DeleteItemAsync="api.DeleteAdditionalEquipmentCategoryAsync">
+									<MyGridColumns>
+										<GridColumn Field="@nameof(AdditionalEquipmentCategory.Category)" HeaderText="Názov kategórie" />
+										<GridColumn Field="@($"{nameof(AdditionalEquipmentCategory.AdditionalEquipmentsOfThisCategory)}.{nameof(ICollection<AdditionalEquipment>.Count)}")" HeaderText="Počet príd. zar." />
+									</MyGridColumns>
+								</ItemsManagement>
+							</div>
+							<div class="w-50-100">
+								<ItemsManagement ItemType="AdditionalEquipmentBrand"
+												 ItemFormType="AdditionalEquipmentBrandForm"
+												 Title="Správa značiek prídavných zariadení"
+												 GetItemsAsync="api.GetAdditionalEquipmentBrandsAsync"
+												 GetItemsCountAsync="api.GetAdditionalEquipmentBrandsCountAsync"
+												 DeleteItemAsync="api.DeleteAdditionalEquipmentBrandAsync">
+									<MyGridColumns>
+										<GridColumn Field="@nameof(AdditionalEquipmentBrand.Brand)" HeaderText="Názov značky" />
+										<GridColumn Field="@($"{nameof(AdditionalEquipmentBrand.AdditionalEquipmentsOfThisBrand)}.{nameof(ICollection<AdditionalEquipment>.Count)}")" HeaderText="Počet príd. zar." />
+									</MyGridColumns>
+								</ItemsManagement>
+							</div>
 						</div>
-						<div class="w-50-100">
-							<ItemsManagement ItemType="AdditionalEquipmentBrand"
-											 ItemFormType="AdditionalEquipmentBrandForm"
-											 Title="Správa značiek prídavných zariadení"
-											 GetItemsAsync="api.GetAdditionalEquipmentBrandsAsync"
-											 GetItemsCountAsync="api.GetAdditionalEquipmentBrandsCountAsync"
-											 DeleteItemAsync="api.DeleteAdditionalEquipmentBrandAsync">
-								<MyGridColumns>
-									<GridColumn Field="@nameof(AdditionalEquipmentBrand.Brand)" HeaderText="Názov značky" />
-									<GridColumn Field="@($"{nameof(AdditionalEquipmentBrand.AdditionalEquipmentsOfThisBrand)}.{nameof(ICollection<AdditionalEquipment>.Count)}")" HeaderText="Počet príd. zar." />
-								</MyGridColumns>
-							</ItemsManagement>
-						</div>
-					</div>
+					</TabPage>
+				</Authorized>
+			</AuthorizeView>
+			<AuthorizeView>
+				<TabPage TabLabel="Moje údaje">
+					@if (User == null)
+					{
+						<p>Načítáva sa...</p>
+					}
+					else
+					{
+						<UserForm User="@User" OnSave="@(async () => await js.InvokeVoidAsync("alert", "Údaje úspešne zmenené."))" />
+					}
 				</TabPage>
-			</Authorized>
-		</AuthorizeView>
-		<AuthorizeView>
-			<TabPage TabLabel="Moje údaje">
-				@if (User == null)
-				{
-					<p>Načítáva sa...</p>
-				}
-				else
-				{
-					<UserForm User="@User" OnSave="@(async () => await js.InvokeVoidAsync("alert", "Údaje úspešne zmenené."))" />
-				}
-			</TabPage>
-		</AuthorizeView>
-	</TabControl>
-</div>
+			</AuthorizeView>
+		</TabControl>
+	</div>
+}
+else
+{
+	<p>Nastal problém s prihlásením.</p>
+}
 
 @code {
-	private readonly Dictionary<string, object> customAttributes = new Dictionary<string, object>() { { "class", "column-disabled-search" } };
+	private readonly Dictionary<string, object> customAttributes = 
+		new Dictionary<string, object>() { { "class", "column-disabled-search" } };
+	private bool authFailed;
+
+	[CascadingParameter]
+	public Task<AuthenticationState> AuthenticationStateAsync { get; set; } = null!;
 
 	private User User { get; set; } = null!;
 
-	protected override async Task OnInitializedAsync()
+	protected override async Task OnParametersSetAsync()
 	{
-		await base.OnInitializedAsync();
+		await base.OnParametersSetAsync();
 
-		var authState = await authStateProvider.GetAuthenticationStateAsync();
+		var authState = await AuthenticationStateAsync;
 
 		int userId = 0;
 		try
@@ -198,7 +208,8 @@
 		}
 		catch
 		{
-			throw new Exception($"Failed to load user with id '{userId}'.");
+			Console.WriteLine($"Failed to load user with id '{userId}'.");
+			authFailed = true;
 		}
 	}
 }
