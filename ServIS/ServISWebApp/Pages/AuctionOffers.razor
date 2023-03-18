@@ -1,10 +1,11 @@
 ﻿@page "/unc-locust-po-repase-a-go"
-
-<h3>Aukcia</h3>
+@page "/aukcia"
 
 <AuthorizeView Roles="Administrator">
-	<a href="/admin/nova-aukcna-ponuka">Pridať novú položku</a>
+	<a href="/admin/nova-aukcna-ponuka">Pridať novú aukčnú ponuku</a>
 </AuthorizeView>
+
+<AuctionOffersLister Title="Aukcia strojov UNC po repase a GO" />
 
 @code {
 
