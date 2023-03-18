@@ -6,82 +6,85 @@
 @using System.Security.Claims
 @using System.ComponentModel.DataAnnotations;
 
-<div id="demand-form" class="w-75 servis-border" style="display: @(isFormHidden ? "none" : "block");">
-	<EditForm Model="DemandInfo" OnValidSubmit="SendFormDataAsync" class="form-space-items">
-		<ObjectGraphDataAnnotationsValidator />
-		<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
+@if (DemandInfo != null)
+{
+	<div id="demand-form" class="w-75 servis-border" style="display: @(isFormHidden ? "none" : "block");">
+		<EditForm Model="DemandInfo" OnValidSubmit="SendFormDataAsync" class="form-space-items">
+			<ObjectGraphDataAnnotationsValidator />
+			<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
 
-		@* There is Context="ctx" just because I was getting an error (it seems EditForm 
-		   and and AuthorizeView both use 'context' as Context so I had to rename it) *@
-		<AuthorizeView Context="ctx">
-			<NotAuthorized>
-				<div class="row">
+			@* There is Context="ctx" just because I was getting an error (it seems EditForm 
+			   and and AuthorizeView both use 'context' as Context so I had to rename it) *@
+			<AuthorizeView Context="ctx">
+				<NotAuthorized>
+					<div class="row">
+						<div class="form-group w-100">
+							<p id="disclaimer">
+								Ak u nás máte vytvorený účet, prosím prihláste sa <a href="/prihlasovanie">tu</a> a vyhnite sa tak vypĺňaniu údajov o Vás (Meno, Priezvisko...).
+								Ak u nás účet ešte nemáte, zvážte registráciu, ktorú nájdete <a href="/registracia">tu</a>.
+							</p>
+						</div>
+					</div>
+					<div class="row">
+						<div class="d-flex flex-no-wrap">
+							<div class="form-group">
+								<label>Meno:</label>
+								<InputText @bind-Value="DemandInfo.User.Name" />
+								<ValidationMessage For="@(() => DemandInfo.User.Name)" />
+							</div>
+
+							<div class="form-group">
+								<label>Priezvisko:</label>
+								<InputText @bind-Value="DemandInfo.User.Surname" />
+								<ValidationMessage For="@(() => DemandInfo.User.Surname)" />
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="d-flex flex-no-wrap">
+							<div class="form-group">
+								<label>Telefónne číslo:</label>
+								<InputText @bind-Value="DemandInfo.User.PhoneNumber" />
+								<ValidationMessage For="@(() => DemandInfo.User.PhoneNumber)" />
+							</div>
+
+							<div class="form-group">
+								<label>Email:</label>
+								<InputText @bind-Value="DemandInfo.User.Email" />
+								<ValidationMessage For="@(() => DemandInfo.User.Email)" />
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="d-flex">
+							<div class="form-group">
+								<label>Mesto:</label>
+								<InputText @bind-Value="DemandInfo.User.Residence" />
+								<ValidationMessage For="@(() => DemandInfo.User.Residence)" />
+							</div>
+						</div>
+					</div>
+				</NotAuthorized>
+			</AuthorizeView>
+
+			<div class="row">
+				<div class="d-flex">
 					<div class="form-group w-100">
-						<p id="disclaimer">
-							Ak u nás máte vytvorený účet, prosím prihláste sa <a href="/prihlasovanie">tu</a> a vyhnite sa tak vypĺňaniu údajov o Vás (Meno, Priezvisko...).
-							Ak u nás účet ešte nemáte, zvážte registráciu, ktorú nájdete <a href="/registracia">tu</a>.
-						</p>
+						<label>Správa:</label>
+						<InputTextArea @bind-Value="DemandInfo.Message" placeholder="Dobrý deň. Mal by som záujem/Chcel by som sa opýtať..." rows="7" />
+						<ValidationMessage For="@(() => DemandInfo.Message)" />
 					</div>
-				</div>
-				<div class="row">
-					<div class="d-flex flex-no-wrap">
-						<div class="form-group">
-							<label>Meno:</label>
-							<InputText @bind-Value="DemandInfo.User.Name" />
-							<ValidationMessage For="@(() => DemandInfo.User.Name)" />
-						</div>
-
-						<div class="form-group">
-							<label>Priezvisko:</label>
-							<InputText @bind-Value="DemandInfo.User.Surname" />
-							<ValidationMessage For="@(() => DemandInfo.User.Surname)" />
-						</div>
-					</div>
-				</div>
-
-				<div class="row">
-					<div class="d-flex flex-no-wrap">
-						<div class="form-group">
-							<label>Telefónne číslo:</label>
-							<InputText @bind-Value="DemandInfo.User.PhoneNumber" />
-							<ValidationMessage For="@(() => DemandInfo.User.PhoneNumber)" />
-						</div>
-
-						<div class="form-group">
-							<label>Email:</label>
-							<InputText @bind-Value="DemandInfo.User.Email" />
-							<ValidationMessage For="@(() => DemandInfo.User.Email)" />
-						</div>
-					</div>
-				</div>
-
-				<div class="row">
-					<div class="d-flex">
-						<div class="form-group">
-							<label>Mesto:</label>
-							<InputText @bind-Value="DemandInfo.User.Residence" />
-							<ValidationMessage For="@(() => DemandInfo.User.Residence)" />
-						</div>
-					</div>
-				</div>
-			</NotAuthorized>
-		</AuthorizeView>
-
-		<div class="row">
-			<div class="d-flex">
-				<div class="form-group w-100">
-					<label>Správa:</label>
-					<InputTextArea @bind-Value="DemandInfo.Message" placeholder="Dobrý deň. Mal by som záujem/Chcel by som sa opýtať..." rows="7" />
-					<ValidationMessage For="@(() => DemandInfo.Message)" />
 				</div>
 			</div>
-		</div>
 
-		<div id="btn-panel" class="container-center-items-horizontal">
-			<SubmitButton Text="Odoslať" />
-		</div>
-	</EditForm>
-</div>
+			<div id="btn-panel" class="container-center-items-horizontal">
+				<SubmitButton Text="Odoslať" />
+			</div>
+		</EditForm>
+	</div>
+}
 
 @code {
 	private bool isFormHidden = true;
@@ -94,7 +97,7 @@
 	[EditorRequired, Parameter]
 	public string DemandedItemName { get; set; } = null!;
 
-	private DemandForm.Demand DemandInfo { get; set; } = new();
+	private DemandForm.Demand DemandInfo { get; set; } = null!;
 
 	protected override void OnInitialized()
 	{
@@ -121,7 +124,8 @@
 
 	private async Task ResetDemandInfoAsync()
 	{
-		DemandInfo = new();
+		DemandInfo = new() { Message = string.Empty };
+		var anonymousUser = new User() { Username = "Anonym", Password = "Anonym123" };
 
 		var isUserAuthenticated = authState?.User.Identity?.IsAuthenticated ?? false;
 		if (isUserAuthenticated)
@@ -135,14 +139,19 @@
 			}
 			catch
 			{
-				throw new Exception($"Failed getting user with id '{userId}'.");
+				Console.WriteLine($"Failed getting user with id '{userId}'.");
+				DemandInfo.User = anonymousUser;
 			}
+		}
+		else
+		{
+			DemandInfo.User = anonymousUser;
 		}
 	}
 
 	private async Task SendFormDataAsync()
 	{
-		var additionalInfo = $"<requested_item_url>{navMan.Uri}</requested_item_url>";
+		var additionalInfo = $"<injected_url>{navMan.Uri}</injected_url>";
 
 		var email = new Email
 			{
@@ -163,9 +172,10 @@
 	private class Demand
 	{
 		/* We have to set some dummy values to `Username` and `Password` properties
-		 * or else form's validation would stop us from submitting. */
+		 * or else form's validation would stop us from submitting.
+		 * (I want `ValidateComplexType` to be here, so other properties are validated.) */
 		[ValidateComplexType]
-		public User User { get; set; } = new() { Username = "DemandFormDummyUsername", Password = "DemandFormDummyPassword123" };
+		public User User { get; set; } = new() { Username = "Anonym", Password = "Anonym123" };
 
 		[Required(AllowEmptyStrings = false, ErrorMessage = "Správa nesmie byť prázdna.")]
 		public string Message { get; set; } = string.Empty;

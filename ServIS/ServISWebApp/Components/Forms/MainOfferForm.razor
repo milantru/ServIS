@@ -6,7 +6,7 @@
 
 @if (Item != null && Item.ExcavatorType != null)
 {
-	<EditForm EditContext="@editContext" Model="@Item" OnValidSubmit="SaveItemAsync" class="form-space-items">
+	<EditForm Model="@Item" OnValidSubmit="SaveItemAsync" class="form-space-items">
 		<ObjectGraphDataAnnotationsValidator />
 		<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
 
@@ -51,8 +51,6 @@
 }
 
 @code {
-	private EditContext editContext = null!;
-
 	private List<ExcavatorType> ExcavatorTypes { get; set; } = null!;
 
 	protected override async Task OnInitializedAsync()
