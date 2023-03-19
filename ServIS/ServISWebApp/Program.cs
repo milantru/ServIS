@@ -1,7 +1,5 @@
 using ServISData;
 using ServISData.Interfaces;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -10,6 +8,7 @@ using Syncfusion.Licensing;
 using Syncfusion.Blazor;
 using Syncfusion.Blazor.Popups;
 using ServISWebApp.Shared;
+using ServISWebApp.BackgroundServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,10 +24,25 @@ builder.Services.AddDbContextFactory<ServISDbContext>(options =>
 		options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
 	}
 );
-builder.Services.AddScoped<IServISApi, ServISApi>();
+builder.Services.AddSingleton<IServISApi, ServISApi>();
 builder.Services.AddScoped<SfDialogService>();
 builder.Services.AddSyncfusionBlazor();
 builder.Services.AddSingleton(typeof(ISyncfusionStringLocalizer), typeof(SyncfusionLocalizer));
+builder.Services.AddSingleton<EmailManager>(provider =>
+{
+	var config = provider.GetRequiredService<IConfiguration>();
+	var emailName = config.GetValue<string>("EmailName");
+	var emailAddress = config.GetValue<string>("EmailAddress");
+	var emailPassword = config.GetValue<string>("EmailAppPassword");
+	return new(emailName, emailAddress, emailPassword);
+});
+builder.Services.AddHostedService<TimerService>(provider =>
+{
+	var emailManager = provider.GetRequiredService<EmailManager>();
+	var api = provider.GetRequiredService<IServISApi>();
+	var baseUrl = provider.GetRequiredService<IConfiguration>().GetValue<string>("AppBaseUrl");
+	return new(api, emailManager, baseUrl);
+});
 
 var app = builder.Build();
 
