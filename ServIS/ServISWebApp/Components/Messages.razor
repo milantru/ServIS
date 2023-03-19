@@ -21,7 +21,7 @@
 		}
 		else
 		{
-			<ThreadView Messages="@CurrentlyChosenThread.Messages"
+			<ThreadView Thread="@CurrentlyChosenThread"
 						OnSent="OnSent"
 						OnBack="() => ChangeToThreadView(null)"
 						OnReloadRequest="LoadThreadsAsync"
@@ -78,9 +78,10 @@
 		}
 	}
 
-	private async Task OnSent()
+	private async Task OnSent(Thread threadFromWhichWasMessageSent)
 	{
 		await LoadThreadsAsync();
+		var updatedThread = Threads.First(t => t.Id == threadFromWhichWasMessageSent.Id);
 
 		/* Sometimes after replying to message, the reply message is NOT marked as read/seen.
 		 * That is the reason we check here after sending the message and reloading messages if
@@ -89,7 +90,7 @@
 		 * replying to message in thread and that is possible only when in thread view, meaning
 		 * `CurrentlyChosenThread` is not null.
 		 */
-		var lastMsg = CurrentlyChosenThread!.Messages.Last();
+		var lastMsg = updatedThread.Messages.Last();
 		if (lastMsg.Flags.HasValue && !lastMsg.Flags.Value.HasFlag(MessageFlags.Seen))
 		{
 			await emailManager.MarkEmailAsReadAsync(lastMsg.UniqueId);
@@ -99,9 +100,9 @@
 			 * because `Flag` property has only getter, I didn't find any way to change it in code.
 			 * The only way I know of is to request for new (updated) one. And that's what we do here.
 			 */
-			var lastMsgIndex = CurrentlyChosenThread!.Messages.Count - 1;
+			var lastMsgIndex = updatedThread.Messages.Count - 1;
 			var lastMsgUpdated = await emailManager.GetMessageSummaryAsync(lastMsg.UniqueId);
-			CurrentlyChosenThread!.Messages[lastMsgIndex] = lastMsgUpdated;
+			updatedThread.Messages[lastMsgIndex] = lastMsgUpdated;
 		}
 	}
 }

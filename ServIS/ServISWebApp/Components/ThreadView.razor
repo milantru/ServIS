@@ -23,14 +23,22 @@ else if (Emails.Count > 0)
 		<div>
 			@if (isUrlExtractionComplete)
 			{
-				<div class="first-msg-container">
-					<div class="msg-part">
-						<Message Email="@Emails.First()" />
+				@if (requestedItemUrl is not null) 
+				{
+					<div class="first-msg-container">
+						<div class="msg-part">
+							<Message Email="@Emails.First()" />
+						</div>
+						<div class="required-item-window-part">
+							<a href="@requestedItemUrl" target="_blank"><iframe src="@requestedItemUrl"></iframe></a>
+						</div>
 					</div>
-					<div class="required-item-window-part">
-						<a href="@requestedItemUrl" target="_blank"><iframe src="@requestedItemUrl"></iframe></a>
-					</div>
-				</div>
+				}
+				else
+				{
+					<Message Email="@Emails.First()" />
+				}
+
 				@if (Emails.Count > 1)
 				{
 					@foreach (var email in Emails.Skip(1))
@@ -60,7 +68,7 @@ else if (Emails.Count > 0)
 	private bool isUrlExtractionComplete;
 
 	[Parameter]
-	public List<IMessageSummary>? Messages { get; set; }
+	public Thread? Thread { get; set; }
 
 	// this parameter is here so we dont have to make new email manager each time we open some thread
 	[Parameter]
@@ -70,7 +78,7 @@ else if (Emails.Count > 0)
 	public EventCallback OnBack { get; set; }
 
 	[Parameter]
-	public EventCallback OnSent { get; set; }
+	public EventCallback<Thread> OnSent { get; set; }
 
 	[Parameter]
 	public EventCallback OnReloadRequest { get; set; }
@@ -83,8 +91,9 @@ else if (Emails.Count > 0)
 	{
 		await base.OnInitializedAsync();
 
-		var lastMessageIsUnread = Messages is not null && 
-		(Messages.Last().Flags.HasValue && !Messages.Last().Flags!.Value.HasFlag(MessageFlags.Seen));
+		var messages = Thread?.Messages;
+		var lastMessageIsUnread = messages is not null &&
+		(messages.Last().Flags.HasValue && !messages.Last().Flags!.Value.HasFlag(MessageFlags.Seen));
 		if (lastMessageIsUnread)
 		{
 			await MarkThreadAsReadAsync();
@@ -102,11 +111,11 @@ else if (Emails.Count > 0)
 
 	private async Task LoadEmailsAsync()
 	{
-		if (Messages is null)
+		if (Thread is null)
 		{
 			return;
 		}
-		var uids = Messages.Select(msgSumm => msgSumm.UniqueId).ToList();
+		var uids = Thread.Messages.Select(msgSumm => msgSumm.UniqueId).ToList();
 		Emails = await EmailManager.GetEmailsAsync(uids);
 	}
 
@@ -116,6 +125,15 @@ else if (Emails.Count > 0)
 		{
 			return;
 		}
+		/* The reason why I assign Thread to variable here is that there was problem when user clicked on sent
+		 * and quickly after that pressed back button. By pressing back button CurrentlyChosenThread in Messages 
+		 * was set to null and in that moment OnSent was invoked here which tried to check the last message 
+		 * of CurrentlyChosenThread but as I already mentioned it was null, hence Exception was thrown.
+		 * This variable assignment allows us to remember thread from which the mesage was sent, so after
+		 * reloading threads with new messages (including this newly sent one) we can find it and check
+		 * the last mesage (the newly sent one) whether it was marked as seen properly.
+		 */
+		var thread = Thread;
 
 		/* There was a problem that admin could double click on send button and reply 
 		 * was sent twice. Checking for reply length and using tmp variable is enough
@@ -126,7 +144,7 @@ else if (Emails.Count > 0)
 		// Uid of `replyEmail` is invalid
 		var replyEmail = await EmailManager.ReplyToAsync(Emails.Last(), replyTextTmp);
 
-		await OnSent.InvokeAsync();
+		await OnSent.InvokeAsync(thread);
 	}
 
 	private void ExtractRequestedItemUrl()
@@ -134,6 +152,7 @@ else if (Emails.Count > 0)
 		if (Emails == null || Emails.Count == 0)
 		{
 			requestedItemUrl = null;
+			isUrlExtractionComplete = true;
 			return;
 		}
 
@@ -147,7 +166,7 @@ else if (Emails.Count > 0)
 		 * our email address in from field).
 		 * Also, it is ok to use `!` here because of the preceding `if`. `Emails` is made from `Messages`.
 		 * It means that if `Emails` is not empty, so is `Messages`. */
-		var fromAddress = Messages!.First().Envelope.From.Mailboxes.First().Address;
+		var fromAddress = Thread!.Messages.First().Envelope.From.Mailboxes.First().Address;
 		if (fromAddress != EmailManager.EmailAddress)
 		{// email was not sent from this app
 			requestedItemUrl = null;
@@ -186,7 +205,7 @@ else if (Emails.Count > 0)
 
 		await EmailManager.DeleteEmailAsync(uids);
 		Emails.Clear();
-		Messages!.Clear();
+		Thread!.Messages.Clear();
 
 		await OnReloadRequest.InvokeAsync();
 
@@ -197,7 +216,7 @@ else if (Emails.Count > 0)
 	private async Task MarkThreadAsReadAsync()
 	{
 		// Called only from `OnInitializedAsync` (where check exists) so it is OK to use `!`
-		var uids = Messages!.Select(msgSumm => msgSumm.UniqueId).ToList();
+		var uids = Thread!.Messages.Select(msgSumm => msgSumm.UniqueId).ToList();
 		await EmailManager.MarkEmailAsReadAsync(uids);
 		await OnReloadRequest.InvokeAsync();
 	}
