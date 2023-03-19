@@ -7,7 +7,7 @@
 @using System.Security.Claims
 @using System.ComponentModel.DataAnnotations
 
-@if (editContext != null && !isFormHidden)
+@if (editContext != null && IsVisible)
 {
 	<div id="auction-bid-form" class="w-75 servis-border">
 		<EditForm EditContext="editContext" OnValidSubmit="SendBidAsync" class="form-space-items">
@@ -95,17 +95,18 @@
 	private const int minDiff = 100;
 	private EditContext editContext = null!;
 	private ValidationMessageStore? messageStore;
-	private bool isFormHidden = true;
 	private AuthenticationState authState = null!;
 
 	[CascadingParameter]
 	public Task<AuthenticationState> AuthenticationStateAsync { get; set; } = null!;
 
 	[EditorRequired, Parameter]
-	public string DemandedItemName { get; set; } = null!;
-
-	[EditorRequired, Parameter]
 	public AuctionOffer AuctionOffer { get; set; } = null!;
+
+	[Parameter]
+	public EventCallback OnSent { get; set; }
+
+	public bool IsVisible { get; private set; } = true;
 
 	private AuctionBid AuctionBid { get; set; } = new();
 
@@ -121,7 +122,7 @@
 
 	public void ToggleForm()
 	{
-		isFormHidden = !isFormHidden;
+		IsVisible = !IsVisible;
 
 		StateHasChanged();
 	}
@@ -140,7 +141,7 @@
 	{
 		decimal currentMaxBid;
 		/* I assume when we are creating auction bid for some auction offer, this offer already exists,
-		 * therefore `AuctionOffer.Id` is not 0 */
+			* therefore `AuctionOffer.Id` is not 0 */
 		var maxAuctionBid = await api.GetMaxAuctionBidAsync(AuctionOffer.Id);
 		if (maxAuctionBid is null)
 		{// there are no bids yet (so there cant be max bid)
@@ -220,5 +221,7 @@
 
 		await InitAucionBidAsync();
 		InitEditContext();
+
+		await OnSent.InvokeAsync();
 	}
 }
