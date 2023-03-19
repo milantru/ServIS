@@ -1,9 +1,8 @@
 ﻿@page "/aukcna-ponuka/{AuctionOfferId:int}"
 
-@implements IDisposable
 @inject IServISApi api
 @inject NavigationManager navMan
-@using ServISWebApp.BackgroundServices;
+@inject SfDialogService dialogService
 
 @if (auctionOfferExists && AuctionOffer != null)
 {
@@ -20,8 +19,9 @@
 
 				<p>Počiatočná cena: @AuctionOffer.StartingBid €</p>
 				<p>Končí: @AuctionOffer.OfferEnd.ToString("g")</p>
+				<p>Počet uchádzačov: @biddersCount</p>
 				<p><b>Aktuálna cena:</b> @currentMaxBid €</p>
-				<p>Ostáva už len: @GetCountdown()</p>
+				<CountdownDisplayer EndTime="@AuctionOffer.OfferEnd" OnEnded="@CloseForm" />
 
 				<p>@AuctionOffer.Description</p>
 
@@ -39,9 +39,12 @@
 
 		<div class="row">
 			<div class="col">
-				<AuctionBidForm @ref="auctionBidForm" 
-								DemandedItemName="@(AuctionOffer.Excavator.Name + "(aukcia)")"
-								AuctionOffer="AuctionOffer" />
+				@if (IsOfferActive)
+				{
+					<AuctionBidForm @ref="auctionBidForm" 
+									AuctionOffer="AuctionOffer"
+									OnSent="GetAdditionalAuctionInfo" />
+				}
 			</div>
 		</div>
 
@@ -64,16 +67,18 @@
 
 		<AuthorizeView Roles="Administrator">
 			<button class="btn btn-secondary" @onclick="GoToAuctionOfferEditPage">Uprav</button>
+			<button class="btn btn-danger" @onclick="DeleteAuctionOfferAsync">Zmazať</button>
 		</AuthorizeView>
 	</div>
 }
 else if (!auctionOfferExists)
 {
-	<p>Táto aukčná ponuka neexistuje.</p>	
+	<p>Táto aukčná ponuka neexistuje.</p>
 }
 
 @code {
 	private bool auctionOfferExists = true;
+	private int biddersCount;
 	private decimal currentMaxBid;
 	private AuctionBidForm auctionBidForm = null!;
 
@@ -82,13 +87,6 @@ else if (!auctionOfferExists)
 
 	private AuctionOffer AuctionOffer { get; set; } = null!;
 	private bool IsOfferActive => AuctionOffer.OfferEnd >= DateTime.Now;
-
-	protected override void OnInitialized()
-	{
-		base.OnInitialized();
-
-		TimerService.UpdateEverySecondEvent += NotifyStateHasChanged;
-	}
 
 	protected override async Task OnParametersSetAsync()
 	{
@@ -102,9 +100,10 @@ else if (!auctionOfferExists)
 		{
 			Console.WriteLine($"AuctionOffer with id '{AuctionOfferId}' was not found.");
 			auctionOfferExists = false;
+			return;
 		}
 
-		await SetCurrentMaxBid();
+		await GetAdditionalAuctionInfo();
 	}
 
 	public void ToggleForm()
@@ -114,13 +113,6 @@ else if (!auctionOfferExists)
 			auctionBidForm.ToggleForm();
 		}
 	}
-
-	public void Dispose()
-	{
-		TimerService.UpdateEverySecondEvent -= NotifyStateHasChanged;
-	}
-
-	private async Task NotifyStateHasChanged() => await InvokeAsync(() => StateHasChanged());
 
 	private List<byte[]> GetImages() => AuctionOffer.Excavator.Photos.Select(p => p.Photo).ToList();
 
@@ -135,14 +127,48 @@ else if (!auctionOfferExists)
 		currentMaxBid = maxAuctionBid?.Bid ?? AuctionOffer.StartingBid;
 	}
 
-	private string GetCountdown()
+	private async Task SetBiddersCount()
 	{
-		var timeRemaining = AuctionOffer.OfferEnd - DateTime.Now;
-		if (timeRemaining <= TimeSpan.Zero)
+		biddersCount = await api.GetAuctionBiddersCountAsync(AuctionOffer.Id);
+	}
+
+	private async Task DeleteAuctionOfferAsync()
+	{
+		var dialogButtonOptions = new DialogButtonOptions { Content = "Zrušiť" };
+		var dialogOptions = new DialogOptions
+			{
+				ShowCloseIcon = true,
+				CancelButtonOptions = dialogButtonOptions
+			};
+		var deletionConfirmed = await dialogService.ConfirmAsync(
+			"Naozaj chcete vymazať túto aukčnú ponuku?", "Vymazať", dialogOptions
+		);
+		if (!deletionConfirmed)
 		{
-			return "0d 0h 0m 0s"; ;
+			return;
 		}
 
-		return $"{timeRemaining:%d}d {timeRemaining:%h}h {timeRemaining:%m}m {timeRemaining:%s}s";
+		await api.DeleteAuctionOfferAsync(AuctionOffer);
+
+		navMan.NavigateTo("/aukcia");
+	}
+
+	private void CloseForm()
+	{
+		if (auctionBidForm is null)
+		{
+			return;
+		}
+
+		if (auctionBidForm.IsVisible)
+		{
+			auctionBidForm.ToggleForm();
+		}
+	}
+
+	private async Task GetAdditionalAuctionInfo()
+	{
+		await SetBiddersCount();
+		await SetCurrentMaxBid();
 	}
 }
