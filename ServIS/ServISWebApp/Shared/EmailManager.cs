@@ -67,6 +67,11 @@ namespace ServISWebApp.Shared
 					Messages = group.OrderBy(m => m.InternalDate).ToList()
 				};
 
+				if (ShouldSkip(thread))
+				{
+					continue;
+				}
+
 				threads.Add(thread);
 			}
 			threads = threads.OrderBy(t => t.Messages.Last().InternalDate).ToList();
@@ -336,6 +341,39 @@ namespace ServISWebApp.Shared
 			}
 
 			await imapClient.DisconnectAsync(true);
+		}
+
+		/// <summary>
+		/// Determines whether should skip the thread. If the thread contains 
+		/// only one message notifying auction winner about victory (it is not meant for admin), then
+		/// this method deletes the email and decides the thread is skippable.
+		/// </summary>
+		/// <returns>true if thread contains only one message notifying auction winner
+		/// (i.e. is not meant for admin); false otherwise</returns>
+		private bool ShouldSkip(Thread thread)
+		{
+			var messages = thread.Messages;
+			var firstMessage = messages.First();
+			var firstMessageEnvelope = firstMessage.Envelope;
+			var isSentFromApp = firstMessageEnvelope.From.Mailboxes.First().Address == EmailAddress;
+			var subject = firstMessageEnvelope.Subject;
+			var isSentFromAuction = subject.StartsWith("Vyhrali ste ") || subject.StartsWith("Aukcia s predmetom ");
+
+			if (isSentFromApp && isSentFromAuction && messages.Count == 1)
+			{
+				/* We skip this thread because this was message meant just for the user, 
+				 * but for some reason it is sent to both user and admin. Because we don't 
+				 * want to bother admin with this message (which is meant only for user anyway),
+				 * this if was created to prevent showing this thread/message to admin. 
+				 * We also delete it so it won't take up space in gmail. 
+				 * However, if for some reason user answered this message (the message says 
+				 * it doesn't need reply, we might want to be able to see it, that's why 
+				 * the condition messages.Count == 1 is present. */
+				_ = DeleteEmailAsync(firstMessage.UniqueId);
+				return true;
+			}
+
+			return false;
 		}
 
 		private async Task ConnectImapAsync(ImapClient imapClient)
