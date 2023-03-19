@@ -1,11 +1,6 @@
 ﻿using ServISData.Interfaces;
 using ServISData.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ServISData.DataOperations;
 
 namespace ServISData
@@ -871,8 +866,8 @@ namespace ServISData
 			using var context = factory.CreateDbContext();
 
 			return await context.AuctionBids
-				.Include(ab => ab.User)
 				.Include(ab => ab.AuctionOffer)
+				.Include(ab => ab.User)
 				.Where(ab => ab.AuctionOffer.Id == auctionOfferId)
 				.AsNoTracking()
 				.ToListAsync();
@@ -883,8 +878,8 @@ namespace ServISData
 			using var context = factory.CreateDbContext();
 
 			return await context.AuctionBids
-				.Include(ab => ab.User)
 				.Include(ab => ab.AuctionOffer)
+				.Include(ab => ab.User)
 				.AsNoTracking()
 				.FirstAsync(ab => ab.Id == id);
 		}
@@ -894,6 +889,20 @@ namespace ServISData
 			using var context = factory.CreateDbContext();
 
 			return await context.AuctionBids.CountAsync();
+		}
+
+		public async Task<int> GetAuctionBiddersCountAsync(int auctionOfferId)
+		{
+			using var context = factory.CreateDbContext();
+
+			await Task.CompletedTask;
+			return context.AuctionBids
+				.Include(ab => ab.AuctionOffer)
+				.Include(ab => ab.User)
+				.Where(ab => ab.AuctionOffer.Id == auctionOfferId)
+				.AsEnumerable()
+				.DistinctBy(ab => ab.User.Email)
+				.Count();
 		}
 
 		public async Task<AuctionBid?> GetMaxAuctionBidAsync(int auctionOfferId)
@@ -906,7 +915,37 @@ namespace ServISData
 				.ThenInclude(ao => ao.Excavator)
 				.Where(ab => ab.AuctionOffer.Id == auctionOfferId)
 				.OrderByDescending(ab => ab.Bid) // MaxBy didnt work for some reason
+				.AsNoTracking()
 				.FirstOrDefaultAsync();
+		}
+
+		public async Task<List<AuctionBid>> GetLostAuctionBidsAsync(int auctionOfferId)
+		{
+			var maxAuctionBid = await GetMaxAuctionBidAsync(auctionOfferId);
+
+			using var context = factory.CreateDbContext();
+
+			var queryTmp1 = context.AuctionBids
+				.Include(ab => ab.AuctionOffer)
+				.Include(ab => ab.User);
+
+			IQueryable<AuctionBid> queryTmp2;
+			if (maxAuctionBid is null)
+			{
+				queryTmp2 = queryTmp1.Where(ab => ab.AuctionOffer.Id == auctionOfferId);
+			}
+			else
+			{
+				queryTmp2 = queryTmp1.Where(ab => ab.AuctionOffer.Id == auctionOfferId && ab.Id != maxAuctionBid.Id);
+			}
+
+			await Task.CompletedTask;
+			return queryTmp2
+				.OrderByDescending(ab => ab.Bid)
+				.AsNoTracking()
+				.AsEnumerable()
+				.DistinctBy(ab => ab.User.Id)
+				.ToList();
 		}
 
 		// delete
@@ -1386,6 +1425,7 @@ namespace ServISData
 			currentAuctionOffer.Description = newAuctionOffer.Description;
 			currentAuctionOffer.OfferEnd = newAuctionOffer.OfferEnd;
 			currentAuctionOffer.StartingBid = newAuctionOffer.StartingBid;
+			currentAuctionOffer.IsEvaluated = newAuctionOffer.IsEvaluated;
 
 			currentAuctionOffer.Excavator = await context.Excavators
 				.FirstAsync(e => e.Id == newAuctionOffer.Excavator.Id);
