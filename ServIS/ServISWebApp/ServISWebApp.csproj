@@ -18,6 +18,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Components\CountdownDisplayer.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Components\MainCard.razor.css" />
     <None Remove="Components\ThreadRow.razor.css" />
     <None Remove="Pages\Index.razor.css" />
@@ -53,6 +57,18 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>SfResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Components\CountdownDisplayer.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Components\CountdownDisplayer.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Components\CountdownDisplayer.razor" />
   </ItemGroup>
 
 </Project>
