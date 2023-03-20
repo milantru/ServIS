@@ -1,0 +1,52 @@
+﻿@using ServISWebApp.BackgroundServices;
+@implements IDisposable
+
+<p>Ostáva už len: @GetCountdown()</p>
+
+@code {
+	private bool isEnded;
+
+	[Parameter]
+	public DateTime EndTime { get; set; }
+
+	[Parameter]
+	public EventCallback OnEnded { get; set; }
+
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+
+		TimerService.UpdateEverySecondEvent += NotifyStateHasChanged;
+	}
+
+	public void Dispose()
+	{
+		if (isEnded)
+		{
+			/* If isEnded is true it means the method was already unregistered
+			 * (to avoid unnecessary rerenders). */
+			return;
+		}
+
+		TimerService.UpdateEverySecondEvent -= NotifyStateHasChanged;
+	}
+
+	private async Task NotifyStateHasChanged() => await InvokeAsync(() => StateHasChanged());
+
+	private string GetCountdown()
+	{
+		var timeRemaining = EndTime - DateTime.Now;
+		if (timeRemaining <= TimeSpan.Zero)
+		{
+			if (!isEnded)
+			{
+				isEnded = true;
+				OnEnded.InvokeAsync();
+				Dispose();
+			}
+			return "0d 0h 0m 0s"; ;
+		}
+
+		return $"{timeRemaining:%d}d {timeRemaining:%h}h {timeRemaining:%m}m {timeRemaining:%s}s";
+	}
+}
