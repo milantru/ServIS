@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using System.Security.Claims;
-using System.Text.Json;
 
 namespace ServISWebApp.Auth
 {
@@ -10,8 +9,7 @@ namespace ServISWebApp.Auth
 		private readonly ProtectedLocalStorage localStorage;
 		private ClaimsPrincipal anonymous = new ClaimsPrincipal(new ClaimsIdentity());
 
-		public CustomAuthenticationStateProvider(ProtectedSessionStorage sessionStorage)
-			ProtectedLocalStorage localStorage,
+		public CustomAuthenticationStateProvider(ProtectedLocalStorage localStorage)
 		{
 			this.localStorage = localStorage;
 		}
