@@ -18,18 +18,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Components\MainCard.razor.css" />
-    <None Remove="Components\ThreadRow.razor.css" />
-    <None Remove="Pages\Index.razor.css" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="Components\MainCard.razor.css" />
-    <Content Include="Components\ThreadRow.razor.css" />
-    <Content Include="Pages\Index.razor.css" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="MailKit" Version="3.5.0" />
     <PackageReference Include="Syncfusion.Blazor.Grid" Version="20.2.0.50" />
     <PackageReference Include="Syncfusion.Blazor.Popups" Version="20.2.0.50" />
