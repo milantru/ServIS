@@ -243,3 +243,22 @@ return await context.Excavators
 Takto napísaný kód je validný, je to to čo som chcel, ale vtipné je na tom to, že Intellisense ukazovala že `ep` je `IList<ExcavatorProperty>` a nie `ExcavatorProperty`, takže mi to tvrdilo, že nemôžem dať `ep.PropertyType`. Ale môžem. Keď som to takto napísal, už aj IntelliSense ukazuje správne.
 
 **Prečo má `Excavator` `ExcavatorType` a `AdditionalEquipment` nie?** -> Je pravda, že pridaním takého objektu (akým je `ExcavatorType`) aj pre prídavné zariadenia by sa kód trochu viac "zuhľadil" (zmenšil by sa počet parametrov niektorých metód, napr. metódy `GetAdditionalEquipmentsAsync()`), ale ináč mi to zmysel nedáva. Pri strojoch je to z toho dôvodu, že `ExcavatorType` (dvojica typu a kategórie) určí typ vlastností stroja (`ExcavatorPropertyTypes`). Ale pri prídavných zariadeniach nič také nemáme.
+
+---
+
+**TimerService:** 
+
+Pôvodne mala táto služba v sebe 2 timery. 1. odpálil event každú sekundu (aby som vedel odpočítavať/renderovať odpočet pri aukcii), 2. odpálil event za nejakú dlhšiu dobu (napr. 1 minútu), aby sa skontrolovali aukčné ponuky. Ak nejaká skončila tak sa rovno aj vyhodnotila. 
+
+Takto sa mi to ale nepáčilo, miešal som viaceré funkcionality dokopy... Preto som sa rozhodol pre lepšiu prehľadnosť, rozšíriteľnosť a udržateľnosť tieto funkcionality rozdeliť. TimerService sa stala abstraktnou triedou, od ktorej dedí EverySecondTimerService a AuctionEvaluatorService. 
+
+Pôvododne mal TimerService v sebe statický field updateEvent, kde si užívateľ tejto služby vedel zaregistrovať nejaký handler. To sa ukázal ako problém, pretože po rozdelení využíval tento field ako EverySecondTimerService, tak aj AuctionEvaluatorTimerService (viedlo to k tomu, že každú sekundu sa odpálil event na timeru EverySecondTimerServicu a zavolal sa eventHandler, ktorý kedže bol statický tak zavolal nie len countdown updaty ale aj vyhodnotenie aukcie). Na prvý pohľad triviálna chyba, no s nie úplne triviálnym riešením.
+
+TimerService dedí od BackgroundService, vieme ho zaregistrovať v Program.cs pomocou AddHostedService (bude ako singleton, niekedy bol ako transient vraj). Ak ho registrujeme takto, spustí sa metóda ExecuteAsync (dedená z BackgroundService) automaticky- čo chceme. No nemôžeme (z nejakého dôvodu) túto službu v komponentách injectnúť, a teda registrovať na inštancii tejto služby (EverySeceondTimerService) event handlery. 
+
+Čiže v rodičovi nemôžeme mať statický field, no ani inštančný (event field, na ktorý by sme registrovali handlery). Jediné čo môžme je presunúť ho do potomkov, ale to by znamenalo že potomkom musím odkryť timer a to nechcem (nechcem aby potomkovia museli riešiť "low-level" veci ako je registrácia vlasntných eventov do Elapsed eventu na timeru... Chcem, aby len povedali za aký *interval* sa má stať *čo*). 
+
+Čo teda spravíme?  
+Vytvoríme v EverySeceondTimerService statické metódy -stačila by properata/field (ale statická!), no s metódou to bude vo Visual Studiu prehliadnejšie kvôli možnosti cestovať po referencíach metód-- pre (od)registrovanie užívateľských event handlerov. Tieto event handlery sa registrujú do statického event fieldu updateEvent, ktorý musí byť statický, pretože k inštančnému by sme sa nedostali (inject nejde).  
+A v AuctionEvaluatorService vytvoríme inštančný field (event), kde si registrujeme svoje metódy (teda nie užívateľ triedy definuje handlery ako tomu je v EverySeceondTimerService).  
+V rodičovi, TimerService, vytvoríme abstraktnú metódu GetEventHandlers, ktorú si potomkovia implementujú (EverySeceondTimerService vráti svoj statický field, AuctionEvaluatorService vráti svoj inštančný). Táto metóda sa volá v lambda funkcii, ktorá sa registruje na Elapsed event timeru. Čiže po prejdení intervalu sa odpáli Elapssed, ten aktivuje registrovanú lambda funkciu (registrovaná v rodičovi), tá v sebe zavolá abstraktnú metódu GetEventHandlers a na jej výsledku sa zavolá Invoke.  

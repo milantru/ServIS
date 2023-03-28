@@ -16,7 +16,7 @@
 	{
 		base.OnInitialized();
 
-		TimerService.UpdateEverySecondEvent += NotifyStateHasChanged;
+		EverySecondTimerService.RegisterEventHandler(NotifyStateHasChanged);
 	}
 
 	public void Dispose()
@@ -28,7 +28,7 @@
 			return;
 		}
 
-		TimerService.UpdateEverySecondEvent -= NotifyStateHasChanged;
+		EverySecondTimerService.UnregisterEventHandler(NotifyStateHasChanged);
 	}
 
 	private async Task NotifyStateHasChanged() => await InvokeAsync(() => StateHasChanged());

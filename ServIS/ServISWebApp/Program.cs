@@ -36,7 +36,8 @@ builder.Services.AddSingleton<EmailManager>(provider =>
 	var emailPassword = config.GetValue<string>("EmailAppPassword");
 	return new(emailName, emailAddress, emailPassword);
 });
-builder.Services.AddHostedService<TimerService>(provider =>
+builder.Services.AddHostedService<EverySecondTimerService>();
+builder.Services.AddHostedService<AuctionEvaluatorService>(provider =>
 {
 	var emailManager = provider.GetRequiredService<EmailManager>();
 	var api = provider.GetRequiredService<IServISApi>();
