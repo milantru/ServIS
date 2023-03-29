@@ -27,30 +27,30 @@ namespace ServISWebApp.BackgroundServices
 
 		protected override Func<Task>? GetEventHandlers() => updateEvent;
 
-		private void RegisterEventHandler()
+		private void NotifyAdminAuctionEndedWithoutWinner(DateTime dateTimeNow, AuctionOffer aoe)
 		{
-			updateEvent += async () =>
+			var excavator = aoe.Excavator;
+			var linkToAuctionOfferDetail = $"{baseUrl}/aukcna-ponuka/{aoe.Id}";
+
+			var header = new Header(
+				field: "X-ServIS-url",
+				value: linkToAuctionOfferDetail
+			);
+
+			var emailForAdmin = new Email
 			{
-				var dateTimeNow = DateTime.Now;
-				var endedAuctionOffers = await GetEndedAuctionOffers(dateTimeNow, includeEvaluated: false);
-				if (endedAuctionOffers.Count == 0)
-				{
-					return;
-				}
-
-				await EvaluateAuctionOffersAsync(dateTimeNow, endedAuctionOffers);
+				DateTime = dateTimeNow,
+				FromName = emailManager.EmailName,
+				FromAddress = emailManager.EmailAddress,
+				ToName = emailManager.EmailName,
+				ToAddress = emailManager.EmailAddress,
+				Headers = new() { header },
+				Subject = $"Aukcia s {excavator.Name} skončila bez výhercu",
+				Text = $"Aukčný predmet: {excavator.Name}\n" +
+				$"Počiatočná cena: {aoe.StartingBid} €."
 			};
-		}
 
-		private async Task<List<AuctionOffer>> GetEndedAuctionOffers(DateTime dateTimeNow, bool includeEvaluated = true)
-		{
-			var auctionOffers = await api.GetAuctionOffersAsync();
-
-			var auctionOffersEnded = auctionOffers
-				.Where(ao => (ao.OfferEnd < dateTimeNow) && (includeEvaluated || !ao.IsEvaluated))
-				.ToList();
-
-			return auctionOffersEnded;
+			_ = emailManager.SendEmailAsync(emailForAdmin);
 		}
 
 		private void NotifyAdminAuctionEndedWithWinner(
@@ -145,6 +145,21 @@ namespace ServISWebApp.BackgroundServices
 			NotifyUser(dateTimeNow, auctionLoser, auctionLoserFullname, subject, text);
 		}
 
+		private void NotifyLosers(
+			DateTime dateTimeNow,
+			List<AuctionBid> lostAuctionBids,
+			AuctionBid maxAuctionBid,
+			Excavator excavator
+		)
+		{
+			foreach (var bid in lostAuctionBids)
+			{
+				var auctionLoser = bid.User;
+				var loserFullname = $"{auctionLoser.Name} {auctionLoser.Surname}";
+				NotifyLoser(dateTimeNow, bid, auctionLoser, loserFullname, excavator, maxAuctionBid);
+			}
+		}
+
 		private async Task EvaluateAuctionOffersAsync(
 			DateTime dateTimeNow,
 			List<AuctionOffer> endedAuctionOffers
@@ -177,45 +192,30 @@ namespace ServISWebApp.BackgroundServices
 			}
 		}
 
-		private void NotifyLosers(
-			DateTime dateTimeNow,
-			List<AuctionBid> lostAuctionBids,
-			AuctionBid maxAuctionBid,
-			Excavator excavator
-		)
+		private async Task<List<AuctionOffer>> GetEndedAuctionOffers(DateTime dateTimeNow, bool includeEvaluated = true)
 		{
-			foreach (var bid in lostAuctionBids)
-			{
-				var auctionLoser = bid.User;
-				var loserFullname = $"{auctionLoser.Name} {auctionLoser.Surname}";
-				NotifyLoser(dateTimeNow, bid, auctionLoser, loserFullname, excavator, maxAuctionBid);
-			}
+			var auctionOffers = await api.GetAuctionOffersAsync();
+
+			var auctionOffersEnded = auctionOffers
+				.Where(ao => (ao.OfferEnd < dateTimeNow) && (includeEvaluated || !ao.IsEvaluated))
+				.ToList();
+
+			return auctionOffersEnded;
 		}
 
-		private void NotifyAdminAuctionEndedWithoutWinner(DateTime dateTimeNow, AuctionOffer aoe)
+		private void RegisterEventHandler()
 		{
-			var excavator = aoe.Excavator;
-			var linkToAuctionOfferDetail = $"{baseUrl}/aukcna-ponuka/{aoe.Id}";
-
-			var header = new Header(
-				field: "X-ServIS-url",
-				value: linkToAuctionOfferDetail
-			);
-
-			var emailForAdmin = new Email
+			updateEvent += async () =>
 			{
-				DateTime = dateTimeNow,
-				FromName = emailManager.EmailName,
-				FromAddress = emailManager.EmailAddress,
-				ToName = emailManager.EmailName,
-				ToAddress = emailManager.EmailAddress,
-				Headers = new() { header },
-				Subject = $"Aukcia s {excavator.Name} skončila bez výhercu",
-				Text = $"Aukčný predmet: {excavator.Name}\n" +
-				$"Počiatočná cena: {aoe.StartingBid} €."
-			};
+				var dateTimeNow = DateTime.Now;
+				var endedAuctionOffers = await GetEndedAuctionOffers(dateTimeNow, includeEvaluated: false);
+				if (endedAuctionOffers.Count == 0)
+				{
+					return;
+				}
 
-			_ = emailManager.SendEmailAsync(emailForAdmin);
+				await EvaluateAuctionOffersAsync(dateTimeNow, endedAuctionOffers);
+			};
 		}
 	}
 }
