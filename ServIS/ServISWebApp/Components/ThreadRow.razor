@@ -11,7 +11,7 @@ else
 		<div class="cols" @onclick="OnClick">
 			<div class="from @(seen ? "" : "bold")">@LatestThreadMessage.Envelope.From.Mailboxes.First().Name</div>
 			<div class="preview-text">
-				<span class="subject @(seen ? "" : "bold")">@LatestThreadMessage.NormalizedSubject</span>-@RemoveInjectedUrl(LatestThreadMessage.PreviewText)
+				<span class="subject @(seen ? "" : "bold")">@LatestThreadMessage.NormalizedSubject</span>-@LatestThreadMessage.PreviewText
 			</div>
 			<div class="date @(seen ? "" : "bold")">@LatestThreadMessage.Date.DateTime.ToShortDateString()</div>
 		</div>
@@ -44,31 +44,5 @@ else
 		{
 			seen = LatestThreadMessage.Flags.Value.HasFlag(MessageFlags.Seen);
 		}
-	}
-
-	private string RemoveInjectedUrl(string text)
-	{
-		var fromAddress = LatestThreadMessage.Envelope.From.Mailboxes.First().Address;
-		if (fromAddress != EmailManager.EmailAddress)
-		{// email was not sent from this app
-			return text;
-		}
-
-		var tagName = "injected_url";
-
-		var openTagIndex = text.IndexOf($"<{tagName}>");
-		if (openTagIndex == -1)
-		{// there isn't injected url
-			return text;
-		}
-		var openTagLen = tagName.Length + 2; // +2 for <>
-
-		var closeTagIndex = text.IndexOf($"</{tagName}>");
-		var closeTagLen = tagName.Length + 3; // +3 for </>
-
-		var injectedInfoLen = (closeTagIndex + closeTagLen) - openTagIndex; // open, end tag and url between them
-		var textWithoutInjectedUrl = text.Remove(openTagIndex, injectedInfoLen);
-
-		return textWithoutInjectedUrl;
 	}
 }

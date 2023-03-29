@@ -1,6 +1,7 @@
 ﻿@inject NavigationManager navMan
 @inject IConfiguration config
 @inject IServISApi api
+@using MimeKit;
 @using ServISWebApp.Auth
 @using ServISWebApp.CssProviders
 @using System.Security.Claims
@@ -151,7 +152,10 @@
 
 	private async Task SendFormDataAsync()
 	{
-		var additionalInfo = $"<injected_url>{navMan.Uri}</injected_url>";
+		var header = new Header(
+			field: "X-ServIS-url",
+			value: navMan.Uri
+		);
 
 		var email = new Email
 			{
@@ -160,8 +164,9 @@
 				ToName = emailManager.EmailName,
 				ToAddress = emailManager.EmailAddress,
 				DateTime = DateTime.Now,
+				Headers = new() { header },
 				Subject = $"Dopyt: {DemandedItemName}",
-				Text = additionalInfo + DemandInfo.Message
+				Text = DemandInfo.Message
 			};
 
 		await ResetDemandInfoAsync();
