@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ServISData.Attributes
+﻿namespace ServISData.Attributes
 {
 	internal class InputTypeLabelAttribute : Attribute
 	{
