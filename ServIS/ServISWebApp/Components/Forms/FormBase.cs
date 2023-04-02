@@ -11,14 +11,14 @@ namespace ServISWebApp.Components.Forms
 		[Parameter]
 		public EventCallback<ItemType> ItemChanged { get; set; }
 
-		public abstract Task SaveItemAsync();
-
-		public abstract Task ResetAsync();
-
 		[Parameter]
 		public EventCallback OnSave { get; set; }
 
 		[Parameter]
 		public Func<Task> AfterSaveAsync { get; set; } = null!;
+
+		public abstract Task SaveItemAsync();
+
+		public abstract Task ResetAsync();
 	}
 }
