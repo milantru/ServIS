@@ -185,9 +185,9 @@ namespace ServISWebApp.BackgroundServices
 
 					var lostAuctionBids = await api.GetLostAuctionBidsAsync(offer.Id);
 					NotifyLosers(dateTimeNow, lostAuctionBids, maxAuctionBid, excavator);
+					offer.IsEvaluated = true;
 				}
 
-				offer.IsEvaluated = true;
 				_ = api.SaveAuctionOfferAsync(offer);
 			}
 		}
