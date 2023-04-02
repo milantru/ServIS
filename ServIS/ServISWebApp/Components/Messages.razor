@@ -6,31 +6,47 @@
 <div class="my-container">
 	<h3>Správy</h3>
 
-	@if (Threads is null)
+	@if (messageSettingsClosed)
 	{
-		<p>Načítava sa...</p>
-	}
-	else
-	{
-		@if (CurrentlyChosenThread is null)
+		<div class="top-right">
+			<CogIconButton OnClick="() => messageSettingsClosed = false" />
+		</div>
+
+		@if (Threads is null)
 		{
-			<ThreadsView @bind-Threads="Threads"
-						 OnThreadClick="ChangeToThreadView"
-						 OnReload="LoadThreadsAsync"
-						 EmailManager="@emailManager" />
+			<p>Načítava sa...</p>
 		}
 		else
 		{
-			<ThreadView Thread="@CurrentlyChosenThread"
-						OnSent="OnSent"
-						OnBack="() => ChangeToThreadView(null)"
-						OnReloadRequest="LoadThreadsAsync"
-						EmailManager="@emailManager" />
+			@if (CurrentlyChosenThread is null)
+			{
+				<ThreadsView @bind-Threads="Threads"
+							 OnThreadClick="ChangeToThreadView"
+							 OnReload="LoadThreadsAsync"
+							 EmailManager="@emailManager" />
+			}
+			else
+			{
+				<ThreadView Thread="@CurrentlyChosenThread"
+							OnSent="OnSent"
+							OnBack="() => ChangeToThreadView(null)"
+							OnReloadRequest="LoadThreadsAsync"
+							EmailManager="@emailManager" />
+			}
 		}
+	} 
+	else
+	{
+		<div class="top-right">
+			<BackIconButton OnClick="() => messageSettingsClosed = true" />
+		</div>
+
+		<MessageSettings />
 	}
 </div>
 
 @code {
+	private bool messageSettingsClosed = true;
 	private EmailManager emailManager = null!;
 	//private Timer timer = null!;
 

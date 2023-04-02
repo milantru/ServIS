@@ -5,3 +5,9 @@
 	margin-right: auto;
 	margin-left: auto;
 }
+
+.top-right {
+	position: absolute;
+	right: 8px;
+	top: 8px;
+}
