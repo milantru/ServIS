@@ -23,8 +23,6 @@ namespace ServISData.Models
 
 		public ICollection<ExcavatorProperty> Properties { get; set; } = null!;
 
-		//public IList<AcquiredExcavator> AcquiredExcavators { get; set; } = null!;
-
 		//public IList<AuctionOffer> AuctionOffers { get; set; } = null!;
 
 		public ICollection<SparePart> SpareParts { get; set; } = null!;

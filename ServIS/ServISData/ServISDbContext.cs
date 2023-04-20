@@ -7,7 +7,6 @@ namespace ServISData
 {
 	public class ServISDbContext : DbContext
 	{
-		public DbSet<AcquiredExcavator> AcquiredExcavators { get; set; } = null!;
 		public DbSet<AdditionalEquipment> AdditionalEquipments { get; set; } = null!;
 		public DbSet<AdditionalEquipmentBrand> AdditionalEquipmentBrands { get; set; } = null!;
 		public DbSet<AdditionalEquipmentCategory> AdditionalEquipmentCategories { get; set; } = null!;
