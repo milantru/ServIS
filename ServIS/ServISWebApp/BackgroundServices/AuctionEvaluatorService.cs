@@ -30,7 +30,6 @@ namespace ServISWebApp.BackgroundServices
 
 		private async Task NotifyAdminAuctionEndedWithoutWinner(DateTime dateTimeNow, AuctionOffer aoe)
 		{
-			var excavator = aoe.Excavator;
 			var linkToAuctionOfferDetail = $"{baseUrl}/aukcna-ponuka/{aoe.Id}";
 
 			var header = new Header(
