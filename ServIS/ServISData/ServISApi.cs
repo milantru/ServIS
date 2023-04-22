@@ -112,17 +112,13 @@ namespace ServISData
 
 			if (excavatorType.Id == 0)
 			{
-				context.Attach(excavatorType.Brand);
-				context.Attach(excavatorType.Category);
-
-				for (int i = 0; i < excavatorType.PropertyTypes.Count; i++)
+				context.Add(new ExcavatorType()
 				{
-					excavatorType.PropertyTypes.ElementAt(i).ExcavatorTypesWithThisProperty = null!;
+					Brand = await context.ExcavatorBrands.FirstAsync(eb => eb.Id == excavatorType.Brand.Id),
+					Category = await context.ExcavatorCategories.FirstAsync(ec => ec.Id == excavatorType.Category.Id),
+					PropertyTypes = await context.ExcavatorPropertyTypes.Where(ept => excavatorType.PropertyTypes.Contains(ept)).ToArrayAsync(),
+				});
                 }
-				context.AttachRange(excavatorType.PropertyTypes);
-
-				context.Add(excavatorType);
-			}
 			else
 			{
 				currentExcavatorType = await context.ExcavatorTypes
