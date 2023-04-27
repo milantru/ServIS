@@ -186,9 +186,14 @@ namespace ServISData
 
 			if (sparePart.Id == 0)
 			{
-				context.AttachRange(sparePart.Excavators);
+				currentSparePart = new SparePart()
+				{
+					Name = sparePart.Name,
+					CatalogNumber = sparePart.CatalogNumber,
+					Excavators = await context.Excavators.Where(e => sparePart.Excavators.Contains(e)).ToListAsync()
+				};
 
-				context.Add(sparePart);
+				context.Add(currentSparePart);
 			}
 			else
 			{
@@ -196,7 +201,7 @@ namespace ServISData
 					.Include(sp => sp.Excavators)
 					.FirstAsync(sp => sp.Id == sparePart.Id);
 
-				UpdateSparePartData(currentSparePart, sparePart);
+				await UpdateSparePartDataAsync(context, currentSparePart, sparePart);
 			}
 
 			await context.SaveChangesAsync();
@@ -1140,7 +1145,7 @@ namespace ServISData
 				.FirstAsync(et => et.Id == newExcavator.Type.Id);
 		}
 
-		private static void UpdateExcavatorProperties(Excavator currentExcavator, Excavator newExcavator)
+		private static async Task UpdateExcavatorPropertiesAsync(ServISDbContext context, Excavator currentExcavator, Excavator newExcavator)
 		{
 			if (currentExcavator.Type.Id == newExcavator.Type.Id)
 			{
@@ -1161,18 +1166,36 @@ namespace ServISData
 				var newProperties = newExcavator.Properties;
 				foreach (var newProperty in newProperties)
 				{
-					newProperty.PropertyType.ExcavatorTypesWithThisProperty = null!;
-					currentExcavator.Properties.Add(newProperty);
+					currentExcavator.Properties.Add(new ExcavatorProperty()
+					{
+						PropertyType = await context.ExcavatorPropertyTypes.FirstAsync(ept => ept.Id == newProperty.PropertyType.Id),
+						Value = newProperty.Value
+					});
 				}
 			}
 		}
 
 		private static async Task UpdateExcavatorSparePartsAsync(ServISDbContext context, Excavator currentExcavator, Excavator newExcavator)
 		{
-			var sparePartsIds = newExcavator.SpareParts.Select(sp => sp.Id);
-			currentExcavator.SpareParts = await context.SpareParts
-				.Where(sp => sparePartsIds.Contains(sp.Id))
-				.ToListAsync();
+			foreach (var newSparePart in newExcavator.SpareParts)
+			{
+				var currSparePart = currentExcavator.SpareParts.FirstOrDefault(sp => sp.Id == newSparePart.Id);
+				if (currSparePart is null)
+				{
+					currentExcavator.SpareParts.Add(await context.SpareParts.FirstAsync(sp => sp.Id == newSparePart.Id));
+				}
+			}
+
+			for (int i = currentExcavator.SpareParts.Count - 1; i >= 0; i--)
+			{
+				var currSparePart = currentExcavator.SpareParts.ElementAt(i);
+
+				var currSparePartIsInNewSpareParts = newExcavator.SpareParts.Any(sp => sp.Id == currSparePart.Id);
+				if (!currSparePartIsInNewSpareParts)
+				{
+					currentExcavator.SpareParts.Remove(currSparePart);
+				}
+			}
 		}
 
 		private static async Task UpdateExcavatorDataAsync(ServISDbContext context, Excavator currentExcavator, Excavator newExcavator)
@@ -1183,7 +1206,7 @@ namespace ServISData
 
 			UpdatePhotos(currentExcavator.Photos, newExcavator.Photos);
 
-			UpdateExcavatorProperties(currentExcavator, newExcavator);
+			await UpdateExcavatorPropertiesAsync(context, currentExcavator, newExcavator);
 
 			await UpdateExcavatorTypeAsync(context, currentExcavator, newExcavator);
 
@@ -1372,43 +1395,41 @@ namespace ServISData
 			}
 		}
 
-		private static void AddNewlyCheckedSpareParts(
+		private static async Task AddNewlyCheckedSparePartsAsync(
+			ServISDbContext context,
 			ICollection<Excavator> currentExcavators,
 			ICollection<Excavator> newExcavators
 		)
 		{
-			var newExcavatorsCount = newExcavators.Count;
-			for (int i = 0; i < newExcavatorsCount; i++)
+			foreach (var newExcavator in newExcavators)
 			{
-				var newExcavator = newExcavators.ElementAt(i);
-				newExcavator.SpareParts = null!; // #hotfix
-
 				var isNewExcavatorInCurrentExcavators =
 					currentExcavators.Any(currentExcavator => currentExcavator.Id == newExcavator.Id);
 
 				if (!isNewExcavatorInCurrentExcavators)
 				{
-					currentExcavators.Add(newExcavator);
+					currentExcavators.Add(await context.Excavators.FirstAsync(e => e.Id == newExcavator.Id));
 				}
 			}
 		}
 
-		private static void UpdateSparePartExcavators(
+		private static async Task UpdateSparePartExcavatorsAsync(
+			ServISDbContext context,
 			ICollection<Excavator> currentExcavators,
 			ICollection<Excavator> newExcavators
 		)
 		{
 			RemoveUncheckedSpareParts(currentExcavators, newExcavators);
 
-			AddNewlyCheckedSpareParts(currentExcavators, newExcavators);
+			await AddNewlyCheckedSparePartsAsync(context, currentExcavators, newExcavators);
 		}
 
-		private static void UpdateSparePartData(SparePart currentSparePart, SparePart newSparePart)
+		private static async Task UpdateSparePartDataAsync(ServISDbContext context, SparePart currentSparePart, SparePart newSparePart)
 		{
 			currentSparePart.CatalogNumber = newSparePart.CatalogNumber;
 			currentSparePart.Name = newSparePart.Name;
 
-			UpdateSparePartExcavators(currentSparePart.Excavators, newSparePart.Excavators);
+			await UpdateSparePartExcavatorsAsync(context, currentSparePart.Excavators, newSparePart.Excavators);
 		}
 
 		private static async Task UpdateMainOfferDataAsync(
