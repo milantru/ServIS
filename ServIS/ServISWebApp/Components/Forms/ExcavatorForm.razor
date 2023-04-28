@@ -282,11 +282,12 @@
 		foreach (var propertyType in Item.Type.PropertyTypes)
 		{
 			Item.Properties.Add(new ExcavatorProperty
-				{
-					PropertyType = propertyType,
-				});
+			{
+				PropertyType = propertyType,
+				Value = ""
+			});
 		}
 
-		StateHasChanged();
+		//StateHasChanged();
 	}
 }
