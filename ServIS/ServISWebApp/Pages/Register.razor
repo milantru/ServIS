@@ -2,8 +2,40 @@
 
 @inject NavigationManager navMan
 
-<UserForm User="@User" OnSave="@(() => navMan.NavigateTo("/"))" />
+@if (isAuthenticated.HasValue)
+{
+	@if (!isAuthenticated.Value)
+	{
+		<UserForm User="@User" OnSave="@(() => navMan.NavigateTo("/"))" />
+	}
+	else
+	{
+		<p>Ste prihlásený.</p>
+	}
+}
+else
+{
+	<p>Načítava sa...</p>
+}
 
 @code {
 	private User User { get; set; } = new();
+	private bool? isAuthenticated;
+
+	[CascadingParameter]
+	public Task<AuthenticationState> AuthenticationState { get; set; } = null!;
+
+	protected override async Task OnParametersSetAsync()
+	{
+		await base.OnParametersSetAsync();
+
+		await CheckIfUserIsAuthenticatedAsync();
+	}
+
+	private async Task CheckIfUserIsAuthenticatedAsync()
+	{
+		var authState = await AuthenticationState;
+
+		isAuthenticated = authState.User.Identity?.IsAuthenticated ?? false;
+	}
 }

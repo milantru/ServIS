@@ -6,40 +6,61 @@
 @inject NavigationManager navMan
 @using ServISWebApp.Auth
 
-<div id="login" class="servis-border">
-	<h3>Prihlásenie</h3>
+@if (isAuthenticated.HasValue)
+{
+	@if (!isAuthenticated.Value)
+	{
+		<div id="login" class="servis-border">
+			<h3>Prihlásenie</h3>
 
-	<div id="login-data">
-		<EditForm Model="loginData" OnValidSubmit="AuthenticateAsync">
-			<div class="form-group">
-				<label @ref="username" for="username">Prihlasovacie meno</label><br />
-				<InputText @bind-Value="@loginData.Username" id="username" class="form-control" />
+			<div id="login-data">
+				<EditForm Model="loginData" OnValidSubmit="AuthenticateAsync">
+					<div class="form-group">
+						<label @ref="username" for="username">Prihlasovacie meno</label><br />
+						<InputText @bind-Value="@loginData.Username" id="username" class="form-control" />
+					</div>
+
+					<div class="form-group">
+						<label for="password">Heslo</label><br />
+						<InputPassword @bind-Value="loginData.Password" />
+					</div>
+
+					<div class="container-center-items-horizontal">
+						<SubmitButton Text="Prihlásiť" />
+					</div>
+				</EditForm>
 			</div>
-
-			<div class="form-group">
-				<label for="password">Heslo</label><br />
-				<InputPassword @bind-Value="loginData.Password" />
-			</div>
-
-			<div class="container-center-items-horizontal">
-				<SubmitButton Text="Prihlásiť" />
-			</div>
-		</EditForm>
-	</div>
-</div>
-
+		</div>
+	}
+	else
+	{
+		<p>Už ste prihlásený.</p>
+	}
+}
+else
+{
+	<p>Načítava sa...</p>
+}
 
 @code {
-	private ElementReference username;
+	private ElementReference? username;
 	private LoginData loginData = new();
+	private bool? isAuthenticated;
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+
+		await CheckIfUserIsAuthenticatedAsync();
+	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
 		await base.OnAfterRenderAsync(firstRender);
 
-		if (firstRender)
+		if (firstRender && username.HasValue)
 		{
-			await username.FocusAsync();
+			await username.Value.FocusAsync();
 		}
 	}
 
@@ -66,6 +87,13 @@
 		await customAuthStateProvider.UpdateAuthenticationState(new UserLocalStorage(user));
 
 		navMan.NavigateTo("/", true);
+	}
+
+	private async Task CheckIfUserIsAuthenticatedAsync()
+	{
+		var authState = await authStateProvider.GetAuthenticationStateAsync();
+
+		isAuthenticated = authState.User.Identity?.IsAuthenticated ?? false;
 	}
 
 	private class LoginData
