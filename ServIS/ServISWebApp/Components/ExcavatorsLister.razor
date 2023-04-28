@@ -48,7 +48,7 @@
 				{
 					Skip = request.StartIndex,
 					Take = excavatorsDisplayedCount,
-					SpecialOperations = (items) => items.Where(item => item.Type.Id == ExcavatorType.Id)
+					SpecialOperations = (items) => items.Where(item => item.Type.Id == ExcavatorType.Id && !item.IsForAuctionOnly)
 				});
 		var excavators = await api.GetExcavatorsAsync(dataOperations);
 
