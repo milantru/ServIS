@@ -1,6 +1,7 @@
-﻿@inherits LayoutComponentBase
+﻿@inject IConfiguration config
+@inherits LayoutComponentBase
 
-<PageTitle>B-Servis</PageTitle>
+<PageTitle>@(config.GetValue<string>("CompanyName"))</PageTitle>
 
 <SfDialogProvider />
 

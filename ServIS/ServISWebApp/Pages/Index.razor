@@ -2,8 +2,9 @@
 
 @inject IServISApi api
 @inject SfDialogService dialogService
+@inject IConfiguration config
 
-<PageTitle>B-Servis | Domov</PageTitle>
+<PageTitle>@(config.GetValue<string>("CompanyName")) | Domov</PageTitle>
 
 <AuthorizeView Roles="Administrator">
 	<a href="/admin/nova-ponuka">Pridať novú ponuku</a>
