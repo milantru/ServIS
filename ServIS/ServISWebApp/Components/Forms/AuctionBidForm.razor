@@ -92,7 +92,7 @@
 }
 
 @code {
-	private const int minDiff = 100;
+	private decimal? minDiff;
 	private EditContext editContext = null!;
 	private ValidationMessageStore? messageStore;
 	private AuthenticationState authState = null!;
@@ -109,6 +109,13 @@
 	public bool IsVisible { get; private set; } = false;
 
 	private AuctionBid AuctionBid { get; set; } = new();
+
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+
+		minDiff = config.GetValue<decimal>("MinimalDifferenceBetweenAuctionBids");
+	}
 
 	protected override async Task OnParametersSetAsync()
 	{
