@@ -92,7 +92,7 @@
 }
 
 @code {
-	private decimal? minDiff;
+	private decimal minDiff;
 	private EditContext editContext = null!;
 	private ValidationMessageStore? messageStore;
 	private AuthenticationState authState = null!;
@@ -144,22 +144,21 @@
 
 	/// <returns>decimal number if bid is not high enough indicating the minimal value required (incl.);
 	/// null otherwise</returns>
-	private async Task<decimal?> IsBidHighEnough()
+	private async Task<decimal?> IsBidHighEnoughAsync()
 	{
-		decimal currentMaxBid;
+		decimal minValue;
+
 		/* I assume when we are creating auction bid for some auction offer, this offer already exists,
-			* therefore `AuctionOffer.Id` is not 0 */
+		 * therefore `AuctionOffer.Id` is not 0. */
 		var maxAuctionBid = await api.GetMaxAuctionBidAsync(AuctionOffer.Id);
-		if (maxAuctionBid is null)
-		{// there are no bids yet (so there cant be max bid)
-			currentMaxBid = AuctionOffer.StartingBid;
+		if (maxAuctionBid is not null)
+		{
+			minValue = maxAuctionBid.Bid + minDiff;
 		}
 		else
-		{
-			currentMaxBid = maxAuctionBid.Bid;
+		{// there are no bids yet (so there cant be max bid)
+			minValue = AuctionOffer.StartingBid;
 		}
-
-		var minValue = currentMaxBid + minDiff;
 
 		return AuctionBid.Bid >= minValue ? null : minValue;
 	}
@@ -168,7 +167,7 @@
 	{
 		messageStore?.Clear();
 
-		var minBidValue = await IsBidHighEnough();
+		var minBidValue = await IsBidHighEnoughAsync();
 		if (minBidValue.HasValue)
 		{
 			messageStore?.Add(() => AuctionBid.Bid, $"Minimálna hodnota je {minBidValue.Value} €.");
@@ -211,7 +210,10 @@
 
 	private async Task SendBidAsync()
 	{
-		var minBidValue = await IsBidHighEnough();
+		/* We registered IsBidHighEnoughAsync in OnValidationRequested already, so why do we check it here again?
+		 * The answer is that OnValidationRequested will cause change in css depending on validity of the data. 
+		 * And check here will/will not let us submit the form depending on validity of the data. */
+		var minBidValue = await IsBidHighEnoughAsync();
 		if (minBidValue.HasValue)
 		{// field with bid is not valid
 			return;
