@@ -1110,6 +1110,16 @@ namespace ServISData
 
 		public async Task DeleteAuctionOfferAsync(AuctionOffer auctionOffer)
 		{
+			var bids = await GetAuctionBidsAsync(auctionOffer.Id);
+			foreach (var bid in bids)
+			{
+				var user = bid.User;
+				if (user.IsTemporary)
+				{
+					await DeleteUserAsync(user);
+				}
+			}
+
 			await DeleteItem(auctionOffer);
 		}
 

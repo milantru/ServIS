@@ -117,6 +117,11 @@
 			foreach (var auctionBid in auctionBids)
 			{
 				_ = api.DeleteAuctionBidAsync(auctionBid);
+
+				var user = auctionBid.User;
+				if (user.IsTemporary) {
+					_ = api.DeleteUserAsync(user);
+				}
 			}
 			Item.IsEvaluated = false;
 		}
