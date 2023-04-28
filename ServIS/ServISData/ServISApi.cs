@@ -386,11 +386,15 @@ namespace ServISData
 
 			if (auctionBid.Id == 0)
 			{
+				var user = auctionBid.User.Id == 0 
+					? auctionBid.User 
+					: await context.Users.FirstAsync(u => u.Id == auctionBid.User.Id);
+
 				currentAuctionBid = new AuctionBid()
 				{
 					Bid = auctionBid.Bid,
 					AuctionOffer = await context.AuctionOffers.FirstAsync(ao => ao.Id == auctionBid.AuctionOffer.Id),
-					User = await context.Users.FirstAsync(u => u.Id == auctionBid.User.Id)
+					User = user
 				};
 
 				context.Add(currentAuctionBid);
