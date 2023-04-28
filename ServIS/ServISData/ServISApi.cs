@@ -20,19 +20,30 @@ namespace ServISData
 			using var context = factory.CreateDbContext();
 			Excavator currentExcavator;
 
-			List<ICollection<Excavator>>? excavatorsTmp = null;
 			if (excavator.Id == 0)
 			{
-				context.Attach(excavator.Type);
-				excavatorsTmp = new(excavator.SpareParts.Count);
-				foreach (var sparePart in excavator.SpareParts)
+				var props = new List<ExcavatorProperty>(excavator.Properties.Count);
+				foreach (var prop in excavator.Properties)
 				{
-					excavatorsTmp.Add(sparePart.Excavators);
-					sparePart.Excavators = null!; // TODO: mere hotfix, but this is not pretty, should be changed!
+					props.Add(new ExcavatorProperty()
+					{
+						PropertyType = await context.ExcavatorPropertyTypes.FirstAsync(ept => ept.Id == prop.PropertyType.Id),
+						Value = prop.Value
+					});
 				}
-				context.AttachRange(excavator.SpareParts);
 
-				context.Add(excavator);
+				currentExcavator = new Excavator()
+				{
+					Name = excavator.Name,
+					Description = excavator.Description,
+					IsForAuctionOnly = excavator.IsForAuctionOnly,
+					Photos = excavator.Photos,
+					Type = await context.ExcavatorTypes.FirstAsync(et => et.Id == excavator.Type.Id),
+					Properties = props,
+					SpareParts = await context.SpareParts.Where(sp => excavator.SpareParts.Contains(sp)).ToListAsync()
+				};
+
+				context.Add(currentExcavator);
 			}
 			else
 			{
@@ -48,15 +59,6 @@ namespace ServISData
 			}
 
 			await context.SaveChangesAsync();
-			if (excavatorsTmp != null)
-			{
-				int i = 0;
-				foreach (var sparePart in excavator.SpareParts)
-				{
-					sparePart.Excavators = excavatorsTmp[i];
-					i++;
-				}
-			}
 
 			return excavator;
 		}
@@ -68,7 +70,12 @@ namespace ServISData
 
 			if (excavatorBrand.Id == 0)
 			{
-				context.Add(excavatorBrand);
+				currentExcavatorBrand = new ExcavatorBrand()
+				{
+					Brand = excavatorBrand.Brand
+				};
+
+				context.Add(currentExcavatorBrand);
 			}
 			else
 			{
@@ -90,7 +97,12 @@ namespace ServISData
 
 			if (excavatorCategory.Id == 0)
 			{
-				context.Add(excavatorCategory);
+				currentExcavatorCategory = new ExcavatorCategory()
+				{
+					Category = excavatorCategory.Category
+				};
+
+				context.Add(currentExcavatorCategory);
 			}
 			else
 			{
@@ -112,13 +124,15 @@ namespace ServISData
 
 			if (excavatorType.Id == 0)
 			{
-				context.Add(new ExcavatorType()
+				currentExcavatorType = new ExcavatorType()
 				{
 					Brand = await context.ExcavatorBrands.FirstAsync(eb => eb.Id == excavatorType.Brand.Id),
 					Category = await context.ExcavatorCategories.FirstAsync(ec => ec.Id == excavatorType.Category.Id),
-					PropertyTypes = await context.ExcavatorPropertyTypes.Where(ept => excavatorType.PropertyTypes.Contains(ept)).ToArrayAsync(),
-				});
-                }
+					PropertyTypes = await context.ExcavatorPropertyTypes.Where(ept => excavatorType.PropertyTypes.Contains(ept)).ToArrayAsync()
+				};
+
+				context.Add(currentExcavatorType);
+            }
 			else
 			{
 				currentExcavatorType = await context.ExcavatorTypes
@@ -129,20 +143,6 @@ namespace ServISData
 					.ThenInclude(e => e.Properties)
 					.ThenInclude(ep => ep.PropertyType)
 					.FirstAsync(et => et.Id == excavatorType.Id);
-
-				foreach (var propertyType in excavatorType.PropertyTypes)
-				{
-					/* #hotfix If this foreach does not make sense to you, well, fear not because you are not alone...
-					 * For some reason, sometimes excavator type didn't save. It didn't throw 
-					 * any exception or whatsoever, but... Let's say we have properties pA (unchecked) 
-					 * and pB (checked). We uncheck pB and check pA. We hit save and excavator type successfully
-					 * saves. Then we choose the same excavator type to edit- check pB, uncheck pA. We try to 
-					 * save the type again. When we choose the type again, we see that pB is still 
-					 * unchecked and pA checked. 
-					 * (This behaviour was spotted in ExcavatorTypeManagement component and it seems this
-					 * foreach solves it.)*/
-					propertyType.ExcavatorTypesWithThisProperty = null!;
-				}
 
 				await UpdateExcavatorTypeDataAsync(context, currentExcavatorType, excavatorType);
 			}
@@ -164,7 +164,13 @@ namespace ServISData
 
 			if (excavatorPropertyType.Id == 0)
 			{
-				context.Add(excavatorPropertyType);
+				currentExcavatorPropertyType = new ExcavatorPropertyType()
+				{
+					Name = excavatorPropertyType.Name,
+					InputType = excavatorPropertyType.InputType
+				};
+
+				context.Add(currentExcavatorPropertyType);
 			}
 			else
 			{
@@ -216,9 +222,14 @@ namespace ServISData
 
 			if (mainOffer.Id == 0)
 			{
-				context.Attach(mainOffer.ExcavatorType);
+				currentMainOffer = new MainOffer()
+				{
+					Photo = mainOffer.Photo,
+					Description = mainOffer.Description,
+					ExcavatorType = await context.ExcavatorTypes.FirstAsync(et => et.Id == mainOffer.ExcavatorType.Id)
+				};
 
-				context.Add(mainOffer);
+				context.Add(currentMainOffer);
 			}
 			else
 			{
@@ -241,16 +252,17 @@ namespace ServISData
 
 			if (additionalEquipment.Id == 0)
 			{
-				additionalEquipment.Brand.AdditionalEquipmentsOfThisBrand = null!;
-				additionalEquipment.Category.AdditionalEquipmentsOfThisCategory = null!;
-				additionalEquipment.ExcavatorCategory.AdditionalEquipmentsOfThisCategory = null!;
-				additionalEquipment.ExcavatorCategory.ExcavatorTypesOfThisCategory = null!;
+				currentAdditionalEquipment = new AdditionalEquipment()
+				{
+					Name = additionalEquipment.Name,
+					Description = additionalEquipment.Description,
+					Photos = additionalEquipment.Photos,
+					Brand = await context.AdditionalEquipmentBrands.FirstAsync(aeb => aeb.Id == additionalEquipment.Brand.Id),
+					Category = await context.AdditionalEquipmentCategories.FirstAsync(aec => aec.Id == additionalEquipment.Category.Id),
+					ExcavatorCategory = await context.ExcavatorCategories.FirstAsync(ec => ec.Id == additionalEquipment.ExcavatorCategory.Id)
+				};
 
-				context.Attach(additionalEquipment.Brand);
-				context.Attach(additionalEquipment.Category);
-				context.Attach(additionalEquipment.ExcavatorCategory);
-
-				context.Add(additionalEquipment);
+				context.Add(currentAdditionalEquipment);
 			}
 			else
 			{
@@ -342,9 +354,16 @@ namespace ServISData
 
 			if (auctionOffer.Id == 0)
 			{
-				context.Attach(auctionOffer.Excavator);
+				currentAuctionOffer = new AuctionOffer()
+				{
+					Description = auctionOffer.Description,
+					StartingBid = auctionOffer.StartingBid,
+					OfferEnd = auctionOffer.OfferEnd,
+					IsEvaluated = auctionOffer.IsEvaluated,
+					Excavator = await context.Excavators.FirstAsync(e => e.Id == auctionOffer.Excavator.Id)
+				};
 
-				context.Add(auctionOffer);
+				context.Add(currentAuctionOffer);
 			}
 			else
 			{
@@ -367,10 +386,14 @@ namespace ServISData
 
 			if (auctionBid.Id == 0)
 			{
-				context.Attach(auctionBid.User);
-				context.Attach(auctionBid.AuctionOffer);
+				currentAuctionBid = new AuctionBid()
+				{
+					Bid = auctionBid.Bid,
+					AuctionOffer = await context.AuctionOffers.FirstAsync(ao => ao.Id == auctionBid.AuctionOffer.Id),
+					User = await context.Users.FirstAsync(u => u.Id == auctionBid.User.Id)
+				};
 
-				context.Add(auctionBid);
+				context.Add(currentAuctionBid);
 			}
 			else
 			{
@@ -1221,7 +1244,8 @@ namespace ServISData
 			}
 		}
 
-		private static void AddNewlyCheckedPropertyTypes(
+		private static async Task AddNewlyCheckedPropertyTypesAsync(
+			ServISDbContext context,
 			ICollection<ExcavatorPropertyType> currentPropertyTypes,
 			ICollection<ExcavatorPropertyType> newPropertyTypes,
 			ICollection<Excavator> excavatorsOfThisType
@@ -1234,37 +1258,20 @@ namespace ServISData
 
 				return !isNewPropertyTypeInCurrentPropertyTypes;
 			});
+
 			foreach (var propertyType in propertyTypesForAddition)
 			{
-				currentPropertyTypes.Add(propertyType);
+				var propTypeFromContext = await context.ExcavatorPropertyTypes.FirstAsync(ept => ept.Id == propertyType.Id);
+
+				currentPropertyTypes.Add(propTypeFromContext);
 
 				var newProperty = new ExcavatorProperty
 				{
-					PropertyType = propertyType,
+					PropertyType = propTypeFromContext,
 					Value = ""
 				};
 				UpdateExcavatorsByAddingProperty(excavatorsOfThisType, newProperty);
 			}
-			//var newPropertyTypesCount = newPropertyTypes.Count;
-			//for (int i = 0; i < newPropertyTypesCount; i++)
-			//{
-			//	var newPropertyType = newPropertyTypes[i];
-
-			//	var isNewPropertyTypeInCurrentPropertyTypes =
-			//		currentPropertyTypes.Any(currentPropertyType => currentPropertyType.Id == newPropertyType.Id);
-
-			//	if (!isNewPropertyTypeInCurrentPropertyTypes)
-			//	{
-			//		currentPropertyTypes.Add(newPropertyType);
-
-			//		var newProperty = new ExcavatorProperty
-			//		{
-			//			PropertyType = newPropertyType,
-			//			Value = ""
-			//		};
-			//		UpdateExcavatorsByAddingProperty(excavatorsOfThisType, newProperty);
-			//	}
-			//}
 		}
 
 		private static void UpdateExcavatorsByRemovingPropertyOfPropertyType(
@@ -1276,22 +1283,18 @@ namespace ServISData
 			{
 				var excavatorProperties = excavator.Properties;
 
-				var propsForRemoval = excavator.Properties.Where(p => p.PropertyType.Id == propertyType.Id);
-				foreach (var prop in propsForRemoval)
+				for (int i = excavatorProperties.Count - 1; i >= 0; i--)
 				{
-					excavatorProperties.Remove(prop);
-				}
-				//for (int i = excavatorProperties.Count - 1; i >= 0; i--)
-				//{
-				//	var property = excavatorProperties[i];
+					var property = excavatorProperties.ElementAt(i);
 
-				//	if (property.PropertyType.Id == propertyType.Id)
-				//	{
-				//		excavatorProperties.Remove(property);
-				//		break;
-				//		//property.PropertyType = null!;
-				//	}
-				//}
+					if (property.PropertyType.Id == propertyType.Id)
+					{
+						excavatorProperties.Remove(property);
+						/* break here is an optimization, we assume that every excavator has properties of the unique type.
+						 * In other words, we assume there cant be 2+ properties of the same property type. */
+						break;
+					}
+				}
 			}
 		}
 
@@ -1315,23 +1318,10 @@ namespace ServISData
 
 				currentPropertyTypes.Remove(propertyType);
 			}
-			//for (int i = currentPropertyTypes.Count - 1; i >= 0; i--)
-			//{
-			//	var currentPropertyType = currentPropertyTypes[i];
-
-			//	var isCurrentPropertyTypeInNewPropertyTypes =
-			//		newPropertyTypes.Any(newPropertyType => newPropertyType.Id == currentPropertyType.Id);
-
-			//	if (!isCurrentPropertyTypeInNewPropertyTypes)
-			//	{
-			//		UpdateExcavatorsByRemovingPropertyOfPropertyType(excavatorsToBeUpdated, currentPropertyType);
-
-			//		currentPropertyTypes.Remove(currentPropertyType);
-			//	}
-			//}
 		}
 
-		private static void UpdateExcavatorTypePropertyTypes(
+		private static async Task UpdateExcavatorTypePropertyTypesAsync(
+			ServISDbContext context,
 			ExcavatorType currentExcavatorType,
 			ExcavatorType newExcavatorType
 		)
@@ -1349,7 +1339,7 @@ namespace ServISData
 
 			RemoveUncheckedPropertyTypes(currentPropertyTypes, newPropertyTypes, excavatorsOfUpdatingType);
 
-			AddNewlyCheckedPropertyTypes(currentPropertyTypes, newPropertyTypes, excavatorsOfUpdatingType);
+			await AddNewlyCheckedPropertyTypesAsync(context, currentPropertyTypes, newPropertyTypes, excavatorsOfUpdatingType);
 		}
 
 		private static async Task UpdateExcavatorTypeDataAsync(
@@ -1364,7 +1354,7 @@ namespace ServISData
 			currentExcavatorType.Category = await context.ExcavatorCategories
 				.FirstAsync(ec => ec.Id == newExcavatorType.Category.Id);
 
-			UpdateExcavatorTypePropertyTypes(currentExcavatorType, newExcavatorType);
+			await UpdateExcavatorTypePropertyTypesAsync(context, currentExcavatorType, newExcavatorType);
 		}
 
 		private static void UpdateExcavatorPropertyTypeData(
@@ -1516,7 +1506,6 @@ namespace ServISData
 			currentAutogeneratedMessage.Subject = newAutogeneratedMessage.Subject;
 			currentAutogeneratedMessage.Message = newAutogeneratedMessage.Message;
 			currentAutogeneratedMessage.ForWhom = newAutogeneratedMessage.ForWhom;
-
 		}
 
 		private async Task DeleteItem(IItem item)
