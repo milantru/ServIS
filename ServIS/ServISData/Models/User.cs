@@ -31,6 +31,6 @@ namespace ServISData.Models
 		[StringLength(50, ErrorMessage = "Max {1} znakov.")]
 		public string? Residence { get; set; }
 
-		//public bool IsTemporary { get; set; }
+		public bool IsTemporary { get; set; }
 	}
 }

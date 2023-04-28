@@ -177,7 +177,7 @@
 	private async Task InitAucionBidAsync()
 	{
 		AuctionBid = new() { AuctionOffer = AuctionOffer };
-		var anonymousUser = new User() { Username = "Anonym", Password = "Anonym123" };
+		var anonymousUser = new User() { Username = "Anonym", Password = "Anonym123", IsTemporary = true };
 
 		var isUserAuthenticated = authState?.User.Identity?.IsAuthenticated ?? false;
 		if (isUserAuthenticated)

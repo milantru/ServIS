@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ServISData;
 
@@ -10,9 +11,10 @@ using ServISData;
 namespace ServISData.Migrations
 {
     [DbContext(typeof(ServISDbContext))]
-    partial class ServISDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230428154502_AddIsTemporaryColumnToUser")]
+    partial class AddIsTemporaryColumnToUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
