@@ -64,6 +64,9 @@
 .subject {
 	white-space: nowrap;
 	color: black;
+	white-space: normal;
+	overflow: hidden;
+	text-overflow: clip;
 }
 
 .date {
