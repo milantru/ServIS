@@ -1019,6 +1019,8 @@ namespace ServISData
 		// delete
 		public async Task DeleteExcavatorAsync(Excavator excavator)
 		{
+			await DeleteTemporaryUsersOfAuctionWithExcavatorAsync(excavator);
+
 			var properties = excavator.Properties;
 			for (int i = properties.Count - 1; i >= 0; i--)
 			{
@@ -1529,6 +1531,33 @@ namespace ServISData
 			context.Remove(item);
 
 			await context.SaveChangesAsync();
+		}
+
+		/// <summary>
+		/// Deletes every temporary user who participated in auction in which excavator was auctioned.
+		/// </summary>
+		/// <param name="excavator"></param>
+		private async Task DeleteTemporaryUsersOfAuctionWithExcavatorAsync(Excavator excavator)
+		{
+			using var context = factory.CreateDbContext();
+
+			var auctionOffers = await context.AuctionOffers
+				.Include(ao => ao.Excavator)
+				.Where(ao => ao.Excavator.Id == excavator.Id)
+				.ToListAsync();
+
+			auctionOffers.ForEach(async ao =>
+			{
+				var bids = await GetAuctionBidsAsync(ao.Id);
+				bids.ForEach(async bid =>
+				{
+					var user = bid.User;
+					if (user.IsTemporary)
+					{
+						await DeleteUserAsync(user);
+					}
+				});
+			});
 		}
 	}
 }
