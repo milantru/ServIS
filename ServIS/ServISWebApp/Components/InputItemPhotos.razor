@@ -77,10 +77,6 @@
 			}
 
 			var dataBytes = await uploadedFile.GetDataBytesAsync();
-			if (dataBytes == null)
-			{
-				throw new Exception("Something went wrong with uploading photo.");
-			}
 
 			var photo = CreatePhoto(dataBytes);
 

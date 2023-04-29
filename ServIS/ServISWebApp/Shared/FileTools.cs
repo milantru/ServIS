@@ -4,7 +4,7 @@ namespace ServISWebApp.Shared
 {
 	public static class FileTools
 	{
-		public static async Task<byte[]?> GetDataBytesAsync(this IBrowserFile file)
+		public static async Task<byte[]> GetDataBytesAsync(this IBrowserFile file)
 		{
 			var memoryStream = await GetMemoryStreamAsync(file);
 
