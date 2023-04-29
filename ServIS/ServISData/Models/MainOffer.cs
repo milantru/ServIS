@@ -1,11 +1,5 @@
 ﻿using ServISData.Interfaces;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ServISData.Models
 {
@@ -16,7 +10,7 @@ namespace ServISData.Models
 		[Required, ValidateComplexType]
 		public ExcavatorType ExcavatorType { get; set; } = null!;
 
-		[Required] // TODO: maybe better attributes
+		[Required(ErrorMessage = "Nebola nahraná žiadna fotka.")] // TODO: maybe better attributes
 		public byte[] Photo { get; set; } = null!;
 
 		[Required(AllowEmptyStrings = true, ErrorMessage = "Toto pole je povinné.")]

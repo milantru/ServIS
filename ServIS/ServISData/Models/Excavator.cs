@@ -15,7 +15,6 @@ namespace ServISData.Models
 
 		public bool IsForAuctionOnly { get; set; }
 
-		// TODO: Custom attr (NotNullNorEmpty)
 		public IList<ExcavatorPhoto> Photos { get; set; } = null!;
 
 		[Required, ValidateComplexType]

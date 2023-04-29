@@ -1,6 +1,5 @@
 ﻿using ServISData.Interfaces;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ServISData.Models
 {
@@ -23,7 +22,6 @@ namespace ServISData.Models
 		[Required(AllowEmptyStrings = true), MaxLength(ErrorMessage = "Popis príliš dlhý.")]
 		public string Description { get; set; } = "";
 
-		// TODO: Custom attr (NotNullNorEmpty)
 		public IList<AdditionalEquipmentPhoto> Photos { get; set; } = null!;
 	}
 }

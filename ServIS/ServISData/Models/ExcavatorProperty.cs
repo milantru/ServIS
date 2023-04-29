@@ -1,10 +1,5 @@
 ﻿using ServISData.Interfaces;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ServISData.Models
 {
@@ -12,7 +7,7 @@ namespace ServISData.Models
 	{
 		public int Id { get; set; }
 
-		[Required(ErrorMessage = "Toto pole je povinné.")]
+		[Required(AllowEmptyStrings = true, ErrorMessage = "Toto pole je povinné.")]
 		public string Value { get; set; } = null!;
 
 		[Required, ValidateComplexType]
