@@ -1,4 +1,5 @@
-﻿@inherits FormBase<Excavator>
+﻿@implements IDisposable
+@inherits FormBase<Excavator>
 @inject IServISApi api
 @inject IJSRuntime js
 @using ServISData
@@ -8,10 +9,10 @@
 
 @if (isExcavatorInitialized)
 {
-	<EditForm Model="@Item" OnValidSubmit="SaveItemAsync" class="form-space-items">
+	<EditForm EditContext="@editContext" OnValidSubmit="SaveItemAsync" class="form-space-items">
 		<ObjectGraphDataAnnotationsValidator />
 		<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
-
+		
 		<div class="form-group">
 			<InputItemPhotos PhotoType="ExcavatorPhoto"
 							 @bind-Photos="Item.Photos"
@@ -19,6 +20,7 @@
 								new ExcavatorPhoto { Photo = dataBytes, Excavator = Item })"
 							 DeletePhotoAsync="DeletePhotoAsync"
 							 IsRequired="@(Item.Id == 0)" />
+			<ValidationMessage For="@(() => Item.Photos)" />
 		</div>
 
 		<div class="form-group">
@@ -78,6 +80,7 @@
 						   id="excavator-type">
 				<OptionText>@excavatorType.Category.Category (@excavatorType.Brand.Brand)</OptionText>
 			</ItemsSelector>
+			<ValidationMessage For="@(() => Item.Type)" />
 		</div>
 
 		<br />
@@ -142,6 +145,8 @@
 
 @code {
 	private bool isExcavatorInitialized;
+	private EditContext editContext = null!;
+	private ValidationMessageStore messageStore = null!;
 
 	private List<ExcavatorType> AllExcavatorTypes { get; set; } = null!;
 	// bool is in pair with spare part, it will tell us if spare part is checked
@@ -187,6 +192,8 @@
 				AllSparePartsChecked[i] = excavatorHasSparePart;
 			}
 		}
+
+		InitEditContext();
 	}
 
 	public override async Task ResetAsync()
@@ -203,14 +210,18 @@
 		{
 			await ItemChanged.InvokeAsync(Item);
 		}
+
+		InitEditContext();
 	}
 
 	public override async Task SaveItemAsync()
 	{
-		if (Item.Photos.Count == 0)
+		var customValidationPassed = DoCustomValidation();
+		if (!customValidationPassed)
 		{
-			throw new Exception("No excavator photos provided.");
+			return;
 		}
+
 		Item.Photos[0].IsTitle = true; // the first uploaded image is the title photo
 
 		Item.SpareParts = GetCheckedSpareParts();
@@ -237,6 +248,14 @@
 		await ResetAsync();
 	}
 
+	public void Dispose()
+	{
+		if (editContext is not null)
+		{
+			editContext.OnValidationRequested -= HandleValidationRequested;
+		}
+	}
+
 	private static void InitExcavator(Excavator excavator)
 	{
 		excavator.Photos ??= new List<ExcavatorPhoto>();
@@ -260,20 +279,16 @@
 		return checkedSpareParts;
 	}
 
-
 	private async Task DeletePhotoAsync(ExcavatorPhoto excavatorPhoto)
 	{
-		if (Item.Photos.Count > 1)
+		if (excavatorPhoto.Id != 0)
 		{
-			if (excavatorPhoto.Id != 0)
-			{
-				await api.DeleteExcavatorPhotoAsync(excavatorPhoto);
-			}
-
-			Item.Photos.Remove(excavatorPhoto);
-
-			StateHasChanged();
+			await api.DeleteExcavatorPhotoAsync(excavatorPhoto);
 		}
+
+		Item.Photos.Remove(excavatorPhoto);
+
+		StateHasChanged();
 	}
 
 	private void UpdateExcavatorProperties()
@@ -289,5 +304,50 @@
 		}
 
 		//StateHasChanged();
+	}
+
+	private bool ArePhotosEmpty() => Item.Photos.Count == 0;
+
+	private bool IsExcavatorTypeSelected() => Item.Type.Id != 0;
+
+	private void HandleValidationRequested(object? sender, ValidationRequestedEventArgs args)
+	{
+		messageStore.Clear();
+
+		if (ArePhotosEmpty())
+		{
+			messageStore.Add(() => Item.Photos, $"Neboli nahrané žiadne fotky.");
+		}
+
+		if (!IsExcavatorTypeSelected())
+		{
+			messageStore.Add(() => Item.Type, $"Nie je vybraný žiaden typ stroja.");
+		}
+	}
+
+	private void InitEditContext()
+	{
+		editContext = new EditContext(Item);
+		editContext.OnValidationRequested += HandleValidationRequested;
+		messageStore = new ValidationMessageStore(editContext);
+	}
+
+	/// <summary>
+	/// Performs custom validation.
+	/// </summary>
+	/// <returns>true if validation was performed successfully; false otherwise</returns>
+	private bool DoCustomValidation()
+	{
+		if (ArePhotosEmpty())
+		{
+			return false;
+		}
+
+		if (!IsExcavatorTypeSelected())
+		{
+			return false;
+		}
+
+		return true;
 	}
 }

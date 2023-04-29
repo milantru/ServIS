@@ -1,11 +1,12 @@
-﻿@inherits FormBase<ExcavatorPropertyType>
+﻿@implements IDisposable
+@inherits FormBase<ExcavatorPropertyType>
 @inject IServISApi api
 @using ServISData
 @using ServISWebApp.CssProviders
 
 @if (Item != null)
 {
-	<EditForm Model="@Item" OnValidSubmit="SaveItemAsync" class="form-space-items">
+	<EditForm EditContext="@editContext" OnValidSubmit="SaveItemAsync" class="form-space-items">
 		<DataAnnotationsValidator />
 		<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
 
@@ -30,6 +31,7 @@
 					}
 				}
 			</InputSelect>
+			<ValidationMessage For="@(() => Item.InputType)" />
 		</div>
 
 		<div>
@@ -41,6 +43,8 @@
 
 @code {
 	private InputType[] InputTypes { get; set; } = null!;
+	private EditContext editContext = null!;
+	private ValidationMessageStore messageStore = null!;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -64,6 +68,8 @@
 		{
 			InitExcavatorPropertyType(Item);
 		}
+
+		InitEditContext();
 	}
 
 	public override async Task ResetAsync()
@@ -78,10 +84,18 @@
 		{
 			await ItemChanged.InvokeAsync(Item);
 		}
+
+		InitEditContext();
 	}
 
 	public override async Task SaveItemAsync()
 	{
+		var customValidationPassed = DoCustomValidation();
+		if (!customValidationPassed)
+		{
+			return;
+		}
+
 		try
 		{
 			await api.SaveExcavatorPropertyTypeAsync(Item);
@@ -104,8 +118,49 @@
 		await ResetAsync();
 	}
 
+	public void Dispose()
+	{
+		if (editContext is not null)
+		{
+			editContext.OnValidationRequested -= HandleValidationRequested;
+		}
+	}
+
 	private static void InitExcavatorPropertyType(ExcavatorPropertyType excavatorPropertyType)
 	{
 		excavatorPropertyType.ExcavatorTypesWithThisProperty ??= new List<ExcavatorType>();
+	}
+
+	private bool IsInputTypeSelected() => Item.InputType != InputType.Unset;
+
+	private void HandleValidationRequested(object? sender, ValidationRequestedEventArgs args)
+	{
+		messageStore.Clear();
+
+		if (!IsInputTypeSelected())
+		{
+			messageStore.Add(() => Item.InputType, $"Nie je vybraný typ vlastnosti.");
+		}
+	}
+
+	private void InitEditContext()
+	{
+		editContext = new EditContext(Item);
+		editContext.OnValidationRequested += HandleValidationRequested;
+		messageStore = new ValidationMessageStore(editContext);
+	}
+
+	/// <summary>
+	/// Performs custom validation.
+	/// </summary>
+	/// <returns>true if validation was performed successfully; false otherwise</returns>
+	private bool DoCustomValidation()
+	{
+		if (!IsInputTypeSelected())
+		{
+			return false;
+		}
+
+		return true;
 	}
 }

@@ -1,4 +1,5 @@
-﻿@inherits FormBase<MainOffer>
+﻿@implements IDisposable
+@inherits FormBase<MainOffer>
 @inject IServISApi api
 @inject IJSRuntime js
 @using ServISWebApp.CssProviders
@@ -6,7 +7,7 @@
 
 @if (Item != null && Item.ExcavatorType != null)
 {
-	<EditForm Model="@Item" OnValidSubmit="SaveItemAsync" class="form-space-items">
+	<EditForm EditContext="@editContext" OnValidSubmit="SaveItemAsync" class="form-space-items">
 		<ObjectGraphDataAnnotationsValidator />
 		<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
 
@@ -24,6 +25,7 @@
 					<img src="@FileTools.GetDataUrlBase64String(Item.Photo, "image/jpeg")" width="280" />
 				}
 			</div>
+			<ValidationMessage For="@(() => Item.Photo)" />
 		</div>
 
 		<div class="form-group">
@@ -35,6 +37,7 @@
 						   id="excavator-type">
 				<OptionText>@excavatorType.Category.Category (@excavatorType.Brand.Brand)</OptionText>
 			</ItemsSelector>
+			<ValidationMessage For="@(() => Item.ExcavatorType)" />
 		</div>
 
 		<div class="form-group">
@@ -51,6 +54,9 @@
 }
 
 @code {
+	private EditContext editContext = null!;
+	private ValidationMessageStore messageStore = null!;
+
 	private List<ExcavatorType> ExcavatorTypes { get; set; } = null!;
 
 	protected override async Task OnInitializedAsync()
@@ -80,6 +86,8 @@
 		{
 			InitMainOffer(Item);
 		}
+
+		InitEditContext();
 	}
 
 	public override async Task ResetAsync()
@@ -91,10 +99,18 @@
 		{
 			await ItemChanged.InvokeAsync(Item);
 		}
+
+		InitEditContext();
 	}
 
 	public override async Task SaveItemAsync()
 	{
+		var customValidationPassed = DoCustomValidation();
+		if (!customValidationPassed)
+		{
+			return;
+		}
+
 		try
 		{
 			await api.SaveMainOfferAsync(Item);
@@ -117,6 +133,14 @@
 		await ResetAsync();
 	}
 
+	public void Dispose()
+	{
+		if (editContext is not null)
+		{
+			editContext.OnValidationRequested -= HandleValidationRequested;
+		}
+	}
+
 	private async Task HandleInputFileChangeAsync(InputFileChangeEventArgs e)
 	{
 		var uploadedFile = e.File;
@@ -127,13 +151,7 @@
 			return;
 		}
 
-		var dataBytes = await uploadedFile.GetDataBytesAsync();
-		if (dataBytes == null)
-		{
-			throw new Exception("Something went wrong with uploading photo.");
-		}
-
-		Item.Photo = dataBytes;
+		Item.Photo = await uploadedFile.GetDataBytesAsync(); ;
 
 		StateHasChanged();
 	}
@@ -141,5 +159,38 @@
 	private static void InitMainOffer(MainOffer mainOffer)
 	{
 		mainOffer.ExcavatorType ??= new();
+	}
+
+	private bool IsExcavatorTypeSelected() => Item.ExcavatorType.Id != 0;
+
+	private void HandleValidationRequested(object? sender, ValidationRequestedEventArgs args)
+	{
+		messageStore.Clear();
+
+		if (!IsExcavatorTypeSelected())
+		{
+			messageStore.Add(() => Item.ExcavatorType, $"Nie je vybraný žiaden typ stroja.");
+		}
+	}
+
+	private void InitEditContext()
+	{
+		editContext = new EditContext(Item);
+		editContext.OnValidationRequested += HandleValidationRequested;
+		messageStore = new ValidationMessageStore(editContext);
+	}
+
+	/// <summary>
+	/// Performs custom validation.
+	/// </summary>
+	/// <returns>true if validation was performed successfully; false otherwise</returns>
+	private bool DoCustomValidation()
+	{
+		if (!IsExcavatorTypeSelected())
+		{
+			return false;
+		}
+
+		return true;
 	}
 }

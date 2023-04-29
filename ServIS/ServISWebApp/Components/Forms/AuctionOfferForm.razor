@@ -1,4 +1,5 @@
-﻿@inherits FormBase<AuctionOffer>
+﻿@implements IDisposable
+@inherits FormBase<AuctionOffer>
 @inject IServISApi api
 @inject IJSRuntime js
 @using ServISWebApp.CssProviders
@@ -73,6 +74,7 @@
 
 @code {
 	private EditContext editContext = null!;
+	private ValidationMessageStore messageStore = null!;
 	private List<Excavator> Excavators { get; set; } = null!;
 
 	protected override async Task OnInitializedAsync()
@@ -95,7 +97,8 @@
 		{
 			InitAuctionOffer(Item);
 		}
-		editContext = new(Item);
+
+		InitEditContext();
 	}
 
 	public override async Task ResetAsync()
@@ -107,10 +110,18 @@
 		{
 			await ItemChanged.InvokeAsync(Item);
 		}
+
+		InitEditContext();
 	}
 
 	public override async Task SaveItemAsync()
 	{
+		var customValidationPassed = DoCustomValidation();
+		if (!customValidationPassed)
+		{
+			return;
+		}
+
 		if (Item.IsEvaluated)
 		{// it's a restart of the auction offer
 			var auctionBids = await api.GetAuctionBidsAsync(Item.Id);
@@ -148,9 +159,74 @@
 		await ResetAsync();
 	}
 
+	public void Dispose()
+	{
+		if (editContext is not null)
+		{
+			editContext.OnValidationRequested -= HandleValidationRequested;
+		}
+	}
+
 	private static void InitAuctionOffer(AuctionOffer auctionOffer)
 	{
 		auctionOffer.OfferEnd = DateTime.Now;
 		auctionOffer.Excavator ??= new();
+	}
+
+	private bool IsStartingBidLessThanZero() => Item.StartingBid < 0;
+
+	private bool IsOfferEndSetToPast() => Item.OfferEnd < DateTime.Now;
+
+	private bool IsExcavatorSelected() => Item.Excavator.Id != 0;
+
+	private void HandleValidationRequested(object? sender, ValidationRequestedEventArgs args)
+	{
+		messageStore.Clear();
+
+		if (IsStartingBidLessThanZero())
+		{
+			messageStore.Add(() => Item.StartingBid, $"Počiatočná cena nemôže byť záporná.");
+		}
+
+		if (IsOfferEndSetToPast())
+		{
+			messageStore.Add(() => Item.OfferEnd, $"Koniec aukcie nemôže byť v minulosti.");
+		}
+
+		if (!IsExcavatorSelected())
+		{
+			messageStore.Add(() => Item.Excavator, $"Nie je vybraný žiaden stroj.");
+		}
+	}
+
+	private void InitEditContext()
+	{
+		editContext = new EditContext(Item);
+		editContext.OnValidationRequested += HandleValidationRequested;
+		messageStore = new ValidationMessageStore(editContext);
+	}
+
+	/// <summary>
+	/// Performs custom validation.
+	/// </summary>
+	/// <returns>true if validation was performed successfully; false otherwise</returns>
+	private bool DoCustomValidation()
+	{
+		if (IsStartingBidLessThanZero())
+		{
+			return false;
+		}
+
+		if (IsOfferEndSetToPast())
+		{
+			return false;
+		}
+
+		if (!IsExcavatorSelected())
+		{
+			return false;
+		}
+
+		return true;
 	}
 }

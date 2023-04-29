@@ -1,11 +1,12 @@
-﻿@inherits FormBase<ExcavatorType>
+﻿@implements IDisposable
+@inherits FormBase<ExcavatorType>
 @inject IServISApi api
 @using ServISData
 @using ServISWebApp.CssProviders
 
 @if (isExcavatorTypeInitialized)
 {
-	<EditForm Model="@Item" OnValidSubmit="SaveItemAsync" class="form-space-items">
+	<EditForm EditContext="@editContext" OnValidSubmit="SaveItemAsync" class="form-space-items">
 		<ObjectGraphDataAnnotationsValidator />
 		<CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider" />
 
@@ -18,6 +19,7 @@
 						   id="excavator-brand">
 				<OptionText>@excavatorBrand.Brand</OptionText>
 			</ItemsSelector>
+			<ValidationMessage For="@(() => Item.Brand)" />
 		</div>
 
 		<div class="form-group">
@@ -29,6 +31,7 @@
 						   id="excavator-category">
 				<OptionText>@excavatorCategory.Category</OptionText>
 			</ItemsSelector>
+			<ValidationMessage For="@(() => Item.Category)" />
 		</div>
 
 		<div class="form-group">
@@ -60,6 +63,8 @@
 
 @code {
 	private bool isExcavatorTypeInitialized;
+	private EditContext editContext = null!;
+	private ValidationMessageStore messageStore = null!;
 
 	private List<ExcavatorBrand> AllExcavatorBrands { get; set; } = null!;
 
@@ -104,6 +109,8 @@
 				AllPropertyTypesChecked[i] = excavatorTypeHasProperty;
 			}
 		}
+
+		InitEditContext();
 	}
 
 	public override async Task ResetAsync()
@@ -120,10 +127,18 @@
 		{
 			await ItemChanged.InvokeAsync(Item);
 		}
+
+		InitEditContext();
 	}
 
 	public override async Task SaveItemAsync()
 	{
+		var customValidationPassed = DoCustomValidation();
+		if (!customValidationPassed)
+		{
+			return;
+		}
+
 		Item.PropertyTypes = GetCheckedPropertyTypes();
 
 		try
@@ -148,6 +163,14 @@
 		await ResetAsync();
 	}
 
+	public void Dispose()
+	{
+		if (editContext is not null)
+		{
+			editContext.OnValidationRequested -= HandleValidationRequested;
+		}
+	}
+
 	private List<ExcavatorPropertyType> GetCheckedPropertyTypes()
 	{
 		var checkedPropertyTypes = new List<ExcavatorPropertyType>();
@@ -170,5 +193,50 @@
 		excavatorType.Category ??= new();
 		excavatorType.PropertyTypes ??= new List<ExcavatorPropertyType>();
 		excavatorType.ExcavatorsOfThisType ??= new List<Excavator>();
+	}
+
+	private bool IsExcavatorBrandSelected() => Item.Brand.Id != 0;
+
+	private bool IsExcavatorCategorySelected() => Item.Category.Id != 0;
+
+	private void HandleValidationRequested(object? sender, ValidationRequestedEventArgs args)
+	{
+		messageStore.Clear();
+
+		if (!IsExcavatorBrandSelected())
+		{
+			messageStore.Add(() => Item.Brand, $"Nie je vybraná žiadna značka stroja.");
+		}
+
+		if (!IsExcavatorCategorySelected())
+		{
+			messageStore.Add(() => Item.Category, $"Nie je vybraná žiadna kategória stroja.");
+		}
+	}
+
+	private void InitEditContext()
+	{
+		editContext = new EditContext(Item);
+		editContext.OnValidationRequested += HandleValidationRequested;
+		messageStore = new ValidationMessageStore(editContext);
+	}
+
+	/// <summary>
+	/// Performs custom validation.
+	/// </summary>
+	/// <returns>true if validation was performed successfully; false otherwise</returns>
+	private bool DoCustomValidation()
+	{
+		if (!IsExcavatorBrandSelected())
+		{
+			return false;
+		}
+
+		if (!IsExcavatorCategorySelected())
+		{
+			return false;
+		}
+
+		return true;
 	}
 }
