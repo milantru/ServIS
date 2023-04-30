@@ -60,36 +60,36 @@
 %%% Údaje o práci
 
 % Název práce v jazyce práce (přesně podle zadání)
-\def\NazevPrace{Název práce}
+\def\NazevPrace{ServIS – webový systém pro firmy zabývající se opravami bagrů}
 
 % Název práce v angličtině
-\def\NazevPraceEN{Name of thesis}
+\def\NazevPraceEN{ServIS – a web system for companies dealing with excavator repairs}
 
 % Jméno autora
-\def\AutorPrace{Jméno Příjmení}
+\def\AutorPrace{Milan Truchan}
 
 % Rok odevzdání
-\def\RokOdevzdani{ROK}
+\def\RokOdevzdani{2023}
 
 % Název katedry nebo ústavu, kde byla práce oficiálně zadána
 % (dle Organizační struktury MFF UK, případně plný název pracoviště mimo MFF)
-\def\Katedra{Název katedry nebo ústavu}
-\def\KatedraEN{Name of the department}
+\def\Katedra{Katedra distribuovaných a spolehlivých systémů}
+\def\KatedraEN{Department of Distributed and Dependable Systems}
 
 % Jedná se o katedru (department) nebo o ústav (institute)?
 \def\TypPracoviste{Katedra}
 \def\TypPracovisteEN{Department}
 
 % Vedoucí práce: Jméno a příjmení s~tituly
-\def\Vedouci{Vedoucí práce}
+\def\Vedouci{Mgr. Pavel Ježek, Ph.D.}
 
 % Pracoviště vedoucího (opět dle Organizační struktury MFF)
-\def\KatedraVedouciho{katedra}
-\def\KatedraVedoucihoEN{department}
+\def\KatedraVedouciho{Katedra distribuovaných a spolehlivých systémů}
+\def\KatedraVedoucihoEN{Department of Distributed and Dependable Systems}
 
 % Studijní program a obor
-\def\StudijniProgram{studijní program}
-\def\StudijniObor{studijní obor}
+\def\StudijniProgram{Informatika}
+\def\StudijniObor{Programování a vývoj software}
 
 % Nepovinné poděkování (vedoucímu práce, konzultantovi, tomu, kdo
 % zapůjčil software, literaturu apod.)
@@ -99,7 +99,12 @@ Poděkování.
 
 % Abstrakt (doporučený rozsah cca 80-200 slov; nejedná se o zadání práce)
 \def\Abstrakt{%
-Abstrakt.
+Cieľom tejto práce bolo vytvoriť softvérové dielo pre malé firmy\\ zaoberajúce sa zemnými a výkopovými prácami, opravou a predajom bagrov, ktoré nemajú prístup k vhodnému softvérovému riešeniu pre svoju činnosť.
+
+Potreba a správanie funkcionalít bola prekonzultovaná s majiteľom jednej z týchto firiem.
+
+Vzniknutý softvér predstavuje riešenie problému, je schopný zobraziť ponuku (stroje, prídavné zariadenia) a umožňuje užívateľom dopyt (v podobe emailov) na tieto ponuky. V aplikácii tiež existuje aukcia, kde sa dražia opravené bagre. Užívatelia si tiež môžu v aplikácií vytvoriť účet. Vymenované funkcionality môžu využívať prihlásení aj neprihlásení užívatelia. Bežní prihlásení užívatelia nemusia vyplňovať informácie o sebe vo formulároch pri dopytovaní sa na ponuku. Prihlásení admini majú možnosť spravovať stránku. Tj. pridávať nové, editovať a mazať existujúce ponuky, odpovedať na správy atď.
+
 }
 \def\AbstraktEN{%
 Abstract.
@@ -107,10 +112,10 @@ Abstract.
 
 % 3 až 5 klíčových slov (doporučeno), každé uzavřeno ve složených závorkách
 \def\KlicovaSlova{%
-{klíčová} {slova}
+{Informačný systém} {C\#} {.NET} {Blazor Server} {MySQL}
 }
 \def\KlicovaSlovaEN{%
-{key} {words}
+{Information system} {C\#} {.NET} {Blazor Server} {MySQL}
 }
 
 %% Balíček hyperref, kterým jdou vyrábět klikací odkazy v PDF,
@@ -132,10 +137,11 @@ Abstract.
 
 %%% Jednotlivé kapitoly práce jsou pro přehlednost uloženy v samostatných souborech
 \include{uvod}
-\include{kap01}
-\include{kap02}
-\include{kap03}
-\include{kap04}
+\include{analyza}
+% \include{kap01}
+% \include{kap02}
+% \include{kap03}
+% \include{kap04}
 
 \include{zaver}
 
@@ -144,15 +150,15 @@ Abstract.
 
 %%% Obrázky v bakalářské práci
 %%% (pokud jich je malé množství, obvykle není třeba seznam uvádět)
-\listoffigures
+% \listoffigures
 
 %%% Tabulky v bakalářské práci (opět nemusí být nutné uvádět)
 %%% U matematických prací může být lepší přemístit seznam tabulek na začátek práce.
-\listoftables
+% \listoftables
 
 %%% Použité zkratky v bakalářské práci (opět nemusí být nutné uvádět)
 %%% U matematických prací může být lepší přemístit seznam zkratek na začátek práce.
-\chapwithtoc{Seznam použitých zkratek}
+% \chapwithtoc{Seznam použitých zkratek}
 
 %%% Přílohy k bakalářské práci, existují-li. Každá příloha musí být alespoň jednou
 %%% odkazována z vlastního textu práce. Přílohy se číslují.

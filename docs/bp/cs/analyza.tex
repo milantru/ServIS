@@ -1,0 +1,41 @@
+\chapter{Analýza}
+
+V~tejto kapitole sa zamyslíme nad tým, ako splniť požiadavky definované v~Úvode~(\ref{poziadavky}).
+
+Pre~splnenie požiadavky P1 dáva veľmi dobrý zmysel vytvoriť naše riešenie ako webovú aplikáciu. Týmto spôsobom sa nemusíme starať o~distribúciu programu k~užívateľom. Stačí ak má zákazník~(resp. admin) pripojenie na~internet.
+
+Je síce pravda, že voľba webovej aplikácie zahŕňa i~voľbu hostingu. A~ten nemusí byť lacný. To by mohlo byť v~rozpore s~P2. Ale je potrebné dodať, že ak by sme zvolili klasickú desktopovú aplikáciu, tak by sme ju museli nejakým spôsobom dodať zákazníkovi. A~to by bolo nepraktické, prípadne by mohlo stáť takisto nejaké peniaze. Navyše práve webová aplikácia má~potenciál pomôcť firme tak, že ju zákazník objaví pri surfovaní internetu.
+
+Pre splnenie~P4,~P5~a~P8 je jasné, že budeme potrebovať databázu. A~to na to, aby si firmy vedeli samé tvoriť ponuku, ktorú si do databázy uložia. Po~príchode zákazníka bude možné ponuku z~databázy načítať a~zobraziť. Podobne v~prípade~P8. Keď sa užívateľ zaregistruje, jeho údaje sa uložia v~databáze a~pri prihlásení sa z~nej prečítajú a~môžu použiť pre vyplnenie formulárov podľa potreby.
+
+Znova sa vrátim k~P5. Kedže ide o aukciu, budeme potrebovať nejaký mechanizmus, ktorý by vedel zabezpečiť odpočet, a~takisto vyhodnotenie aukcie na~pozadí. Taktiež si musíme rozmyslieť, ako sa má aukcia správať v~rôznych situáciách.
+
+Na to, aby sme splnili P6, musí byť náš softvér schopný posielať správy. Z~podmienky P3 usudzujeme, že nikto nebude pri softvére sedieť, a~teda posielanie dopytov by nemalo mať povahu četu. Posielanie správ bude prebiehať prostredníctvom emailov. To nám vytvára novú požiadavku na~softvér. Aby administrátor nemusel preklikávať medzi svojou emailovou schránku a~naším systémom, bolo by dobre integrovať jeho schránku priamo do systému.
+
+\section{Voľba technológií}
+
+Po prejdení požiadaviek vieme, že chceme vytvoriť webovú aplikáciu s~bohatým uživateľským rozhraním, ktorá by bola schopná posielať a~prijímať správy, pracovať s~databázou, umožnila nám autentikáciu a~autorizáciu, a~taktiež vykonávať prácu na~pozadí. Pre túto úlohu sa hodia vysokoúrovňové jazyky, ako sú napríklad C\# alebo Java\dots Na~základe autorových skúseností si volíme jazyk C\# a platformu .NET, ktorá je s~ním spojená.
+
+Platforma .NET nám pre vývoj webových aplikácií poskytuje framework\\ASP.NET alebo Blazor. Obe frameworky sú si podobné. Rozdiel náj\-de\-me v~tom, že Blazor umožňuje vytváranie komponent. Komponent si môžeme predstaviť ako logickú časť stránky (napr. tabuľka, tlačidlo\dots). Po~zadefinovaní komponentu ho~vieme „recyklovať“. Tým myslím to, že ho môžeme použiť na viacerých miestach na webe. Na~každom mieste sa bude správať a~vyzerať rovnako (príp.~vie\-me  jeho správanie meniť pomocou parametrov). Táto myšlienka komponentov sa autorovi páči, dobre sa s~ňou pracuje a~neskôr si ukážeme ako nám pomôže vyriešiť problém s odpočtom.
+
+Blazor poskytuje viacero hosting modelov. V~čase rozhodovania existovali dva: Blazor WebAssembly a Blazor Server. Výber WebAssembly by zahŕňal niekoľko problémov. Pri~prvotnej návšteve stránky sa musia klientovi stiahnuť zdrojové kódy aplikácie. To môže chvíľu trvať a mohlo by to odradiť nových potenciálnych zákazníkov. V~prípade Blazor Server tento problém nemáme, pretože kód beží na~serveri a~užívateľovi sa servíruje už len prerenderovaný HTML, CSS, JavaScript kód stránky. Z~rovnakého dôvodu sú weby vytvorené Blazor Ser\-ve\-rom SEO-friendly (čo znamená, že sú dohľadateľné vyhľadávačmi, akým je napríklad~Google). V~prípade WebAssembly...
+
+\section{Voľba databázy}
+
+V~predošlom texte sme spomenuli, že pre splnenie~P4~a~P5 budeme potrebovať databázu, ale akú?
+
+\subsection{Návrh databázy, UML}
+
+Obrázok, opis.
+
+\subsection{ORM}
+
+Prečo by sme chceli ORM.
+
+\section{Aukcia- odpočet a vyhodnocovanie}
+
+V tejto podkapitole predstavím BackgroundServices?, vysvetlím ako odpočítavať (len 1 timer, v osobitnej komponente kvôli rerenderom), ako funguje vyhodnocovanie- rozne scenare (co sa stane ak mame vitaza, co sa stane ak nemamee vitaza).
+
+\section{Posielanie a príjimanie správ}
+
+V tejto podkapitole rozoberieme spôsoby ako posielať/prijímať správy. Gmail api? AE.net? Mailkit?
