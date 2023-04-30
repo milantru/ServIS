@@ -852,13 +852,13 @@ namespace ServISData
 				.FirstAsync(c => c.Id == id);
 		}
 
-		public async Task<User> GetUserAsync(string username)
+		public async Task<User?> GetUserAsync(string username)
 		{
 			using var context = factory.CreateDbContext();
 
 			return await context.Users
 				.AsNoTracking()
-				.FirstAsync(c => c.Username == username);
+				.FirstOrDefaultAsync(c => c.Username == username);
 		}
 
 		public async Task<List<AuctionOffer>> GetAuctionOffersAsync(

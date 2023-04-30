@@ -90,6 +90,7 @@
 	private ElementReference username;
 	private string currentPassword = string.Empty;
 	private string passwordField = string.Empty;
+	private string currentUsername = string.Empty;
 
 	[Parameter]
 	public User User { get; set; } = null!;
@@ -126,6 +127,7 @@
 		if (User.Id != 0)
 		{
 			currentPassword = User.Password;
+			currentUsername = User.Username;
 		}
 	}
 
@@ -165,6 +167,19 @@
 			currentPassword = User.Password;
 			PasswordField = string.Empty;
 			PasswordAgainField = string.Empty;
+		}
+
+		if (User.Username != currentUsername)
+		{
+			/* It's new user or existing user has changed username, so now we have to check 
+			 * if the user is not picking someone elses username. The username must be unique 
+			 * (because it's used for auth) */
+			var user = await api.GetUserAsync(User.Username);
+			if (user is not null)
+			{
+				await js.InvokeVoidAsync("alert", "Užívateľ s takýmto prihlasovacím menom už existuje.");
+				return;
+			}
 		}
 
 		try

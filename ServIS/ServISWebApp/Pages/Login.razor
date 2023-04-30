@@ -66,12 +66,8 @@ else
 
 	private async Task AuthenticateAsync()
 	{
-		User user;
-		try
-		{
-			user = await api.GetUserAsync(loginData.Username);
-		}
-		catch
+		var user = await api.GetUserAsync(loginData.Username);
+		if (user is null)
 		{
 			await js.InvokeVoidAsync("alert", "Užívateľ s takýmto menom neexistuje.");
 			return;

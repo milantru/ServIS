@@ -54,7 +54,10 @@ namespace ServISData.Interfaces
 		public Task<List<AdditionalEquipmentCategory>> GetAdditionalEquipmentCategoriesAsync(DataOperations<AdditionalEquipmentCategory>? dataOperations = null);
 		public Task<int> GetAdditionalEquipmentCategoriesCountAsync();
 		public Task<User> GetUserAsync(int id);
-		public Task<User> GetUserAsync(string username);
+
+		/// <param name="username"></param>
+		/// <returns>User with given username; null if user with given username doesn't exist</returns>
+		public Task<User?> GetUserAsync(string username);
 		public Task<List<AuctionOffer>> GetAuctionOffersAsync(DataOperations<AuctionOffer>? dataOperations = null);
 		public Task<int> GetAuctionOffersCountAsync();
 		public Task<AuctionOffer> GetAuctionOfferAsync(int id);
