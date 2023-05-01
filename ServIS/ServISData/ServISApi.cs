@@ -634,7 +634,7 @@ namespace ServISData
 				.Include(et => et.Brand)
 				.Include(et => et.Category)
 				//.Include(et => et.ExcavatorsOfThisType)
-				//.Include(et => et.PropertyTypes)
+				.Include(et => et.PropertyTypes)
 				.AsNoTracking()
 				.FirstAsync(et => et.Id == id);
 		}

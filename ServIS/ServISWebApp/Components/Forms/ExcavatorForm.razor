@@ -180,11 +180,6 @@
 
 		if (AllSpareParts != null)
 		{
-			if (Item.SpareParts == null)
-			{// Excavator.SpareParts will not be null here, but compiler doesn't see it, so we need this if
-				throw new Exception($"{nameof(Item.SpareParts)} cannot be null here.");
-			}
-
 			var excavatorsSparePartsIds = Item.SpareParts.Select(sp => sp.Id);
 			for (int i = 0; i < AllSpareParts.Count; i++)
 			{
@@ -256,11 +251,28 @@
 		}
 	}
 
+	private static void InitExcavatorProperties(Excavator excavator)
+	{
+		excavator.Properties = new List<ExcavatorProperty>();
+
+		if (excavator.Type.Id != 0)
+		{
+			foreach (var propertyType in excavator.Type.PropertyTypes)
+			{
+				excavator.Properties.Add(new ExcavatorProperty()
+				{
+					PropertyType = propertyType,
+					Value = ""
+				});
+			}
+		}
+	}
+
 	private static void InitExcavator(Excavator excavator)
 	{
 		excavator.Photos ??= new List<ExcavatorPhoto>();
 		excavator.Type ??= new ExcavatorType();
-		excavator.Properties ??= new List<ExcavatorProperty>();
+		InitExcavatorProperties(excavator);
 		excavator.SpareParts ??= new List<SparePart>();
 	}
 
@@ -294,6 +306,7 @@
 	private void UpdateExcavatorProperties()
 	{
 		Item.Properties.Clear();
+
 		foreach (var propertyType in Item.Type.PropertyTypes)
 		{
 			Item.Properties.Add(new ExcavatorProperty
@@ -302,8 +315,6 @@
 				Value = ""
 			});
 		}
-
-		//StateHasChanged();
 	}
 
 	private bool ArePhotosEmpty() => Item.Photos.Count == 0;
