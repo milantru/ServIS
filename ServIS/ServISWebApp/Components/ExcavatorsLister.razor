@@ -1,58 +1,57 @@
-﻿@using ServISData.DataOperations
-@inject IServISApi api
+﻿@inject IServISApi api
 @inject SfDialogService dialogService
+@using ServISData.DataOperations
 
-@if (Title != null)
+@if (Title is not null)
 {
 	<h3>@Title</h3>
 }
 
-<div class="d-flex flex-wrap">
-	<Virtualize @ref="excavatorPhotosContainer" ItemsProvider="LoadExcavatorsAsync" Context="excavator">
-		<ExcavatorCard Excavator="excavator"
-					   OnDelete="async () => await DeleteExcavatorAsync(excavator)" />
-	</Virtualize>
-</div>
+@if (Excavators is null)
+{
+	<p>Načítava sa...</p>
+}
+else if (Excavators.Count == 0)
+{
+	<p>Momentálne neexistujú žiadne stroje požadovaného typu.</p>
+}
+else
+{
+	<div class="w-100 d-flex flex-wrap justify-content-around">
+		@foreach (var excavator in Excavators)
+		{
+			<ExcavatorCard Excavator="excavator"
+						   OnDelete="async () => await DeleteExcavatorAsync(excavator)" />
+		}
+	</div>
+}
 
 @code {
-	private Virtualize<Excavator> excavatorPhotosContainer = null!;
-
 	[Parameter]
 	public string Title { get; set; } = null!;
 
 	[Parameter]
 	public ExcavatorType ExcavatorType { get; set; } = null!;
 
-	public int ExcavatorsTotalCount { get; set; } // excavators of given type (ExcavatorType)
+	private List<Excavator> Excavators { get; set; } = null!; // excavators of given type (ExcavatorType)
 
-	public async Task ReloadExcavatorsPhotosAsync()
+	protected override async Task OnParametersSetAsync()
 	{
-		await excavatorPhotosContainer.RefreshDataAsync();
+		await base.OnParametersSetAsync();
+
+		await InitExcavatorsAsync();
 	}
 
-	private async ValueTask<ItemsProviderResult<Excavator>> LoadExcavatorsAsync(ItemsProviderRequest request)
+	private async Task InitExcavatorsAsync()
 	{
-		if (ExcavatorsTotalCount == 0)
-		{
-			ExcavatorsTotalCount = await api.GetExcavatorsCountAsync(ExcavatorType);
-			if (ExcavatorsTotalCount == 0)
-			{// in case there is no excavator in the database
-				return new ItemsProviderResult<Excavator>();
-			}
-		}
-
-		int excavatorsDisplayedCount = Math.Min(request.Count, ExcavatorsTotalCount - request.StartIndex);
-
 		var dataOperations = new MyDataOperations<Excavator>(
-			new MyDataOperations<Excavator>.Configuration
-				{
-					Skip = request.StartIndex,
-					Take = excavatorsDisplayedCount,
-					SpecialOperations = (items) => items.Where(item => item.Type.Id == ExcavatorType.Id && !item.IsForAuctionOnly)
-				});
-		var excavators = await api.GetExcavatorsAsync(dataOperations);
+			new MyDataOperations<Excavator>.Configuration()
+			{
+				SpecialOperations = excavators => excavators.Where(e => e.Type.Id == ExcavatorType.Id && !e.IsForAuctionOnly)
+			}
+		);
 
-		return new ItemsProviderResult<Excavator>(excavators, ExcavatorsTotalCount);
+		Excavators = await api.GetExcavatorsAsync(dataOperations);
 	}
 
 	private async Task DeleteExcavatorAsync(Excavator excavator)
@@ -75,6 +74,6 @@
 
 		await api.DeleteExcavatorAsync(excavator);
 
-		await ReloadExcavatorsPhotosAsync();
+		Excavators.Remove(excavator);
 	}
 }

@@ -20,7 +20,7 @@ else
 		@foreach (var auctionOffer in AuctionOffers)
 		{
 			<AuctionOfferCard AuctionOffer="auctionOffer"
-								OnDelete="async () => await DeleteAuctionOfferAsync(auctionOffer)" />
+							  OnDelete="async () => await DeleteAuctionOfferAsync(auctionOffer)" />
 		}
 	</div>
 }

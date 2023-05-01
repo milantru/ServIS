@@ -1,22 +1,21 @@
-﻿@using ServISData.DataOperations
-@inject IServISApi api
+﻿@inject IServISApi api
 @inject SfDialogService dialogService
+@using ServISData.DataOperations
 
 @if (Title != null)
 {
 	<h3>@Title</h3>
 }
 
-<div class="d-flex flex-wrap justify-content-between">
-	<Virtualize @ref="additionalEquipmentPhotosContainer" ItemsProvider="LoadAdditionalEquipmentsAsync" Context="ae">
+<div class="w-100 d-flex flex-wrap justify-content-around">
+	@foreach (var ae in AdditionalEquipments)
+	{
 		<AdditionalEquipmentCard AdditionalEquipment="ae"
 								 OnDelete="async () => await DeleteAdditionalEquipmentAsync(ae)" />
-	</Virtualize>
+	}
 </div>
 
 @code {
-	private Virtualize<AdditionalEquipment> additionalEquipmentPhotosContainer = null!;
-
 	[Parameter]
 	public string Title { get; set; } = null!;
 
@@ -29,41 +28,29 @@
 	[Parameter]
 	public ExcavatorCategory AdditionalEquipmentExcavatorCategory { get; set; } = null!;
 
-	public int AdditionalEquipmentsTotalCount { get; set; }
+	private List<AdditionalEquipment> AdditionalEquipments { get; set; } = null!;
 
-	public async Task ReloadAdditionalEquipmentPhotosAsync()
+	protected override async Task OnParametersSetAsync()
 	{
-		await additionalEquipmentPhotosContainer.RefreshDataAsync();
+		await base.OnParametersSetAsync();
+
+		await InitAdditionalEquipmentsAsync();
 	}
 
-	private async ValueTask<ItemsProviderResult<AdditionalEquipment>> LoadAdditionalEquipmentsAsync(ItemsProviderRequest request)
+	private async Task InitAdditionalEquipmentsAsync()
 	{
-		if (AdditionalEquipmentsTotalCount == 0)
-		{
-			AdditionalEquipmentsTotalCount = await api.GetAdditionalEquipmentsCountAsync();
-			if (AdditionalEquipmentsTotalCount == 0)
-			{// in case there is no additional equipment in the database
-				return new ItemsProviderResult<AdditionalEquipment>();
-			}
-		}
-
-		int additionalEquipmentsDisplayedCount = Math.Min(request.Count, AdditionalEquipmentsTotalCount - request.StartIndex);
-
 		var dataOperations = new MyDataOperations<AdditionalEquipment>(
 			new MyDataOperations<AdditionalEquipment>.Configuration
-					{
-						Skip = request.StartIndex,
-						Take = additionalEquipmentsDisplayedCount,
-						SpecialOperations = (items) => items.Where(item =>
-							AdditionalEquipmentCategory == null ? true : item.Category.Id == AdditionalEquipmentCategory.Id &&
-							AdditionalEquipmentBrand == null ? true : item.Brand.Id == AdditionalEquipmentBrand.Id &&
-							AdditionalEquipmentExcavatorCategory == null ? true : item.ExcavatorCategory.Id == AdditionalEquipmentExcavatorCategory.Id
-						)
-					}
+				{
+					SpecialOperations = (items) => items.Where(item =>
+						AdditionalEquipmentCategory == null ? true : item.Category.Id == AdditionalEquipmentCategory.Id
+						&& AdditionalEquipmentBrand == null ? true : item.Brand.Id == AdditionalEquipmentBrand.Id
+						&& AdditionalEquipmentExcavatorCategory == null ? true : item.ExcavatorCategory.Id == AdditionalEquipmentExcavatorCategory.Id
+				)
+				}
 		);
-		var additionalEquipments = await api.GetAdditionalEquipmentsAsync(dataOperations);
 
-		return new ItemsProviderResult<AdditionalEquipment>(additionalEquipments, AdditionalEquipmentsTotalCount);
+		AdditionalEquipments = await api.GetAdditionalEquipmentsAsync(dataOperations);
 	}
 
 	private async Task DeleteAdditionalEquipmentAsync(AdditionalEquipment additionalEquipment)
@@ -86,6 +73,6 @@
 
 		await api.DeleteAdditionalEquipmentAsync(additionalEquipment);
 
-		await ReloadAdditionalEquipmentPhotosAsync();
+		AdditionalEquipments.Remove(additionalEquipment);
 	}
 }
