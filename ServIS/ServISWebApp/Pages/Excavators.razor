@@ -2,21 +2,23 @@
 
 @inject IServISApi api
 
-<AuthorizeView Roles="Administrator">
-	<a href="/admin/novy-stroj/@ExcavatorTypeId">Pridať nový stroj tohto typu</a>
-</AuthorizeView>
+@if (excavatorTypeExists && ExcavatorType is not null)
+{
+	<AuthorizeView Roles="Administrator">
+		<a href="/admin/novy-stroj/@ExcavatorTypeId">Pridať nový stroj tohto typu</a>
+	</AuthorizeView>
 
-@if (ExcavatorType == null)
-{
-	<p>Načítava sa...</p>
-}
-else
-{
 	<ExcavatorsLister ExcavatorType="@ExcavatorType"
-				      Title="@($"{@ExcavatorType.Category.Category}- {@ExcavatorType.Brand.Brand}")" />
+					  Title="@($"{@ExcavatorType.Category.Category}- {@ExcavatorType.Brand.Brand}")" />
+}
+else if (!excavatorTypeExists)
+{
+	<p>Tento typ stroja neexistuje.</p>
 }
 
 @code {
+	private bool excavatorTypeExists = true;
+
 	[Parameter]
 	public int ExcavatorTypeId { get; set; }
 
@@ -32,7 +34,8 @@ else
 		}
 		catch
 		{
-			throw new Exception($"Excavator type with id '{ExcavatorTypeId}' not found.");
+			Console.WriteLine($"Excavator type with id '{ExcavatorTypeId}' not found.");
+			excavatorTypeExists = false;
 		}
 	}
 }
