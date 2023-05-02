@@ -1,15 +1,17 @@
-\babel@toc {czech}{}\relax 
+\babel@toc {slovak}{}\relax 
 \contentsline {chapter}{Úvod}{2}{chapter*.2}%
 \contentsline {section}{\numberline {0.1}Požiadavky na softvér}{2}{section.0.1}%
 \contentsline {section}{\numberline {0.2}Alternatívne riešenia}{3}{section.0.2}%
 \contentsline {section}{\numberline {0.3}Zhrnutie cieľov}{3}{section.0.3}%
-\contentsline {chapter}{\numberline {1}Analýza}{4}{chapter.1}%
-\contentsline {section}{\numberline {1.1}Voľba technológií}{4}{section.1.1}%
-\contentsline {section}{\numberline {1.2}Voľba databázy}{5}{section.1.2}%
-\contentsline {subsection}{\numberline {1.2.1}Návrh databázy, UML}{5}{subsection.1.2.1}%
-\contentsline {subsection}{\numberline {1.2.2}ORM}{5}{subsection.1.2.2}%
-\contentsline {section}{\numberline {1.3}Aukcia- odpočet a vyhodnocovanie}{5}{section.1.3}%
-\contentsline {section}{\numberline {1.4}Posielanie a príjimanie správ}{5}{section.1.4}%
-\contentsline {chapter}{Závěr}{6}{chapter*.3}%
-\contentsline {chapter}{\numberline {A}Přílohy}{7}{appendix.A}%
-\contentsline {section}{\numberline {A.1}První příloha}{7}{section.A.1}%
+\contentsline {chapter}{\numberline {1}Analýza zadania}{4}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Voľba typu aplikácie, jazyka a frameworku}{4}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Návrh systému}{5}{section.1.2}%
+\contentsline {section}{\numberline {1.3}Voľba databázy}{5}{section.1.3}%
+\contentsline {subsection}{\numberline {1.3.1}Návrh relačného modelu databázy}{6}{subsection.1.3.1}%
+\contentsline {subsection}{\numberline {1.3.2}Voľba typu databázy a databázového servera}{8}{subsection.1.3.2}%
+\contentsline {subsection}{\numberline {1.3.3}ORM}{8}{subsection.1.3.3}%
+\contentsline {section}{\numberline {1.4}Aukcia- odpočet a vyhodnocovanie}{8}{section.1.4}%
+\contentsline {section}{\numberline {1.5}Posielanie a príjimanie správ}{8}{section.1.5}%
+\contentsline {chapter}{Závěr}{9}{chapter*.3}%
+\contentsline {chapter}{\numberline {A}Přílohy}{10}{appendix.A}%
+\contentsline {section}{\numberline {A.1}První příloha}{10}{section.A.1}%
