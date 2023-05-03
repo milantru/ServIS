@@ -43,7 +43,7 @@
 								<GridColumn Field="@nameof(SparePart.Name)" 
 											HeaderText="Názov" />
 								<GridColumn Field="@($"{nameof(SparePart.Excavators)}.{nameof(ICollection<Excavator>.Count)}")" 
-											HeaderText="Počet strojov s dielom*" 
+											HeaderText="Počet strojov s dielom" 
 											AllowSearching="false" 
 											CustomAttributes="@customAttributes" />
 							</MyGridColumns>
@@ -65,6 +65,13 @@
 											HeaderText="Kategória" />
 								<GridColumn Field="@($"{nameof(Excavator.Type)}.{nameof(ExcavatorType.Brand)}.{nameof(ExcavatorBrand.Brand)}")" 
 											HeaderText="Značka" />
+								<GridColumn Field="@nameof(Excavator.IsForAuctionOnly)" 
+											HeaderText="Určený IBA pre aukciu"
+											Context="e"
+											AllowSearching="false"
+											CustomAttributes="@customAttributes">
+										<Template>@(((Excavator)e).IsForAuctionOnly ? "Áno" : "Nie")</Template>
+								</GridColumn>
 							</MyGridColumns>
 						</ItemsManagement>
 					</TabPage>
@@ -82,7 +89,9 @@
 								<GridColumn Field="@($"{nameof(ExcavatorType.Category)}.{nameof(ExcavatorCategory.Category)}")" 
 											HeaderText="Kategória" />
 								<GridColumn Field="@($"{nameof(ExcavatorType.ExcavatorsOfThisType)}.{nameof(ICollection<Excavator>.Count)}")" 
-											HeaderText="Počet strojov" />
+											HeaderText="Počet strojov"
+											AllowSearching="false"
+											CustomAttributes="@customAttributes" />
 							</MyGridColumns>
 						</ItemsManagement>
 					</TabPage>
@@ -98,13 +107,14 @@
 								<GridColumn Field="@nameof(ExcavatorPropertyType.Name)" 
 											HeaderText="Názov" />
 								<GridColumn Field="@nameof(ExcavatorPropertyType.InputType)" 
-											HeaderText="Typ vlastnosti*" Context="ept" 
+											HeaderText="Typ vlastnosti" 
+											Context="ept" 
 											AllowSearching="false" 
 											CustomAttributes="@customAttributes">
 									<Template>@(((ExcavatorPropertyType)ept).InputType.GetLabel())</Template>
 								</GridColumn>
 								<GridColumn Field="@($"{nameof(ExcavatorPropertyType.ExcavatorTypesWithThisProperty)}.{nameof(ICollection<ExcavatorType>.Count)}")" 
-											HeaderText="Počet typov strojov s touto vlastnosťou*" 
+											HeaderText="Počet typov strojov s vlastnosťou" 
 											AllowSearching="false" 
 											CustomAttributes="@customAttributes" />
 							</MyGridColumns>
@@ -124,14 +134,16 @@
 										<GridColumn Field="@nameof(ExcavatorCategory.Category)" 
 													HeaderText="Názov kategórie" />
 										<GridColumn Field="@nameof(ExcavatorCategory.ExcavatorTypesOfThisCategory)" 
-													HeaderText="Počet strojov*" 
+													HeaderText="Počet strojov" 
 													Context="ec" 
 													AllowSearching="false" 
 													CustomAttributes="@customAttributes">
 											<Template>@(((ExcavatorCategory)ec).ExcavatorTypesOfThisCategory.SelectMany(e => e.ExcavatorsOfThisType).Count())</Template>
 										</GridColumn>
 										<GridColumn Field="@($"{nameof(ExcavatorCategory.AdditionalEquipmentsOfThisCategory)}.{nameof(ICollection<AdditionalEquipment>.Count)}")" 
-													HeaderText="Počet príd. zar." />
+													HeaderText="Počet príd. zar."
+													AllowSearching="false" 
+													CustomAttributes="@customAttributes" />
 									</MyGridColumns>
 								</ItemsManagement>
 							</div>
@@ -145,7 +157,7 @@
 									<MyGridColumns>
 										<GridColumn Field="@nameof(ExcavatorBrand.Brand)" HeaderText="Názov značky" />
 										<GridColumn Field="@nameof(ExcavatorBrand.ExcavatorTypesOfThisBrand)" 
-													HeaderText="Počet strojov*" 
+													HeaderText="Počet strojov" 
 													Context="eb" 
 													AllowSearching="false" 
 													CustomAttributes="@customAttributes">
@@ -170,7 +182,9 @@
 										<GridColumn Field="@nameof(AdditionalEquipmentCategory.Category)" 
 													HeaderText="Názov kategórie" />
 										<GridColumn Field="@($"{nameof(AdditionalEquipmentCategory.AdditionalEquipmentsOfThisCategory)}.{nameof(ICollection<AdditionalEquipment>.Count)}")" 
-													HeaderText="Počet príd. zar." />
+													HeaderText="Počet príd. zar."
+													AllowSearching="false"
+													CustomAttributes="@customAttributes" />
 									</MyGridColumns>
 								</ItemsManagement>
 							</div>
@@ -184,7 +198,9 @@
 									<MyGridColumns>
 										<GridColumn Field="@nameof(AdditionalEquipmentBrand.Brand)" HeaderText="Názov značky" />
 										<GridColumn Field="@($"{nameof(AdditionalEquipmentBrand.AdditionalEquipmentsOfThisBrand)}.{nameof(ICollection<AdditionalEquipment>.Count)}")" 
-													HeaderText="Počet príd. zar." />
+													HeaderText="Počet príd. zar."
+													AllowSearching="false"
+													CustomAttributes="@customAttributes" />
 									</MyGridColumns>
 								</ItemsManagement>
 							</div>
