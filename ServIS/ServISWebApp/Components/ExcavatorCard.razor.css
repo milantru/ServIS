@@ -4,7 +4,8 @@
 
 .card-content {
 	width: 18rem;
-	margin: 0 10px 10px 0;
+	height: 320px;
+	margin: 0 15px 15px 0;
 }
 
 .card-title {
