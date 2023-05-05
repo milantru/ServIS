@@ -39,6 +39,7 @@ Majme preto dva projekty: ServISData a ServISWebApp. ServISData slúži ako dát
 Vieme, že náš systém potrebuje pre splnenie podmienok~P4, P5 a~P8 databázu. V tejto kapitole si vyberieme typ databázy, databazový server a~rozoberieme si aké entity potrebujeme.
 
 \subsection{Návrh relačného modelu databázy}
+\label{navrh relacneho modelu databazy}
 
 Z P4 vieme, že potrebujeme entity pre bagre a~prídavné zariadenia. Niekoho by mohlo napadnúť spojiť obe entity do~jednej, ale to my nespravíme. Ide o~rozdielne entity, ktoré môžu uchovávať rozdielne informácie (a~ako neskôr v~texte uvidíme, skutočne budú uchovávať rozdielne dáta).
 
@@ -56,7 +57,7 @@ No okrem udržania údajov o~aukčnej ponuke a~draženom stroji, si musíme zapa
 
 Entitu užívateľa som načal už v~prechádzajúcom odstavci. Túto entitu skutočne budeme potrebovať a~to aj kvôli splneniu P8. Údaje užívateľov musíme pri~registrácii uchovať, aby sme nimi vedeli predvypĺniť formuláre, a~takisto aby sme vedeli vytvoriť prihlasovanie.
 
-Čítateľ by mohol navrhnúť, že pre splnenie P6 budeme potrebovať entitu reprezentujúcu správy. Toto riešenie by mohlo fungovať, ale ako si neskôr ukážeme, existuje aj iné riešenie. Také, ktoré nám ušetrí úložisko v~databáze a navyše uľahčí implementáciu. Preto entitu pre správy nevytvárame.
+Čítateľ by mohol navrhnúť, že pre splnenie P6 budeme potrebovať entitu reprezentujúcu správy. Toto riešenie by mohlo fungovať, ale ako si neskôr ukážeme, existuje aj iné riešenie. Také, ktoré nám (okrem iného, ale detailnejšie rozobranie príde neskôr) ušetrí úložisko v~databáze. Preto entitu pre správy nevytvárame.
 
 Pre splnenie P7 si vytvoríme entitu, ktorá bude reprezentovať náhradné diely stroja. Každý náhradný diel bude niesť informáciu o~tom, v~ktorých strojoch sa nachádza. A~každý stroj bude vedieť aké diely obsahuje. Každý náhradný diel obsahuje katalógové číslo. Toto číslo je unikátne medzi strojmi, a~preto by mohlo byť použité ako primárny kľúč entity. Ale autor sa z opatrnosti a~kvôli konzistencii (každá entita má id) rozhodol využiť ako primárny kľúč id i~pri náhradných dieloch.
 
@@ -70,18 +71,48 @@ Pre detailnejšiu predstavu môžeme návrh vidieť na~obrázku~\ref{relacny mod
 \label{relacny model uml}
 \end{figure}
 
+Pozorný čítateľ si mohol všimnúť, že na~obrázku existuje entita, ktorú sme ešte nespomenuli. Ide o~entitu reprezentujúcu automaticky generované správy. Na~dôvod jej existencie sa pozrieme neskôr. Zatiaľ len~prezradím, že táto entita sa využije pri fungovaní aukcie.
+
 \subsection{Voľba typu databázy a databázového servera}
 
-TBA
+Kvôli tomu, že naše dáta majú presne definovanú štruktúru, si volíme relačnú databázu. Tá nám poskytne rýchly prístup k~dátam, a~takisto zaručí ich neporušenosť. Ďalším plusom je, že autor má s~relačnými databázami trochu viac skúseností, než s~NoSql databázami.
+
+Čo sa týka databázového servera, tak si najprv poďme rozmyslieť, čo od~neho budeme vyžadovať. Kvôli P2 chceme, aby bol server (v~najlepšom prípade) bezplatný. Taktiež musí byť kompatibilný s~platformou .NET. Tieto požiadavky spĺňajú servery: Microsoft SQL Server, Oracle Database a~MySQL. V~prípade prvých dvoch serverov je síce pravda, že poskytujú aj bezplatnú verziu, ale tie sú obmedzené na~kapacitu. Ale aj napriek obmedzeniu je kapacita dosť veľká. V~prípade Community verzie MySql takéto obmedzenie kapacity nemáme žiadne. V~budúcnosti, ak by sa firme darilo a~získala by viacej zákazníkov, prípadne rozšírila ponuku, by sa nám mohla neobmedzená kapacita servera hodiť. Preto si volíme MySql.
 
 \subsection{ORM}
 
-Prečo by sme chceli ORM.
+Keď už máme vybraný databázový server, poďme si rozmyslieť ako s~ním budeme pracovať. Potrebujeme vytvoriť databázu s~tabuľkami, vkladať, editovať, čítať a~mazať dáta. Všetky tieto úkony by sme mohli vykonať tak, že budeme písať kód s SQL syntaxou. Ale keďže autor nemá veľa skúseností s~jazykom SQL, prichádza do úvahy využiť nejaký z~ORM frameworkov (z~ang. object relational mapping). Asi najznámejšími na~platforme .NET sú: Dapper a~Entitfy~Framework~Core. Využívanie frameworku Dapper zahŕňa písanie SQL kódu. Pretože sa snažíme obmedziť písanie SQL kódu, nedáva zmysel si vybrať Dapper. Našou voľbou je preto Entity Framework Core. Konkrétne s~prístupom založeným na~kóde (anglicky code first approach). To znamená, že entity z~relačného modelu najprv napíšeme do~C\# kódu ako triedy a z~nich Entity~Framework~Core vytvorí tabuľky databázy.
 
 \section{Aukcia- odpočet a vyhodnocovanie}
 
-V tejto podkapitole predstavím BackgroundServices?, vysvetlím ako odpočítavať (len 1 timer, v osobitnej komponente kvôli rerenderom), ako funguje vyhodnocovanie- rozne scenare (co sa stane ak mame vitaza, co sa stane ak nemamee vitaza).
+Ako už bolo skôr v~texte spomenuté, budeme potrebovať nejaký mechanizmus, ktorý zvládne vykonávať odpočet do~konca každej aukčnej ponuky, a~takisto aby ju po~skončení vedel vyhodnotiť.
 
-\section{Posielanie a príjimanie správ}
+Odpočet by sme mohli implementovať tak, že by sme si vytvorili inštanciu triedy \verb|Timer|\footnote{\url{https://learn.microsoft.com/en-us/dotnet/api/system.timers.timer?view=net-8.0}} pre~každú aukčnú ponuku. Každá z~inštancií by každú sekundu odpálila event, pri~ktorom by došlo k~prerenderovaniu komponentu s~časom do~skončenia ponuky. Toto riešenie by síce fungovalo, ale je to mrhanie zdrojmi. Stačí nám jeden \verb|Timer|. Na~jeho event \verb|Elapsed| si každý komponent s~odpočtom zaregistruje metódu na~prerenderovanie. Týmto spôsobom sa nám podarí ušetriť zdroje, ale vyskytá sa otázka. Kde bude inštancia triedy \verb|Timer| uložená? Prirodzenou odpoveďou by bolo, že ju uložíme do~rodičovského komponentu. Limitácia tohto riešenie spočíva v~tom, že ak budeme potrebovať vykonať nejakú operáciu periodicky každú sekundu, ale v~komponente, ktorá sa nenachádza v~rodičovi s~triedou \verb|Timer|, tak nemáme prístup k~triede \verb|Timer|. Lepším riešením bude presunúť \verb|Timer| do~nového vlákna, ktoré bude bežať na~pozadí. Takýmto spôsobom si môžeme kedykoľvek a~odkiaľkoľvek registrovať periodické operácie.
 
-V tejto podkapitole rozoberieme spôsoby ako posielať/prijímať správy. Gmail api? AE.net? Mailkit?
+Tu by som sa ešte rád zastavil a vrátil k~poznámke z~úvodu, kedy som spomenul, že komponenty nám pomôžu vyriešiť problém s~odpočtom. Vieme, že kvôli odpočtu dôjde každú sekundu k prerenderovaniu stránky. No určite nechceme, aby sa nám každú sekundu prerenderovávala celá stránka (resp.~hľadali zmeny na~celej stránke). Ak izolujeme odpočet do~samostatného komponentu, prerenderovanie sa vykoná iba v~ňom. Zbytok stránky to neovplyvní.
+
+Ďalej si potrebujeme rozmyslieť ako bude prebiehať vyhodnocovanie aukcie. Náš systém bude fungovať tak, že užívateľ (ak má záujem o~dražený stroj) odošle svoju~ponúkanú sumu. Tá sa uloží v~databáze. Potrebujeme mechanizmus, ktorý by sledoval aukčné ponuky. Ak by uvidel, že nejaká z~ponúk už skončila, tak ju vyhodnotí. Periodické sledovanie aukčných ponúk je dlhodobo bežiaca operácia, a~preto sa hodí ju takisto vykonávať vo~vedľajšom vlákne na~pozadí.
+
+Poďme sa ešte pozrieť na~to, čo presne zahŕňa vyhodnocovanie jednej aukčnej ponuky. Prejdeme všetky ponúknuté sumy, nájdeme najvyššiu sumu a~užívateľ, ktorý ju ponúkol bude vyhlásený za~víťaza. Víťaz aukcie bude informovaný o~skutočnoti, že vyhral stroj v~aukcii. Porazení budú takisto oboznámení o~svojej prehre. Okrem tohto scenára existuje ešte jeden. Čo ak sa nikto nezapojil do~aukcie? Má sa aukčná ponuka zmazať? Alebo iba označiť za~ukončnenú a~schovať sa pred~bežnými zákazníkmi? Alebo sa má koniec aukcie presunúť na~neskôr? Ako vidíme možností je viacero. Prvé dve možnosti vyžadujú zásah admina, ktorý by musel nanovo vložiť ponuku do systému~(prvý prípad) alebo~upraviť ponuku a~znova ju zviditeľniť zákazníkom~(druhý prípad). Všimnime si, že posledná z~možností nevyžaduje akciu admina. Administrátor môže ponuku upraviť, ale nemusí. Systém sa postará sám o~seba a~funguje aj bez~zásahu admina. A~to je presne to, čo od~nás vyžuje P3. Preto volíme tretí prístup. V~prípade, že aukcia skončí bez~víťaza, tak systém o~tom upozorní administrátora a~koniec ponuky posunie na~neskôr~(napr. o~týždeň).
+
+V~oboch prípadoch (odpočet i~vyhodnocovanie) sme sa rozhodli využiť vlákna na~pozadí. Vo~frameworku Blazor existuje trieda~\verb|BackgroundService|\footnote{\url{https://learn.microsoft.com/en-us/aspnet/core/fundamentals/host/hosted-services?view=aspnetcore-7.0&tabs=visual-studio\#backgroundservice-base-class}}. Tá nám umožní rozbehnúť kód na~pozadí. Takže logiku behu vlákien na~pozadí si nemusíme implementovať sami.
+
+\section{Posielanie a prijímanie správ}
+
+Z pozorovania autor vie, že zákazníci týchto firiem, a rovnako i samotné firmy, sú zvyknuté na komunikáciu pomocou emailov.
+
+V~predchádzajúcom texte sme už viackrát spomínali, že budeme posielať správy. Jednak kvôli spĺneniu P6, ale takisto pre~upozorňovanie účastníkov a~administrátorov na~priebeh aukcií. Tiež sme si povedali, že správy nebudú reprezentované entitami v~databáze. Ako teda vyriešime túto úlohu? Ak bude posielanie správ~(dopytov, notifikácií z~aukcie) implementované prostredníctvom posielania emailov do~emailovej schránky firmy, tak ušetríme miesto v~databáze. To nám môže potenciálne znížiť náklady, čo je v~prospech~P2. Nevýhodou by však bolo, že administrátor by musel chodiť kontrolovať emaily mimo našu aplikáciu. Tejto nevýhody sa dokážeme zbaviť. A to tak, že vytvoríme zjednodušenú emailovú schránku priamo v~našej aplikácii. Týmto spôsobom docielime toho, že užívateľ vie odoslať správu z~nášho systému, náš systém vie odoslať správu o~stave aukcií, admin si ich v~našej aplikácii vie prečítať a reagovať na ne. Zároveň sa nestaráme o~ukladanie správ v databáze, takže šetríme úložisko. A~čo viac, zákazníci vedia kontaktovať firmu i~mimo nášho systému (keď zákazník pošle firme email z~miesta mimo nášho systému, admin si ho vie aj napriek tomu v~naŠej aplikácii prečítať).
+
+Dospeli sme k~tomu, že nepotrebujeme správy len odosielať ale potrebujeme ich aj čítať. Ešte predtým, než si zvolíme spôsob akým budeme správy prijímať a~posielať, si poďme vybrať akú emailovú službu budeme využívať. Od~služby vyžadujeme, aby podporovala protokoly IMAP~(pre~prijímanie správ) a~SMTP~(pre~posielanie správ). Jednou zo~služieb ktorá spĺňa podmienku je Gmail od~spoločnosti Google. Ide o~veľkú spoločnosť, ktorú pozná snáď každý a~autor dôveruje ich zabezpečeniu. Ďalším plusom je to, že k~tejto službe existuje dokumentácia. Navyše služba poskytuje API~(z~ang. application programming interface), ktoré by sme mohli využiť v~prípade potreby. Čítateľ by mohol poznamenať, že API by sme mohli vyyužiť ku~kompletnej implementácii našej schránky. Dôvodom prečo nevyužijeme API služby pre~kompletnú implementáciu je ten, že to čo ideme vytvoriť sa skôr podobá emailovému klientovi. Na~jeho implemenáciu je vhodnejšie použiť protokoly~IMAP a~SMTP ~(rovnako to spomína i~dokumentácia API\footnote{\url{https://developers.google.com/gmail/api/guides}}). Ako vidíme, Gmail sa zdá byť dobrým kandidátom, a~preto si ho zvolíme.
+
+Ďalej potrebujeme zistiť ako môžeme využívať protokoly IMAP a~SMTP z~nášho programu. Zdá sa, že najznámejšími balíčkami pre~prácu s~týmito protokolmi sú MailKit a~AE.Net.Mail. Obe umožňujú prácu s~IMAP i~SMTP, ale AE.Net.Mail nebol už dlhšiu dobu aktualizovaný. A~preto, ak sa z~tohto systému stane dlhodobejší projekt, sa zdá byť lepšou možnosťou MailkKit.
+
+\subsection{Automaticky generované správy}
+
+Spomínali sme, že systém bude sám automaticky odosielať správy, či už víťazom aukcie, porazeným alebo~adminom, o~stave aukcie. Ak by náš systém využívali viaceré firmy, je prirodzené, že by si chceli tvar automaticky generovaných správ upraviť. Náš~systém firmám túto funkcionalitu umožní. Preto sme si v~časti~Návrh~relačného~modelu~datábazy~(\ref{navrh relacneho modelu databazy}) dopredu pripravili entitu reprezentujúcu automaticky generované správy.
+
+\section{Ďalší kód tretích strán}
+TBA? (Fontawesome, Syncfusion) + pridať že management treba na zaciatok analyzy (ako do db sa daju veci? Treba inteface pre adminov!)
+
+\section{GDPR}
+TBA?
