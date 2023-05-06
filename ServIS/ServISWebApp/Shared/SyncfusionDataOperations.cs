@@ -40,7 +40,8 @@ namespace ServISWebApp.Shared
 			{
 				if (this.dataManagerRequest.Where != null && this.dataManagerRequest.Where.Count > 0)
 				{
-					items = DataOperations.PerformFiltering(items, this.dataManagerRequest.Where, this.dataManagerRequest.Where[0].Operator);
+					items = DataOperations.PerformFiltering(
+						items, this.dataManagerRequest.Where, this.dataManagerRequest.Where[0].Operator);
 				}
 
 				return items;
