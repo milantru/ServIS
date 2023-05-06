@@ -24,6 +24,14 @@
 \contentsline {subsection}{\numberline {2.1.5}Migrations}{13}{subsection.2.1.5}%
 \contentsline {subsection}{\numberline {2.1.6}Models}{13}{subsection.2.1.6}%
 \contentsline {section}{\numberline {2.2}ServISWebApp}{13}{section.2.2}%
-\contentsline {chapter}{Závěr}{14}{chapter*.3}%
-\contentsline {chapter}{\numberline {A}Přílohy}{15}{appendix.A}%
-\contentsline {section}{\numberline {A.1}První příloha}{15}{section.A.1}%
+\contentsline {subsection}{\numberline {2.2.1}Koreňový priečinok projektu}{13}{subsection.2.2.1}%
+\contentsline {subsection}{\numberline {2.2.2}Auth}{14}{subsection.2.2.2}%
+\contentsline {subsection}{\numberline {2.2.3}BackgroundServices}{14}{subsection.2.2.3}%
+\contentsline {subsection}{\numberline {2.2.4}Components}{14}{subsection.2.2.4}%
+\contentsline {subsection}{\numberline {2.2.5}CssProviders}{15}{subsection.2.2.5}%
+\contentsline {subsection}{\numberline {2.2.6}Pages}{15}{subsection.2.2.6}%
+\contentsline {subsection}{\numberline {2.2.7}Resources}{15}{subsection.2.2.7}%
+\contentsline {subsection}{\numberline {2.2.8}Shared}{15}{subsection.2.2.8}%
+\contentsline {chapter}{Závěr}{17}{chapter*.3}%
+\contentsline {chapter}{\numberline {A}Přílohy}{18}{appendix.A}%
+\contentsline {section}{\numberline {A.1}První příloha}{18}{section.A.1}%
