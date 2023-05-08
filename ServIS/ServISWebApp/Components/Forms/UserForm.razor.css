@@ -22,6 +22,18 @@
 
 #btn-panel {
 	margin: 4px 0;
+	position: relative;
+}
+
+.delete-account-btn {
+	width: 116px;
+	position: absolute;
+	right: 18px;
+}
+
+.export-data-btn {
+	position: absolute;
+	right: calc(116px + 23.5px); /* width of .delete-account-btn + some margin */
 }
 
 @media (max-width: 950px) {

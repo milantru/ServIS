@@ -6,3 +6,16 @@
 }
 
 <component type="typeof(App)" render-mode="Server" />
+
+<head>
+    <script>
+        window.downloadUserDataFile = url => {
+            const anchorElement = document.createElement('a');
+            anchorElement.href = url;
+            anchorElement.download = 'user_data.txt';
+            anchorElement.click();
+            anchorElement.remove();
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</head>
