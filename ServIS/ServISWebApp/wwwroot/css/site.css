@@ -72,6 +72,12 @@ a, .btn-link {
 	margin: 5px;
 }
 
+.disclaimer {
+	font-size: x-small;
+	color: grey;
+	margin-bottom: -5px;
+}
+
 /* borders and outlines */
 .servis-outline {
 	border: 1px solid #FF8800;

@@ -2,12 +2,6 @@
 	margin: 5px auto 18px auto;
 }
 
-#disclaimer {
-	font-size: x-small;
-	color: grey;
-	margin-bottom: -5px;
-}
-
 .flex-no-wrap {
 	flex-wrap: nowrap;
 }

@@ -80,6 +80,20 @@
 				</div>
 			</div>
 
+			<AuthorizeView Context="ctx">
+				<NotAuthorized>
+					<div class="row">
+						<div class="d-flex">
+							<div class="form-group">
+								<p class="disclaimer w-100">
+									Odoslaním správy súhlasíte s <a href="/podmienky-pouzivania" target="_blank">podmienkami</a>
+									a <a href="/zasady-ochrany-osobnych-udajov" target="_blank">zásadami</a> systému.
+								</p>
+							</div>
+						</div>
+					</div>
+				</NotAuthorized>
+			</AuthorizeView>
 			<div class="row">
 				<div class="form-group">
 					<div id="btn-panel">

@@ -20,7 +20,7 @@
 				<NotAuthorized>
 					<div class="row">
 						<div class="form-group w-100">
-							<p id="disclaimer">
+							<p class="disclaimer">
 								Ak u nás máte vytvorený účet, prosím prihláste sa <a href="/prihlasovanie">tu</a> a vyhnite sa tak vypĺňaniu údajov o Vás (Meno, Priezvisko...).
 								Ak u nás účet ešte nemáte, zvážte registráciu, ktorú nájdete <a href="/registracia">tu</a>.
 							</p>
@@ -80,6 +80,20 @@
 				</div>
 			</div>
 
+			<AuthorizeView Context="ctx">
+				<NotAuthorized>
+					<div class="row">
+						<div class="d-flex">
+							<div class="form-group">
+								<p class="disclaimer w-100">
+									Odoslaním správy súhlasíte s <a href="/podmienky-pouzivania" target="_blank">podmienkami</a>
+									a <a href="/zasady-ochrany-osobnych-udajov" target="_blank">zásadami</a> systému.
+								</p>
+							</div>
+						</div>
+					</div>
+				</NotAuthorized>
+			</AuthorizeView>
 			<div id="btn-panel" class="container-center-items-horizontal">
 				<SubmitButton Text="Odoslať" />
 			</div>

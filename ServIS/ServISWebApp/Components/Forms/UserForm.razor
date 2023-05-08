@@ -84,6 +84,20 @@
 			</div>
 		</div>
 
+		@if (User.Id == 0)
+		{
+			<div class="row">
+				<div class="d-flex">
+					<div class="form-group">
+						<p class="disclaimer w-100">
+							Registráciou súhlasíte s <a href="/podmienky-pouzivania" target="_blank">podmienkami</a>
+							a <a href="/zasady-ochrany-osobnych-udajov" target="_blank">zásadami</a> systému.
+						</p>
+					</div>
+				</div>
+			</div>
+			
+		}
 		<div id="btn-panel" class="container-center-items-horizontal">
 			<SubmitButton Text="@(User.Id == 0 ? "Registrovať" : "Uložiť")" />
 		
