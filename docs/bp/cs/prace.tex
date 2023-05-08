@@ -63,10 +63,10 @@
 %%% Údaje o práci
 
 % Název práce v jazyce práce (přesně podle zadání)
-\def\NazevPrace{ServIS – webový systém pro firmy zabývající se opravami bagrů}
+\def\NazevPrace{ServIS – webový systém pro~firmy zabývající se opravami bagrů}
 
 % Název práce v angličtině
-\def\NazevPraceEN{ServIS – a web system for companies dealing with excavator repairs}
+\def\NazevPraceEN{ServIS – a~web system for~companies dealing with~excavator repairs}
 
 % Jméno autora
 \def\AutorPrace{Milan Truchan}
@@ -76,8 +76,8 @@
 
 % Název katedry nebo ústavu, kde byla práce oficiálně zadána
 % (dle Organizační struktury MFF UK, případně plný název pracoviště mimo MFF)
-\def\Katedra{Katedra distribuovaných a spolehlivých systémů}
-\def\KatedraEN{Department of Distributed and Dependable Systems}
+\def\Katedra{Katedra distribuovaných a~spolehlivých systémů}
+\def\KatedraEN{Department of~Distributed and~Dependable Systems}
 
 % Jedná se o katedru (department) nebo o ústav (institute)?
 \def\TypPracoviste{Katedra}
@@ -87,26 +87,26 @@
 \def\Vedouci{Mgr. Pavel Ježek, Ph.D.}
 
 % Pracoviště vedoucího (opět dle Organizační struktury MFF)
-\def\KatedraVedouciho{Katedra distribuovaných a spolehlivých systémů}
-\def\KatedraVedoucihoEN{Department of Distributed and Dependable Systems}
+\def\KatedraVedouciho{Katedra distribuovaných a~spolehlivých systémů}
+\def\KatedraVedoucihoEN{Department of~Distributed and~Dependable Systems}
 
 % Studijní program a obor
 \def\StudijniProgram{Informatika}
-\def\StudijniObor{Programování a vývoj software}
+\def\StudijniObor{Programování a~vývoj software}
 
 % Nepovinné poděkování (vedoucímu práce, konzultantovi, tomu, kdo
 % zapůjčil software, literaturu apod.)
 \def\Podekovani{%
-Poděkování.
+Rád by som sa poďakoval vedúcemu práce~Mgr.~Pavlovi Ježkovi,~Ph.D. za~jeho vedenie, rady, čas a~trpezlivosť, ktorú mi venoval. Taktiež by som sa chcel poďakovať svojej~rodine, ktorá ma motivovala a~podporovala počas vypracovania tejto práce, ale aj počas~celej doby štúdia.
 }
 
 % Abstrakt (doporučený rozsah cca 80-200 slov; nejedná se o zadání práce)
 \def\Abstrakt{%
-Cieľom tejto práce bolo vytvoriť softvérové dielo pre malé firmy\\ zaoberajúce sa zemnými a výkopovými prácami, opravou a predajom bagrov, ktoré nemajú prístup k vhodnému softvérovému riešeniu pre svoju činnosť.
+Cieľom tejto práce bolo vytvoriť softvérové dielo pre~malé firmy zaoberajúce sa zemnými a~výkopovými prácami, opravou a~predajom bagrov, ktoré nemajú prístup k~vhodnému softvérovému riešeniu pre~svoju činnosť.
 
-Potreba a správanie funkcionalít bola prekonzultovaná s majiteľom jednej z týchto firiem.
+Potreba a~správanie funkcionalít bola prekonzultovaná s~majiteľom jednej z~týchto firiem.
 
-Vzniknutý softvér predstavuje riešenie problému, je schopný zobraziť ponuku (stroje, prídavné zariadenia) a umožňuje užívateľom dopyt (v podobe emailov) na tieto ponuky. V aplikácii tiež existuje aukcia, kde sa dražia opravené bagre. Užívatelia si tiež môžu v aplikácií vytvoriť účet. Vymenované funkcionality môžu využívať prihlásení aj neprihlásení užívatelia. Bežní prihlásení užívatelia nemusia vyplňovať informácie o sebe vo formulároch pri dopytovaní sa na ponuku. Prihlásení admini majú možnosť spravovať stránku. Tj. pridávať nové, editovať a mazať existujúce ponuky, odpovedať na správy atď.
+Vzniknutý softvér predstavuje riešenie problému, je schopný zobraziť ponuku~(stroje, prídavné zariadenia) a~umožňuje užívateľom dopyt (v~podobe emailov) na~tieto ponuky. V~aplikácii tiež existuje aukcia, kde sa dražia opravené bagre. Užívatelia si tiež môžu v~aplikácií vytvoriť účet. Vymenované funkcionality môžu využívať prihlásení aj neprihlásení užívatelia. Bežní prihlásení užívatelia nemusia vyplňovať informácie o~sebe vo~formulároch pri~dopytovaní sa na~ponuku. Prihlásení admini majú možnosť spravovať stránku. Tj.~pridávať nové, editovať a~mazať existujúce ponuky, odpovedať na~správy atď.
 
 }
 \def\AbstraktEN{%
@@ -142,6 +142,7 @@ Abstract.
 \include{uvod}
 \include{analyza}
 \include{vyvojova dokumentacia}
+\include{uzivatelska dokumentacia}
 % \include{kap01}
 % \include{kap02}
 % \include{kap03}
@@ -175,9 +176,17 @@ Abstract.
 %%% je také do práce vložit na CD/DVD. Povolené formáty souborů specifikuje
 %%% opatření rektora č. 72/2017.
 \appendix
-\chapter{Přílohy}
+\chapter{Prílohy}
 
-\section{První příloha}
+\section{Implementácia}
+\label{implementacia}
+
+Implementácia aplikácie~(Visual Studio solution) sa nachádza\\v~priečinku~ServIS na~adrese: \url{https://github.com/milantru/ServIS}.
+
+\section{Videonávod}
+\label{videonavod}
+
+Odkaz k~videonávodu pre~administrátorov: \url{}.
 
 \openright
 \end{document}

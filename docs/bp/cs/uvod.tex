@@ -1,12 +1,12 @@
 \chapter*{Úvod}
 \addcontentsline{toc}{chapter}{Úvod}
 
-Predstavme si malú firmu. Napríklad takú, ktorá práve vznikla. Takáto firma zatiaľ nemá zákazníkov. Ľudia ju nepoznajú. Preto sa firma potrebuje nejakým spôsobom zviditeľniť, napr. prostredníctvom vlastnej stránky. No tvorba stránky môže byť pracná alebo finančne náročná. A kedže sa bavíme o (začínajúcej) malej firme, tak finančný aspekt hraje veľkú rolu. Preto som sa rozhodol vytvoriť softvér, ktorý by umožnil malým firmám prezentovať svoju ponuku strojov a~služieb. A to za žiaden alebo minimálny poplatok. Čítateľ by mohol namietať, že v~súčasnosti predsa existujú riešenia, ktoré by majiteľom firiem umožnili vytvoriť si vlastný web zdarma. Čítateľ má síce pravdu, no tieto riešenia majú v sebe háčik. Podrobnejšie sa na nich pozrieme neskôr v podkapitole Alternatívne riešenia~(\ref{alternativne riesenia}). Aby sme videli a pochopili plusy a mínusy alternatívnych riešení a~toho môjho, poďme sa najprv pozrieť čo vyžadujú majitelia takýchto firiem.
+Predstavme si malú firmu. Napríklad takú, ktorá práve vznikla. Takáto firma zatiaľ nemá zákazníkov. Ľudia ju nepoznajú. Preto sa firma potrebuje nejakým spôsobom zviditeľniť, napr.~prostredníctvom vlastnej stránky. No tvorba stránky môže byť pracná alebo finančne náročná. A~kedže sa bavíme o~(začínajúcej) malej firme, tak finančný aspekt hraje veľkú rolu. Preto som sa rozhodol vytvoriť softvér, ktorý by umožnil malým firmám prezentovať svoju ponuku strojov a~služieb. A~to za~žiaden alebo minimálny poplatok. Čítateľ by mohol namietať, že v~súčasnosti predsa existujú riešenia, ktoré by majiteľom firiem umožnili vytvoriť si vlastný web zdarma. Čítateľ má síce pravdu, no tieto riešenia majú v~sebe háčik. Podrobnejšie sa na~nich pozrieme neskôr v~podkapitole Alternatívne riešenia~(\ref{alternativne riesenia}). Aby sme videli a~pochopili plusy a~mínusy alternatívnych riešení a~toho môjho, poďme sa najprv pozrieť čo vyžadujú majitelia takýchto firiem.
 
 \section{Požiadavky na softvér}
 \label{poziadavky}
 
-Po konzultácii s majiteľom jednej z firiem, boli vyhotovené tieto požiadavky:
+Po~konzultácii s~majiteľom jednej z~firiem, boli vyhotovené tieto požiadavky:
 
 \begin{itemize}
 \item \textbf{P1 Dostupnosť}
@@ -15,23 +15,23 @@ Softvér by mal byť jednoducho dostupný každému užívateľovi. Či už ide 
 
 \item \textbf{P2 Náklady}
 
-Kedže ide o malé firmy, pri ktorých sa predpokladá nízky rozpočet, chceme, aby náklady spojené s tvorbou a vedením softvéru boli minimálne alebo v~ideálnom prípade žiadne.
+Kedže ide o~malé firmy, pri~ktorých sa predpokladá nízky rozpočet, chceme, aby náklady spojené s~tvorbou a~vedením softvéru boli minimálne alebo v~ideálnom prípade žiadne.
 
 \item \textbf{P3 Minimálna obsluha softvéru}
 
-Systém by mal fungovať a starať sa o seba „sám“. Teda softvér by mal fungovať tak, aby pri ňom nemusel ustavične sedieť človek a obsluhovať ho. Pracovníci firmy, vrátane majiteľa, majú svoju prácu a najímanie si nového pracovníka, ktorý by softvér obsluhoval, nie je z finančných dôvodov žiadúce.
+Systém by mal fungovať a~starať sa o~seba „sám“. Teda softvér by mal fungovať tak, aby pri ňom nemusel ustavične sedieť človek a~obsluhovať ho. Pracovníci firmy, vrátane majiteľa, majú svoju prácu a~najímanie si nového pracovníka, ktorý by softvér obsluhoval, nie je z~finančných dôvodov žiadúce.
 
 \item \textbf{P4 Predstavenie ponuky zákazníkom}
 
-Systém by mal byť schopný prezentovať ponuku bagrov a prídavných za\-ria\-de\-ní zákazníkom.
+Systém by mal byť schopný prezentovať ponuku bagrov a~prídavných za\-ria\-de\-ní zákazníkom.
 
 \item \textbf{P5 Aukcia}
 
-Jednou z činností spomínaných firiem je oprava bagrov. Systém by mal byť schopný poskytnúť administrátorovi možnosť pridať opravený stroj do~au\-kci\-e.
+Jednou z~činností spomínaných firiem je oprava bagrov. Systém by mal byť schopný poskytnúť administrátorovi možnosť pridať opravený stroj do~au\-kci\-e.
 
 \item \textbf{P6 Dopyt}
 
-Bežnou praxou v tomto odvetví je, že cena strojov sa dopredu neudáva. Zákazník najprv vyjadrí záujem (pošle dopyt), prekonzultujú sa detaily medzi potenciálnym kupcom a firmou, a až potom prebehne obchod. Z tohto dôvodu systém nebude fungovať na princípe ako bežné internetové obchody (tým myslím pridávanie do košíka s následnou platbou), ale bude fungovať na princípe posielania správ (dopytov). Takže systém by mal umožniť zákazníkom posielať dopyt na položky (stroje, prídavné zariadenia), o ktoré majú záujem.
+Bežnou praxou v~tomto odvetví je, že cena strojov sa dopredu neudáva. Zákazník najprv vyjadrí záujem (pošle dopyt), prekonzultujú sa detaily medzi potenciálnym kupcom a~firmou, a~až potom prebehne obchod. Z~tohto dôvodu systém nebude fungovať na~princípe ako bežné internetové obchody (tým myslím pridávanie do~košíka s~následnou platbou), ale bude fungovať na~princípe posielania správ (dopytov). Takže systém by mal umožniť zákazníkom posielať dopyt na~položky~(stroje, prídavné zariadenia), o~ktoré majú záujem.
 
 \item \textbf{P7 Prístup k súčiastkam strojov}
 
@@ -39,18 +39,18 @@ Systém by mal umožniť administrátorom jednoducho zistiť, aké náhradné di
 
 \item \textbf{P8 Registrácia a prihlásenie užívateľov}
 
-Systém by mal umožniť bežným užívateľom možnosť registrácie a pri\-hlá\-se\-nia sa do systému. Po prihlásení získajú bežní užívatelia výhodu v tom, že do formulárov už nebudú musieť zadávať svoje údaje.
+Systém by mal umožniť bežným užívateľom možnosť registrácie a~pri\-hlá\-se\-nia sa do~systému. Po~prihlásení získajú bežní užívatelia výhodu v~tom, že do~formulárov už nebudú musieť zadávať svoje údaje.
 \end{itemize}
 
 \section{Alternatívne riešenia}
 \label{alternativne riesenia}
 
-Teraz, keď už vieme aké sú požiadavky, sa môžeme pozrieť na alternatívne riešenia a zhodnotiť plusy a mínusy.
+Teraz, keď už vieme aké sú požiadavky, sa môžeme pozrieť na~alternatívne riešenia a~zhodnotiť plusy a~mínusy.
 
-Jedným z~možných riešení by bolo použitie nejakého CMS systému (z ang. content management system), napr. WordPress. Autor práce síce nemá s~platformou WordPress žiadne skúsenosti, ale po~krátkom hľadaní na~internete zistil, že pre túto platformu existuje aukčný plugin. S~ním, by bolo dokonca možné na~webe prevádzkovať i~požadovanú aukciu. Ale toto riešenie by vyžadovalo znalosť platformy WordPress alebo by si majiteľ firmy musel najmúť niekoho, kto túto znalosť má. Kedže znalosť platformy nie je samozrejmesťou a najímanie si niekoho by bolo v rozpore s P2, túto alternatívu môžeme škrnúť.
+Jedným z~možných riešení by bolo použitie nejakého CMS systému~(z~ang. content management system), napr.~WordPress. Autor práce síce nemá s~platformou WordPress žiadne skúsenosti, ale po~krátkom hľadaní na~internete zistil, že pre~túto platformu existuje aukčný plugin. S~ním, by bolo dokonca možné na~webe prevádzkovať i~požadovanú aukciu. Ale toto riešenie by vyžadovalo znalosť platformy WordPress alebo by si majiteľ firmy musel najmúť niekoho, kto túto znalosť má. Kedže znalosť platformy nie je samozrejmesťou a~najímanie si niekoho by bolo v~rozpore s~P2, túto alternatívu môžeme škrtnúť.
 
-Pre úplnosť ešte spomeniem, že jedným z~riešení by bolo najmúť si inú firmu, ktorá by web vytvorila. No toto riešenie môže byť finančne náročné, a~preto je taktiež v rozpore s~P2.
+Pre~úplnosť ešte spomeniem, že jedným z~riešení by bolo najmúť si inú firmu, ktorá by web vytvorila. No toto riešenie môže byť finančne náročné, a~preto je taktiež v~rozpore s~P2.
 
 \section{Zhrnutie cieľov}
 
-Cieľom tejto práce je implementovať softvérový informačný systém určený pre firmy, ktoré sa zaoberajú predajom a opravou bagrov. Systém bude spĺnať požiadavky P1 až P7.
+Cieľom tejto práce je implementovať softvérový informačný systém určený pre~firmy, ktoré sa zaoberajú predajom a~opravou bagrov. Systém bude spĺnať požiadavky P1 až P7.

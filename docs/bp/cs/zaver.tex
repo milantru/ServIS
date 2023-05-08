@@ -1,2 +1,59 @@
 \chapter*{Záver}
-\addcontentsline{toc}{chapter}{Závěr}
+\addcontentsline{toc}{chapter}{Záver}
+
+V~závere zhodnotíme ako sa nám podarilo naplniť požiadavky definované v~Úvode, konkrétne v~podkapitole~Požiadavky na~softvér~(\ref{poziadavky}).
+
+\begin{itemize}
+\item \textbf{P1 Dostupnosť}
+
+Náš systém je webovou aplikáciou, ktorá je dostupná pre~užívateľov odkiaľkoľvek (samozrejme za~predpokladu, že majú prístup k~internetu).
+
+\item \textbf{P2 Náklady}
+
+Všetky balíčky využívané aplikáciou sú buď úplne zdarma alebo~využívame ich bezplatné verzie. Čo sa týka databázového servera, tak ten takisto využívame v~jeho bezplatnej verzii.
+
+\item \textbf{P3 Minimálna obsluha softvéru}
+
+Táto požiadavka sa odzrkadľuje v~správaní aukcie. V~prípade, že aukčná ponuka skončí bez~toho, aby sa jej niekto účastnil, posunie sa jej termín ukončenia aj bez~zásahu administrátora.
+
+\item \textbf{P4 Predstavenie ponuky zákazníkom}
+
+Systém je schopný načítať z~databázy dáta strojov aj prídavných zariadení a~zobraziť ich užívateľom.
+
+\item \textbf{P5 Aukcia}
+
+V~aplikácií existuje aukcia strojov. Administrátorom je umožnené vytvárať aukčne ponuky, v~ktorých sa draží (adminom vybraný) stroj. Užívateľom je v~prípade záujmu umožnené ponúkať sumy do~dražby. Po~skončení odpočtu prebehne vyhodnocovanie aukčných ponúk, kde sa rozhodne kto je ich víťazom. Víťaz je oboznámený prostredníctvom emailu, že vyhral. Porazení sú informovaní o~skutočnosti, že sa im aukciu nepodarilo vyhrať. Admin je upozornený, že aukčná ponuka skončila a~kto je jej víťazom.
+
+\item \textbf{P6 Dopyt}
+
+Systém umožňuje užívateľom podávať dopyt prostredníctvom formulára, ktorý odošle email administrátorovi s~potrebnými informáciami o~užívateľovi a~jeho záujme o~danú položku.
+
+\item \textbf{P7 Prístup k súčiastkam strojov}
+
+V~aplikácií si vie administrátor po~kliknutí na~profil v~správe strojov rozkliknúť detail nejakého konkrétneho stroja. Okrem iných údajov o~spomínanom stroji sa mu zobrazí aj zoznam náhradných dielov, ktoré stroj obsahuje.
+
+\item \textbf{P8 Registrácia a prihlásenie užívateľov}
+
+Systém umožňuje bežným užívateľom vytvoriť si účet v~systéme, a~takisto sa doň prihlásiť (možnosť odhlásenia je samozrejmosťou). A~po~prihlásení už nemusia do~formulárov (pri posielaní dopytu alebo pri~zapájani sa do~aukcie) zadávať svoje údaje.
+\end{itemize}
+
+\section{Možné vylepšenia}
+
+Softvér síce spĺňa požiadavky a~jeho funkčnosť je dostatočná, ale stále existuje priestor pre~rôzne vylepšenia a~pridanie nových funkcionalít. V~tejto podkapitole si o~niektorých povieme.
+
+\begin{itemize}
+\item \textbf{Výkonnosť listovania ponuky}
+
+Ponuku firmy (napr.~stroje) prečítame z~databázy a~vylistujeme jednotlívé položky. Nevyužívame žiadnu virtualizáciu, ani~stránkovanie. Keďže systém je určený pre~malé firmy a~nepredpokladá sa veľká ponuka, tak táto skutočnosť nepredstavuje problem. No v~budúcnosti, ak by sa firme používajúcej náš systém darilo a~rozhodla by sa rozšíriť ponuku, mohla by sa virtualizácia alebo~stránkovanie hodiť.
+
+\item \textbf{Vylepšenie manažovania správ}
+
+Systém síce umožňuje administrátorovi~prijímať emaily, a~takisto na~nich odpovedať, mazať ich, a~tiež označovať správy ako prečítané/neprečítané. No je v~tom trocha pomalý. Akcie síce netrvajú hodiny, a~ani minúty, ale do budúcna je to určite niečo, na~čom by bolo dobré popracovať.
+
+Takisto by bolo dobré správam pridať~stránkovanie, vyhľadávanie a~triedenie podľa dátumu. Hlavným dôvodom existencie správ je umožniť administrátorovi reagovať na~dopyt užívateľov, a~takisto admina upozorňovať na~stav aukčných ponúk. Z~podstaty obsahu správ sa čas na~ich vybavenie odhaduje na~jednotky dní. A~teda predpokladáme, že počet správ v~schránke nebude príliš vysoký. V~prípade, že by ich admin nemazal stále platí, že relevantné správy sa budú nachádzať na~vrchu schránky. Ako vidíme, spomínané vlastnosti preto nie sú pre~naše účely nevyhnutné. Ale takisto ide o~funkcionality, ktoré by mohli oceniť firmy obzvlášť v~budúcnosti, kedy by sa zvýšením počtu zákazníkov zvýšila aj~frakvencia prichádzajúcich správ.
+
+\item \textbf{Upozornenie na prehliadku stroja}
+
+Vo~svete to funguje tak, že keď si užívateľ zakúpi stroj, tak po~určitom čase by firma mala prísť na~prehliadku a~stroj skontrolovať. Preto by sme do~nášho systému mohli pridať funkcionalitu, ktorá by fungovala následovne. Ak užívateľ odošle dopyt na~nejaký stroj a~obchod prebehne úspešne, admin by túto skutočnosť zaznačil v~systéme, čím by užívateľovi priradil dopytovaný stroj. Potom by sa spustil časovač, ktorý by po~uplynutí definovaného času upozornil administrátora na~blížiacu sa prehliadku.
+
+\end{itemize}
