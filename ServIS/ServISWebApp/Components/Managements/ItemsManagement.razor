@@ -154,8 +154,12 @@
 
 		if (args.CommandColumn.ID == "delete-cmd-btn")
 		{
-
-			var dialogOptions = new DialogOptions { ShowCloseIcon = true };
+			var dialogButtonOptions = new DialogButtonOptions { Content = "Zrušiť" };
+			var dialogOptions = new DialogOptions
+				{
+					ShowCloseIcon = true,
+					CancelButtonOptions = dialogButtonOptions
+				};
 			var deletionConfirmed = await dialogService.ConfirmAsync(
 				"Naozaj chcete tento záznam vymazať natrvalo?", "Vymazať záznam", dialogOptions
 			);
