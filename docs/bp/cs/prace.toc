@@ -32,7 +32,8 @@
 \contentsline {subsection}{\numberline {2.2.8}Shared}{15}{subsection.2.2.8}%
 \contentsline {chapter}{\numberline {3}Užívateľská dokumentácia}{17}{chapter.3}%
 \contentsline {chapter}{Záver}{18}{chapter*.3}%
-\contentsline {section}{\numberline {3.1}Možné vylepšenia}{19}{section.3.1}%
-\contentsline {chapter}{\numberline {A}Prílohy}{20}{appendix.A}%
-\contentsline {section}{\numberline {A.1}Implementácia}{20}{section.A.1}%
-\contentsline {section}{\numberline {A.2}Videonávod}{20}{section.A.2}%
+\contentsline {section}{\numberline {3.1}GDPR}{19}{section.3.1}%
+\contentsline {section}{\numberline {3.2}Možné vylepšenia}{19}{section.3.2}%
+\contentsline {chapter}{\numberline {A}Prílohy}{21}{appendix.A}%
+\contentsline {section}{\numberline {A.1}Implementácia}{21}{section.A.1}%
+\contentsline {section}{\numberline {A.2}Videonávod}{21}{section.A.2}%
