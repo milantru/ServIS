@@ -5,7 +5,7 @@
 @using ServISWebApp.CssProviders
 @using ServISData.Interfaces
 
-@if (Item != null && Item.ExcavatorType != null)
+@if (initComplete)
 {
 	<EditForm EditContext="@editContext" OnValidSubmit="SaveItemAsync" class="form-space-items">
 		<ObjectGraphDataAnnotationsValidator />
@@ -54,6 +54,7 @@
 }
 
 @code {
+	private bool initComplete = false;
 	private EditContext editContext = null!;
 	private ValidationMessageStore messageStore = null!;
 
@@ -88,6 +89,7 @@
 		}
 
 		InitEditContext();
+		initComplete = true;
 	}
 
 	public override async Task ResetAsync()
