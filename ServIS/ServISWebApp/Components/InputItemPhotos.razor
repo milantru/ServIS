@@ -59,7 +59,7 @@
 		if (DeletePhoto == null && DeletePhotoAsync == null)
 		{
 			throw new Exception(
-				$"Parameters '{DeletePhoto}' and '{DeletePhotoAsync}' cannot be null at the same time."
+				$"Parameters '{nameof(DeletePhoto)}' and '{nameof(DeletePhotoAsync)}' cannot be null at the same time."
 			);
 		}
 	}
