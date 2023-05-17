@@ -1,4 +1,5 @@
 ﻿@inject IConfiguration config
+@inject EmailManager emailManager
 @using MailKit.Net.Imap;
 @using MailKit;
 @using MimeKit;
@@ -47,7 +48,6 @@
 
 @code {
 	private bool messageSettingsClosed = true;
-	private EmailManager emailManager = null!;
 	//private Timer timer = null!;
 
 	private List<Thread> Threads { get; set; } = null!;
@@ -56,8 +56,6 @@
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-
-		emailManager = new EmailManager(config["EmailName"], config["EmailAddress"], config["EmailAppPassword"]);
 
 		await LoadThreadsAsync();
 
