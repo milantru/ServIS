@@ -1,6 +1,7 @@
-﻿@inject NavigationManager navMan
 @inject IConfiguration config
 @inject IServISApi api
+@inject EmailManager emailManager
+@inject NavigationManager navMan
 @using MimeKit;
 @using ServISWebApp.Auth
 @using ServISWebApp.CssProviders
@@ -113,13 +114,6 @@
 	public string DemandedItemName { get; set; } = null!;
 
 	private DemandForm.Demand DemandInfo { get; set; } = null!;
-
-	protected override void OnInitialized()
-	{
-		base.OnInitialized();
-
-		emailManager = new EmailManager(config["EmailName"], config["EmailAddress"], config["EmailAppPassword"]);
-	}
 
 	protected override async Task OnParametersSetAsync()
 	{
