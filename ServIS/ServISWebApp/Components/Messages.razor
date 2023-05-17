@@ -48,7 +48,6 @@
 
 @code {
 	private bool messageSettingsClosed = true;
-	//private Timer timer = null!;
 
 	private List<Thread> Threads { get; set; } = null!;
 	private Thread? CurrentlyChosenThread { get; set; }
@@ -58,15 +57,6 @@
 		await base.OnInitializedAsync();
 
 		await LoadThreadsAsync();
-
-		//timer = new(async (_) => {
-		//	await InvokeAsync(async () =>
-		//	{
-		//		await LoadThreadsAsync();
-		//		Console.WriteLine("Test");
-		//		StateHasChanged();
-		//	});
-		//}, null, 10_000, 10_000);
 	}
 
 	private void ChangeToThreadView(Thread? thread)
