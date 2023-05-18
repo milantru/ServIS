@@ -546,11 +546,49 @@ namespace ServISWebApp.Shared
 			return reply;
 		}
 
+		private string PrepareErrorMessageForFailedEmailSending(MimeMessage message)
+		{
+			GetSender(message, out _, out var fromEmail);
+
+			/* message.To should always be nonempty, but FirstOrDefault is called on it
+			 * due to defensive programming, if we see in log that this place is empty, 
+			 * we know this is the problem. But once again... it should never happen. 
+			 * The only reason it is here instead of First is defensive programming; better  
+			 * to have some log message with empty spot than no log message at all. */
+			var errMsg = $"Failed to send email from {fromEmail} to {message.To.FirstOrDefault()?.Name}.\n" +
+				"The subject was:\n" +
+				$"{message.Subject}\n" +
+				"The text was:\n" +
+				$"{message.TextBody}\n";
+
+			if (message.Headers is not null && message.Headers.Count > 0)
+			{
+				errMsg += "Headers:\n";
+
+				foreach (var header in message.Headers)
+				{
+					errMsg += $"{header.Field}: {header.Value}\n";
+				}
+			}
+
+			return errMsg;
+		}
+
 		private async Task SendMessageAsync(MimeMessage message)
 		{
 			using var smtpClient = await GetConnectedSmtpClientAsync();
 
-			await smtpClient.SendAsync(message);
+			try
+			{
+				//await smtpClient.SendAsync(message);
+				throw new ArgumentNullException();
+			}
+			catch (Exception ex)
+			{
+				var errMsg = PrepareErrorMessageForFailedEmailSending(message);
+
+				logger.LogError(ex, errMsg);
+			}
 
 			await smtpClient.DisconnectAsync(true);
 		}
