@@ -27,7 +27,7 @@ namespace ServISWebApp.Auth
 
 			if (parts.Length != 3)
 			{
-				//throw new FormatException("Unexpected hash format, should be formatted as `{iterations}.{salt}.{hash}`");
+				// Unexpected hash format, should be formatted as "{iterations}.{salt}.{hash}"
 				return (false, false);
 			}
 
