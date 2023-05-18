@@ -1,5 +1,4 @@
-﻿@implements IDisposable
-@using System.Timers;
+﻿@using System.Timers;
 @using ServISWebApp.BackgroundServices;
 
 @if (AuctionOffer is not null)
@@ -9,7 +8,9 @@
 			<img src="@imgSrc">
 			<div class="panel">
 				<div class="heading">@AuctionOffer.Excavator.Name</div>
-				<div class="countdown servis-outline">@GetCountdown()</div>
+				<div class="countdown servis-outline">
+					<CountdownDisplayer EndTime="@AuctionOffer.OfferEnd" EndMessage="Koniec aukcie" />
+				</div>
 			</div>
 		</a>
 		@if (OnDelete.HasDelegate)
@@ -32,36 +33,11 @@
 	[Parameter]
 	public EventCallback OnDelete { get; set; }
 
-	protected override void OnInitialized()
-	{
-		base.OnInitialized();
-
-		EverySecondTimerService.RegisterEventHandler(NotifyStateHasChanged);
-	}
-
 	protected override void OnParametersSet()
 	{
 		base.OnParametersSet();
 
 		var excavatorTitlePhoto = AuctionOffer.Excavator.Photos.First(p => p.IsTitle);
 		imgSrc = FileTools.GetDataUrlBase64String(excavatorTitlePhoto.Photo, "images/jpeg");
-	}
-
-	public void Dispose()
-	{
-		EverySecondTimerService.UnregisterEventHandler(NotifyStateHasChanged);
-	}
-
-	private async Task NotifyStateHasChanged() => await InvokeAsync(() => StateHasChanged());
-
-	private string GetCountdown()
-	{
-		var timeRemaining = AuctionOffer.OfferEnd - DateTime.Now;
-		if (timeRemaining <= TimeSpan.Zero)
-		{
-			return "Koniec aukcie";
-		}
-
-		return $"{timeRemaining:%d}d {timeRemaining:%h}h {timeRemaining:%m}m {timeRemaining:%s}s";
 	}
 }

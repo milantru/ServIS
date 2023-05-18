@@ -1,13 +1,16 @@
 ﻿@using ServISWebApp.BackgroundServices;
 @implements IDisposable
 
-<p>Ostáva už len: @GetCountdown()</p>
+<span>@GetCountdown()</span>
 
 @code {
 	private bool isEnded;
 
 	[Parameter]
 	public DateTime EndTime { get; set; }
+
+	[Parameter]
+	public string EndMessage { get; set; } = "0d 0h 0m 0s";
 
 	[Parameter]
 	public EventCallback OnEnded { get; set; }
@@ -39,12 +42,12 @@
 		if (timeRemaining <= TimeSpan.Zero)
 		{
 			if (!isEnded)
-			{
+			{// this if is here to assure the code in it will run only once
 				isEnded = true;
 				OnEnded.InvokeAsync();
 				Dispose();
 			}
-			return "0d 0h 0m 0s"; ;
+			return EndMessage;
 		}
 
 		return $"{timeRemaining:%d}d {timeRemaining:%h}h {timeRemaining:%m}m {timeRemaining:%s}s";

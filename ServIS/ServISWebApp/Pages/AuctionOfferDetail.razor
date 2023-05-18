@@ -22,7 +22,7 @@
 				<p>Končí: @AuctionOffer.OfferEnd.ToString("g")</p>
 				<p>Počet uchádzačov: @biddersCount</p>
 				<p><b>Aktuálna cena:</b> @currentMaxBid €</p>
-				<CountdownDisplayer EndTime="@AuctionOffer.OfferEnd" OnEnded="@CloseForm" />
+				<p>Ostáva už len: <CountdownDisplayer EndTime="@AuctionOffer.OfferEnd" OnEnded="CloseForm" /></p>
 
 				<p>@AuctionOffer.Description</p>
 
