@@ -30,11 +30,11 @@ namespace ServISWebApp.Shared
 				errorMessage = "Nepodporovaný typ súboru"; // unsupported file type
 				return false;
 			}
-			//else if (imageFile.Size > ???)
-			//{
-			//	errorMessage = "Súbor je príliš veľký"; // file is too large
-			//	return false;
-			//}
+			else if (imageFile.Size > 1_000_000)
+			{
+				errorMessage = "Súbor je príliš veľký"; // file is too large (> 1MB)
+				return false;
+			}
 			else
 			{
 				errorMessage = null;
