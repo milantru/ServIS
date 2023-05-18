@@ -2,6 +2,7 @@
 @page "/admin/uprava-ponuky/{MainOfferId:int}"
 
 @attribute [Authorize(Roles = "Administrator")]
+@inject ILogger<CreateMainOffer> logger
 @inject IServISApi api
 @inject NavigationManager navMan
 
@@ -32,9 +33,10 @@ else
 			{
 				MainOffer = await api.GetMainOfferAsync(MainOfferId.Value);
 			}
-			catch
+			catch (Exception ex)
 			{
-				throw new Exception($"Main offer with id {MainOfferId.Value} not found.");
+				logger.LogError(ex, $"Main offer with id {MainOfferId.Value} not found.");
+				MainOffer = new();
 			}
 		}
 		else

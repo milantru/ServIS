@@ -2,16 +2,19 @@
 using ServISData.Models;
 using Microsoft.EntityFrameworkCore;
 using ServISData.DataOperations;
+using Microsoft.Extensions.Logging;
 
 namespace ServISData
 {
 	public class ServISApi : IServISApi
 	{
-		IDbContextFactory<ServISDbContext> factory;
+		private readonly IDbContextFactory<ServISDbContext> factory;
+		private readonly ILogger<ServISApi> logger;
 
-		public ServISApi(IDbContextFactory<ServISDbContext> factory)
+		public ServISApi(IDbContextFactory<ServISDbContext> factory, ILogger<ServISApi> logger)
 		{
 			this.factory = factory;
+			this.logger = logger;
 		}
 
 		// Create/Update
@@ -159,7 +162,9 @@ namespace ServISData
 
 			if (excavatorPropertyType.InputType == InputType.Unset)
 			{// defensive programming... we don't want InputType.Unset in db
-				throw new Exception($"Tried to save instance of '{nameof(ExcavatorPropertyType)}' with '{InputType.Unset}'.");
+				logger.LogError($"Tried to save instance of '{nameof(ExcavatorPropertyType)}' with '{InputType.Unset}' " +
+					$"(saving '{nameof(ExcavatorPropertyType)}' with id '{excavatorPropertyType.Id}' cancelled).");
+				return excavatorPropertyType;
 			}
 
 			if (excavatorPropertyType.Id == 0)

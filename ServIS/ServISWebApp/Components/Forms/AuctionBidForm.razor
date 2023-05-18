@@ -1,6 +1,7 @@
 ﻿@implements IDisposable
 @inject NavigationManager navMan
 @inject IConfiguration config
+@inject ILogger<AuctionBidForm> logger
 @inject IServISApi api
 @using ServISWebApp.Auth
 @using ServISWebApp.CssProviders
@@ -163,7 +164,7 @@
 		decimal minValue;
 
 		/* I assume when we are creating auction bid for some auction offer, this offer already exists,
-		 * therefore `AuctionOffer.Id` is not 0. */
+			* therefore `AuctionOffer.Id` is not 0. */
 		var maxAuctionBid = await api.GetMaxAuctionBidAsync(AuctionOffer.Id);
 		if (maxAuctionBid is not null)
 		{
@@ -203,9 +204,9 @@
 				userId = int.Parse(authState!.User.Claims.First(c => c.Type == ClaimTypes.PrimarySid).Value);
 				AuctionBid.User = await api.GetUserAsync(userId);
 			}
-			catch
+			catch (Exception ex)
 			{
-				Console.WriteLine($"Failed getting user with id '{userId}'.");
+				logger.LogError(ex, $"Failed getting user with id '{userId}'.");
 				AuctionBid.User = anonymousUser;
 			}
 		}
@@ -225,8 +226,8 @@
 	private async Task SendBidAsync()
 	{
 		/* We registered IsBidHighEnoughAsync in OnValidationRequested already, so why do we check it here again?
-		 * The answer is that OnValidationRequested will cause change in css depending on validity of the data. 
-		 * And check here will/will not let us submit the form depending on validity of the data. */
+			* The answer is that OnValidationRequested will cause change in css depending on validity of the data. 
+			* And check here will/will not let us submit the form depending on validity of the data. */
 		var minBidValue = await IsBidHighEnoughAsync();
 		if (minBidValue.HasValue)
 		{// field with bid is not valid
@@ -237,9 +238,9 @@
 		{
 			await api.SaveAuctionBidAsync(AuctionBid);
 		}
-		catch
+		catch (Exception ex)
 		{
-			throw new Exception("Couldn't save auction bid.");
+			logger.LogError(ex, "Couldn't save auction bid.");
 		}
 
 		await InitAucionBidAsync();

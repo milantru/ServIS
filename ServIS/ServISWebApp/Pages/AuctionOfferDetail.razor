@@ -1,5 +1,6 @@
 ﻿@page "/aukcna-ponuka/{AuctionOfferId:int}"
 
+@inject ILogger<AuctionOfferDetail> logger
 @inject IServISApi api
 @inject NavigationManager navMan
 @inject SfDialogService dialogService
@@ -96,9 +97,9 @@ else if (!auctionOfferExists)
 		{
 			AuctionOffer = await api.GetAuctionOfferAsync(AuctionOfferId);
 		}
-		catch
+		catch (Exception ex)
 		{
-			Console.WriteLine($"AuctionOffer with id '{AuctionOfferId}' was not found.");
+			logger.LogError(ex, $"AuctionOffer with id '{AuctionOfferId}' was not found.");
 			auctionOfferExists = false;
 			return;
 		}

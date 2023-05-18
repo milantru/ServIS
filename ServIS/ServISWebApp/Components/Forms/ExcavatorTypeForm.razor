@@ -1,5 +1,6 @@
 ﻿@implements IDisposable
 @inherits FormBase<ExcavatorType>
+@inject ILogger<ExcavatorTypeForm> logger
 @inject IServISApi api
 @using ServISData
 @using ServISWebApp.CssProviders
@@ -145,9 +146,9 @@
 		{
 			await api.SaveExcavatorTypeAsync(Item);
 		}
-		catch
+		catch (Exception ex)
 		{
-			throw new Exception($"Failed to save excavator type with id '{Item.Id}'.");
+			logger.LogError(ex, $"Failed to save excavator type with id '{Item.Id}'.");
 		}
 
 		if (OnSave.HasDelegate)

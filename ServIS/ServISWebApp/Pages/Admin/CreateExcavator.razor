@@ -2,6 +2,7 @@
 @page "/admin/uprava-stroja/{ExcavatorId:int}"
 
 @attribute [Authorize(Roles = "Administrator")]
+@inject ILogger<CreateExcavator> logger
 @inject IServISApi api
 @inject NavigationManager navMan
 
@@ -36,9 +37,10 @@ else
 			{
 				excavatorTypeTmp = await api.GetExcavatorTypeAsync(ExcavatorTypeId.Value);
 			}
-			catch
+			catch (Exception ex)
 			{
-				throw new Exception($"Excavator type with id {ExcavatorTypeId.Value} not found.");
+				logger.LogError(ex, $"Excavator type with id {ExcavatorTypeId.Value} not found.");
+				excavatorTypeTmp = null!;
 			}
 
 			Excavator = new() { Type = excavatorTypeTmp };
@@ -49,9 +51,10 @@ else
 			{
 				Excavator = await api.GetExcavatorAsync(ExcavatorId.Value);
 			}
-			catch
+			catch (Exception ex)
 			{
-				throw new Exception($"Excavator with id {ExcavatorId.Value} not found.");
+				logger.LogError(ex, $"Excavator with id {ExcavatorId.Value} not found.");
+				Excavator = new();
 			}
 		}
 	}

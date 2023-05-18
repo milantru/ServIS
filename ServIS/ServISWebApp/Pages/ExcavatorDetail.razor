@@ -1,5 +1,6 @@
 ﻿@page "/stroj/{ExcavatorId:int}"
 
+@inject ILogger<ExcavatorDetail> logger
 @inject IServISApi api
 @inject NavigationManager navMan
 
@@ -74,9 +75,9 @@ else if (!excavatorExists)
 		{
 			Excavator = await api.GetExcavatorAsync(ExcavatorId);
 		}
-		catch
+		catch (Exception ex)
 		{
-			Console.WriteLine($"Excavator with id '{ExcavatorId}' was not found.");
+			logger.LogError(ex, $"Excavator with id '{ExcavatorId}' was not found.");
 			excavatorExists = false;
 		}
 	}

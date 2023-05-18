@@ -3,6 +3,7 @@
 
 @attribute [Authorize(Roles = "Administrator")]
 @inject IServISApi api
+@inject ILogger<CreateAuctionOffer> logger
 @inject NavigationManager navMan
 
 <h3>Prídavné zariadenia- @(AuctionOfferId.HasValue ? "úprava existujúceho" : "vytvorenie nového") záznamu</h3>
@@ -15,6 +16,7 @@ else
 {
 	<AuctionOfferForm Item="@AuctionOffer" OnSave="@(() => navMan.NavigateTo("/aukcia"))" />
 }
+
 @code {
 	[Parameter]
 	public int? AuctionOfferId { get; set; } = null!;
@@ -31,9 +33,9 @@ else
 			{
 				AuctionOffer = await api.GetAuctionOfferAsync(AuctionOfferId.Value);
 			}
-			catch
+			catch (Exception ex)
 			{
-				throw new Exception($"Auction offer with id {AuctionOfferId.Value} not found.");
+				logger.LogError(ex, $"Auction offer with id {AuctionOfferId.Value} not found.");
 			}
 		}
 		else

@@ -1,5 +1,6 @@
 ﻿@page "/pridavne-zariadenie/{AdditionalEquipmentId:int}"
 
+@inject ILogger<AdditionalEquipmentDetail> logger
 @inject IServISApi api
 @inject NavigationManager navMan
 
@@ -78,9 +79,9 @@ else if (!additionalEquipmentExists)
 		{
 			AdditionalEquipment = await api.GetAdditionalEquipmentAsync(AdditionalEquipmentId);
 		}
-		catch
+		catch (Exception ex)
 		{
-			Console.WriteLine($"AdditionalEquipment with id '{AdditionalEquipmentId}' was not found.");
+			logger.LogError(ex, $"AdditionalEquipment with id '{AdditionalEquipmentId}' was not found.");
 			additionalEquipmentExists = false;
 		}
 	}

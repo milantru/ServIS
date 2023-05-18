@@ -1,7 +1,8 @@
 ﻿@implements IDisposable
 @inherits FormBase<AuctionOffer>
-@inject IServISApi api
 @inject IJSRuntime js
+@inject ILogger<AuctionOfferForm> logger
+@inject IServISApi api
 @using ServISWebApp.CssProviders
 @using ServISData.Interfaces
 @using Syncfusion.Blazor.Calendars
@@ -141,9 +142,9 @@
 		{
 			await api.SaveAuctionOfferAsync(Item);
 		}
-		catch
+		catch (Exception ex)
 		{
-			throw new Exception($"Failed to save auction offer with id '{Item.Id}'.");
+			logger.LogError(ex, $"Failed to save auction offer with id '{Item.Id}'.");
 		}
 
 		if (OnSave.HasDelegate)

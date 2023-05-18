@@ -1,5 +1,6 @@
 ﻿@page "/typ-stroja/{ExcavatorTypeId:int}"
 
+@inject ILogger<Excavators> logger
 @inject IServISApi api
 
 @if (excavatorTypeExists && ExcavatorType is not null)
@@ -32,9 +33,9 @@ else if (!excavatorTypeExists)
 		{
 			ExcavatorType = await api.GetExcavatorTypeAsync(ExcavatorTypeId);
 		}
-		catch
+		catch (Exception ex)
 		{
-			Console.WriteLine($"Excavator type with id '{ExcavatorTypeId}' not found.");
+			logger.LogError(ex, $"Excavator type with id '{ExcavatorTypeId}' not found.");
 			excavatorTypeExists = false;
 		}
 	}

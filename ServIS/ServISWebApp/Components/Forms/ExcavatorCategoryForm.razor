@@ -1,4 +1,5 @@
 ﻿@inherits FormBase<ExcavatorCategory>
+@inject ILogger<ExcavatorCategoryForm> logger
 @inject IServISApi api
 @using ServISWebApp.CssProviders
 
@@ -45,9 +46,9 @@
 		{
 			await api.SaveExcavatorCategoryAsync(Item);
 		}
-		catch
+		catch (Exception ex)
 		{
-			throw new Exception($"Failed to save excavator category with id '{Item.Id}'.");
+			logger.LogError(ex, $"Failed to save excavator category with id '{Item.Id}'.");
 		}
 
 		if (OnSave.HasDelegate)

@@ -9,6 +9,7 @@ namespace ServISWebApp.Shared
 {
 	public class EmailManager
 	{
+		private readonly ILogger<EmailManager> logger;
 		private readonly string emailPassword;
 		private readonly MessageSummaryItems defaultMessageSummaryItems = MessageSummaryItems.UniqueId |
 															MessageSummaryItems.GMailThreadId |
@@ -21,11 +22,12 @@ namespace ServISWebApp.Shared
 		public string EmailName { get; private init; } = null!;
 		public string EmailAddress { get; private init; } = null!;
 
-		public EmailManager(string emailName, string emailAddress, string emailPassword)
+		public EmailManager(string emailName, string emailAddress, string emailPassword, ILogger<EmailManager> logger)
 		{
 			EmailName = emailName;
 			EmailAddress = emailAddress;
 			this.emailPassword = emailPassword;
+			this.logger = logger;
 		}
 
 		public void GetSender(MimeMessage message, out string senderName, out string senderAddress)
@@ -404,9 +406,9 @@ namespace ServISWebApp.Shared
 			{
 				await ConnectImapAsync(imapClient);
 			}
-			catch (SslHandshakeException)
+			catch (SslHandshakeException ex)
 			{
-				Console.WriteLine($"Recovering from '{nameof(SslHandshakeException)}', trying to connect anyway.");
+				logger.LogWarning(ex, $"Recovering from '{nameof(SslHandshakeException)}', trying to connect anyway.");
 				// 3. in -> https://stackoverflow.com/questions/59026301/sslhandshakeexception-an-error-occurred-while-attempting-to-establish-an-ssl-or/#answer-59039909
 				imapClient.CheckCertificateRevocation = false;
 
@@ -429,9 +431,9 @@ namespace ServISWebApp.Shared
 			{
 				await ConnectSmtpAsync(smtpClient);
 			}
-			catch (SslHandshakeException)
+			catch (SslHandshakeException ex)
 			{
-				Console.WriteLine($"Recovering from '{nameof(SslHandshakeException)}', trying to connect anyway.");
+				logger.LogWarning(ex, $"Recovering from '{nameof(SslHandshakeException)}', trying to connect anyway.");
 				smtpClient.CheckCertificateRevocation = false;
 
 				await ConnectSmtpAsync(smtpClient);

@@ -1,7 +1,8 @@
 ﻿@implements IDisposable
 @inherits FormBase<Excavator>
-@inject IServISApi api
 @inject IJSRuntime js
+@inject ILogger<ExcavatorForm> logger
+@inject IServISApi api
 @using ServISData
 @using ServISWebApp.CssProviders;
 @using System.Collections
@@ -125,9 +126,15 @@
 										<td><InputTextArea @bind-Value="property.Value" /></td>
 										break;
 									case InputType.Unset:
-										throw new Exception("Excavator property input type is unset.");
+										var errMsg1 = "Excavator property input type is unset.";
+										var ex1 = new Exception(errMsg1);
+										logger.LogError(ex1, errMsg1);
+										throw ex1;
 									default:
-										throw new Exception("Unknown excavator property input type.");
+										var errMsg2 = "Unknown excavator property input type.";
+										var ex2 = new Exception(errMsg2);
+										logger.LogError(ex2, errMsg2);
+										throw ex2;
 								}
 							</tr>
 						}
@@ -225,9 +232,9 @@
 		{
 			await api.SaveExcavatorAsync(Item);
 		}
-		catch
+		catch (Exception ex)
 		{
-			throw new Exception($"Failed to save excavator with id '{Item.Id}'.");
+			logger.LogError(ex, $"Failed to save excavator with id '{Item.Id}'.");
 		}
 
 		if (OnSave.HasDelegate)

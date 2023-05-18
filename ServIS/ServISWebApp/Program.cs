@@ -17,6 +17,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddAuthenticationCore();
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
 builder.Services.AddScoped<ProtectedLocalStorage>();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
 builder.Services.AddDbContextFactory<ServISDbContext>(options =>
@@ -35,7 +37,8 @@ builder.Services.AddSingleton<EmailManager>(provider =>
 	var emailName = config.GetValue<string>("EmailName");
 	var emailAddress = config.GetValue<string>("EmailAddress");
 	var emailPassword = config.GetValue<string>("EmailAppPassword");
-	return new(emailName, emailAddress, emailPassword);
+	var logger = provider.GetRequiredService<ILogger<EmailManager>>();
+	return new(emailName, emailAddress, emailPassword, logger);
 });
 builder.Services.AddHostedService<EverySecondTimerService>();
 builder.Services.AddHostedService<AuctionEvaluatorService>(provider =>

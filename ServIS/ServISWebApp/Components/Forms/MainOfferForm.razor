@@ -1,7 +1,8 @@
 ﻿@implements IDisposable
 @inherits FormBase<MainOffer>
-@inject IServISApi api
 @inject IJSRuntime js
+@inject ILogger<MainOfferForm> logger
+@inject IServISApi api
 @using ServISWebApp.CssProviders
 @using ServISData.Interfaces
 
@@ -64,14 +65,7 @@
 	{
 		await base.OnInitializedAsync();
 
-		try
-		{
-			ExcavatorTypes = await api.GetExcavatorTypesAsync();
-		}
-		catch
-		{
-			throw new Exception("Error retrieving excavator types.");
-		}
+		ExcavatorTypes = await api.GetExcavatorTypesAsync();
 	}
 
 	protected override void OnParametersSet()
@@ -117,9 +111,9 @@
 		{
 			await api.SaveMainOfferAsync(Item);
 		}
-		catch
+		catch (Exception ex)
 		{
-			throw new Exception($"Failed to save main offer with id '{Item.Id}'.");
+			logger.LogError(ex, $"Failed to save main offer with id '{Item.Id}'.");
 		}
 
 		if (OnSave.HasDelegate)

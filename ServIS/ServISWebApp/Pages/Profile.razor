@@ -1,8 +1,9 @@
 @page "/profil"
 
 @attribute [Authorize(Roles = "Administrator,User")]
-@inject IServISApi api
 @inject IJSRuntime js
+@inject ILogger<Profile> logger
+@inject IServISApi api
 @using ServISData
 @using ServISWebApp.Auth
 @using ServISWebApp.Components.Managements
@@ -254,9 +255,9 @@ else
 
 			User = await api.GetUserAsync(userId);
 		}
-		catch
+		catch (Exception ex)
 		{
-			Console.WriteLine($"Failed to load user with id '{userId}'.");
+			logger.LogError(ex, $"Failed to load user with id '{userId}'.");
 			authFailed = true;
 		}
 	}

@@ -1,4 +1,5 @@
 ﻿@inherits FormBase<AdditionalEquipmentBrand>
+@inject ILogger<AdditionalEquipmentBrandForm> logger
 @inject IServISApi api
 @using ServISWebApp.CssProviders
 
@@ -45,9 +46,9 @@
 		{
 			await api.SaveAdditionalEquipmentBrandAsync(Item);
 		}
-		catch
+		catch (Exception ex)
 		{
-			throw new Exception($"Failed to save additional equipment brand with id '{Item.Id}'.");
+			logger.LogError(ex, $"Failed to save additional equipment brand with id '{Item.Id}'.");
 		}
 
 		if (OnSave.HasDelegate)

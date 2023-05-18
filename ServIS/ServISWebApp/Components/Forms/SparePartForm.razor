@@ -1,5 +1,6 @@
 ﻿@using ServISWebApp.CssProviders
 @inherits FormBase<SparePart>
+@inject ILogger<SparePartForm> logger
 @inject IServISApi api
 
 @if (Item != null)
@@ -124,9 +125,9 @@
         {
             await api.SaveSparePartAsync(Item);
         }
-        catch
+        catch (Exception ex)
         {
-            throw new Exception($"Failed to save spare part with id '{Item.Id}'.");
+            logger.LogError(ex, $"Failed to save spare part with id '{Item.Id}'.");
         }
 
         if (OnSave.HasDelegate)

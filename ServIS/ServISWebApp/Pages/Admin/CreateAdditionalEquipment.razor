@@ -2,6 +2,7 @@
 @page "/admin/uprava-pridavneho-zariadenia/{AdditionalEquipmentId:int}"
 
 @attribute [Authorize(Roles = "Administrator")]
+@inject ILogger<CreateAdditionalEquipment> logger
 @inject IServISApi api
 @inject NavigationManager navMan
 
@@ -32,9 +33,9 @@ else
 			{
 				AdditionalEquipment = await api.GetAdditionalEquipmentAsync(AdditionalEquipmentId.Value);
 			}
-			catch
+			catch (Exception ex)
 			{
-				throw new Exception($"Additional equipment with id {AdditionalEquipmentId.Value} not found.");
+				logger.LogError(ex, $"Additional equipment with id {AdditionalEquipmentId.Value} not found.");
 			}
 		}
 		else

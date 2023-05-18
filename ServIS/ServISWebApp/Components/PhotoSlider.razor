@@ -1,4 +1,6 @@
-﻿@if (Images != null)
+﻿@inject ILogger<PhotoSlider> logger
+
+@if (Images != null)
 {
 	<div id="photo-slider" class="carousel slide w-100">
 		<div class="carousel-indicators">
@@ -6,22 +8,24 @@
 			{
 				int iCopy = i;
 
-				<button class="@GetCssActiveClass(iCopy)" onclick="@(() => SlideTo(iCopy))" aria-hidden="true"></button>
+				<button class="@GetCssActiveClass(iCopy)" @onclick="() => SlideTo(iCopy)" aria-hidden="true"></button>
 			}
 		</div>
 		<div class="carousel-inner">
 			@for (int i = 0; i < Images.Count; i++)
 			{
 				<div class="carousel-item @GetCssActiveClass(i)">
-					<img src=@FileTools.GetDataUrlBase64String(Images[i], "images/jpeg") class="d-block img-fluid w-100" alt="Fotka @(i + 1)">
+					<img src=@FileTools.GetDataUrlBase64String(Images[i], "images/jpeg") 
+						 class="d-block img-fluid w-100" 
+						 alt="Fotka @(i + 1)">
 				</div>
 			}
 		</div>
-		<button class="carousel-control-prev" href="#photo-slider" role="button" onclick="@(() => SlidePrev())">
+		<button class="carousel-control-prev" href="#photo-slider" role="button" @onclick="() => SlidePrev()">
 			<span class="carousel-control-prev-icon" aria-hidden="true"></span>
 			<span class="visually-hidden">Previous</span>
 		</button>
-		<button class="carousel-control-next" href="#photo-slider" role="button" onclick="@(() => SlideNext())">
+		<button class="carousel-control-next" href="#photo-slider" role="button" @onclick="() => SlideNext()">
 			<span class="carousel-control-next-icon" aria-hidden="true"></span>
 			<span class="visually-hidden">Next</span>
 		</button>
@@ -40,11 +44,14 @@
 
 		if (Images.Count == 0)
 		{
-			throw new Exception("No image provided for the photo slider.");
+			var exMsg = "No image provided for the photo slider.";
+			var ex = new Exception(exMsg);
+			logger.LogError(ex, exMsg);
+			throw ex;
 		}
 	}
 
-	public void SlidePrev()
+	private void SlidePrev()
 	{
 		int tmp = index - 1;
 		if (tmp < 0)
@@ -55,26 +62,21 @@
 		{
 			index = tmp % Images.Count;
 		}
-
-		StateHasChanged();
 	}
 
-	public void SlideNext()
+	private void SlideNext()
 	{
 		index = (index + 1) % Images.Count;
-
-		StateHasChanged();
 	}
 
-	public void SlideTo(int newIndex)
+	private void SlideTo(int newIndex)
 	{
 		if (newIndex < 0 || newIndex >= Images.Count)
 		{
-			throw new ArgumentOutOfRangeException("No image with this index.");
+			return;
 		}
 
 		index = newIndex;
-		StateHasChanged();
 	}
 
 	private string GetCssActiveClass(int i) => i == index ? "active" : "inactive";

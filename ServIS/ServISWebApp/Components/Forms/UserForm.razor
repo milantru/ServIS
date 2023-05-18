@@ -1,5 +1,6 @@
-﻿@inject IServISApi api
-@inject IJSRuntime js
+﻿@inject IJSRuntime js
+@inject ILogger<UserForm> logger
+@inject IServISApi api
 @inject AuthenticationStateProvider authStateProvider
 @inject NavigationManager navMan
 @inject SfDialogService dialogService
@@ -210,9 +211,9 @@
 		{
 			await api.SaveUserAsync(User);
 		}
-		catch
+		catch (Exception ex)
 		{
-			throw new Exception($"Failed to save user with id '{User.Id}'.");
+			logger.LogError(ex, $"Failed to save user with id '{User.Id}'.");
 		}
 
 		if (UserChanged.HasDelegate)
