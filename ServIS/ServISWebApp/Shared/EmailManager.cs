@@ -270,7 +270,7 @@ namespace ServISWebApp.Shared
 			emails.ForEach(e => e.Read = false);
 		}
 
-		public async Task Search()
+		public async Task SearchAsync()
 		{
 			await Task.CompletedTask;
 			throw new NotImplementedException();

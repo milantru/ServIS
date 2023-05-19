@@ -19,7 +19,7 @@
 	{
 		base.OnInitialized();
 
-		EverySecondTimerService.RegisterEventHandler(NotifyStateHasChanged);
+		EverySecondTimerService.RegisterEventHandler(NotifyStateHasChangedAsync);
 	}
 
 	public void Dispose()
@@ -31,10 +31,10 @@
 			return;
 		}
 
-		EverySecondTimerService.UnregisterEventHandler(NotifyStateHasChanged);
+		EverySecondTimerService.UnregisterEventHandler(NotifyStateHasChangedAsync);
 	}
 
-	private async Task NotifyStateHasChanged() => await InvokeAsync(() => StateHasChanged());
+	private async Task NotifyStateHasChangedAsync() => await InvokeAsync(() => StateHasChanged());
 
 	private string GetCountdown()
 	{

@@ -44,7 +44,7 @@
 				{
 					<AuctionBidForm @ref="auctionBidForm" 
 									AuctionOffer="AuctionOffer"
-									OnSent="GetAdditionalAuctionInfo" />
+									OnSent="GetAdditionalAuctionInfoAsync" />
 				}
 			</div>
 		</div>
@@ -104,7 +104,7 @@ else if (!auctionOfferExists)
 			return;
 		}
 
-		await GetAdditionalAuctionInfo();
+		await GetAdditionalAuctionInfoAsync();
 	}
 
 	public void ToggleForm()
@@ -122,13 +122,13 @@ else if (!auctionOfferExists)
 		navMan.NavigateTo($"/admin/uprava-aukcnej-ponuky/{AuctionOffer.Id}");
 	}
 
-	private async Task SetCurrentMaxBid()
+	private async Task SetCurrentMaxBidAsync()
 	{
 		var maxAuctionBid = await api.GetMaxAuctionBidAsync(AuctionOfferId);
 		currentMaxBid = maxAuctionBid?.Bid ?? AuctionOffer.StartingBid;
 	}
 
-	private async Task SetBiddersCount()
+	private async Task SetBiddersCountAsync()
 	{
 		biddersCount = await api.GetAuctionBiddersCountAsync(AuctionOffer.Id);
 	}
@@ -167,9 +167,9 @@ else if (!auctionOfferExists)
 		}
 	}
 
-	private async Task GetAdditionalAuctionInfo()
+	private async Task GetAdditionalAuctionInfoAsync()
 	{
-		await SetBiddersCount();
-		await SetCurrentMaxBid();
+		await SetBiddersCountAsync();
+		await SetCurrentMaxBidAsync();
 	}
 }
