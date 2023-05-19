@@ -439,7 +439,7 @@ namespace ServISWebApp.Shared
 				await ConnectSmtpAsync(smtpClient);
 			}
 
-			smtpClient.Authenticate(
+			await smtpClient.AuthenticateAsync(
 				userName: EmailAddress,
 				password: emailPassword
 			);
