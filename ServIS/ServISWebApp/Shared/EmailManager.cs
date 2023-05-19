@@ -550,12 +550,12 @@ namespace ServISWebApp.Shared
 		{
 			GetSender(message, out _, out var fromEmail);
 
-			/* message.To should always be nonempty, but FirstOrDefault is called on it
+			/* message.To.Mailboxes should always be nonempty, but FirstOrDefault is called on it
 			 * due to defensive programming, if we see in log that this place is empty, 
 			 * we know this is the problem. But once again... it should never happen. 
 			 * The only reason it is here instead of First is defensive programming; better  
 			 * to have some log message with empty spot than no log message at all. */
-			var errMsg = $"Failed to send email from {fromEmail} to {message.To.FirstOrDefault()?.Name}.\n" +
+			var errMsg = $"Failed to send email from {fromEmail} to {message.To.Mailboxes.FirstOrDefault()?.Address}.\n" +
 				"The subject was:\n" +
 				$"{message.Subject}\n" +
 				"The text was:\n" +
@@ -580,8 +580,7 @@ namespace ServISWebApp.Shared
 
 			try
 			{
-				//await smtpClient.SendAsync(message);
-				throw new ArgumentNullException();
+				await smtpClient.SendAsync(message);
 			}
 			catch (Exception ex)
 			{
