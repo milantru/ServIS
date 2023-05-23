@@ -1,5 +1,5 @@
 ﻿@inject IServISApi api
-@inject SfDialogService dialogService
+@inject Modals modals
 
 @if (Title != null)
 {
@@ -40,16 +40,9 @@ else
 
 	private async Task DeleteAuctionOfferAsync(AuctionOffer auctionOffer)
 	{
-		var dialogButtonOptions = new DialogButtonOptions { Content = "Zrušiť" };
-		var dialogOptions = new DialogOptions
-			{
-				ShowCloseIcon = true,
-				CancelButtonOptions = dialogButtonOptions
-			};
-		var isDeletionConfirmed = await dialogService.ConfirmAsync(
-			content: "Naozaj chcete túto aukčnú ponuku vymazať natrvalo?",
-			title: "Vymazať aukčnú ponuku natrvalo",
-			options: dialogOptions
+		var isDeletionConfirmed = await modals.DisplayConfirmationAsync(
+			confirmationMessage: "Naozaj chcete túto aukčnú ponuku vymazať natrvalo?",
+			title: "Vymazať aukčnú ponuku natrvalo"
 		);
 		if (!isDeletionConfirmed)
 		{

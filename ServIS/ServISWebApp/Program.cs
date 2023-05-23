@@ -75,7 +75,7 @@ internal class Program
         });
         builder.Services.AddSingleton<IServISApi, ServISApi>();
         builder.Services.AddScoped<SfDialogService>();
-        builder.Services.AddSyncfusionBlazor();
+		builder.Services.AddSyncfusionBlazor();
         builder.Services.AddSingleton(typeof(ISyncfusionStringLocalizer), typeof(SyncfusionLocalizer));
         builder.Services.AddSingleton<EmailManager>(provider =>
         {
@@ -84,6 +84,7 @@ internal class Program
             var emailAddress = config.GetValue<string>("EmailAddress");
             var emailPassword = config.GetValue<string>("EmailAppPassword");
             var logger = provider.GetRequiredService<ILogger<EmailManager>>();
+
             return new(emailName, emailAddress, emailPassword, logger);
         });
         builder.Services.AddHostedService<EverySecondTimerService>();
@@ -92,7 +93,14 @@ internal class Program
             var emailManager = provider.GetRequiredService<EmailManager>();
             var api = provider.GetRequiredService<IServISApi>();
             var baseUrl = provider.GetRequiredService<IConfiguration>().GetValue<string>("AppBaseUrl");
+
             return new(api, emailManager, baseUrl);
+        });
+        builder.Services.AddScoped<Modals>(factory =>
+        {
+            var dialogService = factory.GetRequiredService<SfDialogService>();
+
+            return new(dialogService);
         });
 
         var app = builder.Build();

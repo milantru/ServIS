@@ -2,8 +2,8 @@
 
 @inject ILogger<AuctionOfferDetail> logger
 @inject IServISApi api
+@inject Modals modals
 @inject NavigationManager navMan
-@inject SfDialogService dialogService
 
 @if (auctionOfferExists && AuctionOffer != null)
 {
@@ -135,16 +135,11 @@ else if (!auctionOfferExists)
 
 	private async Task DeleteAuctionOfferAsync()
 	{
-		var dialogButtonOptions = new DialogButtonOptions { Content = "Zrušiť" };
-		var dialogOptions = new DialogOptions
-			{
-				ShowCloseIcon = true,
-				CancelButtonOptions = dialogButtonOptions
-			};
-		var deletionConfirmed = await dialogService.ConfirmAsync(
-			"Naozaj chcete vymazať túto aukčnú ponuku?", "Vymazať", dialogOptions
+		var isDeletionConfirmed = await modals.DisplayConfirmationAsync(
+			confirmationMessage: "Naozaj chcete vymazať túto aukčnú ponuku?",
+			title: "Vymazať"
 		);
-		if (!deletionConfirmed)
+		if (!isDeletionConfirmed)
 		{
 			return;
 		}

@@ -1,5 +1,5 @@
 ﻿@inject IServISApi api
-@inject SfDialogService dialogService
+@inject Modals modals
 @using ServISData.DataOperations
 
 @if (Title is not null)
@@ -56,16 +56,9 @@ else
 
 	private async Task DeleteExcavatorAsync(Excavator excavator)
 	{
-		var dialogButtonOptions = new DialogButtonOptions { Content = "Zrušiť" };
-		var dialogOptions = new DialogOptions
-			{
-				ShowCloseIcon = true,
-				CancelButtonOptions = dialogButtonOptions
-			};
-		var isDeletionConfirmed = await dialogService.ConfirmAsync(
-			content: "Naozaj chcete tento stroj vymazať natrvalo?",
-			title: "Vymazať stroj natrvalo",
-			options: dialogOptions
+		var isDeletionConfirmed = await modals.DisplayConfirmationAsync(
+			confirmationMessage: "Naozaj chcete tento stroj vymazať natrvalo?",
+			title: "Vymazať stroj natrvalo"
 		);
 		if (!isDeletionConfirmed)
 		{

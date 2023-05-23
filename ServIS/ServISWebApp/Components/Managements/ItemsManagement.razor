@@ -2,7 +2,7 @@
 @typeparam ItemFormType where ItemFormType : FormBase<ItemType>
 
 @inject IServISApi api
-@inject SfDialogService dialogService
+@inject Modals modals
 @using ServISWebApp.Components.Managements
 @using Syncfusion.Blazor.Data
 @using Syncfusion.Blazor.Navigations
@@ -144,16 +144,11 @@
 
 		if (args.CommandColumn.ID == "delete-cmd-btn")
 		{
-			var dialogButtonOptions = new DialogButtonOptions { Content = "Zrušiť" };
-			var dialogOptions = new DialogOptions
-				{
-					ShowCloseIcon = true,
-					CancelButtonOptions = dialogButtonOptions
-				};
-			var deletionConfirmed = await dialogService.ConfirmAsync(
-				"Naozaj chcete tento záznam vymazať natrvalo?", "Vymazať záznam", dialogOptions
+			var isDeletionConfirmed = await modals.DisplayConfirmationAsync(
+				confirmationMessage: "Naozaj chcete tento záznam vymazať natrvalo?",
+				title: "Vymazať záznam"
 			);
-			if (!deletionConfirmed)
+			if (!isDeletionConfirmed)
 			{
 				return;
 			}

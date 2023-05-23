@@ -3,7 +3,7 @@
 @inject IConfiguration config
 @inject ILogger<Index> logger
 @inject IServISApi api
-@inject SfDialogService dialogService
+@inject Modals modals
 
 <PageTitle>@(config.GetValue<string>("CompanyName")) | Domov</PageTitle>
 
@@ -49,16 +49,9 @@ else
 
 	private async Task DeleteMainOfferAsync(MainOffer mainOffer)
 	{
-		var dialogButtonOptions = new DialogButtonOptions { Content = "Zrušiť" };
-		var dialogOptions = new DialogOptions
-			{
-				ShowCloseIcon = true,
-				CancelButtonOptions = dialogButtonOptions
-			};
-		var isDeletionConfirmed = await dialogService.ConfirmAsync(
-			content: "Naozaj chcete túto ponuku vymazať natrvalo?",
-			title: "Vymazať ponuku natrvalo",
-			options: dialogOptions
+		var isDeletionConfirmed = await modals.DisplayConfirmationAsync(
+			confirmationMessage: "Naozaj chcete túto ponuku vymazať natrvalo?",
+			title: "Vymazať ponuku natrvalo"
 		);
 		if (!isDeletionConfirmed)
 		{

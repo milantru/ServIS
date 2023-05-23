@@ -2,8 +2,8 @@
 @inject ILogger<UserForm> logger
 @inject IServISApi api
 @inject AuthenticationStateProvider authStateProvider
+@inject Modals modals
 @inject NavigationManager navMan
-@inject SfDialogService dialogService
 @using ServISWebApp.Auth
 @using ServISWebApp.CssProviders
 @using System.ComponentModel.DataAnnotations
@@ -248,16 +248,9 @@
 			return;
 		}
 
-		var dialogButtonOptions = new DialogButtonOptions { Content = "Zrušiť" };
-		var dialogOptions = new DialogOptions
-			{
-				ShowCloseIcon = true,
-				CancelButtonOptions = dialogButtonOptions
-			};
-		var isDeletionConfirmed = await dialogService.ConfirmAsync(
-			content: "POZOR! Naozaj chcete vymazať svoj účet so všetkými svojimi dátami?",
-			title: "Vymazať svoj účet natrvalo",
-			options: dialogOptions
+		var isDeletionConfirmed = await modals.DisplayConfirmationAsync(
+			confirmationMessage: "POZOR! Naozaj chcete vymazať svoj účet so všetkými svojimi dátami?",
+			title: "Vymazať svoj účet natrvalo"
 		);
 		if (!isDeletionConfirmed)
 		{

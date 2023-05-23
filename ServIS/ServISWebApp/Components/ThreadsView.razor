@@ -1,4 +1,4 @@
-﻿@inject SfDialogService dialogService
+﻿@inject Modals modals
 @using MailKit;
 
 @if (Threads is null)
@@ -85,16 +85,11 @@ else
 
 	private async Task DeleteSelectedThreadsAsync()
 	{
-		var dialogButtonOptions = new DialogButtonOptions { Content = "Zrušiť" };
-		var dialogOptions = new DialogOptions
-			{
-				ShowCloseIcon = true,
-				CancelButtonOptions = dialogButtonOptions
-			};
-		var deletionConfirmed = await dialogService.ConfirmAsync(
-			"Naozaj chcete vymazať všetky vybrané správy?", "Vymazať", dialogOptions
+		var isDeletionConfirmed = await modals.DisplayConfirmationAsync(
+			confirmationMessage: "Naozaj chcete vymazať všetky vybrané správy?",
+			title: "Vymazať"
 		);
-		if (!deletionConfirmed)
+		if (!isDeletionConfirmed)
 		{
 			return;
 		}
