@@ -128,11 +128,11 @@
 			var auctionBids = await api.GetAuctionBidsAsync(Item.Id);
 			foreach (var auctionBid in auctionBids)
 			{
-				_ = api.DeleteAuctionBidAsync(auctionBid);
+				await api.DeleteAuctionBidAsync(auctionBid);
 
 				var user = auctionBid.User;
 				if (user.IsTemporary) {
-					_ = api.DeleteUserAsync(user);
+					await api.DeleteUserAsync(user);
 				}
 			}
 			Item.IsEvaluated = false;
