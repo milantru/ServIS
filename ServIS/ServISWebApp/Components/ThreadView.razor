@@ -7,11 +7,11 @@
 else if (Emails.Count > 0)
 {
 	@* I assume there is always at least 1 email in `Emails`
-		(because I doubt thread can exist without at least 1 message),
-		so `else` would be sufficient, right? Then why `else if`...
-		Well, due to some actions like deleting there can be (temporary) state (before back action triggers)
-		when`Emails.Count` is indeed 0 and following code would end up throwing an exception.
-		This `else if ` is simple solution of this problem. *@
+	   (because I doubt thread can exist without at least 1 message),
+	   so `else` would be sufficient, right? Then why `else if`...
+	   Well, due to some actions like deleting there can be (temporary) state (before back action triggers)
+	   when`Emails.Count` is indeed 0 and following code would end up throwing an exception.
+	   This `else if ` is simple solution of this problem. *@
 	<div>
 		<div class="top-panel">
 			<BackIconButton OnClick="OnBack" />
@@ -62,9 +62,9 @@ else if (Emails.Count > 0)
 @code {
 	private string? requestedItemUrl;
 	/* `isUrlExtractionComplete` exists to solve the problem with extracting
-		*  the url from the first message. There was a problem that injected url
-		*  blinked (was seen by the user) and then disappeared (when the extraction was
-		*  complete). This field ensures that this blink of injected url doesn't occur. */
+	 *  the url from the first message. There was a problem that injected url
+	 *  blinked (was seen by the user) and then disappeared (when the extraction was
+	 *  complete). This field ensures that this blink of injected url doesn't occur. */
 	private bool isUrlExtractionComplete;
 
 	[Parameter]

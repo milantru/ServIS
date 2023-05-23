@@ -12,8 +12,5 @@ namespace ServISData.Models
 
 		[Required, ValidateComplexType]
 		public ExcavatorPropertyType PropertyType { get; set; } = null!;
-
-		//[Required]
-		//public Excavator Excavator { get; set; } = null!;
 	}
 }

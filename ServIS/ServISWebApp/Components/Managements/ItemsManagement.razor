@@ -28,8 +28,6 @@
 
 	<GridEvents TValue="ItemType" OnToolbarClick="OnToolbarClick" CommandClicked="OnCommandButtonClickAsync" />
 
-	@*<GridSearchSettings IgnoreAccent="true" IgnoreCase="true" />*@
-
 	<GridEditSettings AllowAdding="true"
 					  AllowEditing="true"
 					  AllowDeleting="true"
@@ -43,22 +41,12 @@
 		<FooterTemplate></FooterTemplate>
 	</GridEditSettings>
 
-	@*<GridSortSettings>
-	<GridSortColumns>
-	<GridSortColumn Field="@PrimaryColumn.Field" Direction="SortDirection.Ascending" />
-	</GridSortColumns>
-	</GridSortSettings>*@
-
 	<GridPageSettings PageSize="@PageSize" />
 
 	<GridColumns>
-		@*This primary column must be here, even though it is not visible, because without it the edit does not work (won't close modal and rerender)*@
+		@* This primary column must be here, even though it is not visible, 
+		   because without it the edit does not work (won't close modal and rerender) *@
 		<GridColumn Field="@primaryField" IsPrimaryKey="true" Visible="false" AllowFiltering="false" AllowSearching="false" />
-
-		@*@foreach (var column in Columns)
-		{
-			<GridColumn Field="@(column.Field)" HeaderText="@(column.HeaderText)" />
-		}*@
 
 		@if (MyGridColumns != null)
 		{
@@ -67,8 +55,10 @@
 
 		<GridColumn HeaderText="Akcie" TextAlign="TextAlign.Center" AutoFit="true">
 			<GridCommandColumns>
-				<GridCommandColumn Type="CommandButtonType.Edit" ButtonOption="@(new CommandButtonOptions { IconCss = "e-icons e-edit", CssClass = "e-flat" })" />
-				<GridCommandColumn ID="delete-cmd-btn" ButtonOption="@(new CommandButtonOptions { IconCss = "e-icons e-delete", CssClass = "e-flat" })" />
+				<GridCommandColumn Type="CommandButtonType.Edit" 
+								   ButtonOption="@(new CommandButtonOptions { IconCss = "e-icons e-edit", CssClass = "e-flat" })" />
+				<GridCommandColumn ID="delete-cmd-btn"
+								   ButtonOption="@(new CommandButtonOptions { IconCss = "e-icons e-delete", CssClass = "e-flat" })" />
 			</GridCommandColumns>
 		</GridColumn>
 	</GridColumns>

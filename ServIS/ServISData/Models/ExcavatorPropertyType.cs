@@ -19,7 +19,5 @@ namespace ServISData.Models
 		public InputType InputType { get; set; } = InputType.Unset;
 
 		public ICollection<ExcavatorType> ExcavatorTypesWithThisProperty { get; set; } = null!;
-
-		//public IList<ExcavatorProperty> ExcavatorPropertiesOfThisType { get; set; } = null!;
 	}
 }

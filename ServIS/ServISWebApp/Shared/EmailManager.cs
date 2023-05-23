@@ -366,12 +366,6 @@ namespace ServISWebApp.Shared
 			emails.ForEach(e => e.IsRead = false);
 		}
 
-		//public async Task SearchAsync()
-		//{
-		//	await Task.CompletedTask;
-		//	throw new NotImplementedException();
-		//}
-
         /// <summary>
         /// Asynchronously sends an email.
         /// </summary>
@@ -579,21 +573,6 @@ namespace ServISWebApp.Shared
 
 			return message;
 		}
-
-		//private void CalculateFromToEmailIndexes(int? skip, int? take, int maxRange, out int fromIndex, out int toIndex)
-		//{
-		//	if (!skip.HasValue)
-		//	{
-		//		skip = 0;
-		//	}
-		//	if (!take.HasValue)
-		//	{
-		//		take = maxRange;
-		//	}
-
-		//	fromIndex = skip.Value * take.Value;
-		//	toIndex = fromIndex + take.Value;
-		//}
 
 		private IEnumerable<bool> _GetEmailsReadStatuses(IList<IMessageSummary> emailsSummaries)
 		{

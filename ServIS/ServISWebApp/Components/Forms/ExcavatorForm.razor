@@ -43,7 +43,6 @@
 				   @bind-value="Item.IsForAuctionOnly"
 				   class="form-check-input"
 				   id="auction-only" />
-			@*<InputCheckbox @bind-Value="@TrackedExcavator.IsForAuctionOnly" class="form-check-input"/>*@
 			<ValidationMessage For="@(() => Item.IsForAuctionOnly)" />
 		</div>
 
@@ -112,11 +111,9 @@
 								@switch (propertyInputType)
 								{
 									case InputType.Date:
-										@*<td><InputDate TValue="string" @bind-Value="property.Value" /></td>*@
 										<td><input type="datetime" @bind-value="property.Value" /></td>
 										break;
 									case InputType.Number:
-										@*<td><InputNumber TValue="string" @bind-Value="property.Value" /></td>*@
 										<td><input type="number" @bind-value="property.Value" /></td>
 										break;
 									case InputType.Text:
@@ -353,7 +350,7 @@
 	/// <summary>
 	/// Performs custom validation.
 	/// </summary>
-	/// <returns>true if validation was performed successfully; false otherwise</returns>
+	/// <returns><c>true</c> if validation was performed successfully; <c>false</c> otherwise</returns>
 	private bool DoCustomValidation()
 	{
 		if (ArePhotosEmpty())

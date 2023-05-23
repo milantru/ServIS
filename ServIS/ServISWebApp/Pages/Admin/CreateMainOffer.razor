@@ -28,7 +28,7 @@ else
 		await base.OnParametersSetAsync();
 
 		if (MainOfferId.HasValue)
-		{
+		{// edit of existing main offer
 			try
 			{
 				MainOffer = await api.GetMainOfferAsync(MainOfferId.Value);
@@ -40,7 +40,7 @@ else
 			}
 		}
 		else
-		{
+		{// new main offer
 			MainOffer = new();
 		}
 	}

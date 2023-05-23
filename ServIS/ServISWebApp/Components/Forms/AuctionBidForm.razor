@@ -164,7 +164,7 @@
 		decimal minValue;
 
 		/* I assume when we are creating auction bid for some auction offer, this offer already exists,
-			* therefore `AuctionOffer.Id` is not 0. */
+		 * therefore `AuctionOffer.Id` is not 0. */
 		var maxAuctionBid = await api.GetMaxAuctionBidAsync(AuctionOffer.Id);
 		if (maxAuctionBid is not null)
 		{
@@ -226,8 +226,8 @@
 	private async Task SendBidAsync()
 	{
 		/* We registered IsBidHighEnoughAsync in OnValidationRequested already, so why do we check it here again?
-			* The answer is that OnValidationRequested will cause change in css depending on validity of the data. 
-			* And check here will/will not let us submit the form depending on validity of the data. */
+		 * The answer is that OnValidationRequested will cause change in css depending on validity of the data. 
+		 * And check here will/will not let us submit the form depending on validity of the data. */
 		var minBidValue = await IsBidHighEnoughAsync();
 		if (minBidValue.HasValue)
 		{// field with bid is not valid

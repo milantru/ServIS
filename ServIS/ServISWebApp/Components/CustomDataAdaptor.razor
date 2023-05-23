@@ -21,10 +21,6 @@
 
 	public override async Task<object> ReadAsync(DataManagerRequest dataManagerRequest, string key = null!)
 	{
-		//var config = new MyDataOperations<ItemType>.Configuration();
-		//SetConfig(config, dataManagerRequest);
-
-		//var dataOperations = new MyDataOperations<ItemType>(config);
 		var dataOperations = new SyncfusionDataOperations<ItemType>(dataManagerRequest);
 		IEnumerable<ItemType> items = await GetItemsAsync(dataOperations);
 

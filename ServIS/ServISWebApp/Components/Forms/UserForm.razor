@@ -197,8 +197,8 @@
 		if (User.Username != currentUsername)
 		{
 			/* It's new user or existing user has changed username, so now we have to check 
-				* if the user is not picking someone elses username. The username must be unique 
-				* (because it's used for auth) */
+			 * if the user is not picking someone elses username. The username must be unique 
+			 * (because it's used for auth) */
 			var user = await api.GetUserAsync(User.Username);
 			if (user is not null)
 			{
@@ -239,8 +239,6 @@
 	{
 		var customAuthStateProvider = (CustomAuthenticationStateProvider)authStateProvider;
 		await customAuthStateProvider.UpdateAuthenticationState(null);
-
-		//navMan.NavigateTo("/");
 	}
 
 	private async Task DeleteAccountAsync()

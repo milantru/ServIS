@@ -22,7 +22,7 @@ else
 				<DeleteIconButton OnClick="DeleteSelectedThreadsAsync" />
 
 				@* It is ok to cast to bool, null is returned only if 
-				there are no checked threads, but we check it here in if. *@
+				   there are no checked threads, but we check it here in if. *@
 				<MarkAsReadUnreadIconButton ShowOpenEnvelopeIcon="@((bool)ShouldMarkAsRead()!)" 
 											OnClick="MarkAsReadUnreadAsync" />
 			}
