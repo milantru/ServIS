@@ -6,6 +6,9 @@ using ServISWebApp.Shared.Extensions;
 
 namespace ServISWebApp.BackgroundServices
 {
+    /// <summary>
+    /// Service for evaluating auction offers based on a timer interval.
+    /// </summary>
 	public class AuctionEvaluatorService : TimerService
 	{
 		private readonly IServISApi api;
@@ -13,11 +16,18 @@ namespace ServISWebApp.BackgroundServices
 		private readonly string baseUrl;
 		private event Func<Task>? updateEvent;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AuctionEvaluatorService"/> class 
+		/// with the specified dependencies and interval of the evaluation.
+        /// </summary>
+        /// <param name="api">The <see cref="IServISApi"/> implementation for API interactions.</param>
+        /// <param name="emailManager">The <see cref="EmailManager"/> for sending emails.</param>
+        /// <param name="baseUrl">The base URL of the application.</param>
 		public AuctionEvaluatorService(
 			IServISApi api,
 			EmailManager emailManager,
 			string baseUrl
-		) : base(TimeSpan.FromMinutes(1))
+		) : base(interval: TimeSpan.FromMinutes(1))
 		{
 			this.api = api;
 			this.emailManager = emailManager;

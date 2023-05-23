@@ -7,7 +7,10 @@ using SmtpClient = MailKit.Net.Smtp.SmtpClient;
 
 namespace ServISWebApp.Shared
 {
-	public class EmailManager
+    /// <summary>
+    /// Provides functionality for managing and processing emails.
+    /// </summary>
+    public class EmailManager
 	{
 		private readonly ILogger<EmailManager> logger;
 		private readonly string emailPassword;
@@ -19,10 +22,24 @@ namespace ServISWebApp.Shared
 															MessageSummaryItems.Envelope |
 															MessageSummaryItems.Headers;
 
-		public string EmailName { get; private init; } = null!;
-		public string EmailAddress { get; private init; } = null!;
+        /// <summary>
+        /// Represents the email name used when sending messages.
+        /// </summary>
+        public string EmailName { get; private init; } = null!;
 
-		public EmailManager(string emailName, string emailAddress, string emailPassword, ILogger<EmailManager> logger)
+        /// <summary>
+        /// Represents the email address used for sending messages.
+        /// </summary>
+        public string EmailAddress { get; private init; } = null!;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EmailManager"/> class.
+        /// </summary>
+        /// <param name="emailName">The email name used when sending messages.</param>
+        /// <param name="emailAddress">The email address used for sending messages.</param>
+        /// <param name="emailPassword">The password of the email used for sending mesages.</param>
+        /// <param name="logger">The object used for logging.</param>
+        public EmailManager(string emailName, string emailAddress, string emailPassword, ILogger<EmailManager> logger)
 		{
 			EmailName = emailName;
 			EmailAddress = emailAddress;
@@ -30,7 +47,13 @@ namespace ServISWebApp.Shared
 			this.logger = logger;
 		}
 
-		public void GetSender(MimeMessage message, out string senderName, out string senderAddress)
+        /// <summary>
+        /// Retrieves the sender name and address from the provided <paramref name="message"/>.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        /// <param name="senderName">The sender name.</param>
+        /// <param name="senderAddress">The sender address.</param>
+        public void GetSender(MimeMessage message, out string senderName, out string senderAddress)
 		{
 			/* If user sent mail using this web app then his/her email address is stored
 			 * in `ReplyTo` (because for some reason even though we set it to `From`,
@@ -48,7 +71,12 @@ namespace ServISWebApp.Shared
 			}
 		}
 
-		public async Task<List<Thread>> GetThreadsAsync()
+        /// <summary>
+        /// Asynchronously retrieves the list of threads.
+        /// </summary>
+        /// <returns>A task that represents the asynchronous operation.
+        /// The task result contains the list of threads.</returns>
+        public async Task<List<Thread>> GetThreadsAsync()
 		{
 			using var imapClient = await GetConnectedImapClientAsync();
 
@@ -85,7 +113,13 @@ namespace ServISWebApp.Shared
 			return threads;
 		}
 
-		public async Task<List<Email>> GetEmailsAsync(IList<UniqueId> uniqueIds)
+        /// <summary>
+        /// Asynchronously retrieves the list of emails associated with the <paramref name="uniqueIds"/>.
+        /// </summary>
+        /// <param name="uniqueIds">The unique identifiers of the emails.</param>
+        /// <returns>A task that represents the asynchronous operation.
+        /// The task result contains the list of emails associated with the provided unique identifiers.</returns>
+        public async Task<List<Email>> GetEmailsAsync(IList<UniqueId> uniqueIds)
 		{
 			using var imapClient = await GetConnectedImapClientAsync();
 
@@ -116,7 +150,7 @@ namespace ServISWebApp.Shared
 					ToAddress = to.Address,
 					Subject = message.Subject,
 					Text = message.TextBody,
-					Read = emailRead,
+					IsRead = emailRead,
 					DateTime = message.Date.LocalDateTime
 				};
 
@@ -129,7 +163,13 @@ namespace ServISWebApp.Shared
 			return emails;
 		}
 
-		public async Task<Email> GetEmailAsync(UniqueId uniqueId)
+        /// <summary>
+        /// Asynchronously retrieves an email associated with the provided <paramref name="uniqueId"/>.
+        /// </summary>
+        /// <param name="uniqueId">The unique identifier of the email.</param>
+        /// <returns>A task that represents the asynchronous operation.
+        /// The task result contains the retrieved email associated with the provided unique identifier.</returns>
+        public async Task<Email> GetEmailAsync(UniqueId uniqueId)
 		{
 			using var imapClient = await GetConnectedImapClientAsync();
 
@@ -155,7 +195,7 @@ namespace ServISWebApp.Shared
 				ToAddress = to.Address,
 				Subject = message.Subject,
 				Text = message.TextBody,
-				Read = emailRead,
+				IsRead = emailRead,
 				DateTime = message.Date.LocalDateTime
 			};
 
@@ -165,7 +205,15 @@ namespace ServISWebApp.Shared
 			return email;
 		}
 
-		public async Task<IList<IMessageSummary>> GetMessageSummariesAsync(IList<UniqueId> uniqueIds, MessageSummaryItems? items = null)
+        /// <summary>
+        /// Asynchronously retrieves the message summaries associated with the provided <paramref name="uniqueIds"/> 
+		/// containing info based on the specified <paramref name="items"/>.
+        /// </summary>
+        /// <param name="uniqueIds">The unique identifiers of the messages.</param>
+        /// <param name="items">The message summary items to retrieve (optional).</param>
+        /// <returns>A task that represents the asynchronous operation.
+        /// The task result contains the list of message summaries associated with the provided unique identifiers.</returns>
+        public async Task<IList<IMessageSummary>> GetMessageSummariesAsync(IList<UniqueId> uniqueIds, MessageSummaryItems? items = null)
 		{
 			using var imapClient = await GetConnectedImapClientAsync();
 
@@ -180,7 +228,15 @@ namespace ServISWebApp.Shared
 			return messageSummaries;
 		}
 
-		public async Task<IMessageSummary> GetMessageSummaryAsync(UniqueId uniqueId, MessageSummaryItems? items = null)
+        /// <summary>
+        /// Asynchronously retrieves the message summary based on the provided <paramref name="uniqueId"/> 
+		/// containing info based on the specified <paramref name="items"/>.
+        /// </summary>
+        /// <param name="uniqueId">The unique identifier of the message.</param>
+        /// <param name="items">The message summary items to retrieve (optional).</param>
+        /// <returns>A task that represents the asynchronous operation.
+        /// The task result contains the retrieved message summary associated with the provided unique identifier.</returns>
+        public async Task<IMessageSummary> GetMessageSummaryAsync(UniqueId uniqueId, MessageSummaryItems? items = null)
 		{
 			var itemsToPass = items ?? defaultMessageSummaryItems;
 			var messageSummary = (await GetMessageSummariesAsync(new List<UniqueId> { uniqueId }, itemsToPass)).First();
@@ -188,7 +244,12 @@ namespace ServISWebApp.Shared
 			return messageSummary;
 		}
 
-		public async Task MarkEmailAsReadAsync(UniqueId uniqueId)
+        /// <summary>
+        /// Asynchronously marks an email as read.
+        /// </summary>
+        /// <param name="uniqueId">The unique identifier of the email.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        public async Task MarkEmailAsReadAsync(UniqueId uniqueId)
 		{
 			using var imapClient = await GetConnectedImapClientAsync();
 
@@ -201,7 +262,12 @@ namespace ServISWebApp.Shared
 			await imapClient.DisconnectAsync(true);
 		}
 
-		public async Task MarkEmailAsReadAsync(IList<UniqueId> uniqueIds)
+        /// <summary>
+        /// Asynchronously marks emails as read.
+        /// </summary>
+        /// <param name="uniqueIds">The unique identifiers of the emails.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        public async Task MarkEmailAsReadAsync(IList<UniqueId> uniqueIds)
 		{
 			using var imapClient = await GetConnectedImapClientAsync();
 
@@ -214,22 +280,37 @@ namespace ServISWebApp.Shared
 			await imapClient.DisconnectAsync(true);
 		}
 
-		public async Task MarkEmailAsReadAsync(Email email)
+        /// <summary>
+        /// Asynchronously marks an email as read.
+        /// </summary>
+        /// <param name="email">The email to be marked as read.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        public async Task MarkEmailAsReadAsync(Email email)
 		{
 			await MarkEmailAsReadAsync(email.Uid);
 
-			email.Read = true;
+			email.IsRead = true;
 		}
 
-		public async Task MarkEmailAsReadAsync(List<Email> emails)
+        /// <summary>
+        /// Asynchronously marks emails as read.
+        /// </summary>
+        /// <param name="emails">The emails to be marked as read.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        public async Task MarkEmailAsReadAsync(List<Email> emails)
 		{
 			var uids = emails.Select(e => e.Uid).ToList();
 			await MarkEmailAsReadAsync(uids);
 
-			emails.ForEach(e => e.Read = true);
+			emails.ForEach(e => e.IsRead = true);
 		}
 
-		public async Task MarkEmailAsUnreadAsync(UniqueId uniqueId)
+        /// <summary>
+        /// Asynchronously marks an email as unread.
+        /// </summary>
+        /// <param name="uniqueId">The unique identifier of the email.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        public async Task MarkEmailAsUnreadAsync(UniqueId uniqueId)
 		{
 			using var imapClient = await GetConnectedImapClientAsync();
 
@@ -242,7 +323,12 @@ namespace ServISWebApp.Shared
 			await imapClient.DisconnectAsync(true);
 		}
 
-		public async Task MarkEmailAsUnreadAsync(IList<UniqueId> uniqueIds)
+        /// <summary>
+        /// Asynchronously marks emails as unread.
+        /// </summary>
+        /// <param name="uniqueIds">The unique identifiers of the emails.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        public async Task MarkEmailAsUnreadAsync(IList<UniqueId> uniqueIds)
 		{
 			using var imapClient = await GetConnectedImapClientAsync();
 
@@ -255,35 +341,56 @@ namespace ServISWebApp.Shared
 			await imapClient.DisconnectAsync(true);
 		}
 
-		public async Task MarkEmailAsUnreadAsync(Email email)
+        /// <summary>
+        /// Asynchronously marks an email as unread.
+        /// </summary>
+        /// <param name="email">The email to be marked as unread.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        public async Task MarkEmailAsUnreadAsync(Email email)
 		{
 			await MarkEmailAsUnreadAsync(email.Uid);
 
-			email.Read = false;
+			email.IsRead = false;
 		}
 
-		public async Task MarkEmailAsUnreadAsync(List<Email> emails)
+        /// <summary>
+        /// Asynchronously marks emails as unread.
+        /// </summary>
+        /// <param name="emails">The emails to be marked as unread.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        public async Task MarkEmailAsUnreadAsync(List<Email> emails)
 		{
 			var uids = emails.Select(e => e.Uid).ToList();
 			await MarkEmailAsUnreadAsync(uids);
 
-			emails.ForEach(e => e.Read = false);
+			emails.ForEach(e => e.IsRead = false);
 		}
 
-		public async Task SearchAsync()
-		{
-			await Task.CompletedTask;
-			throw new NotImplementedException();
-		}
+		//public async Task SearchAsync()
+		//{
+		//	await Task.CompletedTask;
+		//	throw new NotImplementedException();
+		//}
 
-		public async Task SendEmailAsync(Email email)
+        /// <summary>
+        /// Asynchronously sends an email.
+        /// </summary>
+        /// <param name="email">The email to be sent.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        public async Task SendEmailAsync(Email email)
 		{
 			var message = PrepareMessage(email);
 
 			await SendMessageAsync(message);
 		}
 
-		public async Task<Email> ReplyToAsync(Email email, string replyText)
+        /// <summary>
+        /// Asynchronously sends a reply to the <paramref name="email"/> with the <paramref name="replyText"/>.
+        /// </summary>
+        /// <param name="email">The email to reply to.</param>
+        /// <param name="replyText">The text of the reply.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the replied email.</returns>
+        public async Task<Email> ReplyToAsync(Email email, string replyText)
 		{
 			var reply = PrepareReply(email, replyText);
 
@@ -299,14 +406,19 @@ namespace ServISWebApp.Shared
 				ToAddress = email.FromAddress,
 				Subject = reply.Subject,
 				Text = reply.TextBody,
-				Read = true,
-				DateTime = reply.Date.DateTime
+				IsRead = true,
+				DateTime = reply.Date.LocalDateTime
 			};
 
 			return replyEmail;
 		}
 
-		public async Task DeleteEmailAsync(UniqueId uniqueId)
+        /// <summary>
+        /// Asynchronously deletes an email.
+        /// </summary>
+        /// <param name="uniqueId">The unique identifier of the email.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        public async Task DeleteEmailAsync(UniqueId uniqueId)
 		{
 			using var imapClient = await GetConnectedImapClientAsync();
 
@@ -327,7 +439,12 @@ namespace ServISWebApp.Shared
 			await imapClient.DisconnectAsync(true);
 		}
 
-		public async Task DeleteEmailAsync(IList<UniqueId> uniqueIds)
+        /// <summary>
+        /// Asynchronously deletes emails.
+        /// </summary>
+        /// <param name="uniqueIds">The unique identifier of the emails.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        public async Task DeleteEmailAsync(IList<UniqueId> uniqueIds)
 		{
 			using var imapClient = await GetConnectedImapClientAsync();
 
@@ -348,14 +465,14 @@ namespace ServISWebApp.Shared
 			await imapClient.DisconnectAsync(true);
 		}
 
-		/// <summary>
-		/// Determines whether should skip the thread. If the thread contains 
-		/// only one autogenerated message (e.g. notifying auction winner about victory (it is not meant for admin), 
-		/// then this method deletes the email and decides the thread is skippable.
-		/// </summary>
-		/// <returns>true if thread contains only one autogenerated message 
-		/// (i.e. is not meant for admin); false otherwise</returns>
-		private bool ShouldSkip(Thread thread)
+        /// <summary>
+        /// Determines whether should skip the thread. If the thread contains 
+        /// only one autogenerated message (e.g. notifying auction winner about victory (it is not meant for admin), 
+        /// then this method deletes the email and decides the thread is skippable.
+        /// </summary>
+        /// <returns><c>true</c> if thread contains only one autogenerated message 
+        /// (i.e. is not meant for admin); <c>false</c> otherwise</returns>
+        private bool ShouldSkip(Thread thread)
 		{
 			var messages = thread.Messages;
 			var firstMessage = messages.First();

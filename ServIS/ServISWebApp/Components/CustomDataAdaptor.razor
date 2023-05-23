@@ -11,7 +11,7 @@
 
 @code {
 	[Parameter, EditorRequired]
-	public Func<DataOperations<ItemType>?, Task<List<ItemType>>> GetItemsAsync { get; set; } = null!;
+	public Func<IDataOperations<ItemType>?, Task<List<ItemType>>> GetItemsAsync { get; set; } = null!;
 
 	[Parameter, EditorRequired]
 	public Func<Task<int>> GetItemsCountAsync { get; set; } = null!;
@@ -49,7 +49,7 @@
 		}
 	}
 
-	private void SetConfig(MyDataOperations<ItemType>.Configuration config, DataManagerRequest dataManagerRequest)
+	private void SetConfig(DataOperations<ItemType>.Configuration config, DataManagerRequest dataManagerRequest)
 	{
 		if (dataManagerRequest.Search != null && dataManagerRequest.Search.Count > 0)
 		{

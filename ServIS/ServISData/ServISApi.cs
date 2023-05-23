@@ -443,7 +443,7 @@ namespace ServISData
 
 		// Read
 		public async Task<List<Excavator>> GetExcavatorsAsync(
-			DataOperations<Excavator>? dataOperations = null
+			IDataOperations<Excavator>? dataOperations = null
 		)
 		{
 			using var context = factory.CreateDbContext();
@@ -522,7 +522,7 @@ namespace ServISData
 		}
 
 		public async Task<List<ExcavatorBrand>> GetExcavatorBrandsAsync(
-			DataOperations<ExcavatorBrand>? dataOperations = null
+			IDataOperations<ExcavatorBrand>? dataOperations = null
 		)
 		{
 			using var context = factory.CreateDbContext();
@@ -548,7 +548,7 @@ namespace ServISData
 		}
 
 		public async Task<List<ExcavatorCategory>> GetExcavatorCategoriesAsync(
-			DataOperations<ExcavatorCategory>? dataOperations = null
+			IDataOperations<ExcavatorCategory>? dataOperations = null
 		)
 		{
 			using var context = factory.CreateDbContext();
@@ -575,7 +575,7 @@ namespace ServISData
 		}
 
 		public async Task<List<ExcavatorType>> GetExcavatorTypesAsync(
-			DataOperations<ExcavatorType>? dataOperations = null
+			IDataOperations<ExcavatorType>? dataOperations = null
 		)
 		{
 			using var context = factory.CreateDbContext();
@@ -607,7 +607,7 @@ namespace ServISData
 		}
 
 		public async Task<List<ExcavatorPropertyType>> GetExcavatorPropertyTypesAsync(
-			DataOperations<ExcavatorPropertyType>? dataOperations = null
+			IDataOperations<ExcavatorPropertyType>? dataOperations = null
 		)
 		{
 			using var context = factory.CreateDbContext();
@@ -656,7 +656,7 @@ namespace ServISData
 		}
 
 		public async Task<List<SparePart>> GetSparePartsAsync(
-			DataOperations<SparePart>? dataOperations = null
+			IDataOperations<SparePart>? dataOperations = null
 		)
 		{
 			using var context = factory.CreateDbContext();
@@ -728,7 +728,7 @@ namespace ServISData
 		}
 
 		public async Task<List<AdditionalEquipment>> GetAdditionalEquipmentsAsync(
-			DataOperations<AdditionalEquipment>? dataOperations = null
+			IDataOperations<AdditionalEquipment>? dataOperations = null
 		)
 		{
 			using var context = factory.CreateDbContext();
@@ -799,7 +799,7 @@ namespace ServISData
 		}
 
 		public async Task<List<AdditionalEquipmentBrand>> GetAdditionalEquipmentBrandsAsync(
-			DataOperations<AdditionalEquipmentBrand>? dataOperations = null
+			IDataOperations<AdditionalEquipmentBrand>? dataOperations = null
 		)
 		{
 			using var context = factory.CreateDbContext();
@@ -824,7 +824,7 @@ namespace ServISData
 		}
 
 		public async Task<List<AdditionalEquipmentCategory>> GetAdditionalEquipmentCategoriesAsync(
-			DataOperations<AdditionalEquipmentCategory>? dataOperations = null
+			IDataOperations<AdditionalEquipmentCategory>? dataOperations = null
 		)
 		{
 			using var context = factory.CreateDbContext();
@@ -867,7 +867,7 @@ namespace ServISData
 		}
 
 		public async Task<List<AuctionOffer>> GetAuctionOffersAsync(
-			DataOperations<AuctionOffer>? dataOperations = null	
+			IDataOperations<AuctionOffer>? dataOperations = null	
 		)
 		{
 			using var context = factory.CreateDbContext();

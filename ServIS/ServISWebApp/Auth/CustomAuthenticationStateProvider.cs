@@ -4,17 +4,28 @@ using System.Security.Claims;
 
 namespace ServISWebApp.Auth
 {
-	public class CustomAuthenticationStateProvider : AuthenticationStateProvider
+    /// <summary>
+    /// Provides the custom implementation of the authentication state for the application.
+    /// </summary>
+    public class CustomAuthenticationStateProvider : AuthenticationStateProvider
 	{
 		private readonly ProtectedLocalStorage localStorage;
 		private ClaimsPrincipal anonymous = new ClaimsPrincipal(new ClaimsIdentity());
 
-		public CustomAuthenticationStateProvider(ProtectedLocalStorage localStorage)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CustomAuthenticationStateProvider"/> class.
+        /// </summary>
+        /// <param name="localStorage">The protected local storage used for storing user authentication information.</param>
+        public CustomAuthenticationStateProvider(ProtectedLocalStorage localStorage)
 		{
 			this.localStorage = localStorage;
 		}
 
-		public override async Task<AuthenticationState> GetAuthenticationStateAsync()
+        /// <summary>
+        /// Retrieves the authentication state asynchronously.
+        /// </summary>
+        /// <returns>A task that represents the asynchronous operation, containing the authentication state.</returns>
+        public override async Task<AuthenticationState> GetAuthenticationStateAsync()
 		{
 			try
 			{
@@ -40,7 +51,13 @@ namespace ServISWebApp.Auth
 			}
 		}
 
-		public async Task UpdateAuthenticationState(UserLocalStorage? userLocalStorage)
+        /// <summary>
+        /// Updates the authentication state based on the provided user local storage information.
+        /// </summary>
+        /// <param name="userLocalStorage">The user local storage information to update the authentication state with. 
+        /// Use <c>null</c> to indicate a logout operation.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        public async Task UpdateAuthenticationState(UserLocalStorage? userLocalStorage)
 		{
 			ClaimsPrincipal claimsPrincipal;
 

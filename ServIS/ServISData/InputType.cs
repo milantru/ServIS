@@ -1,18 +1,41 @@
 ﻿using ServISData.Attributes;
+using ServISData.Models;
 
 namespace ServISData
 {
-	public enum InputType
+    /// <summary>
+    /// Represents the input types for <see cref="ExcavatorPropertyType"/>.
+    /// </summary>
+    public enum InputType
 	{
-		[InputTypeLabel("Nenastavené")]
+        /// <summary>
+        /// Indicates that the input type is not set.
+        /// </summary>
+        [InputTypeLabel("Nenastavené")]
 		Unset, // let Unset be the first one (some parts of the code, e.g. foreach in ExcavatorForm, are counting on it)
-		[InputTypeLabel("Číslo")]
+
+        /// <summary>
+        /// Indicates a numeric input type.
+        /// </summary>
+        [InputTypeLabel("Číslo")]
 		Number,
-		[InputTypeLabel("Text")]
+
+        /// <summary>
+        /// Indicates a text input type.
+        /// </summary>
+        [InputTypeLabel("Text")]
 		Text,
-		[InputTypeLabel("Veľký text")]
+
+        /// <summary>
+        /// Indicates a large text input type.
+        /// </summary>
+        [InputTypeLabel("Veľký text")]
 		TextArea,
-		[InputTypeLabel("Dátum")]
+
+        /// <summary>
+        /// Indicates a date input type.
+        /// </summary>
+        [InputTypeLabel("Dátum")]
 		Date
 	}
 }

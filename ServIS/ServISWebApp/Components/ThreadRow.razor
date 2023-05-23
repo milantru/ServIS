@@ -13,7 +13,7 @@ else
 			<div class="preview-text">
 				<span class="subject @(seen ? "" : "bold")">@LatestThreadMessage.NormalizedSubject</span>-@LatestThreadMessage.PreviewText
 			</div>
-			<div class="date @(seen ? "" : "bold")">@LatestThreadMessage.Date.DateTime.ToShortDateString()</div>
+			<div class="date @(seen ? "" : "bold")">@LatestThreadMessage.Date.LocalDateTime.ToShortDateString()</div>
 		</div>
 	</div>
 }

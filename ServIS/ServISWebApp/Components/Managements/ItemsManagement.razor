@@ -88,7 +88,7 @@
 	public RenderFragment MyGridColumns { get; set; } = null!;
 
 	[Parameter, EditorRequired]
-	public Func<ServISData.DataOperations.DataOperations<ItemType>?, Task<List<ItemType>>> GetItemsAsync { get; set; } = null!;
+	public Func<ServISData.DataOperations.IDataOperations<ItemType>?, Task<List<ItemType>>> GetItemsAsync { get; set; } = null!;
 
 	[Parameter, EditorRequired]
 	public Func<Task<int>> GetItemsCountAsync { get; set; } = null!;

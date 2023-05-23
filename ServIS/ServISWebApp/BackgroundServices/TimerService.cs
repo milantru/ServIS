@@ -3,21 +3,37 @@ using Timer = System.Timers.Timer;
 
 namespace ServISWebApp.BackgroundServices
 {
-	public abstract class TimerService : BackgroundService
+    /// <summary>
+    /// Base abstract class for a timer-based background service.
+    /// </summary>
+    public abstract class TimerService : BackgroundService
 	{
 		private readonly Timer timer;
 
-		public TimerService(double interval)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TimerService"/> class with the specified interval in milliseconds.
+        /// </summary>
+        /// <param name="interval">The interval between timer ticks in milliseconds.</param>
+        public TimerService(double interval)
 		{
 			timer = new(interval);
 		}
 
-		public TimerService(TimeSpan interval)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TimerService"/> class with the specified time span interval.
+        /// </summary>
+        /// <param name="interval">The time span representing the interval between timer ticks.</param>
+        public TimerService(TimeSpan interval)
 		{
 			timer = new(interval.TotalMilliseconds);
 		}
 
-		protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+        /// <summary>
+        /// Executes the background service asynchronously.
+        /// </summary>
+        /// <param name="stoppingToken">The cancellation token to stop the service.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 		{
 			InitTimer(stoppingToken);
 			timer.Start();
@@ -25,7 +41,11 @@ namespace ServISWebApp.BackgroundServices
 			await Task.CompletedTask;
 		}
 
-		protected abstract Func<Task>? GetEventHandlers();
+        /// <summary>
+        /// Gets the event handlers for the timer elapsed event.
+        /// </summary>
+        /// <returns>The event handlers as a delegate that returns a <see cref="Task"/>.</returns>
+        protected abstract Func<Task>? GetEventHandlers();
 
 		private void InitTimer(CancellationToken stoppingToken)
 		{

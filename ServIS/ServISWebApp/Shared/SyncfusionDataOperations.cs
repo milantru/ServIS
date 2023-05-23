@@ -3,16 +3,60 @@ using Syncfusion.Blazor;
 
 namespace ServISWebApp.Shared
 {
-	public class SyncfusionDataOperations<T> : DataOperations<T>
+    /// <summary>
+    /// Represents a generic implementation of data operations using Syncfusion's <see cref="DataManagerRequest"/>.
+    /// </summary>
+    /// <typeparam name="T">The type of items the operations are performed on.</typeparam>
+    public class SyncfusionDataOperations<T> : IDataOperations<T>
 	{
 		private readonly DataManagerRequest dataManagerRequest;
 
-		protected Func<IQueryable<T>, IQueryable<T>> Searching { get; init; } = null!;
-		protected Func<IQueryable<T>, IQueryable<T>> Filtering { get; init; } = null!;
-		protected Func<IQueryable<T>, IQueryable<T>> Sorting { get; init; } = null!;
-		protected Func<IQueryable<T>, IQueryable<T>> Paging { get; init; } = null!;
+        /// <summary>
+        /// Gets or sets the function used for searching data.
+        /// </summary>
+		/// <para>
+		/// <remarks>
+		/// This function is used when <see cref="PerformDataOperations(IQueryable{T})"/> is called.
+		/// </remarks>
+		/// </para>
+        protected Func<IQueryable<T>, IQueryable<T>> Searching { get; init; } = null!;
 
-		public SyncfusionDataOperations(DataManagerRequest dataManagerRequest)
+        /// <summary>
+        /// Gets or sets the function used for filtering data.
+        /// </summary>
+		/// <para>
+		/// <remarks>
+		/// This function is used when <see cref="PerformDataOperations(IQueryable{T})"/> is called.
+		/// </remarks>
+		/// </para>
+        protected Func<IQueryable<T>, IQueryable<T>> Filtering { get; init; } = null!;
+
+        /// <summary>
+        /// Gets or sets the function used for sorting data.
+        /// </summary>
+		/// <para>
+		/// <remarks>
+		/// This function is used when <see cref="PerformDataOperations(IQueryable{T})"/> is called.
+		/// </remarks>
+		/// </para>
+        protected Func<IQueryable<T>, IQueryable<T>> Sorting { get; init; } = null!;
+
+        /// <summary>
+        /// Gets or sets the function used for paging data.
+        /// </summary>
+		/// <para>
+		/// <remarks>
+		/// This function is used when <see cref="PerformDataOperations(IQueryable{T})"/> is called.
+		/// </remarks>
+		/// </para>
+        protected Func<IQueryable<T>, IQueryable<T>> Paging { get; init; } = null!;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SyncfusionDataOperations{T}"/> class with the specified 
+		/// instance of the <see cref="DataManagerRequest"/>.
+        /// </summary>
+        /// <param name="dataManagerRequest">The <see cref="DataManagerRequest"/> containing the data operation parameters.</param>
+        public SyncfusionDataOperations(DataManagerRequest dataManagerRequest)
 		{
 			this.dataManagerRequest = dataManagerRequest;
 
@@ -62,7 +106,16 @@ namespace ServISWebApp.Shared
 			};
 		}
 
-		public override IQueryable<T> PerformDataOperations(IQueryable<T> data)
+        /// <inheritdoc/>
+        /// <remarks>Order of the operations is: 
+        /// <list type="number">
+        /// <item>Searching</item>
+        /// <item>Filtering</item>
+        /// <item>Sorting</item>
+        /// <item>Paging</item>
+        /// </list>
+        /// </remarks>
+        public IQueryable<T> PerformDataOperations(IQueryable<T> data)
 		{
 			data = Searching(data);
 			data = Filtering(data);

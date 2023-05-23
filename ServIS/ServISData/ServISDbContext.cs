@@ -5,7 +5,10 @@ using Microsoft.Extensions.Configuration;
 
 namespace ServISData
 {
-	public class ServISDbContext : DbContext
+    /// <summary>
+    /// Represents the database context for the ServIS application.
+    /// </summary>
+    public class ServISDbContext : DbContext
 	{
 		public DbSet<AdditionalEquipment> AdditionalEquipments { get; set; } = null!;
 		public DbSet<AdditionalEquipmentBrand> AdditionalEquipmentBrands { get; set; } = null!;
@@ -25,12 +28,20 @@ namespace ServISData
 		public DbSet<SparePart> SpareParts { get; set; } = null!;
 		public DbSet<User> Users { get; set; } = null!;
 
-		public ServISDbContext(DbContextOptions<ServISDbContext> options) : base(options)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ServISDbContext"/> class.
+        /// </summary>
+        /// <param name="options">The options for configuring the database context.</param>
+        public ServISDbContext(DbContextOptions<ServISDbContext> options) : base(options)
 		{
 
 		}
 
-		protected override void OnModelCreating(ModelBuilder modelBuilder)
+        /// <summary>
+        /// Configures the model for the database context.
+        /// </summary>
+        /// <param name="modelBuilder">The builder used to construct the model for the database context.</param>
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			modelBuilder.Entity<ExcavatorProperty>()
 				.HasOne<Excavator>()
@@ -39,9 +50,20 @@ namespace ServISData
 		}
 	}
 
-	public class ServISDbContextFactory : IDesignTimeDbContextFactory<ServISDbContext>
+    /// <summary>
+    /// Factory for creating instances of the <see cref="ServISDbContext"/> class.
+	/// <para>
+	/// For more info on using context factory see: 
+	/// <seealso href="https://learn.microsoft.com/en-us/ef/core/dbcontext-configuration/#using-a-dbcontext-factory-eg-for-blazor"/>
+	/// </para>
+    /// </summary>
+    public class ServISDbContextFactory : IDesignTimeDbContextFactory<ServISDbContext>
 	{
-		public static string GetConnectionString()
+        /// <summary>
+        /// Retrieves the connection string for the ServIS database.
+        /// </summary>
+        /// <returns>The connection string for the database.</returns>
+        public static string GetConnectionString()
 		{
 			IConfiguration config = new ConfigurationBuilder()
 				.AddUserSecrets("de01772f-834a-40d3-86af-a1dcae8ee4d4")
@@ -50,7 +72,12 @@ namespace ServISData
 			return config.GetConnectionString("Default");
 		}
 
-		public ServISDbContext CreateDbContext(string[] args)
+        /// <summary>
+        /// Creates a new instance of the <see cref="ServISDbContext"/> class.
+        /// </summary>
+        /// <param name="args">Command-line arguments.</param>
+        /// <returns>An instance of the <see cref="ServISDbContext"/> class.</returns>
+        public ServISDbContext CreateDbContext(string[] args)
 		{
 			var connectionString = GetConnectionString();
 

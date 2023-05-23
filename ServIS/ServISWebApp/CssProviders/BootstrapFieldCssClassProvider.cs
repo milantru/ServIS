@@ -2,20 +2,40 @@
 
 namespace ServISWebApp.CssProviders
 {
-	public class BootstrapFieldCssClassProvider : FieldCssClassProvider
+    /// <summary>
+    /// Provides CSS class names for Bootstrap styling based on the state of the field in an EditContext.
+    /// </summary>
+    public class BootstrapFieldCssClassProvider : FieldCssClassProvider
 	{
-		public override string GetFieldCssClass(EditContext editContext, in FieldIdentifier fieldIdentifier)
+        /// <summary>
+        /// Gets the CSS class(es) for the specified field in the given EditContext.
+        /// </summary>
+        /// <param name="editContext">The EditContext instance representing the form being edited.</param>
+        /// <param name="fieldIdentifier">The identifier of the field.</param>
+        /// <returns>The CSS class name(s) for the field.</returns>
+        public override string GetFieldCssClass(EditContext editContext, in FieldIdentifier fieldIdentifier)
 		{
+			string fieldCssClass;
 			var isModified = editContext.IsModified(fieldIdentifier);
 			var isValid = !editContext.GetValidationMessages(fieldIdentifier).Any();
 
-			return (isModified, isValid) switch
+			switch (isModified, isValid)
 			{
-				(true, true) => "form-control modified is-valid",
-				(true, false) => "form-control modified is-invalid",
-				(false, true) => "form-control",
-				(false, false) => "form-control"
-			};
+				case (true, true):
+					fieldCssClass = "form-control modified is-valid";
+					break;
+				case (true, false):
+					fieldCssClass = "form-control modified is-invalid";
+					break;
+				case (false, true):
+					fieldCssClass = "form-control";
+					break;
+				case (false, false):
+					fieldCssClass = "form-control";
+					break;
+			}
+
+			return fieldCssClass;
 		}
 	}
 }

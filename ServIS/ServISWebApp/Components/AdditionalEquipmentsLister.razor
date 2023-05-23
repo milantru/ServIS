@@ -39,8 +39,8 @@
 
 	private async Task InitAdditionalEquipmentsAsync()
 	{
-		var dataOperations = new MyDataOperations<AdditionalEquipment>(
-			new MyDataOperations<AdditionalEquipment>.Configuration
+		var dataOperations = new DataOperations<AdditionalEquipment>(
+			new DataOperations<AdditionalEquipment>.Configuration
 				{
 					SpecialOperations = (items) => items.Where(item =>
 						AdditionalEquipmentCategory == null ? true : item.Category.Id == AdditionalEquipmentCategory.Id
