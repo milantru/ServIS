@@ -46,7 +46,15 @@ namespace ServISWebApp.Shared
         /// <returns><c>true</c> if the image file is valid; otherwise, <c>false</c>.</returns>
         public static bool IsValidImageFile(this IBrowserFile imageFile, out string? errorMessage)
 		{
-			if (imageFile == null)
+			var basePath = AppDomain.CurrentDomain.BaseDirectory;
+			var appSettingsPath = Path.Combine(basePath, "appsettings.json");
+			var config = new ConfigurationBuilder()
+				.AddJsonFile(path: appSettingsPath, optional: false, reloadOnChange: true)
+				.Build();
+
+			var imageMaxSize = config.GetValue<int>("ImageMaxSizeInMB");
+
+            if (imageFile == null)
 			{
 				errorMessage = "Chýba súbor"; // missing image file
 				return false;
@@ -56,9 +64,9 @@ namespace ServISWebApp.Shared
 				errorMessage = "Nepodporovaný typ súboru"; // unsupported file type
 				return false;
 			}
-			else if (imageFile.Size > 1_000_000)
+			else if (imageFile.Size >= imageMaxSize)
 			{
-				errorMessage = "Súbor je príliš veľký"; // file is too large (> 1MB)
+				errorMessage = "Súbor je príliš veľký";
 				return false;
 			}
 			else
