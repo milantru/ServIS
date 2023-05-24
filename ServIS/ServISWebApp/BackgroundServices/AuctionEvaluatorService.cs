@@ -9,7 +9,7 @@ namespace ServISWebApp.BackgroundServices
     /// <summary>
     /// Service for evaluating auction offers based on a timer interval.
     /// </summary>
-	public class AuctionEvaluatorService : TimerService
+    public class AuctionEvaluatorService : TimerService
 	{
 		private readonly IServISApi api;
 		private readonly EmailManager emailManager;
@@ -23,7 +23,7 @@ namespace ServISWebApp.BackgroundServices
         /// <param name="api">The <see cref="IServISApi"/> implementation for API interactions.</param>
         /// <param name="emailManager">The <see cref="EmailManager"/> for sending emails.</param>
         /// <param name="baseUrl">The base URL of the application.</param>
-		public AuctionEvaluatorService(
+        public AuctionEvaluatorService(
 			IServISApi api,
 			EmailManager emailManager,
 			string baseUrl
@@ -199,7 +199,7 @@ namespace ServISWebApp.BackgroundServices
 				tasks.Add(task);
 			}
 
-			Task.WaitAll(tasks.ToArray());
+			await Task.WhenAll(tasks.ToArray());
 		}
 
 		private async Task EvaluateAuctionOffersAsync(
@@ -229,7 +229,7 @@ namespace ServISWebApp.BackgroundServices
 				
 					offer.IsEvaluated = true;
 
-					Task.WaitAll(notifyWinner, notifyAdmin, notifyLosers);
+					await Task.WhenAll(notifyWinner, notifyAdmin, notifyLosers);
 				}
 
 				await api.SaveAuctionOfferAsync(offer);
