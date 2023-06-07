@@ -63,9 +63,9 @@ else if (Emails.Count > 0)
 @code {
 	private string? requestedItemUrl;
 	/* `isUrlExtractionComplete` exists to solve the problem with extracting
-		*  the url from the first message. There was a problem that injected url
-		*  blinked (was seen by the user) and then disappeared (when the extraction was
-		*  complete). This field ensures that this blink of injected url doesn't occur. */
+	 *  the url from the first message. There was a problem that injected url
+	 *  blinked (was seen by the user) and then disappeared (when the extraction was
+	 *  complete). This field ensures that this blink of injected url doesn't occur. */
 	private bool isUrlExtractionComplete;
 
 	[Parameter]

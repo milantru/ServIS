@@ -35,13 +35,7 @@ namespace ServISWebApp.Auth
 				{
 					return await Task.FromResult(new AuthenticationState(anonymous));
 				}
-
-				var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim>
-				{
-					new Claim(ClaimTypes.PrimarySid, userLocalStorage.User.Id.ToString()),
-
-					new Claim(ClaimTypes.Role, userLocalStorage.User.Role)
-				}, "CustomAuth"));
+				var claimsPrincipal = GetClaimsPrincipal(userLocalStorage);
 
 				return await Task.FromResult(new AuthenticationState(claimsPrincipal));
 			}
@@ -51,25 +45,20 @@ namespace ServISWebApp.Auth
 			}
 		}
 
-        /// <summary>
-        /// Updates the authentication state based on the provided user local storage information.
-        /// </summary>
-        /// <param name="userLocalStorage">The user local storage information to update the authentication state with. 
-        /// Use <c>null</c> to indicate a logout operation.</param>
-        /// <returns>A task that represents the asynchronous operation.</returns>
-        public async Task UpdateAuthenticationState(UserLocalStorage? userLocalStorage)
+		/// <summary>
+		/// Updates the authentication state based on the provided user local storage information.
+		/// </summary>
+		/// <param name="userLocalStorage">The user local storage information to update the authentication state with. 
+		/// Use <c>null</c> to indicate a logout operation.</param>
+		/// <returns>A task that represents the asynchronous operation.</returns>
+		public async Task UpdateAuthenticationState(UserLocalStorage? userLocalStorage)
 		{
 			ClaimsPrincipal claimsPrincipal;
 
 			if (userLocalStorage != null)
 			{// login
 				await localStorage.SetAsync(nameof(UserLocalStorage), userLocalStorage);
-				claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim>
-				{
-					new Claim(ClaimTypes.PrimarySid, userLocalStorage.User.Id.ToString()),
-
-					new Claim(ClaimTypes.Role, userLocalStorage.User.Role)
-				}, "CustomAuth"));
+				claimsPrincipal = GetClaimsPrincipal(userLocalStorage);
 			}
 			else
 			{// logout
@@ -78,6 +67,20 @@ namespace ServISWebApp.Auth
 			}
 
 			NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(claimsPrincipal)));
+		}
+
+		private static ClaimsPrincipal GetClaimsPrincipal(UserLocalStorage userLocalStorage)
+		{
+			var claimsIdentity = new ClaimsIdentity(
+				claims: new List<Claim>
+				{
+					new Claim(ClaimTypes.PrimarySid, userLocalStorage.User.Id.ToString()),
+					new Claim(ClaimTypes.Role, userLocalStorage.User.Role)
+				},
+				authenticationType: "CustomAuth"
+			);
+
+			return new ClaimsPrincipal(claimsIdentity);
 		}
 	}
 }
