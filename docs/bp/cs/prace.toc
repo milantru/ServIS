@@ -1,39 +1,49 @@
 \babel@toc {slovak}{}\relax 
-\contentsline {chapter}{Úvod}{2}{chapter*.2}%
-\contentsline {section}{\numberline {0.1}Požiadavky na softvér}{2}{section.0.1}%
-\contentsline {section}{\numberline {0.2}Alternatívne riešenia}{3}{section.0.2}%
-\contentsline {section}{\numberline {0.3}Zhrnutie cieľov}{3}{section.0.3}%
-\contentsline {chapter}{\numberline {1}Analýza zadania}{4}{chapter.1}%
-\contentsline {section}{\numberline {1.1}Voľba typu aplikácie, jazyka a frameworku}{4}{section.1.1}%
-\contentsline {section}{\numberline {1.2}Návrh systému}{5}{section.1.2}%
-\contentsline {section}{\numberline {1.3}Voľba databázy}{5}{section.1.3}%
-\contentsline {subsection}{\numberline {1.3.1}Návrh relačného modelu databázy}{6}{subsection.1.3.1}%
-\contentsline {subsection}{\numberline {1.3.2}Voľba typu databázy a databázového servera}{8}{subsection.1.3.2}%
-\contentsline {subsection}{\numberline {1.3.3}ORM}{8}{subsection.1.3.3}%
-\contentsline {section}{\numberline {1.4}Aukcia- odpočet a vyhodnocovanie}{9}{section.1.4}%
-\contentsline {section}{\numberline {1.5}Posielanie a prijímanie správ}{10}{section.1.5}%
-\contentsline {subsection}{\numberline {1.5.1}Automaticky generované správy}{11}{subsection.1.5.1}%
-\contentsline {chapter}{\numberline {2}Vývojová dokumentácia}{12}{chapter.2}%
-\contentsline {section}{\numberline {2.1}ServISData}{12}{section.2.1}%
-\contentsline {subsection}{\numberline {2.1.1}Koreňový priečinok projektu}{12}{subsection.2.1.1}%
-\contentsline {subsection}{\numberline {2.1.2}Attributes}{12}{subsection.2.1.2}%
-\contentsline {subsection}{\numberline {2.1.3}DataOperations}{12}{subsection.2.1.3}%
-\contentsline {subsection}{\numberline {2.1.4}Interfaces}{13}{subsection.2.1.4}%
-\contentsline {subsection}{\numberline {2.1.5}Migrations}{13}{subsection.2.1.5}%
-\contentsline {subsection}{\numberline {2.1.6}Models}{13}{subsection.2.1.6}%
-\contentsline {section}{\numberline {2.2}ServISWebApp}{13}{section.2.2}%
-\contentsline {subsection}{\numberline {2.2.1}Koreňový priečinok projektu}{13}{subsection.2.2.1}%
-\contentsline {subsection}{\numberline {2.2.2}Auth}{14}{subsection.2.2.2}%
-\contentsline {subsection}{\numberline {2.2.3}BackgroundServices}{14}{subsection.2.2.3}%
-\contentsline {subsection}{\numberline {2.2.4}Components}{14}{subsection.2.2.4}%
-\contentsline {subsection}{\numberline {2.2.5}CssProviders}{15}{subsection.2.2.5}%
-\contentsline {subsection}{\numberline {2.2.6}Pages}{15}{subsection.2.2.6}%
-\contentsline {subsection}{\numberline {2.2.7}Resources}{15}{subsection.2.2.7}%
-\contentsline {subsection}{\numberline {2.2.8}Shared}{15}{subsection.2.2.8}%
-\contentsline {chapter}{\numberline {3}Užívateľská dokumentácia}{17}{chapter.3}%
-\contentsline {chapter}{Záver}{18}{chapter*.3}%
-\contentsline {section}{\numberline {3.1}GDPR}{19}{section.3.1}%
-\contentsline {section}{\numberline {3.2}Možné vylepšenia}{19}{section.3.2}%
-\contentsline {chapter}{\numberline {A}Prílohy}{21}{appendix.A}%
-\contentsline {section}{\numberline {A.1}Implementácia}{21}{section.A.1}%
-\contentsline {section}{\numberline {A.2}Videonávod}{21}{section.A.2}%
+\contentsline {chapter}{\numberline {1}Úvod}{3}{chapter.1}%
+\contentsline {chapter}{Úvod}{3}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Požiadavky na systém}{3}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Zhrnutie}{7}{section.1.2}%
+\contentsline {chapter}{\numberline {2}Návrh systému}{8}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Splnenie P2 a P3}{8}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Splnenie P4}{8}{section.2.2}%
+\contentsline {section}{\numberline {2.3}Splnenie P5}{8}{section.2.3}%
+\contentsline {section}{\numberline {2.4}Splnenie P6}{8}{section.2.4}%
+\contentsline {section}{\numberline {2.5}Splnenie P7}{8}{section.2.5}%
+\contentsline {section}{\numberline {2.6}Splnenie P8}{9}{section.2.6}%
+\contentsline {section}{\numberline {2.7}Splnenie P9}{9}{section.2.7}%
+\contentsline {section}{\numberline {2.8}Splnenie P1 a správy predmetov}{9}{section.2.8}%
+\contentsline {section}{\numberline {2.9}Výber jazyka a frameworku}{9}{section.2.9}%
+\contentsline {chapter}{\numberline {3}Analýza zadania}{10}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Voľba typu aplikácie, jazyka a frameworku}{10}{section.3.1}%
+\contentsline {section}{\numberline {3.2}Návrh systému}{11}{section.3.2}%
+\contentsline {section}{\numberline {3.3}Voľba databázy}{11}{section.3.3}%
+\contentsline {subsection}{\numberline {3.3.1}Návrh relačného modelu databázy}{12}{subsection.3.3.1}%
+\contentsline {subsection}{\numberline {3.3.2}Voľba typu databázy a databázového servera}{14}{subsection.3.3.2}%
+\contentsline {subsection}{\numberline {3.3.3}ORM}{14}{subsection.3.3.3}%
+\contentsline {section}{\numberline {3.4}Aukcia- odpočet a vyhodnocovanie}{15}{section.3.4}%
+\contentsline {section}{\numberline {3.5}Posielanie a prijímanie správ}{16}{section.3.5}%
+\contentsline {subsection}{\numberline {3.5.1}Automaticky generované správy}{17}{subsection.3.5.1}%
+\contentsline {chapter}{\numberline {4}Vývojová dokumentácia}{18}{chapter.4}%
+\contentsline {section}{\numberline {4.1}ServISData}{18}{section.4.1}%
+\contentsline {subsection}{\numberline {4.1.1}Koreňový priečinok projektu}{18}{subsection.4.1.1}%
+\contentsline {subsection}{\numberline {4.1.2}Attributes}{18}{subsection.4.1.2}%
+\contentsline {subsection}{\numberline {4.1.3}DataOperations}{18}{subsection.4.1.3}%
+\contentsline {subsection}{\numberline {4.1.4}Interfaces}{19}{subsection.4.1.4}%
+\contentsline {subsection}{\numberline {4.1.5}Migrations}{19}{subsection.4.1.5}%
+\contentsline {subsection}{\numberline {4.1.6}Models}{19}{subsection.4.1.6}%
+\contentsline {section}{\numberline {4.2}ServISWebApp}{19}{section.4.2}%
+\contentsline {subsection}{\numberline {4.2.1}Koreňový priečinok projektu}{19}{subsection.4.2.1}%
+\contentsline {subsection}{\numberline {4.2.2}Auth}{20}{subsection.4.2.2}%
+\contentsline {subsection}{\numberline {4.2.3}BackgroundServices}{20}{subsection.4.2.3}%
+\contentsline {subsection}{\numberline {4.2.4}Components}{20}{subsection.4.2.4}%
+\contentsline {subsection}{\numberline {4.2.5}CssProviders}{21}{subsection.4.2.5}%
+\contentsline {subsection}{\numberline {4.2.6}Pages}{21}{subsection.4.2.6}%
+\contentsline {subsection}{\numberline {4.2.7}Resources}{21}{subsection.4.2.7}%
+\contentsline {subsection}{\numberline {4.2.8}Shared}{21}{subsection.4.2.8}%
+\contentsline {chapter}{\numberline {5}Užívateľská dokumentácia}{23}{chapter.5}%
+\contentsline {chapter}{Záver}{24}{chapter*.2}%
+\contentsline {section}{\numberline {5.1}GDPR}{25}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Možné vylepšenia}{25}{section.5.2}%
+\contentsline {chapter}{\numberline {A}Prílohy}{27}{appendix.A}%
+\contentsline {section}{\numberline {A.1}Implementácia}{27}{section.A.1}%
+\contentsline {section}{\numberline {A.2}Videonávod}{27}{section.A.2}%

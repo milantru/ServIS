@@ -1,56 +1,145 @@
-\chapter*{Úvod}
+\chapter{Úvod}
 \addcontentsline{toc}{chapter}{Úvod}
 
-Predstavme si malú firmu. Napríklad takú, ktorá práve vznikla. Takáto firma zatiaľ nemá zákazníkov. Ľudia ju nepoznajú. Preto sa firma potrebuje nejakým spôsobom zviditeľniť, napr.~prostredníctvom vlastnej stránky. No tvorba stránky môže byť pracná alebo finančne náročná. A~kedže sa bavíme o~(začínajúcej) malej firme, tak finančný aspekt hraje veľkú rolu. Preto som sa rozhodol vytvoriť softvér, ktorý by umožnil malým firmám prezentovať svoju ponuku strojov a~služieb. A~to za~žiaden alebo minimálny poplatok. Čítateľ by mohol namietať, že v~súčasnosti predsa existujú riešenia, ktoré by majiteľom firiem umožnili vytvoriť si vlastný web zdarma. Čítateľ má síce pravdu, no tieto riešenia majú v~sebe háčik. Podrobnejšie sa na~nich pozrieme neskôr v~podkapitole Alternatívne riešenia~(\ref{alternativne riesenia}). Aby sme videli a~pochopili plusy a~mínusy alternatívnych riešení a~toho môjho, poďme sa najprv pozrieť čo vyžadujú majitelia takýchto firiem.
+V~súčasnosti existujú malé firmy, ktoré fungujú ako dodávatelia rôznych drahých produktov. Tieto firmy môžu ponúkať na~predaj okrem nových produktov aj staré produkty, ktoré prešli nejakou opravou. Takisto stojí za~zmienku, že kedže ide o~dodávateľov drahých produktov, tak zákazníci sa najprv s~firmou musia dohodnúť na~detailoch obchodu, a~až potom je možné dodanie produktu.
 
-\section{Požiadavky na softvér}
-\label{poziadavky}
+Spoločným problémom takýchto firiem býva, že ich ľudia nepoznajú. Preto by sa spomínaným firmám hodilo riešenie, ktoré by im umožnilo zviditeľniť ich ponuku produktov. Jednoduché riešenie v~podobe statických stránok v~tomto prípade nestačí, pretože by neumožnilo dynamicky meniť ponuku danej firmy. Použitie nejakého CMS systému~(z~ang. content management system), napr.~Word\-Press, takisto nie je optimálnym riešením, pretože vyžaduje znalosť platformy, ktorá nie je samozrejmesťou.
 
-Po~konzultácii s~majiteľom jednej z~firiem, boli vyhotovené tieto požiadavky:
+My sme dostali ponuku na~tvorbu riešenia od~jednej z~takýchto firiem. Konkrétne ide o~firmu, ktorá sa zaoberá predajom a~opravou bagrov (ďalej už len klientská firma). Po~konzultácii s~majiteľom (ďalej už len klient) sme zistili, že klientksá firma ponúka služby v~podobe výkopových prác, predaja a~opravy bagrov, a~takisto predaja prídavných zariadení pre~bagre. Taktiež sme zistili, že doteraz fungovala komunikácia medzi klientskou firmou a~zákazníkmi prostredníctvom telefonátov, emailov alebo sa strany fyzicky stretli a~dohodli obchod. Klient od~nás vyžaduje riešenie, ktoré by spĺňalo následujúce požiadavky.
+
+\section{Požiadavky na systém}
 
 \begin{itemize}
-\item \textbf{P1 Dostupnosť}
+\item \textbf{P1 Roly užívateľa}
 
-Softvér by mal byť jednoducho dostupný každému užívateľovi. Či už ide o~bežného zákazníka alebo administrátora.
+Jednou z~požiadaviek je, že softvér má rozlišovať zamestnancov firmy spravujúcich systém (ďalej už len administrátori, resp. administrátor) a~bežných zákazníkov. Administrátorom sa bude zobrazovať plná forma systému so~všetkými funkcionalitami (napr.~spravovanie ponuky), zatiaľ čo zákazníkom sa bude zobrazovať len obmedzený obsah podľa funkcionalít, ktoré má k~dispozícii (čiže napr.~bude si môcť zobraziť detail bagra, ale nezobrazí sa mu tlačidlo na~vymazanie bagra).
 
-\item \textbf{P2 Náklady}
+\item \textbf{P2 Predstavenie ponuky zákazníkom}
 
-Kedže ide o~malé firmy, pri~ktorých sa predpokladá nízky rozpočet, chceme, aby náklady spojené s~tvorbou a~vedením softvéru boli minimálne alebo v~ideálnom prípade žiadne.
+Ako už bolo spomenuté, klientská firma predáva bagre a~prídavné zariadenia pre~bagre. Klient preto chce, aby sme vytvorili softvér, ktorý by bol schopný prezentovať ponuku firmy (bagre a~prídavné zariadenia), pričom hlavná ponuka je tvorená bagrami. Klient vyžaduje, aby po~príchode užívateľa na~domovskú (úvodnú) stránku sa zobrazila hlavná ponuka.
 
-\item \textbf{P3 Minimálna obsluha softvéru}
+\begin{itemize}
+\item \textbf{P2.1 Hlavná ponuka}
 
-Systém by mal fungovať a~starať sa o~seba „sám“. Teda softvér by mal fungovať tak, aby pri ňom nemusel ustavične sedieť človek a~obsluhovať ho. Pracovníci firmy, vrátane majiteľa, majú svoju prácu a~najímanie si nového pracovníka, ktorý by softvér obsluhoval, nie je z~finančných dôvodov žiadúce.
+Hlavná ponuka predstavuje bagre určitého typu (t.~j.~určitej kombinácie značky a~kategórie). Hlavná ponuka obsahuje opis typu bagrov a~fotku reprezentujúcu daný typ bagrov. Po~rozkliknutí nejakej hlavnej ponuky sa zobrazia bagre typu asociovaného s~vybranou ponukou.
 
-\item \textbf{P4 Predstavenie ponuky zákazníkom}
+\item \textbf{P2.2 Bager}
 
-Systém by mal byť schopný prezentovať ponuku bagrov a~prídavných za\-ria\-de\-ní zákazníkom.
+Každý bager má obsahovať informácie: názov, značku, kategóriu, opis, fotky a~vlastnosti. Tieto informácie majú byť viditeľné pre~každého užívateľa, t.~j.~ako pre~bežného zákazníka, tak aj pre~administrátora. Navyše má ešte stroj obsahovať informáciu o~náhradných dieloch~-- táto informácia má byť viditeľná iba pre~administrátorov. Navyše môžu existovať bagre, ktoré nepatria do~ponuky a~môžu byť využité výhradne iba v~aukcii (viac o~akcii v~P3).
 
-\item \textbf{P5 Aukcia}
+\item \textbf{P2.3 Prídavné zariadenie}
 
-Jednou z~činností spomínaných firiem je oprava bagrov. Systém by mal byť schopný poskytnúť administrátorovi možnosť pridať opravený stroj do~au\-kci\-e.
+Každé prídavné zariadenie má obsahovať informácie: názov, značka, kategória, pre~akú kategóriu strojov je zariadenie určené, opis a~fotky. Tieto informácie majú byť viditeľné rovnako pre~každého užívateľa.
 
-\item \textbf{P6 Dopyt}
+\item \textbf{P2.4 Správa bagrov, prídavných zariadení a hlavných ponúk}
 
-Bežnou praxou v~tomto odvetví je, že cena strojov sa dopredu neudáva. Zákazník najprv vyjadrí záujem (pošle dopyt), prekonzultujú sa detaily medzi potenciálnym kupcom a~firmou, a~až potom prebehne obchod. Z~tohto dôvodu systém nebude fungovať na~princípe ako bežné internetové obchody (tým myslím pridávanie do~košíka s~následnou platbou), ale bude fungovať na~princípe posielania správ (dopytov). Takže systém by mal umožniť zákazníkom posielať dopyt na~položky~(stroje, prídavné zariadenia), o~ktoré majú záujem.
-
-\item \textbf{P7 Prístup k súčiastkam strojov}
-
-Systém by mal umožniť administrátorom jednoducho zistiť, aké náhradné diely obsahuje konkrétny stroj. 
-
-\item \textbf{P8 Registrácia a prihlásenie užívateľov}
-
-Systém by mal umožniť bežným užívateľom možnosť registrácie a~pri\-hlá\-se\-nia sa do~systému. Po~prihlásení získajú bežní užívatelia výhodu v~tom, že do~formulárov už nebudú musieť zadávať svoje údaje.
+Aby mohol admin spravovať bagre, prídavné zariadenia ale takisto aj hlavné ponuky podľa potreby, tak je tiež nutné vytvoriť miesto, ktoré mu ich umožní pridávať, odstraňovať a~editovať.
 \end{itemize}
 
-\section{Alternatívne riešenia}
-\label{alternativne riesenia}
+\item \textbf{P3 Posielanie dopytu}
 
-Teraz, keď už vieme aké sú požiadavky, sa môžeme pozrieť na~alternatívne riešenia a~zhodnotiť plusy a~mínusy.
+Takisto klient od~softvéru vyžaduje, aby umožnil zákazníkom objednať si daný produkt alebo službu prostredníctvom emailových správ. Bežnou praxou v~tomto odvetví je, že cena strojov sa dopredu neudáva. Zákazník najprv vyjadrí záujem (dopyt), prekonzultujú sa detaily medzi potenciálnym kupcom a~firmou, a~až potom prebehne obchod. Z~tohto dôvodu systém nebude fungovať na~princípe ako bežné internetové obchody (tým sa myslí pridávanie do~košíka s~následnou platbou), ale bude fungovať na~princípe posielania správ~(dopytov).
 
-Jedným z~možných riešení by bolo použitie nejakého CMS systému~(z~ang. content management system), napr.~WordPress. Autor práce síce nemá s~platformou WordPress žiadne skúsenosti, ale po~krátkom hľadaní na~internete zistil, že pre~túto platformu existuje aukčný plugin. S~ním, by bolo dokonca možné na~webe prevádzkovať i~požadovanú aukciu. Ale toto riešenie by vyžadovalo znalosť platformy WordPress alebo by si majiteľ firmy musel najmúť niekoho, kto túto znalosť má. Kedže znalosť platformy nie je samozrejmesťou a~najímanie si niekoho by bolo v~rozpore s~P2, túto alternatívu môžeme škrtnúť.
+\begin{itemize}
+\item \textbf{P3.1 Dopyt}
 
-Pre~úplnosť ešte spomeniem, že jedným z~riešení by bolo najmúť si inú firmu, ktorá by web vytvorila. No toto riešenie môže byť finančne náročné, a~preto je taktiež v~rozpore s~P2.
+Dopyt by mal v~sebe obsahovať informácie o~žiadanom predmete, údaje o~užívateľovi, a~tiež správu užívateľa. Uživateľskými údajmi sa myslí meno, priezvisko, email~-- tie sú povinné údaje. A~takisto telefónne číslo, mesto~-- tie sú nepovinné údaje.
+\end{itemize}
 
-\section{Zhrnutie cieľov}
+\item \textbf{P4 Aukcia}
 
-Cieľom tejto práce je implementovať softvérový informačný systém určený pre~firmy, ktoré sa zaoberajú predajom a~opravou bagrov. Systém bude spĺnať požiadavky P1 až P7.
+Keď sme v~predošlých podmienkách spomínali ponuku strojov a~prídavných zariadení, tak išlo o~nové produkty. No ako už bolo skôr spomenuté, klientská firma sa špecializuje aj na~opravu bagrov. Klient vyžaduje, aby mohol admin v~systéme vytvoriť aukčnú ponuku, do~ktorej by okrem špecifikovania jej konca a~počiatočnej sumy (vyvolávacej ceny), vedel zaradiť opravený bager, a~aby systém umožnil zákazníkom ponúkať sumy (prvá ponúknutá suma môže byť rovná počiatočnej sume, nasledujúce ponúkané sumy musia mať medzi sebou rozdiel aspoň 100 eur), pričom po~skončení dražby zákazník s~najvyššou ponúknutou sumou vyhráva dražený bager.
+
+\begin{itemize}
+\item \textbf{P4.1 Správanie aukcie}
+
+Keď aukcia skončí, systém má upozorniť jej účastníkov (poslať email) na~to, či vyhrali alebo prehrali dražbu. Taktiež má softvér upozorniť administrátora systému na~to, že aukcia skončila a~kto je jej víťazom. V~prípade, že aukcia skončila bez víťaza (nikto sa jej nezúčastnil), tak má softvér dražbu automaticky reštartovať, posunúť termín konca dražby o~týždeň a~upozorniť o~tom administrátora (poslať mu email).
+
+\item \textbf{P4.2 Odpočet a ďalšie údaje}
+
+Okrem toho sa od~nášho softvéru vyžaduje, aby bol pri~každej aukčnej ponuke zobrazený odpočet do~konca danej dražby, počet účastníkov, a~taktiež aktuálna (najvyššia ponúknutá) suma.
+\end{itemize}
+
+\item \textbf{P5 Správy}
+
+Keďže posielanie dopytov a~správanie aukcie zahŕňa posielanie emailov administrátorom, tak je tiež žiadúce, aby sa emaily dali prečítať nielen z~Gmailu~(emailová služba používaná klientom), ale aj z~nášho systému a~rovnako aby systém administrátorom umožnil na~ne odpovedať.
+
+\begin{itemize}
+\item \textbf{P5.1 Podobnosť s~Gmailom}
+
+Nakoľko je klient zvyknutý na~prácu s~Gmailom, tak sa má schránka podobať na~Gmail. Teda aspoň funkcionalitou, t.~j.~pri~príchode do~schránky sa zobrazia najnovšie správy pre~každú konverzáciu~(vlákno) zoradené zhora smerom dole od~najnovšej po~najstaršiu.
+
+Po~rozkliknutí nejakej zo~správ sa zobrazí celá konverzácia (každá správa vo~vybranom vlákne) zoradená zhora dole od~najstaršej po~najnovšiu.
+
+Ďalej má schránka umožňovať označovanie správ, pričom označené správy budeme môcť hromadne vymazať alebo označiť za~prečítané, resp.~neprečítané. Ak sú označené správy neprečítané, zobrazí sa tlačidlo umožňujúce označenie vybraných správ ako prečítané, ak sú všetky označené správy prečítané, tak sa zobrazí tlačidlo umožňujúce označiť vybrané správy ako neprečítané, a~ak označené správy obsahujú aj prečítané, aj neprečítané správy, tak sa zobrazí tlačidlo umožňujúce označiť vybrané správy ako prečítané.
+
+Podobne po~rozkliknutí nejakej zo~správ sa nám zobrazí celá konverzácia a~administrátor bude môcť celú konverzáciu vymazať alebo~označiť za~neprečítanú, a~taktiež bude môcť odoslať novú správu do~konverzácie (odpovedať na~správy). 
+
+Čo sa týka mazania správ, tak po~kliknutí na~tlačidlo vymazania správy (resp.~správ) stačí ak sa zobrazí potvrdzovacie okno, nie je nutné vytvárať osobitné miesto pre~vymazané správy (kôš). 
+
+\item \textbf{P5.2 Prepojenie správy s~predmetom}
+
+Okrem toho budeme ešte od~softvéru vyžadovať, aby v~správach, ktoré boli odoslané z~nášho systému, ako napr.~dopyt alebo~správy z~aukcie, tak aby v~sebe obsahovali okno, ktoré prepojí správu a~vec, ktorej sa daná správa týka. Teda napríklad ak zákazník odošle dopyt na~stroj~X, tak po~otvorení správy nájde administrátor okrem predmetu a~tela správy, takisto nejaký odkaz (prepojenie) odkazujúci na~stroj~X, ktorým sa dá jednoducho dostať k~údajom o~stroji~X.
+
+\item \textbf{P5.3 Automaticky generované správy}
+
+Okrem toho je tiež žiadúce, aby systém umožňil adminom upravovať formát automaticky odosielaných (generovaných) správ týkajúcich sa aukcie.
+\end{itemize}
+
+\item \textbf{P6 Registrácia a~prihlásenie užívateľov}
+
+Ďalšou požiadavkou je, aby softvér umožnil zákazníkom registrovať sa do~systému a~následne sa doň prihlásiť. Do~systému sa môžu prihlasovať rovnakým spôsobom ako bežní zákazníci aj administrátori. Systém má rozlíšiť či ide o~účet bežného zákazníka alebo o~administrátorský, prípadne poďľa toho upraviť obsah stránky ako bolo spomenuté v P1. Každý užívateľ má mať po~prihlásení výhodu v~tom, že do~formulárov nemusí zadávať svoje osobné údaje.
+
+\begin{itemize}
+\item \textbf{P6.1 Funkcionality pre~neprihlásených užívatelov}
+
+No požiadavkou je takisto to, aby aj neprihlásení užívatelia neboli o~funkcionality, akými sú posielanie dopytov alebo~účastnenie sa aukčných dražieb, nijako ukrátení a~mohli ich využívať.
+
+\item \textbf{P6.2 Registrácia a~prihlasovanie užívateľa}
+
+Pri~registrácií si bude môcť užívateľ vybrať svoje užívateľské meno, heslo, takisto bude môcť zadať svoje meno, priezvisko a~email. Všetky spomenuté údaje sú povinné. Nepovinnými údajmi, ktoré môže užívateľ ďalej zadať, sú telefónne číslo a~mesto.
+
+Pri~prihlasovaní do~systému má užívateľ zadať svoje prihlasovacie meno a~heslo.
+
+\item \textbf{P6.3 Profil užívateľa}
+
+Takisto je nutné vytvoriť miesto, kde si užívateľ môže svoje údaje upravovať (profil).
+\end{itemize}
+
+\item \textbf{P7 Prístup k~súčiastkam strojov}
+
+Keď si zákazník zakúpi bager, tak po~nejakom čase má firma vykonať kontrolu tohto bagra. Ale predtým než zamestnanci pôjdu vykonať kontrolu si musia zistiť, aké súčiastky obsahuje daný bager. A~preto klient od~softvéru vyžaduje, aby umožňoval administrátorom zobraziť aké náhradné diely obsahuje konkrétny bager.
+
+\begin{itemize}
+\item \textbf{P7.1 Náhradný diel}
+
+Jeden bager môže obsahovať viacero náhradných dielov (počet nás nezaujíma) a~jeden náhradný diel sa môže nachádzať vo~viacerých bagroch. Náhradný diel obsahuje informácie: katalógové číslo, názov.
+
+\item \textbf{P7.2 Správa náhradných dielov}
+
+Taktiež je potrebné vytvoriť miesto, ktoré adminovi umožní náhradné diely pridávať, editovať, mazať a~upravovať ich vzťahy s~bagrami.
+\end{itemize}
+
+\item \textbf{P8 Objednávanie výkopových prác}
+
+Klient taktiež vyžaduje miesto v~systéme, kde budú opísané služby (presnejšie výkopové práce), ktoré firma poskytuje, a~aby užívateľ mohol odtiaľ o~dané služby požiadať (odoslať email, v~ktorom opíše svoje požiadavky).
+
+\item \textbf{P9 O~nás a~Kontakt}
+
+Navyše klient žiada miesto v~systéme, kde bude opísaná firma a~jej história, a~takisto miesto, kde bude zobrazený kontakt (email, telefónne číslo) na~klientskú firmu (príp.~jej pridružené firmy). V~oboch prípadoch pôjde len o~statický text, príp.~fotky.
+
+\item \textbf{P10 Dostupnosť}
+\label{dostupnost}
+
+Nakoľko klientovi ide o~to, aby dostal ponuku viac do~povedomia (i~potenciálne nových) zákazníkov, je žiadúce, aby bol softvér jednoducho dostupný každému užívateľovi~-- tým sa myslí, že užívateľ si nemusí sťahovať, inštalovať žiaden softvér, a~takisto v~prípade administrátorov sa chceme vyhnúť problémom s~kompatibilitou (s~pozorovania autor vie, že firmy častokrát používajú staré počítače s~potenciálne starým softvérom, čo by mohlo spôsobovať problémy s~prevádzkou nášho systému).
+
+\item \textbf{P11 Náklady}
+
+Kedže ide o~malú firmu, tak chceme, aby náklady spojené s~tvorbou a~vedením softvéru boli minimálne alebo v~ideálnom prípade žiadne. Konkrétne sa myslia náklady spojené s~potenciálnym využitím softvéru, balíčkov tretích strán alebo~databázových serverov atď.
+\end{itemize}
+
+\section{Zhrnutie}
+
+Po~hľadaní alternatívnych riešení sa nám nepodarilo nájsť žiaden už existujúci systém, ktorý by spĺňal predchádzajúce požiadavky. Podobný systém by si mohol vytvoriť majiteľ firmy sám napr.~pomocou WordPressu, ale to by vyžadovalo pokročilejšie znalosti platformy.
+
+Preto je cieľom tejto práce implementovať systém spĺňajúci požiadavky P1 až~P11, určený pre~firmy, ktoré sa zaoberajú predajom a~opravou bagrov, ktorý by majiteľom firiem umožnil sústrediť sa len na ich doménu (t.~j.~napr.~pridávanie bagrov do~ponuky) a~neriešiť detaily implementácie funkcionalít a~vzhľadu systému (ako by tomu bolo v~prípade WordPressu).
