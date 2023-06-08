@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+using ServISData.Interfaces;
+using ServISData.Models;
 using System.Security.Claims;
 
 namespace ServISWebApp.Auth
@@ -10,15 +12,23 @@ namespace ServISWebApp.Auth
     public class CustomAuthenticationStateProvider : AuthenticationStateProvider
 	{
 		private readonly ProtectedLocalStorage localStorage;
-		private ClaimsPrincipal anonymous = new ClaimsPrincipal(new ClaimsIdentity());
+		private readonly IServISApi api;
+		private readonly ILogger<CustomAuthenticationStateProvider> logger;
+		private readonly ClaimsPrincipal anonymousUser = new ClaimsPrincipal(new ClaimsIdentity());
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CustomAuthenticationStateProvider"/> class.
-        /// </summary>
-        /// <param name="localStorage">The protected local storage used for storing user authentication information.</param>
-        public CustomAuthenticationStateProvider(ProtectedLocalStorage localStorage)
+		/// <summary>
+		/// Initializes a new instance of the <see cref="CustomAuthenticationStateProvider"/> class.
+		/// </summary>
+		/// <param name="localStorage">The protected local storage used for storing user authentication information.</param>
+		public CustomAuthenticationStateProvider(
+			ProtectedLocalStorage localStorage, 
+			IServISApi api, 
+			ILogger<CustomAuthenticationStateProvider> logger
+		)
 		{
 			this.localStorage = localStorage;
+			this.api = api;
+			this.logger = logger;
 		}
 
         /// <summary>
@@ -33,7 +43,7 @@ namespace ServISWebApp.Auth
 				var userLocalStorage = userLocalStorageResult.Success ? userLocalStorageResult.Value : null;
 				if (userLocalStorage == null)
 				{
-					return await Task.FromResult(new AuthenticationState(anonymous));
+					return await Task.FromResult(new AuthenticationState(anonymousUser));
 				}
 				var claimsPrincipal = GetClaimsPrincipal(userLocalStorage);
 
@@ -41,32 +51,57 @@ namespace ServISWebApp.Auth
 			}
 			catch
 			{
-				return await Task.FromResult(new AuthenticationState(anonymous));
+				return await Task.FromResult(new AuthenticationState(anonymousUser));
 			}
 		}
 
 		/// <summary>
-		/// Updates the authentication state based on the provided user local storage information.
+		/// Logs in the user and updates the authentication state with the provided user information.
 		/// </summary>
-		/// <param name="userLocalStorage">The user local storage information to update the authentication state with. 
-		/// Use <c>null</c> to indicate a logout operation.</param>
+		/// <param name="user">The user object representing the authenticated user.</param>
 		/// <returns>A task that represents the asynchronous operation.</returns>
-		public async Task UpdateAuthenticationState(UserLocalStorage? userLocalStorage)
+		public async Task LogInAsync(User user)
 		{
-			ClaimsPrincipal claimsPrincipal;
+			var userLocalStorage = new UserLocalStorage(user);
 
-			if (userLocalStorage != null)
-			{// login
-				await localStorage.SetAsync(nameof(UserLocalStorage), userLocalStorage);
-				claimsPrincipal = GetClaimsPrincipal(userLocalStorage);
+			await UpdateAuthenticationStateAsync(userLocalStorage);
+		}
+
+		/// <summary>
+		/// Logs out the currently authenticated user and updates the authentication state accordingly.
+		/// </summary>
+		/// <returns>A task that represents the asynchronous operation.</returns>
+		public async Task LogoutAsync()
+		{
+			await UpdateAuthenticationStateAsync(null);
+		}
+
+		/// <summary>
+		/// Retrieves the logged-in user asynchronously based on the provided authentication state.
+		/// </summary>
+		/// <param name="authState">The current authentication state.</param>
+		/// <returns>A task that represents the asynchronous operation, containing the logged-in user object if found; otherwise, returns null.</returns>
+		public async Task<User?> GetLoggedInUserAsync(AuthenticationState authState)
+		{
+			int userId = 0;
+			User? user;
+
+			try
+			{
+				userId = int.Parse(
+					authState.User.Claims.First(c => c.Type == ClaimTypes.PrimarySid).Value
+				);
+
+				user = await api.GetUserAsync(userId);
 			}
-			else
-			{// logout
-				await localStorage.DeleteAsync(nameof(UserLocalStorage));
-				claimsPrincipal = anonymous;
+			catch (Exception ex)
+			{
+				logger.LogError(ex, $"Failed to load user with id '{userId}'.");
+
+				user = null;
 			}
 
-			NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(claimsPrincipal)));
+			return user;
 		}
 
 		private static ClaimsPrincipal GetClaimsPrincipal(UserLocalStorage userLocalStorage)
@@ -81,6 +116,30 @@ namespace ServISWebApp.Auth
 			);
 
 			return new ClaimsPrincipal(claimsIdentity);
+		}
+
+		/// <summary>
+		/// Updates the authentication state based on the provided user local storage information.
+		/// </summary>
+		/// <param name="userLocalStorage">The user local storage information to update the authentication state with. 
+		/// Use <c>null</c> to indicate a logout operation.</param>
+		/// <returns>A task that represents the asynchronous operation.</returns>
+		private async Task UpdateAuthenticationStateAsync(UserLocalStorage? userLocalStorage)
+		{
+			ClaimsPrincipal claimsPrincipal;
+
+			if (userLocalStorage is not null)
+			{// login
+				await localStorage.SetAsync(nameof(UserLocalStorage), userLocalStorage);
+				claimsPrincipal = GetClaimsPrincipal(userLocalStorage);
+			}
+			else
+			{// logout
+				await localStorage.DeleteAsync(nameof(UserLocalStorage));
+				claimsPrincipal = anonymousUser;
+			}
+
+			NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(claimsPrincipal)));
 		}
 	}
 }

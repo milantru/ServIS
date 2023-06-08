@@ -3,7 +3,7 @@
 		<Found Context="routeData">
 			<AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
 				<NotAuthorized>
-					Nie ste prihlásený.
+					Nie ste prihlásený alebo k tejto časti webu nemáte oprávnenie.
 				</NotAuthorized>
 			</AuthorizeRouteView>
 			<FocusOnNavigate RouteData="@routeData" Selector="h1" />

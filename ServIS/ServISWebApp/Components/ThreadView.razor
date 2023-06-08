@@ -127,18 +127,18 @@ else if (Emails.Count > 0)
 			return;
 		}
 		/* The reason why I assign Thread to variable here is that there was problem when user clicked on sent
-			* and quickly after that pressed back button. By pressing back button CurrentlyChosenThread in Messages 
-			* was set to null and in that moment OnSent was invoked here which tried to check the last message 
-			* of CurrentlyChosenThread but as I already mentioned it was null, hence Exception was thrown.
-			* This variable assignment allows us to remember thread from which the mesage was sent, so after
-			* reloading threads with new messages (including this newly sent one) we can find it and check
-			* the last mesage (the newly sent one) whether it was marked as seen properly.
-			*/
+		 * and quickly after that pressed back button. By pressing back button CurrentlyChosenThread in Messages 
+		 * was set to null and in that moment OnSent was invoked here which tried to check the last message 
+		 * of CurrentlyChosenThread but as I already mentioned it was null, hence Exception was thrown.
+		 * This variable assignment allows us to remember thread from which the mesage was sent, so after
+		 * reloading threads with new messages (including this newly sent one) we can find it and check
+		 * the last mesage (the newly sent one) whether it was marked as seen properly.
+		 */
 		var thread = Thread;
 
 		/* There was a problem that admin could double click on send button and reply 
-			* was sent twice. Checking for reply length and using tmp variable is enough
-			* to solve the problem. */
+		 * was sent twice. Checking for reply length and using tmp variable is enough
+		 * to solve the problem. */
 		var replyTextTmp = ReplyText;
 		ReplyText = string.Empty;
 

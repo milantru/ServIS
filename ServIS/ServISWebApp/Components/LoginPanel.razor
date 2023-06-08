@@ -1,5 +1,4 @@
 ﻿@inject AuthenticationStateProvider authStateProvider
-@inject NavigationManager navMan
 @using ServISWebApp.Auth
 
 <div id="login-panel" class="servis-outline">
@@ -19,6 +18,6 @@
 	private async Task LogoutAsync()
 	{
 		var customAuthStateProvider = (CustomAuthenticationStateProvider)authStateProvider;
-		await customAuthStateProvider.UpdateAuthenticationState(null);
+		await customAuthStateProvider.LogoutAsync();
 	}
 }
