@@ -9,6 +9,12 @@
 @if (additionalEquipmentExists && AdditionalEquipment != null)
 {
 	<div class="container">
+		<AuthorizeView Roles="Administrator">
+			<div class="w-100">
+				<button class="btn btn-secondary" @onclick="GoToAdditionalEquipmentEditPage">Uprav</button>
+			</div>
+		</AuthorizeView>
+
 		<div class="row img-and-desc-container">
 			<div class="col img-container">
 				<div class="img">
@@ -59,10 +65,6 @@
 				</table>
 			</div>
 		</div>
-
-		<AuthorizeView Roles="Administrator">
-			<button class="btn btn-secondary" @onclick="GoToAdditionalEquipmentEditPage">Uprav</button>
-		</AuthorizeView>
 	</div>
 }
 else if (!additionalEquipmentExists)

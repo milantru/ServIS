@@ -9,6 +9,12 @@
 @if (excavatorExists && Excavator is not null)
 {
 	<div class="container">
+		<AuthorizeView Roles="Administrator">
+			<div class="w-100">
+				<button class="btn btn-secondary" @onclick="GoToExcavatorEditPage">Uprav</button>
+			</div>
+		</AuthorizeView>
+
 		<div class="row img-and-desc-container">
 			<div class="col img-container">
 				<div class="img">
@@ -55,10 +61,6 @@
 				</table>
 			</div>
 		</div>
-
-		<AuthorizeView Roles="Administrator">
-			<button class="btn btn-secondary" @onclick="GoToExcavatorEditPage">Uprav</button>
-		</AuthorizeView>
 	</div>
 }
 else if (!excavatorExists)

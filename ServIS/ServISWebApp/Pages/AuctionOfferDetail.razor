@@ -10,6 +10,13 @@
 @if (auctionOfferExists && AuctionOffer != null)
 {
 	<div class="container">
+		<AuthorizeView Roles="Administrator">
+			<div class="w-100">
+				<button class="btn btn-secondary" @onclick="GoToAuctionOfferEditPage">Uprav</button>
+				<button class="btn btn-danger" @onclick="DeleteAuctionOfferAsync">Zmazať</button>
+			</div>
+		</AuthorizeView>
+
 		<div class="row img-and-desc-container">
 			<div class="col img-container">
 				<div class="img">
@@ -73,11 +80,6 @@
 				</table>
 			</div>
 		</div>
-
-		<AuthorizeView Roles="Administrator">
-			<button class="btn btn-secondary" @onclick="GoToAuctionOfferEditPage">Uprav</button>
-			<button class="btn btn-danger" @onclick="DeleteAuctionOfferAsync">Zmazať</button>
-		</AuthorizeView>
 	</div>
 }
 else if (!auctionOfferExists)
