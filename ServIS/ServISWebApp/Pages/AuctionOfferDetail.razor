@@ -2,8 +2,10 @@
 
 @inject ILogger<AuctionOfferDetail> logger
 @inject IServISApi api
+@inject AuthenticationStateProvider authStateProvider
 @inject Modals modals
 @inject NavigationManager navMan
+@using ServISWebApp.Auth;
 
 @if (auctionOfferExists && AuctionOffer != null)
 {
@@ -26,7 +28,10 @@
 
 				<p>@AuctionOffer.Description</p>
 
-				<button @onclick="ToggleForm" disabled="@(!IsOfferActive)">Mám záujem!</button>
+				@if (!isAdmin)
+				{
+					<button @onclick="ToggleForm" disabled="@(!IsOfferActive)">Mám záujem!</button>
+				}
 			</div>
 		</div>
 
@@ -38,16 +43,19 @@
 			</div>
 		</div>
 
-		<div class="row">
-			<div class="col">
-				@if (IsOfferActive)
-				{
-					<AuctionBidForm @ref="auctionBidForm" 
-									AuctionOffer="AuctionOffer"
-									OnSent="GetAdditionalAuctionInfoAsync" />
-				}
+		@if (!isAdmin)
+		{
+			<div class="row">
+				<div class="col">
+					@if (IsOfferActive)
+					{
+						<AuctionBidForm @ref="auctionBidForm" 
+										AuctionOffer="AuctionOffer"
+										OnSent="GetAdditionalAuctionInfoAsync" />
+					}
+				</div>
 			</div>
-		</div>
+		}
 
 		<div class="row">
 			<div class="col">
@@ -78,10 +86,14 @@ else if (!auctionOfferExists)
 }
 
 @code {
+	private bool isAdmin;
 	private bool auctionOfferExists = true;
 	private int biddersCount;
 	private decimal currentMaxBid;
 	private AuctionBidForm auctionBidForm = null!;
+
+	[CascadingParameter]
+	public Task<AuthenticationState> AuthenticationStateAsync { get; set; } = null!;
 
 	[Parameter]
 	public int AuctionOfferId { get; set; }
@@ -93,18 +105,15 @@ else if (!auctionOfferExists)
 	{
 		await base.OnParametersSetAsync();
 
-		try
+		await SetAuctionOfferAsync();
+		if (!auctionOfferExists)
 		{
-			AuctionOffer = await api.GetAuctionOfferAsync(AuctionOfferId);
-		}
-		catch (Exception ex)
-		{
-			logger.LogError(ex, $"AuctionOffer with id '{AuctionOfferId}' was not found.");
-			auctionOfferExists = false;
-			return;
+			return;	
 		}
 
 		await GetAdditionalAuctionInfoAsync();
+
+		await CheckIfLoggedInAsAdminAsync();
 	}
 
 	public void ToggleForm()
@@ -166,5 +175,27 @@ else if (!auctionOfferExists)
 	{
 		await SetBiddersCountAsync();
 		await SetCurrentMaxBidAsync();
+	}
+
+	private async Task SetAuctionOfferAsync()
+	{
+		try
+		{
+			AuctionOffer = await api.GetAuctionOfferAsync(AuctionOfferId);
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, $"AuctionOffer with id '{AuctionOfferId}' was not found.");
+			auctionOfferExists = false;
+		}
+	}
+
+	private async Task CheckIfLoggedInAsAdminAsync()
+	{
+		var authState = await AuthenticationStateAsync;
+
+		var customAuthStateProvider = (CustomAuthenticationStateProvider)authStateProvider;
+
+		isAdmin = await customAuthStateProvider.CheckIfLoggedInAsAdminAsync(authState);
 	}
 }

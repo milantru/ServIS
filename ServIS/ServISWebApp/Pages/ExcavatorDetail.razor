@@ -2,7 +2,9 @@
 
 @inject ILogger<ExcavatorDetail> logger
 @inject IServISApi api
+@inject AuthenticationStateProvider authStateProvider
 @inject NavigationManager navMan
+@using ServISWebApp.Auth;
 
 @if (excavatorExists && Excavator is not null)
 {
@@ -19,17 +21,23 @@
 
 				<p>@Excavator.Description</p>
 
-				<button @onclick="ToggleForm">Dopyt</button>
+				@if (!isAdmin)
+				{
+					<button @onclick="ToggleForm">Dopyt</button>
+				}
 			</div>
 		</div>
 
 		<br />
 
-		<div class="row">
-			<div class="col">
-				<DemandForm @ref="demandForm" DemandedItemName="@Excavator.Name" />
+		@if (!isAdmin)
+		{
+			<div class="row">
+				<div class="col">
+					<DemandForm @ref="demandForm" DemandedItemName="@Excavator.Name" />
+				</div>
 			</div>
-		</div>
+		}
 
 		<div class="row">
 			<div class="col">
@@ -59,8 +67,12 @@ else if (!excavatorExists)
 }
 
 @code {
+	private bool isAdmin;
 	private bool excavatorExists = true;
 	private DemandForm demandForm = null!;
+
+	[CascadingParameter]
+	public Task<AuthenticationState> AuthenticationStateAsync { get; set; } = null!;
 
 	[Parameter]
 	public int ExcavatorId { get; set; }
@@ -71,15 +83,9 @@ else if (!excavatorExists)
 	{
 		await base.OnParametersSetAsync();
 
-		try
-		{
-			Excavator = await api.GetExcavatorAsync(ExcavatorId);
-		}
-		catch (Exception ex)
-		{
-			logger.LogError(ex, $"Excavator with id '{ExcavatorId}' was not found.");
-			excavatorExists = false;
-		}
+		await SetExcavatorAsync();
+
+		await CheckIfLoggedInAsAdminAsync();
 	}
 
 	public void ToggleForm()
@@ -92,5 +98,27 @@ else if (!excavatorExists)
 	private void GoToExcavatorEditPage()
 	{
 		navMan.NavigateTo($"/admin/uprava-stroja/{Excavator.Id}");
+	}
+
+	private async Task SetExcavatorAsync()
+	{
+		try
+		{
+			Excavator = await api.GetExcavatorAsync(ExcavatorId);
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, $"Excavator with id '{ExcavatorId}' was not found.");
+			excavatorExists = false;
+		}
+	}
+
+	private async Task CheckIfLoggedInAsAdminAsync()
+	{
+		var authState = await AuthenticationStateAsync;
+
+		var customAuthStateProvider = (CustomAuthenticationStateProvider)authStateProvider;
+
+		isAdmin = await customAuthStateProvider.CheckIfLoggedInAsAdminAsync(authState);
 	}
 }

@@ -104,6 +104,21 @@ namespace ServISWebApp.Auth
 			return user;
 		}
 
+		/// <summary>
+		/// Checks if the currently logged-in user, based on the provided authentication state, is authenticated as an administrator.
+		/// </summary>
+		/// <param name="authState">The current authentication state.</param>
+		/// <returns>
+		/// A task that represents the asynchronous operation, returning <c>true</c> if the user is authenticated as an administrator,
+		/// and <c>false</c> otherwise.
+		/// </returns>
+		public async Task<bool> CheckIfLoggedInAsAdminAsync(AuthenticationState authState)
+		{
+			var user = await GetLoggedInUserAsync(authState);
+
+			return user?.Role == "Administrator";
+		}
+
 		private static ClaimsPrincipal GetClaimsPrincipal(UserLocalStorage userLocalStorage)
 		{
 			var claimsIdentity = new ClaimsIdentity(

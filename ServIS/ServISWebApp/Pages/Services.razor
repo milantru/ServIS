@@ -1,5 +1,8 @@
 ﻿@page "/sluzby"
 
+@inject AuthenticationStateProvider authStateProvider
+@using ServISWebApp.Auth;
+
 <h3>Služby</h3>
 
 <p>
@@ -20,10 +23,33 @@
 	Nam egestas mi et libero euismod, sit amet venenatis augue elementum.
 </p>
 
-<button class="btn btn-primary m-2" @onclick="() => demandForm?.ToggleForm()">Mám záujem o službu!</button>
+@if (!isAdmin)
+{
+	<button class="btn btn-primary m-2" @onclick="() => demandForm?.ToggleForm()">Mám záujem o službu!</button>
 
-<DemandForm @ref="demandForm" DemandedItemName="Služba" />
+	<DemandForm @ref="demandForm" DemandedItemName="Služba" />
+}
 
 @code {
+	private bool isAdmin;
 	private DemandForm demandForm = null!;
+
+	[CascadingParameter]
+	public Task<AuthenticationState> AuthenticationStateAsync { get; set; } = null!;
+
+	protected override async Task OnParametersSetAsync()
+	{
+		await base.OnParametersSetAsync();
+
+		await CheckIfLoggedInAsAdminAsync();
+	}
+
+	private async Task CheckIfLoggedInAsAdminAsync()
+	{
+		var authState = await AuthenticationStateAsync;
+
+		var customAuthStateProvider = (CustomAuthenticationStateProvider)authStateProvider;
+
+		isAdmin = await customAuthStateProvider.CheckIfLoggedInAsAdminAsync(authState);
+	}
 }

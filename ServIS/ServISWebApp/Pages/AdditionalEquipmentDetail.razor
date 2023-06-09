@@ -2,7 +2,9 @@
 
 @inject ILogger<AdditionalEquipmentDetail> logger
 @inject IServISApi api
+@inject AuthenticationStateProvider authStateProvider
 @inject NavigationManager navMan
+@using ServISWebApp.Auth;
 
 @if (additionalEquipmentExists && AdditionalEquipment != null)
 {
@@ -19,17 +21,23 @@
 
 				<p>@AdditionalEquipment.Description</p>
 
-				<button @onclick="ToggleForm">Dopyt</button>
+				@if (!isAdmin)
+				{
+					<button @onclick="ToggleForm">Dopyt</button>
+				}
 			</div>
 		</div>
 
 		<br />
 
-		<div class="row">
-			<div class="col">
-				<DemandForm @ref="demandForm" DemandedItemName="@AdditionalEquipment.Name" />
+		@if (!isAdmin)
+		{
+			<div class="row">
+				<div class="col">
+						<DemandForm @ref="demandForm" DemandedItemName="@AdditionalEquipment.Name" />
+				</div>
 			</div>
-		</div>
+		}
 
 		<div class="row">
 			<div class="col">
@@ -63,8 +71,12 @@ else if (!additionalEquipmentExists)
 }
 
 @code {
+	private bool isAdmin;
 	private bool additionalEquipmentExists = true;
 	private DemandForm demandForm = null!;
+
+	[CascadingParameter]
+	public Task<AuthenticationState> AuthenticationStateAsync { get; set; } = null!;
 
 	[Parameter]
 	public int AdditionalEquipmentId { get; set; }
@@ -75,15 +87,9 @@ else if (!additionalEquipmentExists)
 	{
 		await base.OnParametersSetAsync();
 
-		try
-		{
-			AdditionalEquipment = await api.GetAdditionalEquipmentAsync(AdditionalEquipmentId);
-		}
-		catch (Exception ex)
-		{
-			logger.LogError(ex, $"AdditionalEquipment with id '{AdditionalEquipmentId}' was not found.");
-			additionalEquipmentExists = false;
-		}
+		await SetAdditionalEquipmentAsync();
+
+		await CheckIfLoggedInAsAdminAsync();
 	}
 
 	public void ToggleForm()
@@ -96,5 +102,27 @@ else if (!additionalEquipmentExists)
 	private void GoToAdditionalEquipmentEditPage()
 	{
 		navMan.NavigateTo($"/admin/uprava-pridavneho-zariadenia/{AdditionalEquipment.Id}");
+	}
+
+	private async Task SetAdditionalEquipmentAsync()
+	{
+		try
+		{
+			AdditionalEquipment = await api.GetAdditionalEquipmentAsync(AdditionalEquipmentId);
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, $"AdditionalEquipment with id '{AdditionalEquipmentId}' was not found.");
+			additionalEquipmentExists = false;
+		}
+	}
+
+	private async Task CheckIfLoggedInAsAdminAsync()
+	{
+		var authState = await AuthenticationStateAsync;
+
+		var customAuthStateProvider = (CustomAuthenticationStateProvider)authStateProvider;
+
+		isAdmin = await customAuthStateProvider.CheckIfLoggedInAsAdminAsync(authState);
 	}
 }
