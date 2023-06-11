@@ -1,28 +1,29 @@
 ﻿@using MailKit;
 
-@if (LatestThreadMessage is null)
+@if (newestThreadMessage is null)
 {
 	<p>Načítava sa...</p>
 }
 else
 {
-	<div class="thread-row @(seen ? "seen" : "")">
+	<div class="thread-row @(isRead ? "seen" : "")">
 		<input type="checkbox" checked="@IsChecked" @onchange="OnCheckUncheck" />
 		<div class="cols" @onclick="OnClick">
-			<div class="from @(seen ? "" : "bold")">@LatestThreadMessage.Envelope.From.Mailboxes.First().Name</div>
+			<div class="from @(isRead ? "" : "bold")">@newestThreadMessage.Envelope.From.Mailboxes.First().Name</div>
 			<div class="preview-text">
-				<span class="subject @(seen ? "" : "bold")">@LatestThreadMessage.NormalizedSubject</span>-@LatestThreadMessage.PreviewText
+				<span class="subject @(isRead ? "" : "bold")">@newestThreadMessage.NormalizedSubject</span>-@newestThreadMessage.PreviewText
 			</div>
-			<div class="date @(seen ? "" : "bold")">@LatestThreadMessage.Date.LocalDateTime.ToShortDateString()</div>
+			<div class="date @(isRead ? "" : "bold")">@newestThreadMessage.Date.LocalDateTime.ToShortDateString()</div>
 		</div>
 	</div>
 }
 
 @code {
-	private bool seen;
+	private bool isRead;
+	private IMessageSummary newestThreadMessage = null!;
 
 	[Parameter]
-	public IMessageSummary LatestThreadMessage { get; set; } = null!;
+	public Thread Thread { get; set; } = null!;
 
 	[Parameter]
 	public bool IsChecked { get; set; }
@@ -40,9 +41,7 @@ else
 	{
 		base.OnParametersSet();
 
-		if (LatestThreadMessage.Flags.HasValue)
-		{
-			seen = LatestThreadMessage.Flags.Value.HasFlag(MessageFlags.Seen);
-		}
+		isRead = Thread.IsRead;
+		newestThreadMessage = Thread.Messages.Last();
 	}
 }

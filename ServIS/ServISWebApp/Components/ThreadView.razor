@@ -12,7 +12,7 @@ else if (Emails.Count > 0)
 	   so `else` would be sufficient, right? Then why `else if`...
 	   Well, due to some actions like deleting there can be (temporary) state (before back action triggers)
 	   when`Emails.Count` is indeed 0 and following code would end up throwing an exception.
-	   This `else if ` is simple solution of this problem. *@
+	   This `else if` is simple solution of this problem. *@
 	<div>
 		<div class="top-panel">
 			<BackIconButton OnClick="OnBack" />
@@ -46,6 +46,11 @@ else if (Emails.Count > 0)
 					{
 						<Message Email="@email" />
 					}
+
+					@if (IsReplyInProgress)
+					{
+						<div>(Posiela sa...)</div>
+					}
 				}
 			}
 			else
@@ -55,21 +60,24 @@ else if (Emails.Count > 0)
 		</div>
 		<div class="reply-container">
 			<textarea @bind="ReplyText" @bind:event="oninput"></textarea>
-			<button disabled="@(ReplyText.Length == 0)" @onclick="SendReplyAsync">Poslať</button>
+			<button disabled="@IsReplyButtonDisabled" @onclick="SendReplyAsync">Poslať</button>
 		</div>
 	</div>
 }
 
 @code {
 	private string? requestedItemUrl;
-	/* `isUrlExtractionComplete` exists to solve the problem with extracting
-	 *  the url from the first message. There was a problem that injected url
-	 *  blinked (was seen by the user) and then disappeared (when the extraction was
-	 *  complete). This field ensures that this blink of injected url doesn't occur. */
+	/* isUrlExtractionComplete exists to solve the problem with extracting
+	 * the url from the first message. There was a problem that injected url
+	 * blinked (was seen by the user) and then disappeared (when the extraction was
+	 * complete). This field ensures that this blink of injected url doesn't occur. */
 	private bool isUrlExtractionComplete;
 
 	[Parameter]
-	public Thread? Thread { get; set; }
+	public Thread Thread { get; set; } = null!;
+
+	[Parameter]
+	public EventCallback<Thread> ThreadChanged { get; set; }
 
 	// this parameter is here so we dont have to make new email manager each time we open some thread
 	[Parameter]
@@ -82,28 +90,24 @@ else if (Emails.Count > 0)
 	public EventCallback<Thread> OnSent { get; set; }
 
 	[Parameter]
-	public EventCallback OnReloadRequest { get; set; }
+	public EventCallback<Thread> OnDelete { get; set; }
 
 	private List<Email> Emails { get; set; } = null!;
 
 	private string ReplyText { get; set; } = string.Empty;
 
-	protected override async Task OnInitializedAsync()
-	{
-		await base.OnInitializedAsync();
+	private bool IsReplyInProgress => !Emails.Last().Uid.IsValid;
 
-		var messages = Thread?.Messages;
-		var lastMessageIsUnread = messages is not null &&
-		(messages.Last().Flags.HasValue && !messages.Last().Flags!.Value.HasFlag(MessageFlags.Seen));
-		if (lastMessageIsUnread)
-		{
-			await MarkThreadAsReadAsync();
-		}
-	}
+	private bool IsReplyButtonDisabled => ReplyText.Length == 0 || IsReplyInProgress;
 
 	protected override async Task OnParametersSetAsync()
 	{
 		await base.OnParametersSetAsync();
+
+		if (!Thread.IsRead)
+		{
+			await MarkThreadAsReadAsync();
+		}
 
 		await LoadEmailsAsync();
 
@@ -112,28 +116,27 @@ else if (Emails.Count > 0)
 
 	private async Task LoadEmailsAsync()
 	{
-		if (Thread is null)
-		{
-			return;
-		}
-		var uids = Thread.Messages.Select(msgSumm => msgSumm.UniqueId).ToList();
+		var uids = Thread.Messages
+			.Select(msgSumm => msgSumm.UniqueId)
+			.ToList();
+
 		Emails = await EmailManager.GetEmailsAsync(uids);
 	}
 
 	private async Task SendReplyAsync()
 	{
-		if (ReplyText.Length == 0)
+		if (IsReplyButtonDisabled)
 		{
 			return;
 		}
+
 		/* The reason why I assign Thread to variable here is that there was problem when user clicked on sent
 		 * and quickly after that pressed back button. By pressing back button CurrentlyChosenThread in Messages 
 		 * was set to null and in that moment OnSent was invoked here which tried to check the last message 
 		 * of CurrentlyChosenThread but as I already mentioned it was null, hence Exception was thrown.
 		 * This variable assignment allows us to remember thread from which the mesage was sent, so after
 		 * reloading threads with new messages (including this newly sent one) we can find it and check
-		 * the last mesage (the newly sent one) whether it was marked as seen properly.
-		 */
+		 * the last mesage (the newly sent one) whether it was marked as seen properly. */
 		var thread = Thread;
 
 		/* There was a problem that admin could double click on send button and reply 
@@ -142,15 +145,36 @@ else if (Emails.Count > 0)
 		var replyTextTmp = ReplyText;
 		ReplyText = string.Empty;
 
-		// Uid of `replyEmail` is invalid
-		var replyEmail = await EmailManager.ReplyToAsync(Emails.Last(), replyTextTmp);
+		var lastEmail = Emails.Last();
+
+		// we use dummyReplyEmail for display to the user so he sees that something has happened immediately
+		// (and doesn't have to wait until sending the reply is awaited)
+		var dummyReplyEmail = new Email
+			{
+				Uid = UniqueId.Invalid,
+				FromAddress = lastEmail.ToAddress,
+				FromName = lastEmail.ToName,
+				ToAddress = lastEmail.FromAddress,
+				ToName = lastEmail.FromName,
+				Subject = lastEmail.Subject, 
+				Text = replyTextTmp,
+				DateTime = DateTime.Now,
+				IsRead = true
+			};
+		Emails.Add(dummyReplyEmail);
+
+		// It is true that EmailManager.ReplyToAsync returnes reply email but 
+		// Uid of it is invalid (if we want to make another reply, i.e. reply to this reply,
+		// we need to reload messages of this thread, or at least msg summaries of this last message,
+		// to obtain valid Uid. Reloading can be done e.g. in OnSent event handler.)
+		await EmailManager.ReplyToAsync(lastEmail, replyTextTmp);
 
 		await OnSent.InvokeAsync(thread);
 	}
 
 	private void ExtractRequestedItemUrl()
 	{
-		if (Emails == null || Emails.Count == 0)
+		if (Emails.Count == 0)
 		{
 			requestedItemUrl = null;
 			isUrlExtractionComplete = true;
@@ -167,7 +191,7 @@ else if (Emails.Count > 0)
 		 * our email address in from field).
 		 * Also, it is ok to use `!` here because of the preceding `if`. `Emails` is made from `Messages`.
 		 * It means that if `Emails` is not empty, so is `Messages`. */
-		var fromAddress = Thread!.Messages.First().Envelope.From.Mailboxes.First().Address;
+		var fromAddress = Thread.Messages.First().Envelope.From.Mailboxes.First().Address;
 		if (fromAddress != EmailManager.EmailAddress)
 		{// email was not sent from this app
 			requestedItemUrl = null;
@@ -199,32 +223,40 @@ else if (Emails.Count > 0)
 
 		var uids = Emails.Select(e => e.Uid).ToList();
 
-		await EmailManager.DeleteEmailAsync(uids);
-		Emails.Clear();
-		Thread!.Messages.Clear();
+		var deleteEmailsTask = EmailManager.DeleteEmailAsync(uids);
 
-		await OnReloadRequest.InvokeAsync();
+		await OnDelete.InvokeAsync(Thread);
 
 		await OnBack.InvokeAsync();
 
+		await deleteEmailsTask;
 	}
 
 	private async Task MarkThreadAsReadAsync()
 	{
-		// Called only from `OnInitializedAsync` (where check exists) so it is OK to use `!`
-		var uids = Thread!.Messages.Select(msgSumm => msgSumm.UniqueId).ToList();
-		await EmailManager.MarkEmailAsReadAsync(uids);
-		await OnReloadRequest.InvokeAsync();
+		var uids = Thread.Messages
+					.Select(msgSumm => msgSumm.UniqueId)
+					.ToList();
+
+		var markEmailsAsReadTask = EmailManager.MarkEmailAsReadAsync(uids);
+
+		Thread.IsRead = true;
+		await ThreadChanged.InvokeAsync(Thread);
+
+		await markEmailsAsReadTask;
 	}
 
 	private async Task MarkAsUnreadAsync()
 	{
 		var lastEmail = Emails.Last();
 
-		await EmailManager.MarkEmailAsUnreadAsync(lastEmail);
+		var markEmailAsUnreadTask = EmailManager.MarkEmailAsUnreadAsync(lastEmail);
 
-		await OnReloadRequest.InvokeAsync();
+		Thread.IsRead = false;
+		await ThreadChanged.InvokeAsync(Thread);
 
 		await OnBack.InvokeAsync();
+
+		await markEmailAsUnreadTask;
 	}
 }

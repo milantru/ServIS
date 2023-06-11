@@ -91,11 +91,16 @@ namespace ServISWebApp.Shared
 			foreach (var group in groups)
 			{
 				var threadId = group.Key!.Value;
+				var threadMessages = group.OrderBy(m => m.InternalDate).ToList();
+				var newestThreadMessage = threadMessages.Last();
 
 				var thread = new Thread()
 				{
 					Id = threadId,
-					Messages = group.OrderBy(m => m.InternalDate).ToList()
+					IsRead = newestThreadMessage.Flags.HasValue
+						? newestThreadMessage.Flags.Value.HasFlag(MessageFlags.Seen)
+						: false,
+					Messages = threadMessages
 				};
 
 				if (ShouldSkip(thread))
@@ -378,13 +383,14 @@ namespace ServISWebApp.Shared
 			await SendMessageAsync(message);
 		}
 
-        /// <summary>
-        /// Asynchronously sends a reply to the <paramref name="email"/> with the <paramref name="replyText"/>.
-        /// </summary>
-        /// <param name="email">The email to reply to.</param>
-        /// <param name="replyText">The text of the reply.</param>
-        /// <returns>A task that represents the asynchronous operation. The task result contains the replied email.</returns>
-        public async Task<Email> ReplyToAsync(Email email, string replyText)
+		/// <summary>
+		/// Asynchronously sends a reply to the <paramref name="email"/> with the <paramref name="replyText"/>.
+		/// </summary>
+		/// <remarks>The <see cref="Email.Uid"/> of returned <see cref="Email"/> is not valid.</remarks>
+		/// <param name="email">The email to reply to.</param>
+		/// <param name="replyText">The text of the reply.</param>
+		/// <returns>A task that represents the asynchronous operation. The task result contains the replied email.</returns>
+		public async Task<Email> ReplyToAsync(Email email, string replyText)
 		{
 			var reply = PrepareReply(email, replyText);
 

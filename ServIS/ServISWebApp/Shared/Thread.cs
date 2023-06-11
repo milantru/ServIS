@@ -12,6 +12,11 @@ namespace ServISWebApp.Shared
         /// </summary>
         public ulong Id { get; set; }
 
+		/// <summary>
+		/// Gets or sets a value indicating whether the thread has been read.
+		/// </summary>
+		public bool IsRead { get; set; }
+
         /// <summary>
         /// Gets or sets the list of message summaries contained by the thread.
         /// </summary>

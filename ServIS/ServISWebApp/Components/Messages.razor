@@ -28,10 +28,10 @@
 			}
 			else
 			{
-				<ThreadView Thread="@CurrentlyChosenThread"
+				<ThreadView @bind-Thread="@CurrentlyChosenThread"
 							OnSent="OnSent"
 							OnBack="() => ChangeToThreadView(null)"
-							OnReloadRequest="LoadThreadsAsync"
+							OnDelete="DeleteThread"
 							EmailManager="@emailManager" />
 			}
 		}
@@ -71,13 +71,12 @@
 		if (CurrentlyChosenThread is not null)
 		{
 			/* If we are (re)loading threads and currently have some thread chosen,
-				* we want to find its newer version and "update" it (replace old for the newer version).
-				* That's the reason for this if.
-				* Additionaly, here is used `FirstOrDefault` and not just `First` because there might
-				* be (temporary) moment when currently chosen thread does NOT exist (i.e. when we are deleting it,
-				* in this situation it is ok to return null (default) because after deletion we would set
-				* `CurrentlyChosenThread` to null anyway).
-				*/
+			 * we want to find its newer version and "update" it (replace old for the newer version).
+			 * That's the reason for this if.
+			 * Additionaly, here is used `FirstOrDefault` and not just `First` because there might
+			 * be (temporary) moment when currently chosen thread does NOT exist (i.e. when we are deleting it,
+			 * in this situation it is ok to return null (default) because after deletion we would set
+			 * CurrentlyChosenThread to null anyway). */
 			CurrentlyChosenThread = Threads.FirstOrDefault(t => t.Id == CurrentlyChosenThread.Id);
 		}
 	}
@@ -85,28 +84,23 @@
 	private async Task OnSent(Thread threadFromWhichWasMessageSent)
 	{
 		await LoadThreadsAsync();
+
 		var updatedThread = Threads.First(t => t.Id == threadFromWhichWasMessageSent.Id);
 
-		/* Sometimes after replying to message, the reply message is NOT marked as read/seen.
+		/* Sometimes after replying to a message, the reply message is NOT marked as read/seen.
 		 * That is the reason we check here after sending the message and reloading messages if
-		 * the newest message (the reply) is marked as read. If not, we mark it as read.
-		 * Additionally, it should be OK to use `!` here because this is called only when
-		 * replying to message in thread and that is possible only when in thread view, meaning
-		 * `CurrentlyChosenThread` is not null.
-		 */
-		var lastMsg = updatedThread.Messages.Last();
-		if (lastMsg.Flags.HasValue && !lastMsg.Flags.Value.HasFlag(MessageFlags.Seen))
+		 * the newest message (the reply) is marked as read. If not, we mark it as read. */
+		if (!updatedThread.IsRead)
 		{
-			await emailManager.MarkEmailAsReadAsync(lastMsg.UniqueId);
+			updatedThread.IsRead = true;
 
-			/* After we sent a request to mark message as read we would like to change `Flag` property
-			 * to seen here in code as well... However that's not as simple as reassigning the variable
-			 * because `Flag` property has only getter, I didn't find any way to change it in code.
-			 * The only way I know of is to request for new (updated) one. And that's what we do here.
-			 */
-			var lastMsgIndex = updatedThread.Messages.Count - 1;
-			var lastMsgUpdated = await emailManager.GetMessageSummaryAsync(lastMsg.UniqueId);
-			updatedThread.Messages[lastMsgIndex] = lastMsgUpdated;
+			var updatedThreadLastMessage = updatedThread.Messages.Last();
+			await emailManager.MarkEmailAsReadAsync(updatedThreadLastMessage.UniqueId);
 		}
+	}
+
+	private void DeleteThread(Thread thread)
+	{
+		Threads.Remove(thread);
 	}
 }
