@@ -117,3 +117,29 @@ a, .btn-link {
 	border-radius: 25px;
 	color: darkorange;
 }
+
+.icon-btn-load[active] {
+	animation: btnLoadingAnimation 0.75s ease-in-out infinite;
+}
+
+@keyframes btnLoadingAnimation {
+	0% {
+		border-color: #FF8800 transparent transparent #FF8800;
+	}
+
+	25% {
+		border-color: #FF8800 #FF8800 transparent transparent;
+	}
+
+	50% {
+		border-color: transparent #FF8800 #FF8800 transparent;
+	}
+
+	75% {
+		border-color: transparent transparent #FF8800 #FF8800;
+	}
+
+	100% {
+		border-color: #FF8800 transparent transparent #FF8800;
+	}
+}

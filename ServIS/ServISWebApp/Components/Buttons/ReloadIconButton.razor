@@ -1,6 +1,17 @@
-﻿<button class="icon-btn" @onclick="OnClick"><i class="fas fa-redo"></i></button>
+﻿<button class="icon-btn icon-btn-load" active="@isReloading" @onclick="ReloadAsync"><i class="fas fa-redo"></i></button>
 
 @code {
+	private bool isReloading = false;
+
 	[Parameter]
 	public EventCallback OnClick { get; set; }
+
+	private async Task ReloadAsync()
+	{
+		isReloading = true;
+
+		await OnClick.InvokeAsync();
+		
+		isReloading = false;
+	}
 }
