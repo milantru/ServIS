@@ -67,6 +67,7 @@
 	white-space: normal;
 	overflow: hidden;
 	text-overflow: clip;
+	min-width: 185px;
 }
 
 .date {

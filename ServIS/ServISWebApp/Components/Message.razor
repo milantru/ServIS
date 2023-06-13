@@ -6,7 +6,7 @@ else
 {
 	<div class="message">
 		<div class="panel">
-			<span class="sender"><b>@Email.FromName</b> &lt;@Email.FromAddress&gt;</span>
+			<span class="sender"><b>@FromName</b> &lt;@FromAddress&gt;</span>
 			<span class="date">@Email.DateTime.ToString("ddd d.M.yyyy (H:mm)")</span>
 		</div>
 		<div>
@@ -27,8 +27,17 @@ else
 	[Parameter]
 	public Email Email { get; set; } = null!;
 
+	[Parameter]
+	public EmailManager EmailManager { get; set; } = null!;
+
 	private string MainMessage { get; set; } = null!;
 	private string PreviousMessages { get; set; } = null!;
+	private string FromName => Email.FromAddress == EmailManager.EmailAddress
+									? Email.ReplyToName
+									: Email.FromName;
+	private string FromAddress => Email.FromAddress == EmailManager.EmailAddress
+									? Email.ReplyToAddress
+									: Email.FromAddress;
 
 	protected override void OnParametersSet()
 	{

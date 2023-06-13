@@ -94,14 +94,16 @@ namespace ServISWebApp.BackgroundServices
 
 			var emailForAdmin = new Email
 			{
-				DateTime = dateTimeNow,
-				FromName = auctionWinnerFullname,
-				FromAddress = auctionWinner.Email,
+				FromName = emailManager.EmailName,
+				FromAddress = emailManager.EmailAddress,
 				ToName = emailManager.EmailName,
 				ToAddress = emailManager.EmailAddress,
-				Headers = new() { header },
+				ReplyToName = auctionWinnerFullname,
+				ReplyToAddress = auctionWinner.Email,
 				Subject = subject,
-				Text = message
+				Text = message,
+				Headers = new() { header },
+				DateTime = dateTimeNow
 			};
 
 			await emailManager.SendEmailAsync(emailForAdmin);

@@ -100,7 +100,7 @@ else
 		{
 			foreach (var message in thread.Messages)
 			{
-				var deleteEmailTask = EmailManager.DeleteEmailAsync(message.UniqueId);
+				var deleteEmailTask = EmailManager.DeleteEmailAsync(message.Uid);
 
 				deleteEmailTasks.Add(deleteEmailTask);
 			}
@@ -163,12 +163,12 @@ else
 			}
 			thread.IsRead = shouldMarkAsRead.Value;
 
-			var lastMessageUid = thread.Messages.Last().UniqueId;
+			var lastMessageUid = thread.Messages.Last().Uid;
 			Task markEmailAsReadOrUnreadTask;
 
 			if (shouldMarkAsRead.Value)
 			{
-				if (thread.Messages.Count > 1 && !thread.Messages[thread.Messages.Count - 2].Flags!.Value.HasFlag(MessageFlags.Seen))
+				if (thread.Messages.Count > 1 && !thread.Messages[thread.Messages.Count - 2].IsRead)
 				{
 					/* Special case...
 					 * Normally, when we only use the app, looking at and marking the last message is enough.
@@ -184,7 +184,7 @@ else
 					 * This special case needs to be solved only when we are marking as read, marking as unread doesn't
 					 * need this behavior because when we mark checked thread (message) as unread, only the last message
 					 * is marked as unread (it is sufficient, this is how the app works, and it doesn't look weird on gmail). */
-					var uids = thread.Messages.Select(m => m.UniqueId).ToList();
+					var uids = thread.Messages.Select(m => m.Uid).ToList();
 
 					var markEmailsAsReadTask = EmailManager.MarkEmailAsReadAsync(uids);
 

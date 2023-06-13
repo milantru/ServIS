@@ -9,18 +9,19 @@ else
 	<div class="thread-row @(isRead ? "seen" : "")">
 		<input type="checkbox" checked="@IsChecked" @onchange="OnCheckUncheck" />
 		<div class="cols" @onclick="OnClick">
-			<div class="from @(isRead ? "" : "bold")">@newestThreadMessage.Envelope.From.Mailboxes.First().Name</div>
+			<div class="from @(isRead ? "" : "bold")">@FromName</div>
 			<div class="preview-text">
-				<span class="subject @(isRead ? "" : "bold")">@newestThreadMessage.NormalizedSubject</span>-@newestThreadMessage.PreviewText
+				<span class="subject @(isRead ? "" : "bold")">@newestThreadMessage.Subject</span>-@newestThreadMessage.Text
 			</div>
-			<div class="date @(isRead ? "" : "bold")">@newestThreadMessage.Date.LocalDateTime.ToShortDateString()</div>
+			<div class="date @(isRead ? "" : "bold")">@shortDate</div>
 		</div>
 	</div>
 }
 
 @code {
 	private bool isRead;
-	private IMessageSummary newestThreadMessage = null!;
+	private Email newestThreadMessage = null!;
+	private string shortDate = null!;
 
 	[Parameter]
 	public Thread Thread { get; set; } = null!;
@@ -37,11 +38,18 @@ else
 	[Parameter]
 	public EventCallback OnCheckUncheck { get; set; }
 
+	private string FromName => newestThreadMessage.FromAddress == EmailManager.EmailAddress
+									? newestThreadMessage.ReplyToName
+									: newestThreadMessage.FromName;
+
 	protected override void OnParametersSet()
 	{
 		base.OnParametersSet();
 
 		isRead = Thread.IsRead;
+
 		newestThreadMessage = Thread.Messages.Last();
+
+		shortDate = newestThreadMessage.DateTime.ToLocalTime().ToShortDateString();
 	}
 }

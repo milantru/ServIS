@@ -8,15 +8,18 @@ namespace ServISWebApp.Shared
     /// </summary>
     public class Email
 	{
-        /// <summary>
-        /// Gets or sets the unique identifier of the email.
-        /// </summary>
-        /// <para>
-        /// <remarks>
-        /// Represents a unique identifier for messages in a <see cref="IMailFolder"/>.
-        /// </remarks>
-        /// </para>
-        public UniqueId Uid { get; set; }
+        private string? replyToName;
+        private string? replyToAddress;
+
+		/// <summary>
+		/// Gets or sets the unique identifier of the email.
+		/// </summary>
+		/// <para>
+		/// <remarks>
+		/// Represents a unique identifier for messages in a <see cref="IMailFolder"/>.
+		/// </remarks>
+		/// </para>
+		public UniqueId Uid { get; set; }
 
         /// <summary>
         /// Gets or sets the message ID of the email.
@@ -63,10 +66,34 @@ namespace ServISWebApp.Shared
         /// </summary>
         public string ToAddress { get; set; } = null!;
 
-        /// <summary>
-        /// Gets or sets the subject of the email.
-        /// </summary>
-        public string Subject { get; set; } = null!;
+		/// <summary>
+		/// Gets or sets the name to be used in the "Reply-To" field of the email.
+		/// </summary>
+		/// <remarks>
+		/// Unless this property is explicitly set to the non-null value, it defaults to the value of the <see cref="FromName"/> property.
+		/// </remarks>
+		public string ReplyToName
+		{
+			get => replyToName ?? FromName;
+			set => replyToName = value;
+		}
+
+		/// <summary>
+		/// Gets or sets the email address to be used in the "Reply-To" field of the email.
+		/// </summary>
+		/// <remarks>
+		/// Unless this property is explicitly set to the non-null value, it defaults to the value of the <see cref="FromAddress"/> property.
+		/// </remarks>
+		public string ReplyToAddress 
+        { 
+            get => replyToAddress ?? FromAddress; 
+            set => replyToAddress = value; 
+        }
+
+		/// <summary>
+		/// Gets or sets the subject of the email.
+		/// </summary>
+		public string Subject { get; set; } = null!;
 
         /// <summary>
         /// Gets or sets the text body of the email.

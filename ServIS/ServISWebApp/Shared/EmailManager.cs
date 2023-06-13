@@ -48,30 +48,6 @@ namespace ServISWebApp.Shared
 		}
 
         /// <summary>
-        /// Retrieves the sender name and address from the provided <paramref name="message"/>.
-        /// </summary>
-        /// <param name="message">The message.</param>
-        /// <param name="senderName">The sender name.</param>
-        /// <param name="senderAddress">The sender address.</param>
-        public void GetSender(MimeMessage message, out string senderName, out string senderAddress)
-		{
-			/* If user sent mail using this web app then his/her email address is stored
-			 * in `ReplyTo` (because for some reason even though we set it to `From`,
-			 * it is overriden). But if mail was sent from some email client (e.g. gmail),
-			 * then users email is stored in `From`. */
-			senderAddress = message.From.Mailboxes.First().Address;
-			senderName = message.From.Mailboxes.First().Name;
-			if (senderAddress == EmailAddress && message.ReplyTo.Count > 0)
-			{
-				/* sent from this web app;
-				 * second condition added for covering case when admin 
-				 * sends email directly from email client (e.g. gmail) */
-				senderAddress = message.ReplyTo.Mailboxes.First().Address;
-				senderName = message.ReplyTo.Mailboxes.First().Name;
-			}
-		}
-
-        /// <summary>
         /// Asynchronously retrieves the list of threads.
         /// </summary>
         /// <returns>A task that represents the asynchronous operation.
@@ -91,27 +67,32 @@ namespace ServISWebApp.Shared
 			foreach (var group in groups)
 			{
 				var threadId = group.Key!.Value;
-				var threadMessages = group.OrderBy(m => m.InternalDate).ToList();
-				var newestThreadMessage = threadMessages.Last();
+
+				var threadEmails = new List<Email>();
+				foreach (var msgSumm in group)
+				{
+					var email = await CreateEmailFrom(msgSumm);
+
+					threadEmails.Add(email);
+				}
+				threadEmails = threadEmails.OrderBy(e => e.DateTime).ToList();
 
 				var thread = new Thread()
 				{
 					Id = threadId,
-					IsRead = newestThreadMessage.Flags.HasValue
-						? newestThreadMessage.Flags.Value.HasFlag(MessageFlags.Seen)
-						: false,
-					Messages = threadMessages
+					IsRead = threadEmails.Last().IsRead,
+					Messages = threadEmails
 				};
 
-				if (ShouldSkip(thread))
+				var shouldSkipThread = await ShouldSkip(thread);
+				if (!shouldSkipThread)
 				{
-					continue;
+					threads.Add(thread);
 				}
-
-				threads.Add(thread);
 			}
-			threads = threads.OrderBy(t => t.Messages.Last().InternalDate).ToList();
 
+			threads = threads.OrderBy(t => t.Messages.Last().DateTime).ToList();
+			
 			await allMail.CloseAsync();
 			await imapClient.DisconnectAsync(true);
 
@@ -140,19 +121,22 @@ namespace ServISWebApp.Shared
 				var message = await allMail.GetMessageAsync(uid);
 				var emailRead = emailsReadStatuses.ElementAt(i);
 
-				GetSender(message, out string fromName, out string fromAddress);
+				var from = message.From.Mailboxes.First();
 				var to = message.To.Mailboxes.First();
-				
+				var replyTo = message.ReplyTo.Mailboxes.FirstOrDefault();
+
 				var email = new Email
 				{
 					Uid = uid,
 					MessageId = message.MessageId,
 					References = message.References,
 					Headers = message.Headers.ToList(),
-					FromName = fromName,
-					FromAddress = fromAddress,
+					FromName = from.Name,
+					FromAddress = from.Address,
 					ToName = to.Name,
 					ToAddress = to.Address,
+					ReplyToName = replyTo?.Name!,
+					ReplyToAddress = replyTo?.Address!,
 					Subject = message.Subject,
 					Text = message.TextBody,
 					IsRead = emailRead,
@@ -185,8 +169,9 @@ namespace ServISWebApp.Shared
 
 			var message = await allMail.GetMessageAsync(uniqueId);
 
-			GetSender(message, out string fromName, out string fromAddress);
+			var from = message.From.Mailboxes.First();
 			var to = message.To.Mailboxes.First();
+			var replyTo = message.ReplyTo.Mailboxes.FirstOrDefault();
 
 			var email = new Email
 			{
@@ -194,10 +179,12 @@ namespace ServISWebApp.Shared
 				MessageId = message.MessageId,
 				References = message.References,
 				Headers = message.Headers.ToList(),
-				FromName = fromName,
-				FromAddress = fromAddress,
+				FromName = from.Name,
+				FromAddress = from.Address,
 				ToName = to.Name,
 				ToAddress = to.Address,
+				ReplyToName = replyTo?.Name!,
+				ReplyToAddress = replyTo?.Address!,
 				Subject = message.Subject,
 				Text = message.TextBody,
 				IsRead = emailRead,
@@ -389,10 +376,14 @@ namespace ServISWebApp.Shared
 		/// <remarks>The <see cref="Email.Uid"/> of returned <see cref="Email"/> is not valid.</remarks>
 		/// <param name="email">The email to reply to.</param>
 		/// <param name="replyText">The text of the reply.</param>
+		/// <param name="toName">Name of the receiver. It is optional. 
+		/// If not set, the reply name from <paramref name="email"/> will be used.</param>
+		/// <param name="toAddress">Email address of the receiver. It is optional. 
+		/// If not set, the reply address from <paramref name="email"/> will be used.</param>
 		/// <returns>A task that represents the asynchronous operation. The task result contains the replied email.</returns>
-		public async Task<Email> ReplyToAsync(Email email, string replyText)
+		public async Task<Email> ReplyToAsync(Email email, string replyText, string? toName = null, string? toAddress = null)
 		{
-			var reply = PrepareReply(email, replyText);
+			var reply = PrepareReply(email, replyText, toName, toAddress);
 
 			await SendMessageAsync(reply);
 
@@ -400,10 +391,10 @@ namespace ServISWebApp.Shared
 			{
 				MessageId = reply.MessageId,
 				References = reply.References,
-				FromName = email.ToName,
-				FromAddress = email.ToAddress,
-				ToName = email.FromName,
-				ToAddress = email.FromAddress,
+				FromName = EmailName,
+				FromAddress = EmailAddress,
+				ToName = toName ?? email.ReplyToName,
+				ToAddress = toAddress ?? email.ReplyToAddress,
 				Subject = reply.Subject,
 				Text = reply.TextBody,
 				IsRead = true,
@@ -464,21 +455,66 @@ namespace ServISWebApp.Shared
 
 			await imapClient.DisconnectAsync(true);
 		}
+		
+		private async Task<Email> CreateEmailFrom(IMessageSummary messageSummary)
+		{
+			var uid = messageSummary.UniqueId;
 
-        /// <summary>
-        /// Determines whether should skip the thread. If the thread contains 
-        /// only one autogenerated message (e.g. notifying auction winner about victory (it is not meant for admin), 
-        /// then this method deletes the email and decides the thread is skippable.
-        /// </summary>
-        /// <returns><c>true</c> if thread contains only one autogenerated message 
-        /// (i.e. is not meant for admin); <c>false</c> otherwise</returns>
-        private bool ShouldSkip(Thread thread)
+			using var imapClient = await GetConnectedImapClientAsync();
+
+			var allMail = imapClient.GetFolder(SpecialFolder.All);
+			await allMail.OpenAsync(FolderAccess.ReadOnly);
+
+			var message = await allMail.GetMessageAsync(uid);
+
+			var emailRead = messageSummary.Flags.HasValue
+								? messageSummary.Flags.Value.HasFlag(MessageFlags.Seen)
+								: false;
+
+
+			var from = message.From.Mailboxes.First();
+			var to = message.To.Mailboxes.First();
+			var replyto = message.ReplyTo.Mailboxes.FirstOrDefault();
+
+			var email = new Email
+			{
+				Uid = uid,
+				MessageId = message.MessageId,
+				References = message.References,
+				Headers = message.Headers.ToList(),
+				FromName = from.Name,
+				FromAddress = from.Address,
+				ToName = to.Name,
+				ToAddress = to.Address,
+				ReplyToName = replyto?.Name!,
+				ReplyToAddress = replyto?.Address!,
+				Subject = message.Subject,
+				Text = message.TextBody,
+				IsRead = emailRead,
+				DateTime = message.Date.LocalDateTime
+			};
+
+			await allMail.CloseAsync();
+			await imapClient.DisconnectAsync(true);
+
+			return email;
+		}
+
+		/// <summary>
+		/// Determines whether should skip the thread. If the thread contains 
+		/// only one autogenerated message (e.g. notifying auction winner about victory (it is not meant for admin), 
+		/// then this method deletes the email and decides the thread is skippable.
+		/// </summary>
+		/// <returns>A task that represents the asynchronous operation. The task result contains 
+		/// <c>true</c> if the thread contains only one autogenerated message 
+		/// (i.e. is not meant for the admin); <c>false</c> otherwise</returns>
+		private async Task<bool> ShouldSkip(Thread thread)
 		{
 			var messages = thread.Messages;
 			var firstMessage = messages.First();
-			var isSentFromApp = firstMessage.Envelope.From.Mailboxes.First().Address == EmailAddress;
+			var isSentFromApp = firstMessage.FromAddress == EmailAddress;
 			// autogenerated messages are sent to the users e.g. from auction (to notify them if they won or lost)
-			var isAutogenerated = firstMessage.Headers.FirstOrDefault(h => h.Field == "X-ServIS-autogenerated")?.Value == "true";
+			var isAutogenerated = firstMessage.Headers?.FirstOrDefault(h => h.Field == "X-ServIS-autogenerated")?.Value == "true";
 
 			if (isSentFromApp && isAutogenerated && messages.Count == 1)
 			{
@@ -488,9 +524,11 @@ namespace ServISWebApp.Shared
 				 * this if was created to prevent showing this thread/message to admin. 
 				 * We also delete it so it won't take up space in gmail. 
 				 * However, if for some reason user answered this message (the message says 
-				 * it doesn't need reply, we might want to be able to see it, that's why 
-				 * the condition messages.Count == 1 is present. */
-				_ = DeleteEmailAsync(firstMessage.UniqueId);
+				 * it doesn't need reply) we might want to be able to see it, that's why 
+				 * the condition messages.Count == 1 is present (it allows to display message to admin
+				 * if user replied even though it said not to). */
+				await DeleteEmailAsync(firstMessage.Uid);
+
 				return true;
 			}
 
@@ -570,7 +608,7 @@ namespace ServISWebApp.Shared
 
 			message.From.Add(new MailboxAddress(email.FromName, email.FromAddress));
 			message.To.Add(new MailboxAddress(email.ToName, email.ToAddress));
-			message.ReplyTo.Add(new MailboxAddress(email.FromName, email.FromAddress));
+			message.ReplyTo.Add(new MailboxAddress(email.ReplyToName, email.ReplyToAddress));
 
 			email.Headers?.ForEach(header => message.Headers.Add(header));
 
@@ -580,9 +618,11 @@ namespace ServISWebApp.Shared
 			return message;
 		}
 
-		private IEnumerable<bool> _GetEmailsReadStatuses(IList<IMessageSummary> emailsSummaries)
+		private IEnumerable<bool> GetEmailsReadStatuses(IList<IMessageSummary> emailsSummaries)
 		{
-			var emailsReadStatuses = emailsSummaries.Select(es => es.Flags!.Value.HasFlag(MessageFlags.Seen)); // read or not
+			var emailsReadStatuses = emailsSummaries.Select(es => es.Flags.HasValue
+																	? es.Flags.Value.HasFlag(MessageFlags.Seen)
+																	: false);
 
 			return emailsReadStatuses;
 		}
@@ -590,7 +630,7 @@ namespace ServISWebApp.Shared
 		private async Task<IEnumerable<bool>> GetEmailsReadStatusesAsync(IMailFolder folder, IList<UniqueId> uniqueIds)
 		{
 			var emailsSummaries = await folder.FetchAsync(uniqueIds, MessageSummaryItems.Flags);
-			var emailsReadStatuses = _GetEmailsReadStatuses(emailsSummaries);
+			var emailsReadStatuses = GetEmailsReadStatuses(emailsSummaries);
 
 			return emailsReadStatuses;
 		}
@@ -598,7 +638,7 @@ namespace ServISWebApp.Shared
 		private async Task<IEnumerable<bool>> GetEmailsReadStatusesAsync(IMailFolder folder, int fromIndex, int toIndex)
 		{
 			var emailsSummaries = await folder.FetchAsync(fromIndex, toIndex, MessageSummaryItems.Flags);
-			var emailsReadStatuses = _GetEmailsReadStatuses(emailsSummaries);
+			var emailsReadStatuses = GetEmailsReadStatuses(emailsSummaries);
 
 			return emailsReadStatuses;
 		}
@@ -631,13 +671,28 @@ namespace ServISWebApp.Shared
 			return quotation;
 		}
 
-		private MimeMessage PrepareReply(Email email, string replyText)
+		/// <summary>
+		/// Creates a reply message.
+		/// </summary>
+		/// <remarks>
+		/// <paramref name="toName"/> and <paramref name="toAddress"/> can be used e.g. when we  have already replied in a thread to a user message
+		/// but then we want to reply again, but this time our message is the last one, if we  replied to this message the user wouldn't get it
+		/// but using these parameters we can explicitly specify that even though it is a reply (in a thread) we want user to get the message.
+		/// </remarks>
+		/// <param name="email">Provides info like subject, thread messages references, message id etc.</param>
+		/// <param name="replyText">Text of the reply.</param>
+		/// <param name="toName">Name of the receiver. It is optional. 
+		/// If not set, the reply name from <paramref name="email"/> will be used.</param>
+		/// <param name="toAddress">Email address of the receiver. It is optional. 
+		/// If not set, the reply address from <paramref name="email"/> will be used.</param>
+		/// <returns>Reply which is an instance of type <see cref="MimeMessage"/>.</returns>
+		private MimeMessage PrepareReply(Email email, string replyText, string? toName = null, string? toAddress = null)
 		{
 			var reply = new MimeMessage();
 
-			reply.From.Add(new MailboxAddress(email.ToName, email.ToAddress));
-			reply.To.Add(new MailboxAddress(email.FromName, email.FromAddress));
-			reply.ReplyTo.Add(new MailboxAddress(email.ToName, email.ToAddress));
+			reply.From.Add(new MailboxAddress(EmailName, EmailAddress));
+			reply.To.Add(new MailboxAddress(toName ?? email.ReplyToName, toAddress ?? email.ReplyToAddress));
+			reply.ReplyTo.Add(new MailboxAddress(EmailName, EmailAddress));
 			reply.Subject = email.Subject.StartsWith("Re:") ? email.Subject : "Re:" + email.Subject;
 			reply.InReplyTo = email.MessageId;
 			reply.References.AddRange(email.References);
@@ -650,14 +705,16 @@ namespace ServISWebApp.Shared
 
 		private string PrepareErrorMessageForFailedEmailSending(MimeMessage message)
 		{
-			GetSender(message, out _, out var fromEmail);
-
-			/* message.To.Mailboxes should always be nonempty, but FirstOrDefault is called on it
-			 * due to defensive programming, if we see in log that this place is empty, 
+			/* message.X.Mailboxes should always be nonempty, but FirstOrDefault is called on it
+			 * due to defensive programming, if we see in log that the place is empty, 
 			 * we know this is the problem. But once again... it should never happen. 
 			 * The only reason it is here instead of First is defensive programming; better  
-			 * to have some log message with empty spot than no log message at all. */
-			var errMsg = $"Failed to send email from {fromEmail} to {message.To.Mailboxes.FirstOrDefault()?.Address}.\n" +
+			 * to have some log message with an empty spot than no log message at all. */
+			var from = message.From.Mailboxes.FirstOrDefault()?.Address;
+			var to = message.To.Mailboxes.FirstOrDefault()?.Address;
+			var replyTo = message.ReplyTo.Mailboxes.FirstOrDefault()?.Address;
+
+			var errMsg = $"Failed to send email from {from} (with reply-to set to {replyTo}) to {to}.\n" +
 				"The subject was:\n" +
 				$"{message.Subject}\n" +
 				"The text was:\n" +

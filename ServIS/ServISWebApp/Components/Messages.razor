@@ -95,7 +95,7 @@
 			updatedThread.IsRead = true;
 
 			var updatedThreadLastMessage = updatedThread.Messages.Last();
-			await emailManager.MarkEmailAsReadAsync(updatedThreadLastMessage.UniqueId);
+			await emailManager.MarkEmailAsReadAsync(updatedThreadLastMessage.Uid);
 		}
 	}
 

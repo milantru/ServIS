@@ -167,10 +167,12 @@
 
 		var email = new Email
 			{
-				FromName = $"{DemandInfo.User.Name} {DemandInfo.User.Surname}",
-				FromAddress = DemandInfo.User.Email,
+				FromName = emailManager.EmailName,
+				FromAddress = emailManager.EmailAddress,
 				ToName = emailManager.EmailName,
 				ToAddress = emailManager.EmailAddress,
+				ReplyToName = $"{DemandInfo.User.Name} {DemandInfo.User.Surname}",
+				ReplyToAddress = DemandInfo.User.Email,
 				DateTime = DateTime.Now,
 				Headers = new() { header },
 				Subject = $"Dopyt: {DemandedItemName}",

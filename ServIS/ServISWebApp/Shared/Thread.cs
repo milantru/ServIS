@@ -1,6 +1,4 @@
-﻿using MailKit;
-
-namespace ServISWebApp.Shared
+﻿namespace ServISWebApp.Shared
 {
     /// <summary>
     /// Represents a thread containing a list of message summaries.
@@ -18,8 +16,8 @@ namespace ServISWebApp.Shared
 		public bool IsRead { get; set; }
 
         /// <summary>
-        /// Gets or sets the list of message summaries contained by the thread.
+        /// Gets or sets the list of emails contained by the thread.
         /// </summary>
-        public List<IMessageSummary> Messages { get; set; } = null!;
+        public List<Email> Messages { get; set; } = null!;
 	}
 }
