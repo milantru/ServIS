@@ -71,7 +71,7 @@ namespace ServISWebApp.Shared
 				var threadEmails = new List<Email>();
 				foreach (var msgSumm in group)
 				{
-					var email = await CreateEmailFrom(msgSumm);
+					var email = await CreateEmailFromAsync(msgSumm);
 
 					threadEmails.Add(email);
 				}
@@ -456,7 +456,7 @@ namespace ServISWebApp.Shared
 			await imapClient.DisconnectAsync(true);
 		}
 		
-		private async Task<Email> CreateEmailFrom(IMessageSummary messageSummary)
+		private async Task<Email> CreateEmailFromAsync(IMessageSummary messageSummary)
 		{
 			var uid = messageSummary.UniqueId;
 
