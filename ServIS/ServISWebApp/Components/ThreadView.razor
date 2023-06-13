@@ -10,8 +10,8 @@ else
 	<div>
 		<div class="top-panel">
 			<BackIconButton OnClick="OnBack" />
-			<DeleteIconButton OnClick="DeleteThreadAsync" />
-			<MarkAsReadUnreadIconButton OnClick="MarkAsUnreadAsync" />
+			<DeleteIconButton IsDisabled="@IsReplyInProgress" OnClick="DeleteThreadAsync" />
+			<MarkAsReadUnreadIconButton IsDisabled="@IsReplyInProgress" OnClick="MarkAsUnreadAsync" />
 
 			<span class="subject">@Thread.Messages.Last().Subject</span>
 		</div>

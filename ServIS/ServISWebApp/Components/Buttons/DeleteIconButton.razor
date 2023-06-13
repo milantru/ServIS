@@ -1,6 +1,9 @@
-﻿<button class="icon-btn" @onclick="OnClick"><i class="fas fa-trash-alt"></i></button>
+﻿<button class="icon-btn" disabled="@IsDisabled" @onclick="OnClick"><i class="fas fa-trash-alt"></i></button>
 
 @code {
+	[Parameter]
+	public bool IsDisabled { get; set; }
+
 	[Parameter]
 	public EventCallback OnClick { get; set; }
 }

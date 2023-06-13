@@ -1,10 +1,13 @@
 ﻿@* style attr is here because in this icons case it seemed to me that icon inside button is a bit off
 I wanted to center/move it, but creating a new css file just for this felt like too much *@
-<button class="icon-btn" @onclick="OnClick">
+<button class="icon-btn" disabled="@IsDisabled" @onclick="OnClick">
 		<i class="far fa-envelope@(ShowOpenEnvelopeIcon ? "-open" : "")" style="padding-left: 1px;"></i>
 </button>
 
 @code {
+	[Parameter]
+	public bool IsDisabled { get; set; }
+
 	[Parameter]
 	public bool ShowOpenEnvelopeIcon { get; set; }
 
