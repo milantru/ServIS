@@ -36,6 +36,13 @@ namespace ServISWebApp.BackgroundServices
 			RegisterEventHandler();
 		}
 
+		public override void Dispose()
+		{
+			base.Dispose();
+
+			emailManager.Dispose();
+		}
+
 		protected override Func<Task>? GetEventHandlers() => updateEvent;
 
 		private async Task NotifyAdminAuctionEndedWithoutWinnerAsync(DateTime dateTimeNow, AuctionOffer ao)

@@ -10,8 +10,15 @@ namespace ServISWebApp.Shared
     /// <summary>
     /// Provides functionality for managing and processing emails.
     /// </summary>
-    public class EmailManager
+    public class EmailManager : IDisposable
 	{
+		/* We use semaphore to limit IMAP connections to 15 at the same time because Gmail limits it to 15,
+		 * see: https://github.com/jstedfast/MailKit/issues/377 
+		 * or: https://support.google.com/mail/answer/7126229?hl=en&visit_id=638223334600390557-661682674&rd=1#zippy=%2Ctoo-many-simultaneous-connections-error 
+		 * Even though I don't see docs mentioning there SMTP connection limitations, we limit it also using this semaphore
+		 * because of defensive programming, it shouldn't make much of a performance difference as we don't expect the user
+		 * to be sending a lot of emails very quickly. */
+		private readonly Semaphore semaphore = new(initialCount: 15, maximumCount: 15);
 		private readonly ILogger<EmailManager> logger;
 		private readonly string emailPassword;
 		private readonly MessageSummaryItems defaultMessageSummaryItems = MessageSummaryItems.UniqueId |
@@ -54,47 +61,59 @@ namespace ServISWebApp.Shared
         /// The task result contains the list of threads.</returns>
         public async Task<List<Thread>> GetThreadsAsync()
 		{
-			using var imapClient = await GetConnectedImapClientAsync();
+			semaphore.WaitOne();
+			IList<IMessageSummary> gmailMessages;
+			using (var imapClient = await GetConnectedImapClientAsync())
+			{
+				var allMail = imapClient.GetFolder(SpecialFolder.All);
+				await allMail.OpenAsync(FolderAccess.ReadOnly);
 
-			var allMail = imapClient.GetFolder(SpecialFolder.All);
-			await allMail.OpenAsync(FolderAccess.ReadOnly);
+				gmailMessages = await allMail.FetchAsync(0, -1, defaultMessageSummaryItems);
 
-			var gmailMessages = await allMail.FetchAsync(0, -1, defaultMessageSummaryItems);
+				await allMail.CloseAsync();
+				await imapClient.DisconnectAsync(true);
+			}
+			semaphore.Release();
 
 			var groups = gmailMessages.GroupBy(g => g.GMailThreadId);
 
 			var threads = new List<Thread>();
+			var tasks = new List<Task>();
 			foreach (var group in groups)
 			{
-				var threadId = group.Key!.Value;
-
-				var threadEmails = new List<Email>();
-				foreach (var msgSumm in group)
+				var task = Task.Run(async () =>
 				{
-					var email = await CreateEmailFromAsync(msgSumm);
+					var threadId = group.Key!.Value;
 
-					threadEmails.Add(email);
-				}
-				threadEmails = threadEmails.OrderBy(e => e.DateTime).ToList();
+					var threadEmailsTasks = new List<Task<Email>>();
+					foreach (var msgSumm in group)
+					{
+						var emailTask = CreateEmailFromAsync(msgSumm);
 
-				var thread = new Thread()
-				{
-					Id = threadId,
-					IsRead = threadEmails.Last().IsRead,
-					Messages = threadEmails
-				};
+						threadEmailsTasks.Add(emailTask);
+					}
+					var threadEmails = (await Task.WhenAll(threadEmailsTasks)).OrderBy(e => e.DateTime).ToList();
 
-				var shouldSkipThread = await ShouldSkipAsync(thread);
-				if (!shouldSkipThread)
-				{
-					threads.Add(thread);
-				}
+					var thread = new Thread()
+					{
+						Id = threadId,
+						IsRead = threadEmails.Last().IsRead,
+						Messages = threadEmails
+					};
+
+					var shouldSkipThread = await ShouldSkipAsync(thread);
+					if (!shouldSkipThread)
+					{
+						threads.Add(thread);
+					}
+				});
+
+				tasks.Add(task);
 			}
 
+			await Task.WhenAll(tasks);
+
 			threads = threads.OrderBy(t => t.Messages.Last().DateTime).ToList();
-			
-			await allMail.CloseAsync();
-			await imapClient.DisconnectAsync(true);
 
 			return threads;
 		}
@@ -107,6 +126,7 @@ namespace ServISWebApp.Shared
         /// The task result contains the list of emails associated with the provided unique identifiers.</returns>
         public async Task<List<Email>> GetEmailsAsync(IList<UniqueId> uniqueIds)
 		{
+			semaphore.WaitOne();
 			using var imapClient = await GetConnectedImapClientAsync();
 
 			var allMail = imapClient.GetFolder(SpecialFolder.All);
@@ -148,6 +168,7 @@ namespace ServISWebApp.Shared
 
 			await allMail.CloseAsync();
 			await imapClient.DisconnectAsync(true);
+			semaphore.Release();
 
 			return emails;
 		}
@@ -160,6 +181,7 @@ namespace ServISWebApp.Shared
         /// The task result contains the retrieved email associated with the provided unique identifier.</returns>
         public async Task<Email> GetEmailAsync(UniqueId uniqueId)
 		{
+			semaphore.WaitOne();
 			using var imapClient = await GetConnectedImapClientAsync();
 
 			var allMail = imapClient.GetFolder(SpecialFolder.All);
@@ -168,6 +190,10 @@ namespace ServISWebApp.Shared
 			var emailRead = (await GetEmailsReadStatusesAsync(allMail, new List<UniqueId> { uniqueId })).First();
 
 			var message = await allMail.GetMessageAsync(uniqueId);
+
+			await allMail.CloseAsync();
+			await imapClient.DisconnectAsync(true);
+			semaphore.Release();
 
 			var from = message.From.Mailboxes.First();
 			var to = message.To.Mailboxes.First();
@@ -191,9 +217,6 @@ namespace ServISWebApp.Shared
 				DateTime = message.Date.LocalDateTime
 			};
 
-			await allMail.CloseAsync();
-			await imapClient.DisconnectAsync(true);
-
 			return email;
 		}
 
@@ -207,6 +230,7 @@ namespace ServISWebApp.Shared
         /// The task result contains the list of message summaries associated with the provided unique identifiers.</returns>
         public async Task<IList<IMessageSummary>> GetMessageSummariesAsync(IList<UniqueId> uniqueIds, MessageSummaryItems? items = null)
 		{
+			semaphore.WaitOne();
 			using var imapClient = await GetConnectedImapClientAsync();
 
 			var allMail = imapClient.GetFolder(SpecialFolder.All);
@@ -216,6 +240,7 @@ namespace ServISWebApp.Shared
 
 			await allMail.CloseAsync();
 			await imapClient.DisconnectAsync(true);
+			semaphore.Release();
 
 			return messageSummaries;
 		}
@@ -243,6 +268,7 @@ namespace ServISWebApp.Shared
         /// <returns>A task that represents the asynchronous operation.</returns>
         public async Task MarkEmailAsReadAsync(UniqueId uniqueId)
 		{
+			semaphore.WaitOne();
 			using var imapClient = await GetConnectedImapClientAsync();
 
 			var allMail = imapClient.GetFolder(SpecialFolder.All);
@@ -252,6 +278,7 @@ namespace ServISWebApp.Shared
 
 			await allMail.CloseAsync();
 			await imapClient.DisconnectAsync(true);
+			semaphore.Release();
 		}
 
         /// <summary>
@@ -261,6 +288,7 @@ namespace ServISWebApp.Shared
         /// <returns>A task that represents the asynchronous operation.</returns>
         public async Task MarkEmailAsReadAsync(IList<UniqueId> uniqueIds)
 		{
+			semaphore.WaitOne();
 			using var imapClient = await GetConnectedImapClientAsync();
 
 			var allMail = imapClient.GetFolder(SpecialFolder.All);
@@ -270,6 +298,7 @@ namespace ServISWebApp.Shared
 
 			await allMail.CloseAsync();
 			await imapClient.DisconnectAsync(true);
+			semaphore.Release();
 		}
 
         /// <summary>
@@ -304,6 +333,7 @@ namespace ServISWebApp.Shared
         /// <returns>A task that represents the asynchronous operation.</returns>
         public async Task MarkEmailAsUnreadAsync(UniqueId uniqueId)
 		{
+			semaphore.WaitOne();
 			using var imapClient = await GetConnectedImapClientAsync();
 
 			var allMail = imapClient.GetFolder(SpecialFolder.All);
@@ -313,6 +343,7 @@ namespace ServISWebApp.Shared
 
 			await allMail.CloseAsync();
 			await imapClient.DisconnectAsync(true);
+			semaphore.Release();
 		}
 
         /// <summary>
@@ -322,6 +353,7 @@ namespace ServISWebApp.Shared
         /// <returns>A task that represents the asynchronous operation.</returns>
         public async Task MarkEmailAsUnreadAsync(IList<UniqueId> uniqueIds)
 		{
+			semaphore.WaitOne();
 			using var imapClient = await GetConnectedImapClientAsync();
 
 			var allMail = imapClient.GetFolder(SpecialFolder.All);
@@ -331,6 +363,7 @@ namespace ServISWebApp.Shared
 
 			await allMail.CloseAsync();
 			await imapClient.DisconnectAsync(true);
+			semaphore.Release();
 		}
 
         /// <summary>
@@ -411,6 +444,7 @@ namespace ServISWebApp.Shared
         /// <returns>A task that represents the asynchronous operation.</returns>
         public async Task DeleteEmailAsync(UniqueId uniqueId)
 		{
+			semaphore.WaitOne();
 			using var imapClient = await GetConnectedImapClientAsync();
 
 			var trash = imapClient.GetFolder(SpecialFolder.Trash);
@@ -428,6 +462,7 @@ namespace ServISWebApp.Shared
 			}
 
 			await imapClient.DisconnectAsync(true);
+			semaphore.Release();
 		}
 
         /// <summary>
@@ -437,6 +472,7 @@ namespace ServISWebApp.Shared
         /// <returns>A task that represents the asynchronous operation.</returns>
         public async Task DeleteEmailAsync(IList<UniqueId> uniqueIds)
 		{
+			semaphore.WaitOne();
 			using var imapClient = await GetConnectedImapClientAsync();
 
 			var trash = imapClient.GetFolder(SpecialFolder.Trash);
@@ -454,18 +490,29 @@ namespace ServISWebApp.Shared
 			}
 
 			await imapClient.DisconnectAsync(true);
+			semaphore.Release();
 		}
-		
+
+		public void Dispose()
+		{
+			semaphore.Dispose();
+		}
+
 		private async Task<Email> CreateEmailFromAsync(IMessageSummary messageSummary)
 		{
 			var uid = messageSummary.UniqueId;
 
+			semaphore.WaitOne();
 			using var imapClient = await GetConnectedImapClientAsync();
 
 			var allMail = imapClient.GetFolder(SpecialFolder.All);
 			await allMail.OpenAsync(FolderAccess.ReadOnly);
 
 			var message = await allMail.GetMessageAsync(uid);
+
+			await allMail.CloseAsync();
+			await imapClient.DisconnectAsync(true);
+			semaphore.Release();
 
 			var emailRead = messageSummary.Flags.HasValue
 								? messageSummary.Flags.Value.HasFlag(MessageFlags.Seen)
@@ -493,9 +540,6 @@ namespace ServISWebApp.Shared
 				IsRead = emailRead,
 				DateTime = message.Date.LocalDateTime
 			};
-
-			await allMail.CloseAsync();
-			await imapClient.DisconnectAsync(true);
 
 			return email;
 		}
@@ -735,6 +779,7 @@ namespace ServISWebApp.Shared
 
 		private async Task SendMessageAsync(MimeMessage message)
 		{
+			semaphore.WaitOne();
 			using var smtpClient = await GetConnectedSmtpClientAsync();
 
 			try
@@ -749,6 +794,7 @@ namespace ServISWebApp.Shared
 			}
 
 			await smtpClient.DisconnectAsync(true);
+			semaphore.Release();
 		}
 	}
 }
