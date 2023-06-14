@@ -116,7 +116,7 @@ else
 
 		var firstEmail = Thread.Messages.First();
 		var lastEmail = Thread.Messages.Last();
-		
+
 		// we use dummyReplyEmail for display to the user so he sees that something has happened immediately
 		// (and doesn't have to wait until sending the reply is awaited)
 		var dummyReplyEmail = new Email
@@ -190,11 +190,7 @@ else
 
 	private async Task MarkThreadAsReadAsync()
 	{
-		var uids = Thread.Messages
-					.Select(msgSumm => msgSumm.Uid)
-					.ToList();
-
-		var markEmailsAsReadTask = EmailManager.MarkEmailAsReadAsync(uids);
+		var markEmailsAsReadTask = EmailManager.MarkEmailAsReadAsync(Thread.Messages);
 
 		Thread.IsRead = true;
 		await ThreadChanged.InvokeAsync(Thread);

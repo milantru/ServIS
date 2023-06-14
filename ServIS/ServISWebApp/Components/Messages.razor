@@ -66,17 +66,17 @@
 
 	private async Task LoadThreadsAsync()
 	{
-		Threads = await emailManager.GetThreadsAsync();
+		Threads = await emailManager.UpdateThreadsAsync(Threads ?? new());
 
 		if (CurrentlyChosenThread is not null)
 		{
 			/* If we are (re)loading threads and currently have some thread chosen,
-			 * we want to find its newer version and "update" it (replace old for the newer version).
-			 * That's the reason for this if.
-			 * Additionaly, here is used `FirstOrDefault` and not just `First` because there might
-			 * be (temporary) moment when currently chosen thread does NOT exist (i.e. when we are deleting it,
-			 * in this situation it is ok to return null (default) because after deletion we would set
-			 * CurrentlyChosenThread to null anyway). */
+				* we want to find its newer version and "update" it (replace old for the newer version).
+				* That's the reason for this if.
+				* Additionaly, here is used `FirstOrDefault` and not just `First` because there might
+				* be (temporary) moment when currently chosen thread does NOT exist (i.e. when we are deleting it,
+				* in this situation it is ok to return null (default) because after deletion we would set
+				* CurrentlyChosenThread to null anyway). */
 			CurrentlyChosenThread = Threads.FirstOrDefault(t => t.Id == CurrentlyChosenThread.Id);
 		}
 	}
@@ -92,10 +92,13 @@
 		 * the newest message (the reply) is marked as read. If not, we mark it as read. */
 		if (!updatedThread.IsRead)
 		{
+			var updatedThreadLastMessage = updatedThread.Messages.Last();
+
+			var markMessageAsReadTask = emailManager.MarkEmailAsReadAsync(updatedThreadLastMessage);
+
 			updatedThread.IsRead = true;
 
-			var updatedThreadLastMessage = updatedThread.Messages.Last();
-			await emailManager.MarkEmailAsReadAsync(updatedThreadLastMessage.Uid);
+			await markMessageAsReadTask;
 		}
 	}
 

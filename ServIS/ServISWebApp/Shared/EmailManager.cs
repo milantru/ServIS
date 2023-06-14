@@ -4,6 +4,7 @@ using MimeKit;
 using Syncfusion.Blazor.Data;
 using MailKit.Security;
 using SmtpClient = MailKit.Net.Smtp.SmtpClient;
+using System.Collections.Concurrent;
 
 namespace ServISWebApp.Shared
 {
@@ -21,13 +22,13 @@ namespace ServISWebApp.Shared
 		private readonly Semaphore semaphore = new(initialCount: 15, maximumCount: 15);
 		private readonly ILogger<EmailManager> logger;
 		private readonly string emailPassword;
-		private readonly MessageSummaryItems defaultMessageSummaryItems = MessageSummaryItems.UniqueId |
-															MessageSummaryItems.GMailThreadId |
-															MessageSummaryItems.PreviewText |
-															MessageSummaryItems.InternalDate |
-															MessageSummaryItems.Flags |
-															MessageSummaryItems.Envelope |
-															MessageSummaryItems.Headers;
+		private readonly MessageSummaryItems defaultMessageSummaryItems = MessageSummaryItems.UniqueId
+															| MessageSummaryItems.GMailThreadId
+															| MessageSummaryItems.PreviewText
+															| MessageSummaryItems.InternalDate
+															| MessageSummaryItems.Flags
+															| MessageSummaryItems.Envelope
+															| MessageSummaryItems.Headers;
 
         /// <summary>
         /// Represents the email name used when sending messages.
@@ -54,77 +55,58 @@ namespace ServISWebApp.Shared
 			this.logger = logger;
 		}
 
-        /// <summary>
-        /// Asynchronously retrieves the list of threads.
-        /// </summary>
-        /// <returns>A task that represents the asynchronous operation.
-        /// The task result contains the list of threads.</returns>
-        public async Task<List<Thread>> GetThreadsAsync()
+		/// <summary>
+		/// Updates a list of threads asynchronously by retrieving email messages from an IMAP client.
+		/// </summary>
+		/// <param name="threads">The list of threads to update.</param>
+		/// <returns>The updated list of threads.</returns>
+		public async Task<List<Thread>> UpdateThreadsAsync(List<Thread> threads)
 		{
-			semaphore.WaitOne();
-			IList<IMessageSummary> gmailMessages;
-			using (var imapClient = await GetConnectedImapClientAsync())
+			var threadGroups = await GetMessageSummariesPerThreadAsync();
+
+			var loadThreadTasks = new List<Task>();
+
+			foreach (var threadGroup in threadGroups)
 			{
-				var allMail = imapClient.GetFolder(SpecialFolder.All);
-				await allMail.OpenAsync(FolderAccess.ReadOnly);
-
-				gmailMessages = await allMail.FetchAsync(0, -1, defaultMessageSummaryItems);
-
-				await allMail.CloseAsync();
-				await imapClient.DisconnectAsync(true);
-			}
-			semaphore.Release();
-
-			var groups = gmailMessages.GroupBy(g => g.GMailThreadId);
-
-			var threads = new List<Thread>();
-			var tasks = new List<Task>();
-			foreach (var group in groups)
-			{
-				var task = Task.Run(async () =>
+				var loadThreadTask = Task.Run(async () =>
 				{
-					var threadId = group.Key!.Value;
+					var threadId = threadGroup.Key!.Value;
 
-					var threadEmailsTasks = new List<Task<Email>>();
-					foreach (var msgSumm in group)
-					{
-						var emailTask = CreateEmailFromAsync(msgSumm);
+					var thread = threads.FirstOrDefault(t => t.Id == threadId);
 
-						threadEmailsTasks.Add(emailTask);
+					if (thread is not null)
+					{// existing thread
+						await UpdateThreadAsync(thread, threadGroup);
 					}
-					var threadEmails = (await Task.WhenAll(threadEmailsTasks)).OrderBy(e => e.DateTime).ToList();
+					else
+					{// new thread
+						var newThread = await CreateThreadAsync(threadId, threadGroup);
 
-					var thread = new Thread()
-					{
-						Id = threadId,
-						IsRead = threadEmails.Last().IsRead,
-						Messages = threadEmails
-					};
-
-					var shouldSkipThread = await ShouldSkipAsync(thread);
-					if (!shouldSkipThread)
-					{
-						threads.Add(thread);
+						var shouldSkipThread = await ShouldSkipAsync(newThread);
+						if (!shouldSkipThread)
+						{
+							threads.Add(newThread);
+						}
 					}
 				});
 
-				tasks.Add(task);
+				loadThreadTasks.Add(loadThreadTask);
 			}
 
-			await Task.WhenAll(tasks);
+			await Task.WhenAll(loadThreadTasks);
 
 			threads = threads.OrderBy(t => t.Messages.Last().DateTime).ToList();
 
 			return threads;
 		}
 
-        /// <summary>
-        /// Asynchronously retrieves the list of emails associated with the <paramref name="uniqueIds"/>.
-        /// </summary>
-        /// <param name="uniqueIds">The unique identifiers of the emails.</param>
-        /// <returns>A task that represents the asynchronous operation.
-        /// The task result contains the list of emails associated with the provided unique identifiers.</returns>
-        public async Task<List<Email>> GetEmailsAsync(IList<UniqueId> uniqueIds)
+		/// <summary>
+		/// Asynchronously retrieves the list of emails associated with the <paramref name="uniqueIds"/>.
+		/// </summary>
+		/// <param name="uniqueIds">The unique identifiers of the emails.</param>
+		/// <returns>A task that represents the asynchronous operation.
+		/// The task result contains the list of emails associated with the provided unique identifiers.</returns>
+		public async Task<List<Email>> GetEmailsAsync(IList<UniqueId> uniqueIds)
 		{
 			semaphore.WaitOne();
 			using var imapClient = await GetConnectedImapClientAsync();
@@ -321,6 +303,7 @@ namespace ServISWebApp.Shared
         public async Task MarkEmailAsReadAsync(List<Email> emails)
 		{
 			var uids = emails.Select(e => e.Uid).ToList();
+
 			await MarkEmailAsReadAsync(uids);
 
 			emails.ForEach(e => e.IsRead = true);
@@ -386,6 +369,7 @@ namespace ServISWebApp.Shared
         public async Task MarkEmailAsUnreadAsync(List<Email> emails)
 		{
 			var uids = emails.Select(e => e.Uid).ToList();
+
 			await MarkEmailAsUnreadAsync(uids);
 
 			emails.ForEach(e => e.IsRead = false);
@@ -496,52 +480,6 @@ namespace ServISWebApp.Shared
 		public void Dispose()
 		{
 			semaphore.Dispose();
-		}
-
-		private async Task<Email> CreateEmailFromAsync(IMessageSummary messageSummary)
-		{
-			var uid = messageSummary.UniqueId;
-
-			semaphore.WaitOne();
-			using var imapClient = await GetConnectedImapClientAsync();
-
-			var allMail = imapClient.GetFolder(SpecialFolder.All);
-			await allMail.OpenAsync(FolderAccess.ReadOnly);
-
-			var message = await allMail.GetMessageAsync(uid);
-
-			await allMail.CloseAsync();
-			await imapClient.DisconnectAsync(true);
-			semaphore.Release();
-
-			var emailRead = messageSummary.Flags.HasValue
-								? messageSummary.Flags.Value.HasFlag(MessageFlags.Seen)
-								: false;
-
-
-			var from = message.From.Mailboxes.First();
-			var to = message.To.Mailboxes.First();
-			var replyto = message.ReplyTo.Mailboxes.FirstOrDefault();
-
-			var email = new Email
-			{
-				Uid = uid,
-				MessageId = message.MessageId,
-				References = message.References,
-				Headers = message.Headers.ToList(),
-				FromName = from.Name,
-				FromAddress = from.Address,
-				ToName = to.Name,
-				ToAddress = to.Address,
-				ReplyToName = replyto?.Name!,
-				ReplyToAddress = replyto?.Address!,
-				Subject = message.Subject,
-				Text = message.TextBody,
-				IsRead = emailRead,
-				DateTime = message.Date.LocalDateTime
-			};
-
-			return email;
 		}
 
 		/// <summary>
@@ -795,6 +733,180 @@ namespace ServISWebApp.Shared
 
 			await smtpClient.DisconnectAsync(true);
 			semaphore.Release();
+		}
+
+		private async Task<Email> CreateEmailFromAsync(IMessageSummary messageSummary)
+		{
+			var uid = messageSummary.UniqueId;
+
+			semaphore.WaitOne();
+			using var imapClient = await GetConnectedImapClientAsync();
+
+			var allMail = imapClient.GetFolder(SpecialFolder.All);
+			await allMail.OpenAsync(FolderAccess.ReadOnly);
+
+			var message = await allMail.GetMessageAsync(uid);
+
+			await allMail.CloseAsync();
+			await imapClient.DisconnectAsync(true);
+			semaphore.Release();
+
+			var emailRead = messageSummary.Flags.HasValue
+								? messageSummary.Flags.Value.HasFlag(MessageFlags.Seen)
+								: false;
+
+
+			var from = message.From.Mailboxes.First();
+			var to = message.To.Mailboxes.First();
+			var replyto = message.ReplyTo.Mailboxes.FirstOrDefault();
+
+			var email = new Email
+			{
+				Uid = uid,
+				MessageId = message.MessageId,
+				References = message.References,
+				Headers = message.Headers.ToList(),
+				FromName = from.Name,
+				FromAddress = from.Address,
+				ToName = to.Name,
+				ToAddress = to.Address,
+				ReplyToName = replyto?.Name!,
+				ReplyToAddress = replyto?.Address!,
+				Subject = message.Subject,
+				Text = message.TextBody,
+				IsRead = emailRead,
+				DateTime = message.Date.LocalDateTime
+			};
+
+			return email;
+		}
+
+		private async Task<IEnumerable<IGrouping<ulong?, IMessageSummary>>> GetMessageSummariesPerThreadAsync()
+		{
+			semaphore.WaitOne();
+			using var imapClient = await GetConnectedImapClientAsync();
+
+			var allMail = imapClient.GetFolder(SpecialFolder.All);
+			await allMail.OpenAsync(FolderAccess.ReadOnly);
+
+			var gmailMessages = await allMail.FetchAsync(0, -1, defaultMessageSummaryItems);
+
+			await allMail.CloseAsync();
+			await imapClient.DisconnectAsync(true);
+			semaphore.Release();
+
+			var groups = gmailMessages.GroupBy(g => g.GMailThreadId);
+
+			return groups;
+		}
+
+		private void StartUpdatingExistingThreadEmails(
+			Thread thread,
+			int minCount,
+			IOrderedEnumerable<IMessageSummary> messageSummaries,
+			List<Task> updateThreadTasks
+		)
+		{
+			for (int i = 0; i < minCount; i++)
+			{
+				var iCopy = i;
+
+				var updateThreadMessageTask = Task.Run(async () =>
+				{
+					var email = thread.Messages.ElementAt(iCopy);
+					if (email.Uid.IsValid)
+					{
+						return;
+					}
+
+					var msgSumm = messageSummaries.ElementAt(iCopy);
+
+					// now will have thread message valid uid
+					thread.Messages[iCopy] = await CreateEmailFromAsync(msgSumm);
+				});
+
+				updateThreadTasks.Add(updateThreadMessageTask);
+			}
+		}
+
+		private ConcurrentBag<Email> StartGettingNewThreadEmails(
+			int minCount,
+			int maxCount,
+			IOrderedEnumerable<IMessageSummary> messageSummaries,
+			List<Task> updateThreadTasks
+		)
+		{
+			var newEmails = new ConcurrentBag<Email>();
+
+			for (int i = minCount; i < maxCount; i++)
+			{
+				var iCopy = i;
+
+				var addNewMessageToThreadTask = Task.Run(async () =>
+				{
+					var messageSummary = messageSummaries.ElementAt(iCopy);
+
+					var newEmail = await CreateEmailFromAsync(messageSummary);
+
+					newEmails.Add(newEmail);
+				});
+
+				updateThreadTasks.Add(addNewMessageToThreadTask);
+			}
+
+			return newEmails;
+		}
+
+		private async Task UpdateThreadMessagesAsync(Thread thread, IGrouping<ulong?, IMessageSummary> threadGroup)
+		{
+			var oldMessagesCount = thread.Messages.Count;
+			var newMessagesCount = threadGroup.Count();
+
+			var minCount = Math.Min(oldMessagesCount, newMessagesCount);
+			var maxCount = Math.Max(oldMessagesCount, newMessagesCount);
+
+			var messageSummaries = threadGroup.OrderBy(msgSumm => msgSumm.Date);
+
+			var updateThreadTasks = new List<Task>(maxCount);
+
+			StartUpdatingExistingThreadEmails(thread, minCount, messageSummaries, updateThreadTasks);
+
+			// when getting new thread emails finishes the new emails will be available in the variable
+			var newEmails = StartGettingNewThreadEmails(minCount, maxCount, messageSummaries, updateThreadTasks);
+
+			await Task.WhenAll(updateThreadTasks);
+
+			var orderedNewEmails = newEmails.OrderBy(m => m.DateTime);
+
+			thread.Messages.AddRange(orderedNewEmails);
+		}
+
+		private async Task UpdateThreadAsync(Thread thread, IGrouping<ulong?, IMessageSummary> threadGroup)
+		{
+			await UpdateThreadMessagesAsync(thread, threadGroup);
+
+			thread.IsRead = thread.Messages.Last().IsRead;
+		}
+
+		private async Task<Thread> CreateThreadAsync(ulong threadId, IGrouping<ulong?, IMessageSummary> threadGroup)
+		{
+			var newThreadEmailsTasks = new List<Task<Email>>();
+			foreach (var msgSumm in threadGroup)
+			{
+				var emailTask = CreateEmailFromAsync(msgSumm);
+
+				newThreadEmailsTasks.Add(emailTask);
+			}
+			var newThreadEmails = (await Task.WhenAll(newThreadEmailsTasks)).OrderBy(e => e.DateTime).ToList();
+
+			var newThread = new Thread
+			{
+				Id = threadId,
+				IsRead = newThreadEmails.Last().IsRead,
+				Messages = newThreadEmails
+			};
+
+			return newThread;
 		}
 	}
 }

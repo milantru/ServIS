@@ -161,13 +161,13 @@ else
 			if (shouldMarkAsRead.Value == thread.IsRead)
 			{
 				/* If we want to mark message as read and it is already read, 
-					* then why bother sending request for marking it as read 
-					* (the same goes for unread). */
+				 * then why bother sending request for marking it as read 
+				 * (the same goes for unread). */
 				continue;
 			}
 			thread.IsRead = shouldMarkAsRead.Value;
 
-			var lastMessageUid = thread.Messages.Last().Uid;
+			var lastEmail = thread.Messages.Last();
 			Task markEmailAsReadOrUnreadTask;
 
 			if (shouldMarkAsRead.Value)
@@ -175,32 +175,30 @@ else
 				if (thread.Messages.Count > 1 && !thread.Messages[thread.Messages.Count - 2].IsRead)
 				{
 					/* Special case...
-						* Normally, when we only use the app, looking at and marking the last message is enough.
-						* But imagine situation... There are multiple emails in the same thread
-						* that are unread. In the app we check the thread and mark it as read. In the app everything
-						* should look fine. However, IF we decide to look at gmail we might see something weird.
-						* The last message in the thread is read but the previous ones (of the same thread) are unread.
-						* And this behavior is not desired. Thus, this special case if statement was made...
-						* If the last message of the thread should be marked as read and the previous (the penultimate) one
-						* is already read then only the last one needs to be marked, but if it is NOT read then we
-						* mark every message in the thread as read.
-						*
-						* This special case needs to be solved only when we are marking as read, marking as unread doesn't
-						* need this behavior because when we mark checked thread (message) as unread, only the last message
-						* is marked as unread (it is sufficient, this is how the app works, and it doesn't look weird on gmail). */
-					var uids = thread.Messages.Select(m => m.Uid).ToList();
-
-					var markEmailsAsReadTask = EmailManager.MarkEmailAsReadAsync(uids);
+					 * Normally, when we only use the app, looking at and marking the last message is enough.
+					 * But imagine situation... There are multiple emails in the same thread
+					 * that are unread. In the app we check the thread and mark it as read. In the app everything
+					 * should look fine. However, IF we decide to look at gmail we might see something weird.
+					 * The last message in the thread is read but the previous ones (of the same thread) are unread.
+					 * And this behavior is not desired. Thus, this special case if statement was made...
+					 * If the last message of the thread should be marked as read and the previous (the penultimate) one
+					 * is already read then only the last one needs to be marked, but if it is NOT read then we
+					 * mark every message in the thread as read.
+					 *
+					 * This special case needs to be solved only when we are marking as read, marking as unread doesn't
+					 * need this behavior because when we mark checked thread (message) as unread, only the last message
+					 * is marked as unread (it is sufficient, this is how the app works, and it doesn't look weird on gmail). */
+					var markEmailsAsReadTask = EmailManager.MarkEmailAsReadAsync(thread.Messages);
 
 					markEmailAsReadOrUnreadTasks.Add(markEmailsAsReadTask);
 					continue;
 				}
 
-				markEmailAsReadOrUnreadTask = EmailManager.MarkEmailAsReadAsync(lastMessageUid);
+				markEmailAsReadOrUnreadTask = EmailManager.MarkEmailAsReadAsync(lastEmail);
 			}
 			else
 			{
-				markEmailAsReadOrUnreadTask = EmailManager.MarkEmailAsUnreadAsync(lastMessageUid);
+				markEmailAsReadOrUnreadTask = EmailManager.MarkEmailAsUnreadAsync(lastEmail);
 			}
 
 			markEmailAsReadOrUnreadTasks.Add(markEmailAsReadOrUnreadTask);
