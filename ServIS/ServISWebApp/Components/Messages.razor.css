@@ -11,3 +11,11 @@
 	right: 8px;
 	top: 8px;
 }
+
+.paging-panel {
+	margin-top: 8px;
+}
+
+	.paging-panel * {
+		margin: 0 4px;
+	}

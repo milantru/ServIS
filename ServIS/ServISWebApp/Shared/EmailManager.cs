@@ -56,13 +56,90 @@ namespace ServISWebApp.Shared
 		}
 
 		/// <summary>
-		/// Updates a list of threads asynchronously by retrieving email messages from an IMAP client.
+		/// Retrieves a list of threads asynchronously based on the specified page number and the number of items per page.
+		/// </summary>
+		/// <remarks>
+		/// This method should be used for the initial loading of threads on page <paramref name="pageNumber"/>.
+		/// If it is required to update the threads object returned by this method, the <see cref="UpdateThreadsAsync(List{Thread}, int, int)"/>
+		/// should be used.
+		/// </remarks>
+		/// <param name="pageNumber">The page number.</param>
+		/// <param name="pageItemsCount">The number of threads that should be displayed per page.</param>
+		/// <returns>
+		/// A task that represents the asynchronous operation.
+		/// The task result contains a tuple containing the list of retrieved threads 
+		/// and the total count of ALL existing threads (not just the ones returned for the page <paramref name="pageNumber"/>).
+		/// </returns>
+		public async Task<(List<Thread>, int)> GetThreadsAsync(int pageNumber, int pageItemsCount)
+		{
+			var skip = (pageNumber - 1) * pageItemsCount;
+			var take = pageItemsCount;
+
+			var threads = new List<Thread>();
+			var threadGroups = await GetMessageSummariesPerThreadAsync();
+
+			var allThreadsCount = threadGroups.Count();
+
+			threadGroups = threadGroups.OrderByDescending(g => g.Max(msgSumm => msgSumm.Date))
+									.Skip(skip)
+									.Take(take);
+
+			var createThreadTasks = new List<Task>();
+
+			foreach (var threadGroup in threadGroups)
+			{
+				var createThreadTask = Task.Run(async () =>
+				{
+					var threadId = threadGroup.Key!.Value;
+
+					var thread = await CreateThreadAsync(threadId, threadGroup);
+
+					var shouldSkipThread = await ShouldSkipAsync(thread);
+					if (!shouldSkipThread)
+					{
+						threads.Add(thread);
+					}
+				});
+
+				createThreadTasks.Add(createThreadTask);
+			}
+
+			await Task.WhenAll(createThreadTasks);
+
+			threads = threads.OrderBy(t => t.Messages.Last().DateTime).ToList();
+
+			return (threads, allThreadsCount);
+		}
+
+		/// <summary>
+		/// Updates the given list of threads asynchronously based on the specified page number and the number of items per page.
 		/// </summary>
 		/// <param name="threads">The list of threads to update.</param>
-		/// <returns>The updated list of threads.</returns>
-		public async Task<List<Thread>> UpdateThreadsAsync(List<Thread> threads)
+		/// <param name="pageNumber">The page number on which the threads were displayed.</param>
+		/// <param name="pageItemsCount">The number of threads that should be displayed per page.</param>
+		/// <remarks>
+		/// This method is supposed to be an optimization. For initial loading of threads on page the method <see cref="GetThreadsAsync(int, int)"/> 
+		/// should be used. If the page hasn't changed (didn't move to another page) and the update/reload of threads is required, the threads object 
+		/// returned from <see cref="GetThreadsAsync(int, int)"/> should be passed to this method to be updated. This way we limit the async calls 
+		/// for information from Gmail (it is too slow).
+		/// </remarks>
+		/// <returns>
+		/// A task that represents the asynchronous operation.
+		/// The task result contains a tuple containing the list of updated threads 
+		/// and the total count of ALL existing threads (not just the updated ones).
+		/// </returns>
+		public async Task<(List<Thread>, int)> UpdateThreadsAsync(List<Thread> threads, int pageNumber, int pageItemsCount)
 		{
+			var skip = (pageNumber - 1) * pageItemsCount;
+			var take = pageItemsCount;
+
 			var threadGroups = await GetMessageSummariesPerThreadAsync();
+
+			var allThreadsCount = threadGroups.Count();
+
+			threadGroups = threadGroups.OrderByDescending(g => g.Max(msgSumm => msgSumm.Date))
+									.Skip(skip)
+									.Take(take);
 
 			var loadThreadTasks = new List<Task>();
 
@@ -95,9 +172,11 @@ namespace ServISWebApp.Shared
 
 			await Task.WhenAll(loadThreadTasks);
 
-			threads = threads.OrderBy(t => t.Messages.Last().DateTime).ToList();
+			threads = threads.TakeLast(take) // in case new threads have appeared we want to return only *take* newest threads
+							.OrderBy(t => t.Messages.Last().DateTime)
+							.ToList();
 
-			return threads;
+			return (threads, allThreadsCount);
 		}
 
 		/// <summary>
@@ -795,9 +874,9 @@ namespace ServISWebApp.Shared
 			await imapClient.DisconnectAsync(true);
 			semaphore.Release();
 
-			var groups = gmailMessages.GroupBy(g => g.GMailThreadId);
+			var threadGroups = gmailMessages.GroupBy(g => g.GMailThreadId);
 
-			return groups;
+			return threadGroups;
 		}
 
 		private void StartUpdatingExistingThreadEmails(
@@ -814,12 +893,17 @@ namespace ServISWebApp.Shared
 				var updateThreadMessageTask = Task.Run(async () =>
 				{
 					var email = thread.Messages.ElementAt(iCopy);
+					var msgSumm = messageSummaries.ElementAt(iCopy);
+
+					// take newer read/seen value
+					email.IsRead = msgSumm.Flags.HasValue
+										? msgSumm.Flags.Value.HasFlag(MessageFlags.Seen)
+										: false;
+
 					if (email.Uid.IsValid)
 					{
 						return;
 					}
-
-					var msgSumm = messageSummaries.ElementAt(iCopy);
 
 					// now will have thread message valid uid
 					thread.Messages[iCopy] = await CreateEmailFromAsync(msgSumm);

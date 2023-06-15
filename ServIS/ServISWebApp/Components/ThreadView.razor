@@ -181,9 +181,9 @@ else
 
 		var deleteEmailsTask = EmailManager.DeleteEmailAsync(uids);
 
-		await OnDelete.InvokeAsync(Thread);
-
 		await OnBack.InvokeAsync();
+
+		await OnDelete.InvokeAsync(Thread);
 
 		await deleteEmailsTask;
 	}

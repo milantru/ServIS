@@ -7,7 +7,11 @@
 }
 else if (Threads.Count == 0)
 {
-	<p>Nemáte žiadne správy.</p>
+	<div>
+		<ReloadIconButton OnClick="OnReload" />
+
+		<p>Nemáte žiadne správy.</p>
+	</div>
 }
 else
 {
@@ -61,6 +65,9 @@ else
 	[Parameter]
 	public EventCallback OnReload { get; set; }
 
+	[Parameter]
+	public EventCallback OnDelete { get; set; }
+
 	private List<Thread> CheckedThreads { get; set; } = new();
 
 	private void CheckUncheckThread(Thread thread)
@@ -98,23 +105,25 @@ else
 			return;
 		}
 
-		var deleteEmailTasks = new List<Task>(CheckedThreads.Count);
+		var deleteEmailsTasks = new List<Task>(CheckedThreads.Count);
 
 		foreach (var thread in CheckedThreads)
 		{
-			foreach (var message in thread.Messages)
-			{
-				var deleteEmailTask = EmailManager.DeleteEmailAsync(message.Uid);
+			var uids = thread.Messages.Select(m => m.Uid).ToList();
 
-				deleteEmailTasks.Add(deleteEmailTask);
-			}
+			var deleteEmailsTask = EmailManager.DeleteEmailAsync(uids);
+
+			deleteEmailsTasks.Add(deleteEmailsTask);
+
 			Threads.Remove(thread);
 		}
 		CheckedThreads.Clear();
 
 		await ThreadsChanged.InvokeAsync(Threads);
 
-		await Task.WhenAll(deleteEmailTasks);
+		await Task.WhenAll(deleteEmailsTasks);
+
+		await OnDelete.InvokeAsync();
 	}
 
 	/// <summary>

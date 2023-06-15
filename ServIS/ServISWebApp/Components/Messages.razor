@@ -21,17 +21,34 @@
 		{
 			@if (CurrentlyChosenThread is null)
 			{
-				<ThreadsView @bind-Threads="Threads"
-							 OnThreadClick="ChangeToThreadView"
-							 OnReload="LoadThreadsAsync"
-							 EmailManager="@emailManager" />
+				<div class="d-flex flex-column">
+					<ThreadsView @bind-Threads="Threads"
+								 OnThreadClick="ChangeToThreadView"
+								 OnReload="LoadThreadsAsync"
+								 OnDelete="HandleReloadAfterDeletingThreadAsync"
+								 EmailManager="@emailManager" />
+
+					<div class="w-100 d-flex flex-column align-items-center justify-content-center ">
+						<div class="d-flex flex-row flex-nowrap paging-panel">
+							<button disabled="@(IsOnFirstPage || isMovingToAnotherPage)" @onclick="GoToFirstPageAsync">&lt;&lt;</button>
+							<button disabled="@(IsOnFirstPage || isMovingToAnotherPage)" @onclick="GoToPreviousPageAsync">&lt;</button>
+							<span>@currentPage / @PagesCount</span>
+							<button disabled="@(IsOnLastPage || isMovingToAnotherPage)" @onclick="GoToNextPageAsync">&gt;</button>
+							<button disabled="@(IsOnLastPage || isMovingToAnotherPage)" @onclick="GoToLastPageAsync">&gt;&gt;</button>
+						</div>
+						@if (isMovingToAnotherPage)
+						{
+							<div>Prechádza sa na inú stranu...</div>
+						}
+					</div>
+				</div>
 			}
 			else
 			{
 				<ThreadView @bind-Thread="@CurrentlyChosenThread"
-							OnSent="OnSent"
+							OnSent="HandleReloadAfterSendingMessageAsync"
 							OnBack="() => ChangeToThreadView(null)"
-							OnDelete="DeleteThread"
+							OnDelete="DeleteThreadAsync"
 							EmailManager="@emailManager" />
 			}
 		}
@@ -48,15 +65,30 @@
 
 @code {
 	private bool messageSettingsClosed = true;
+	private int currentPage = 1;
+	private int pageItemsCount = 5;
+	private bool isMovingToAnotherPage = false;
+	private int allThreadsCount;
 
 	private List<Thread> Threads { get; set; } = null!;
 	private Thread? CurrentlyChosenThread { get; set; }
+	private bool IsOnFirstPage => currentPage == 1;
+	private bool IsOnLastPage => currentPage == PagesCount;
+	private int PagesCount 
+	{
+		get
+		{
+			var pageCount = (allThreadsCount / pageItemsCount) + (allThreadsCount % pageItemsCount > 0 ? 1 : 0);
+
+			return pageCount == 0 ? 1 : pageCount;
+		}
+	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
 
-		await LoadThreadsAsync();
+		await MovePageAsync(); // "moves" to page 1
 	}
 
 	private void ChangeToThreadView(Thread? thread)
@@ -66,7 +98,7 @@
 
 	private async Task LoadThreadsAsync()
 	{
-		Threads = await emailManager.UpdateThreadsAsync(Threads ?? new());
+		(Threads, allThreadsCount) = await emailManager.UpdateThreadsAsync(Threads ?? new(), currentPage, pageItemsCount);
 
 		if (CurrentlyChosenThread is not null)
 		{
@@ -77,19 +109,19 @@
 				* be (temporary) moment when currently chosen thread does NOT exist (i.e. when we are deleting it,
 				* in this situation it is ok to return null (default) because after deletion we would set
 				* CurrentlyChosenThread to null anyway). */
-			CurrentlyChosenThread = Threads.FirstOrDefault(t => t.Id == CurrentlyChosenThread.Id);
+			CurrentlyChosenThread = Threads!.FirstOrDefault(t => t.Id == CurrentlyChosenThread.Id);
 		}
 	}
 
-	private async Task OnSent(Thread threadFromWhichWasMessageSent)
+	private async Task HandleReloadAfterSendingMessageAsync(Thread threadFromWhichWasMessageSent)
 	{
 		await LoadThreadsAsync();
 
 		var updatedThread = Threads.First(t => t.Id == threadFromWhichWasMessageSent.Id);
 
 		/* Sometimes after replying to a message, the reply message is NOT marked as read/seen.
-		 * That is the reason we check here after sending the message and reloading messages if
-		 * the newest message (the reply) is marked as read. If not, we mark it as read. */
+			* That is the reason we check here after sending the message and reloading messages if
+			* the newest message (the reply) is marked as read. If not, we mark it as read. */
 		if (!updatedThread.IsRead)
 		{
 			var updatedThreadLastMessage = updatedThread.Messages.Last();
@@ -102,8 +134,81 @@
 		}
 	}
 
-	private void DeleteThread(Thread thread)
+	private async Task HandleReloadAfterDeletingThreadAsync()
+	{
+		if (Threads.Count == 0 && !IsOnFirstPage)
+		{
+			--currentPage;
+
+			await MovePageAsync();
+		}
+		else
+		{
+			await LoadThreadsAsync();
+		}
+	}
+
+	private async Task DeleteThreadAsync(Thread thread)
 	{
 		Threads.Remove(thread);
+
+		await HandleReloadAfterDeletingThreadAsync();
+	}
+
+	private async Task MovePageAsync()
+	{
+		isMovingToAnotherPage = true;
+
+		(Threads, allThreadsCount) = await emailManager.GetThreadsAsync(currentPage, pageItemsCount);
+		
+		isMovingToAnotherPage = false;
+	}
+
+	private async Task GoToFirstPageAsync()
+	{
+		if (IsOnFirstPage || isMovingToAnotherPage)
+		{
+			return;
+		}
+
+		currentPage = 1;
+
+		await MovePageAsync();
+	}
+
+	private async Task GoToLastPageAsync()
+	{
+		if (IsOnLastPage || isMovingToAnotherPage)
+		{
+			return;
+		}
+
+		currentPage = PagesCount;
+
+		await MovePageAsync();
+	}
+
+	private async Task GoToPreviousPageAsync()
+	{
+		if (IsOnFirstPage || isMovingToAnotherPage)
+		{
+			return;
+		}
+
+		--currentPage;
+
+		await MovePageAsync();
+	}
+
+	private async Task GoToNextPageAsync()
+	{
+		if (IsOnLastPage || isMovingToAnotherPage)
+		{
+			return;
+		}
+
+		++currentPage;
+
+		await MovePageAsync();
 	}
 }
