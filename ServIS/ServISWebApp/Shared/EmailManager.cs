@@ -70,6 +70,9 @@ namespace ServISWebApp.Shared
 		/// The task result contains a tuple containing the list of retrieved threads 
 		/// and the total count of ALL existing threads (not just the ones returned for the page <paramref name="pageNumber"/>).
 		/// </returns>
+		/// <exception cref="ImapCommandException">
+		/// Yet unknown reason for throwing this exception, but it seems it is thrown sometimes when making too many requests.
+		/// </exception>
 		public async Task<(List<Thread>, int)> GetThreadsAsync(int pageNumber, int pageItemsCount)
 		{
 			var skip = (pageNumber - 1) * pageItemsCount;
@@ -128,6 +131,9 @@ namespace ServISWebApp.Shared
 		/// The task result contains a tuple containing the list of updated threads 
 		/// and the total count of ALL existing threads (not just the updated ones).
 		/// </returns>
+		/// <exception cref="ImapCommandException">
+		/// Yet unknown reason for throwing this exception, but it seems it is thrown sometimes when making too many requests.
+		/// </exception>
 		public async Task<(List<Thread>, int)> UpdateThreadsAsync(List<Thread> threads, int pageNumber, int pageItemsCount)
 		{
 			var skip = (pageNumber - 1) * pageItemsCount;

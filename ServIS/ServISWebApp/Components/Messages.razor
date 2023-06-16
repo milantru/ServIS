@@ -7,8 +7,8 @@
 
 <div class="my-container">
 	<SfToast @ref="toast" 
-			 Title="Chyba pri obnovovaní správ!" 
-			 Content="Došlo k chybe pri obnovovaní správ. Počkajte prosím, práve prebieha opätovné načítanie správ."
+			 Title="Chyba pri načítaní správ!" 
+			 Content="Došlo k chybe pri načítaní správ. Počkajte prosím, práve prebieha opätovné načítanie správ."
 			 Timeout="5000"
 			 ShowCloseButton="true">
 		<ToastPosition X="Right" Y="Bottom"></ToastPosition>
@@ -21,45 +21,52 @@
 		<div class="top-right">
 			<CogIconButton OnClick="() => messageSettingsClosed = false" />
 		</div>
-
-		@if (Threads is null)
+		
+		@if (!isGmailConnectionLost)
 		{
-			<p>Načítava sa...</p>
-		}
-		else
-		{
-			@if (CurrentlyChosenThread is null)
+			@if (Threads is null)
 			{
-				<div class="d-flex flex-column">
-					<ThreadsView @bind-Threads="Threads"
-								 OnThreadClick="ChangeToThreadView"
-								 OnReload="LoadThreadsAsync"
-								 OnDelete="HandleReloadAfterDeletingThreadAsync"
-								 EmailManager="@emailManager" />
-
-					<div class="w-100 d-flex flex-column align-items-center justify-content-center ">
-						<div class="d-flex flex-row flex-nowrap paging-panel">
-							<button disabled="@(IsOnFirstPage || isMovingToAnotherPage)" @onclick="GoToFirstPageAsync">&lt;&lt;</button>
-							<button disabled="@(IsOnFirstPage || isMovingToAnotherPage)" @onclick="GoToPreviousPageAsync">&lt;</button>
-							<span>@currentPage / @PagesCount</span>
-							<button disabled="@(IsOnLastPage || isMovingToAnotherPage)" @onclick="GoToNextPageAsync">&gt;</button>
-							<button disabled="@(IsOnLastPage || isMovingToAnotherPage)" @onclick="GoToLastPageAsync">&gt;&gt;</button>
-						</div>
-						@if (isMovingToAnotherPage)
-						{
-							<div>Prechádza sa na inú stranu...</div>
-						}
-					</div>
-				</div>
+				<p>Načítava sa...</p>
 			}
 			else
 			{
-				<ThreadView @bind-Thread="@CurrentlyChosenThread"
-							OnSent="HandleReloadAfterSendingMessageAsync"
-							OnBack="() => ChangeToThreadView(null)"
-							OnDelete="DeleteThreadAsync"
-							EmailManager="@emailManager" />
+				@if (CurrentlyChosenThread is null)
+				{
+					<div class="d-flex flex-column">
+						<ThreadsView @bind-Threads="Threads"
+									 OnThreadClick="ChangeToThreadView"
+									 OnReload="LoadThreadsAsync"
+									 OnDelete="HandleReloadAfterDeletingThreadAsync"
+									 EmailManager="@emailManager" />
+
+						<div class="w-100 d-flex flex-column align-items-center justify-content-center ">
+							<div class="d-flex flex-row flex-nowrap paging-panel">
+								<button disabled="@(IsOnFirstPage || isMovingToAnotherPage)" @onclick="GoToFirstPageAsync">&lt;&lt;</button>
+								<button disabled="@(IsOnFirstPage || isMovingToAnotherPage)" @onclick="GoToPreviousPageAsync">&lt;</button>
+								<span>@currentPage / @PagesCount</span>
+								<button disabled="@(IsOnLastPage || isMovingToAnotherPage)" @onclick="GoToNextPageAsync">&gt;</button>
+								<button disabled="@(IsOnLastPage || isMovingToAnotherPage)" @onclick="GoToLastPageAsync">&gt;&gt;</button>
+							</div>
+							@if (isMovingToAnotherPage)
+							{
+								<div>Prechádza sa na inú stranu...</div>
+							}
+						</div>
+					</div>
+				}
+				else
+				{
+					<ThreadView @bind-Thread="@CurrentlyChosenThread"
+								OnSent="HandleReloadAfterSendingMessageAsync"
+								OnBack="() => ChangeToThreadView(null)"
+								OnDelete="DeleteThreadAsync"
+								EmailManager="@emailManager" />
+				}
 			}
+		}
+		else
+		{
+			<p>Nedarí sa nadviazať spojenie s Gmailom... Skúste to znova neskôr prosím.</p>
 		}
 	} 
 	else
@@ -79,6 +86,7 @@
 	private bool isMovingToAnotherPage = false;
 	private int allThreadsCount;
 	private SfToast toast = null!;
+	private bool isGmailConnectionLost = false;
 
 	private List<Thread> Threads { get; set; } = null!;
 	private Thread? CurrentlyChosenThread { get; set; }
@@ -115,19 +123,26 @@
 		catch (ImapCommandException ex)
 		{
 			logger.LogError(ex, "Failed to update the message threads.");
+
 			await toast.ShowAsync();
-			(Threads, allThreadsCount) = await emailManager.GetThreadsAsync(currentPage, pageItemsCount);
+
+			await TryGetThreadsRepeatedlyAsync();
+
+			if (isGmailConnectionLost)
+			{
+				return;
+			}
 		}
 
 		if (CurrentlyChosenThread is not null)
 		{
 			/* If we are (re)loading threads and currently have some thread chosen,
-			 * we want to find its newer version and "update" it (replace old for the newer version).
-			 * That's the reason for this if.
-			 * Additionaly, here is used `FirstOrDefault` and not just `First` because there might
-			 * be (temporary) moment when currently chosen thread does NOT exist (i.e. when we are deleting it,
-			 * in this situation it is ok to return null (default) because after deletion we would set
-			 * CurrentlyChosenThread to null anyway). */
+				* we want to find its newer version and "update" it (replace old for the newer version).
+				* That's the reason for this if.
+				* Additionaly, here is used `FirstOrDefault` and not just `First` because there might
+				* be (temporary) moment when currently chosen thread does NOT exist (i.e. when we are deleting it,
+				* in this situation it is ok to return null (default) because after deletion we would set
+				* CurrentlyChosenThread to null anyway). */
 			CurrentlyChosenThread = Threads!.FirstOrDefault(t => t.Id == CurrentlyChosenThread.Id);
 		}
 	}
@@ -178,8 +193,8 @@
 	{
 		isMovingToAnotherPage = true;
 
-		(Threads, allThreadsCount) = await emailManager.GetThreadsAsync(currentPage, pageItemsCount);
-		
+		await TryGetThreadsRepeatedlyAsync();
+
 		isMovingToAnotherPage = false;
 	}
 
@@ -229,5 +244,40 @@
 		++currentPage;
 
 		await MovePageAsync();
+	}
+
+	private async Task TryGetThreadsRepeatedlyAsync()
+	{
+		var attemptsCount = 0;
+		var maxAttemptsCount = 3;
+		var isGettingThreadsSuccessful = false;
+
+		while (!isGettingThreadsSuccessful && attemptsCount < maxAttemptsCount)
+		{
+			try
+			{
+				(Threads, allThreadsCount) = await emailManager.GetThreadsAsync(currentPage, pageItemsCount);
+
+				isGettingThreadsSuccessful = true;
+			}
+			catch (ImapCommandException ex)
+			{
+				await toast.ShowAsync();
+
+				++attemptsCount;
+
+				await Task.Delay(250);
+
+				logger.LogError(
+					exception: ex,
+					message: $"Failed to retrieve the message threads (attempt {attemptsCount} out of {maxAttemptsCount})."
+				);
+			}
+		}
+
+		if (!isGettingThreadsSuccessful)
+		{
+			isGmailConnectionLost = true;
+		}
 	}
 }
