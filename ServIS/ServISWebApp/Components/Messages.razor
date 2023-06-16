@@ -1,10 +1,19 @@
 ﻿@inject IConfiguration config
+@inject ILogger<Messages> logger
 @inject EmailManager emailManager
 @using MailKit.Net.Imap;
 @using MailKit;
 @using MimeKit;
 
 <div class="my-container">
+	<SfToast @ref="toast" 
+			 Title="Chyba pri obnovovaní správ!" 
+			 Content="Došlo k chybe pri obnovovaní správ. Počkajte prosím, práve prebieha opätovné načítanie správ."
+			 Timeout="5000"
+			 ShowCloseButton="true">
+		<ToastPosition X="Right" Y="Bottom"></ToastPosition>
+	</SfToast>
+
 	<h3>Správy</h3>
 
 	@if (messageSettingsClosed)
@@ -69,6 +78,7 @@
 	private int pageItemsCount = 5;
 	private bool isMovingToAnotherPage = false;
 	private int allThreadsCount;
+	private SfToast toast = null!;
 
 	private List<Thread> Threads { get; set; } = null!;
 	private Thread? CurrentlyChosenThread { get; set; }
@@ -98,17 +108,26 @@
 
 	private async Task LoadThreadsAsync()
 	{
-		(Threads, allThreadsCount) = await emailManager.UpdateThreadsAsync(Threads ?? new(), currentPage, pageItemsCount);
+		try
+		{
+			(Threads, allThreadsCount) = await emailManager.UpdateThreadsAsync(Threads ?? new(), currentPage, pageItemsCount);
+		}
+		catch (ImapCommandException ex)
+		{
+			logger.LogError(ex, "Failed to update the message threads.");
+			await toast.ShowAsync();
+			(Threads, allThreadsCount) = await emailManager.GetThreadsAsync(currentPage, pageItemsCount);
+		}
 
 		if (CurrentlyChosenThread is not null)
 		{
 			/* If we are (re)loading threads and currently have some thread chosen,
-				* we want to find its newer version and "update" it (replace old for the newer version).
-				* That's the reason for this if.
-				* Additionaly, here is used `FirstOrDefault` and not just `First` because there might
-				* be (temporary) moment when currently chosen thread does NOT exist (i.e. when we are deleting it,
-				* in this situation it is ok to return null (default) because after deletion we would set
-				* CurrentlyChosenThread to null anyway). */
+			 * we want to find its newer version and "update" it (replace old for the newer version).
+			 * That's the reason for this if.
+			 * Additionaly, here is used `FirstOrDefault` and not just `First` because there might
+			 * be (temporary) moment when currently chosen thread does NOT exist (i.e. when we are deleting it,
+			 * in this situation it is ok to return null (default) because after deletion we would set
+			 * CurrentlyChosenThread to null anyway). */
 			CurrentlyChosenThread = Threads!.FirstOrDefault(t => t.Id == CurrentlyChosenThread.Id);
 		}
 	}
