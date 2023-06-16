@@ -75,7 +75,6 @@ namespace ServISWebApp.Shared
 			var skip = (pageNumber - 1) * pageItemsCount;
 			var take = pageItemsCount;
 
-			var threads = new List<Thread>();
 			var threadGroups = await GetMessageSummariesPerThreadAsync();
 
 			var allThreadsCount = threadGroups.Count();
@@ -84,6 +83,7 @@ namespace ServISWebApp.Shared
 									.Skip(skip)
 									.Take(take);
 
+			var threadsBag = new ConcurrentBag<Thread>();
 			var createThreadTasks = new List<Task>();
 
 			foreach (var threadGroup in threadGroups)
@@ -97,7 +97,7 @@ namespace ServISWebApp.Shared
 					var shouldSkipThread = await ShouldSkipAsync(thread);
 					if (!shouldSkipThread)
 					{
-						threads.Add(thread);
+						threadsBag.Add(thread);
 					}
 				});
 
@@ -106,7 +106,7 @@ namespace ServISWebApp.Shared
 
 			await Task.WhenAll(createThreadTasks);
 
-			threads = threads.OrderBy(t => t.Messages.Last().DateTime).ToList();
+			var threads = threadsBag.OrderBy(t => t.Messages.Last().DateTime).ToList();
 
 			return (threads, allThreadsCount);
 		}
@@ -141,6 +141,7 @@ namespace ServISWebApp.Shared
 									.Skip(skip)
 									.Take(take);
 
+			var threadsBag = new ConcurrentBag<Thread>(threads);
 			var loadThreadTasks = new List<Task>();
 
 			foreach (var threadGroup in threadGroups)
@@ -149,7 +150,7 @@ namespace ServISWebApp.Shared
 				{
 					var threadId = threadGroup.Key!.Value;
 
-					var thread = threads.FirstOrDefault(t => t.Id == threadId);
+					var thread = threadsBag.FirstOrDefault(t => t.Id == threadId);
 
 					if (thread is not null)
 					{// existing thread
@@ -162,7 +163,7 @@ namespace ServISWebApp.Shared
 						var shouldSkipThread = await ShouldSkipAsync(newThread);
 						if (!shouldSkipThread)
 						{
-							threads.Add(newThread);
+							threadsBag.Add(newThread);
 						}
 					}
 				});
@@ -172,7 +173,7 @@ namespace ServISWebApp.Shared
 
 			await Task.WhenAll(loadThreadTasks);
 
-			threads = threads.TakeLast(take) // in case new threads have appeared we want to return only *take* newest threads
+			threads = threadsBag.TakeLast(take) // in case new threads have appeared we want to return only *take* newest threads
 							.OrderBy(t => t.Messages.Last().DateTime)
 							.ToList();
 
@@ -974,14 +975,14 @@ namespace ServISWebApp.Shared
 
 		private async Task<Thread> CreateThreadAsync(ulong threadId, IGrouping<ulong?, IMessageSummary> threadGroup)
 		{
-			var newThreadEmailsTasks = new List<Task<Email>>();
+			var createEmailTasks = new List<Task<Email>>();
 			foreach (var msgSumm in threadGroup)
 			{
-				var emailTask = CreateEmailFromAsync(msgSumm);
+				var createEmailTask = CreateEmailFromAsync(msgSumm);
 
-				newThreadEmailsTasks.Add(emailTask);
+				createEmailTasks.Add(createEmailTask);
 			}
-			var newThreadEmails = (await Task.WhenAll(newThreadEmailsTasks)).OrderBy(e => e.DateTime).ToList();
+			var newThreadEmails = (await Task.WhenAll(createEmailTasks)).OrderBy(e => e.DateTime).ToList();
 
 			var newThread = new Thread
 			{
