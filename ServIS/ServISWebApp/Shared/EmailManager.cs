@@ -924,10 +924,20 @@ namespace ServISWebApp.Shared
 			int minCount,
 			int maxCount,
 			IOrderedEnumerable<IMessageSummary> messageSummaries,
+			int messageSummariesCount,
 			List<Task> updateThreadTasks
 		)
 		{
 			var newEmails = new ConcurrentBag<Email>();
+
+			if (messageSummariesCount >= maxCount)
+			{
+				/* Imagine a situation... we send a reply and the dummy reply is added to thread messages, BUT the actual email hasn't yet arrived to Gmail.
+				 * Because in the meantime (for some reason) the reload was triggered, we arrive here and message summaries count is actually less than messages count in a thread
+				 * meaning that if we try to index message summaries it will end up in the index out of range exception. This if will prevent it. 
+				 * (side note... minCount and maxCount is calculated as min and max of thread messages count and message summaries count) */
+				return newEmails;
+			}
 
 			for (int i = minCount; i < maxCount; i++)
 			{
@@ -963,7 +973,7 @@ namespace ServISWebApp.Shared
 			StartUpdatingExistingThreadEmails(thread, minCount, messageSummaries, updateThreadTasks);
 
 			// when getting new thread emails finishes the new emails will be available in the variable
-			var newEmails = StartGettingNewThreadEmails(minCount, maxCount, messageSummaries, updateThreadTasks);
+			var newEmails = StartGettingNewThreadEmails(minCount, maxCount, messageSummaries, newMessagesCount, updateThreadTasks);
 
 			await Task.WhenAll(updateThreadTasks);
 
