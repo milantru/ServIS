@@ -19,7 +19,7 @@ namespace ServISWebApp.Shared
 		 * Even though I don't see docs mentioning there SMTP connection limitations, we limit it also using this semaphore
 		 * because of defensive programming, it shouldn't make much of a performance difference as we don't expect the user
 		 * to be sending a lot of emails very quickly. */
-		private readonly Semaphore semaphore = new(initialCount: 15, maximumCount: 15);
+		private readonly SemaphoreSlim semaphore = new(initialCount: 15, maxCount: 15);
 		private readonly ILogger<EmailManager> logger;
 		private readonly string emailPassword;
 		private readonly MessageSummaryItems defaultMessageSummaryItems = MessageSummaryItems.UniqueId
@@ -194,7 +194,7 @@ namespace ServISWebApp.Shared
 		/// The task result contains the list of emails associated with the provided unique identifiers.</returns>
 		public async Task<List<Email>> GetEmailsAsync(IList<UniqueId> uniqueIds)
 		{
-			semaphore.WaitOne();
+			await semaphore.WaitAsync();
 			using var imapClient = await GetConnectedImapClientAsync();
 
 			var allMail = imapClient.GetFolder(SpecialFolder.All);
@@ -249,7 +249,7 @@ namespace ServISWebApp.Shared
         /// The task result contains the retrieved email associated with the provided unique identifier.</returns>
         public async Task<Email> GetEmailAsync(UniqueId uniqueId)
 		{
-			semaphore.WaitOne();
+			await semaphore.WaitAsync();
 			using var imapClient = await GetConnectedImapClientAsync();
 
 			var allMail = imapClient.GetFolder(SpecialFolder.All);
@@ -298,7 +298,7 @@ namespace ServISWebApp.Shared
         /// The task result contains the list of message summaries associated with the provided unique identifiers.</returns>
         public async Task<IList<IMessageSummary>> GetMessageSummariesAsync(IList<UniqueId> uniqueIds, MessageSummaryItems? items = null)
 		{
-			semaphore.WaitOne();
+			await semaphore.WaitAsync();
 			using var imapClient = await GetConnectedImapClientAsync();
 
 			var allMail = imapClient.GetFolder(SpecialFolder.All);
@@ -336,7 +336,7 @@ namespace ServISWebApp.Shared
         /// <returns>A task that represents the asynchronous operation.</returns>
         public async Task MarkEmailAsReadAsync(UniqueId uniqueId)
 		{
-			semaphore.WaitOne();
+			await semaphore.WaitAsync();
 			using var imapClient = await GetConnectedImapClientAsync();
 
 			var allMail = imapClient.GetFolder(SpecialFolder.All);
@@ -356,7 +356,7 @@ namespace ServISWebApp.Shared
         /// <returns>A task that represents the asynchronous operation.</returns>
         public async Task MarkEmailAsReadAsync(IList<UniqueId> uniqueIds)
 		{
-			semaphore.WaitOne();
+			await semaphore.WaitAsync();
 			using var imapClient = await GetConnectedImapClientAsync();
 
 			var allMail = imapClient.GetFolder(SpecialFolder.All);
@@ -402,7 +402,7 @@ namespace ServISWebApp.Shared
         /// <returns>A task that represents the asynchronous operation.</returns>
         public async Task MarkEmailAsUnreadAsync(UniqueId uniqueId)
 		{
-			semaphore.WaitOne();
+			await semaphore.WaitAsync();
 			using var imapClient = await GetConnectedImapClientAsync();
 
 			var allMail = imapClient.GetFolder(SpecialFolder.All);
@@ -422,7 +422,7 @@ namespace ServISWebApp.Shared
         /// <returns>A task that represents the asynchronous operation.</returns>
         public async Task MarkEmailAsUnreadAsync(IList<UniqueId> uniqueIds)
 		{
-			semaphore.WaitOne();
+			await semaphore.WaitAsync();
 			using var imapClient = await GetConnectedImapClientAsync();
 
 			var allMail = imapClient.GetFolder(SpecialFolder.All);
@@ -514,7 +514,7 @@ namespace ServISWebApp.Shared
         /// <returns>A task that represents the asynchronous operation.</returns>
         public async Task DeleteEmailAsync(UniqueId uniqueId)
 		{
-			semaphore.WaitOne();
+			await semaphore.WaitAsync();
 			using var imapClient = await GetConnectedImapClientAsync();
 
 			var trash = imapClient.GetFolder(SpecialFolder.Trash);
@@ -542,7 +542,7 @@ namespace ServISWebApp.Shared
         /// <returns>A task that represents the asynchronous operation.</returns>
         public async Task DeleteEmailAsync(IList<UniqueId> uniqueIds)
 		{
-			semaphore.WaitOne();
+			await semaphore.WaitAsync();
 			using var imapClient = await GetConnectedImapClientAsync();
 
 			var trash = imapClient.GetFolder(SpecialFolder.Trash);
@@ -803,7 +803,7 @@ namespace ServISWebApp.Shared
 
 		private async Task SendMessageAsync(MimeMessage message)
 		{
-			semaphore.WaitOne();
+			await semaphore.WaitAsync();
 			using var smtpClient = await GetConnectedSmtpClientAsync();
 
 			try
@@ -825,7 +825,7 @@ namespace ServISWebApp.Shared
 		{
 			var uid = messageSummary.UniqueId;
 
-			semaphore.WaitOne();
+			await semaphore.WaitAsync();
 			using var imapClient = await GetConnectedImapClientAsync();
 
 			var allMail = imapClient.GetFolder(SpecialFolder.All);
@@ -869,7 +869,7 @@ namespace ServISWebApp.Shared
 
 		private async Task<IEnumerable<IGrouping<ulong?, IMessageSummary>>> GetMessageSummariesPerThreadAsync()
 		{
-			semaphore.WaitOne();
+			await semaphore.WaitAsync();
 			using var imapClient = await GetConnectedImapClientAsync();
 
 			var allMail = imapClient.GetFolder(SpecialFolder.All);
