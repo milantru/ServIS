@@ -37,15 +37,16 @@
 									 OnThreadClick="ChangeToThreadView"
 									 OnReload="LoadThreadsAsync"
 									 OnDelete="HandleReloadAfterDeletingThreadAsync"
+									 IsLoadingThreads="@IsLoadingThreadsOrMovingToAnotherPage"
 									 EmailManager="@emailManager" />
 
 						<div class="w-100 d-flex flex-column align-items-center justify-content-center ">
 							<div class="d-flex flex-row flex-nowrap paging-panel">
-								<button disabled="@(IsOnFirstPage || isMovingToAnotherPage)" @onclick="GoToFirstPageAsync">&lt;&lt;</button>
-								<button disabled="@(IsOnFirstPage || isMovingToAnotherPage)" @onclick="GoToPreviousPageAsync">&lt;</button>
+								<button disabled="@(IsOnFirstPage || IsLoadingThreadsOrMovingToAnotherPage)" @onclick="GoToFirstPageAsync">&lt;&lt;</button>
+								<button disabled="@(IsOnFirstPage || IsLoadingThreadsOrMovingToAnotherPage)" @onclick="GoToPreviousPageAsync">&lt;</button>
 								<span>@currentPage / @PagesCount</span>
-								<button disabled="@(IsOnLastPage || isMovingToAnotherPage)" @onclick="GoToNextPageAsync">&gt;</button>
-								<button disabled="@(IsOnLastPage || isMovingToAnotherPage)" @onclick="GoToLastPageAsync">&gt;&gt;</button>
+								<button disabled="@(IsOnLastPage || IsLoadingThreadsOrMovingToAnotherPage)" @onclick="GoToNextPageAsync">&gt;</button>
+								<button disabled="@(IsOnLastPage || IsLoadingThreadsOrMovingToAnotherPage)" @onclick="GoToLastPageAsync">&gt;&gt;</button>
 							</div>
 							@if (isMovingToAnotherPage)
 							{
@@ -60,7 +61,8 @@
 								OnSent="HandleReloadAfterSendingMessageAsync"
 								OnBack="() => ChangeToThreadView(null)"
 								OnDelete="DeleteThreadAsync"
-								EmailManager="@emailManager" />
+								EmailManager="@emailManager"
+								IsLoadingThreads="@IsLoadingThreadsOrMovingToAnotherPage" />
 				}
 			}
 		}
@@ -83,6 +85,7 @@
 	private bool messageSettingsClosed = true;
 	private int currentPage = 1;
 	private int pageItemsCount = 8;
+	private bool isLoadingThreads = false;
 	private bool isMovingToAnotherPage = false;
 	private int allThreadsCount;
 	private SfToast toast = null!;
@@ -101,6 +104,7 @@
 			return pageCount == 0 ? 1 : pageCount;
 		}
 	}
+	private bool IsLoadingThreadsOrMovingToAnotherPage => isLoadingThreads || isMovingToAnotherPage;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -155,6 +159,8 @@
 
 	private async Task LoadThreadsAsync()
 	{
+		isLoadingThreads = true;
+
 		try
 		{
 			(Threads, allThreadsCount) = await emailManager.UpdateThreadsAsync(Threads ?? new(), currentPage, pageItemsCount);
@@ -176,14 +182,16 @@
 		if (CurrentlyChosenThread is not null)
 		{
 			/* If we are (re)loading threads and currently have some thread chosen,
-				* we want to find its newer version and "update" it (replace old for the newer version).
-				* That's the reason for this if.
-				* Additionaly, here is used `FirstOrDefault` and not just `First` because there might
-				* be (temporary) moment when currently chosen thread does NOT exist (i.e. when we are deleting it,
-				* in this situation it is ok to return null (default) because after deletion we would set
-				* CurrentlyChosenThread to null anyway). */
+			 * we want to find its newer version and "update" it (replace old for the newer version).
+			 * That's the reason for this if.
+			 * Additionaly, here is used `FirstOrDefault` and not just `First` because there might
+			 * be (temporary) moment when currently chosen thread does NOT exist (i.e. when we are deleting it,
+			 * in this situation it is ok to return null (default) because after deletion we would set
+			 * CurrentlyChosenThread to null anyway). */
 			CurrentlyChosenThread = Threads!.FirstOrDefault(t => t.Id == CurrentlyChosenThread.Id);
 		}
+
+		isLoadingThreads = false;
 	}
 
 	private void ChangeToThreadView(Thread? thread)

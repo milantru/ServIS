@@ -1,17 +1,25 @@
-﻿<button class="icon-btn icon-btn-load" active="@isReloading" @onclick="ReloadAsync"><i class="fas fa-redo"></i></button>
+﻿<button class="icon-btn icon-btn-load" active="@(IsReloading || isReloadingInner)" @onclick="ReloadAsync"><i class="fas fa-redo"></i></button>
 
 @code {
-	private bool isReloading = false;
+	/* Let's imagine someone triggered reloading from outside (wants loading animation) setting the IsReloading
+	 * to true. The animation is active, the one who triggered it is doing something, let's call it process A.
+	 * Meanwhile someone clicks the button, does process B, it finished before process A and sets variable to false
+	 * cancelling the loading animation. So even though the process A is stil active the loading animation is cancelled.
+	 * This is unwanted, thus this isReloadingInner field exists. */
+	private bool isReloadingInner = false;
+
+	[Parameter]
+	public bool IsReloading { get; set; }
 
 	[Parameter]
 	public EventCallback OnClick { get; set; }
 
 	private async Task ReloadAsync()
 	{
-		isReloading = true;
+		isReloadingInner = true;
 
 		await OnClick.InvokeAsync();
 		
-		isReloading = false;
+		isReloadingInner = false;
 	}
 }

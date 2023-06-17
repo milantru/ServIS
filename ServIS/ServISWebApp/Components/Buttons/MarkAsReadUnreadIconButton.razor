@@ -1,6 +1,6 @@
 ﻿@* style attr is here because in this icons case it seemed to me that icon inside button is a bit off
 I wanted to center/move it, but creating a new css file just for this felt like too much *@
-<button class="icon-btn" disabled="@IsDisabled" @onclick="OnClick">
+<button class="icon-btn" disabled="@IsDisabled" @onclick="HandleClick">
 		<i class="far fa-envelope@(ShowOpenEnvelopeIcon ? "-open" : "")" style="padding-left: 1px;"></i>
 </button>
 
@@ -13,4 +13,14 @@ I wanted to center/move it, but creating a new css file just for this felt like 
 
 	[Parameter]
 	public EventCallback OnClick { get; set; }
+
+	private async Task HandleClick()
+	{
+		if (IsDisabled)
+		{
+			return;
+		}
+
+		await OnClick.InvokeAsync();
+	}
 }

@@ -8,7 +8,7 @@
 else if (Threads.Count == 0)
 {
 	<div>
-		<ReloadIconButton OnClick="OnReload" />
+		<ReloadIconButton IsReloading="@IsLoadingThreads" OnClick="OnReload" />
 
 		<p>Nemáte žiadne správy.</p>
 	</div>
@@ -19,18 +19,18 @@ else
 		<div class="btns">
 			<CheckSquareIconButton UseMinus="@(CheckedThreads.Count > 0 && CheckedThreads.Count < Threads.Count)" 
 								   OnClick="CheckUncheckAllThreads" />
-			<ReloadIconButton OnClick="OnReload" />
+			<ReloadIconButton IsReloading="@IsLoadingThreads" OnClick="OnReload" />
 	
 			@if (CheckedThreads.Count > 0)
 			{
 				var isReplyInProgressInAnyOfCheckedThreads = IsReplyInProgressInAnyOfCheckedThreads();
 
-				<DeleteIconButton IsDisabled="@isReplyInProgressInAnyOfCheckedThreads"
+				<DeleteIconButton IsDisabled="@(isReplyInProgressInAnyOfCheckedThreads || IsLoadingThreads)"
 								  OnClick="DeleteSelectedThreadsAsync" />
 
 				@* It is ok to cast to bool, null is returned only if 
 				   there are no checked threads, but we check it here in if. *@
-				<MarkAsReadUnreadIconButton IsDisabled="@isReplyInProgressInAnyOfCheckedThreads"
+				<MarkAsReadUnreadIconButton IsDisabled="@(isReplyInProgressInAnyOfCheckedThreads || IsLoadingThreads)"
 											ShowOpenEnvelopeIcon="@((bool)ShouldMarkAsRead()!)" 
 											OnClick="MarkAsReadUnreadAsync" />
 			}
@@ -55,6 +55,9 @@ else
 
 	[Parameter]
 	public EventCallback<List<Thread>> ThreadsChanged { get; set; }
+
+	[Parameter]
+	public bool IsLoadingThreads { get; set; }
 
 	[Parameter]
 	public EmailManager EmailManager { get; set; } = null!;
