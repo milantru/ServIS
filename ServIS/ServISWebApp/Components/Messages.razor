@@ -109,9 +109,48 @@
 		await MovePageAsync(); // "moves" to page 1
 	}
 
-	private void ChangeToThreadView(Thread? thread)
+	private async Task TryGetThreadsRepeatedlyAsync()
 	{
-		CurrentlyChosenThread = thread;
+		var attemptsCount = 0;
+		var maxAttemptsCount = 3;
+		var isGettingThreadsSuccessful = false;
+
+		while (!isGettingThreadsSuccessful && attemptsCount < maxAttemptsCount)
+		{
+			try
+			{
+				(Threads, allThreadsCount) = await emailManager.GetThreadsAsync(currentPage, pageItemsCount);
+
+				isGettingThreadsSuccessful = true;
+			}
+			catch (ImapCommandException ex)
+			{
+				await toast.ShowAsync();
+
+				++attemptsCount;
+
+				await Task.Delay(250);
+
+				logger.LogError(
+					exception: ex,
+					message: $"Failed to retrieve the message threads (attempt {attemptsCount} out of {maxAttemptsCount})."
+				);
+			}
+		}
+
+		if (!isGettingThreadsSuccessful)
+		{
+			isGmailConnectionLost = true;
+		}
+	}
+
+	private async Task MovePageAsync()
+	{
+		isMovingToAnotherPage = true;
+
+		await TryGetThreadsRepeatedlyAsync();
+
+		isMovingToAnotherPage = false;
 	}
 
 	private async Task LoadThreadsAsync()
@@ -145,6 +184,11 @@
 				* CurrentlyChosenThread to null anyway). */
 			CurrentlyChosenThread = Threads!.FirstOrDefault(t => t.Id == CurrentlyChosenThread.Id);
 		}
+	}
+
+	private void ChangeToThreadView(Thread? thread)
+	{
+		CurrentlyChosenThread = thread;
 	}
 
 	private async Task HandleReloadAfterSendingMessageAsync(Thread threadFromWhichWasMessageSent)
@@ -187,15 +231,6 @@
 		Threads.Remove(thread);
 
 		await HandleReloadAfterDeletingThreadAsync();
-	}
-
-	private async Task MovePageAsync()
-	{
-		isMovingToAnotherPage = true;
-
-		await TryGetThreadsRepeatedlyAsync();
-
-		isMovingToAnotherPage = false;
 	}
 
 	private async Task GoToFirstPageAsync()
@@ -244,40 +279,5 @@
 		++currentPage;
 
 		await MovePageAsync();
-	}
-
-	private async Task TryGetThreadsRepeatedlyAsync()
-	{
-		var attemptsCount = 0;
-		var maxAttemptsCount = 3;
-		var isGettingThreadsSuccessful = false;
-
-		while (!isGettingThreadsSuccessful && attemptsCount < maxAttemptsCount)
-		{
-			try
-			{
-				(Threads, allThreadsCount) = await emailManager.GetThreadsAsync(currentPage, pageItemsCount);
-
-				isGettingThreadsSuccessful = true;
-			}
-			catch (ImapCommandException ex)
-			{
-				await toast.ShowAsync();
-
-				++attemptsCount;
-
-				await Task.Delay(250);
-
-				logger.LogError(
-					exception: ex,
-					message: $"Failed to retrieve the message threads (attempt {attemptsCount} out of {maxAttemptsCount})."
-				);
-			}
-		}
-
-		if (!isGettingThreadsSuccessful)
-		{
-			isGmailConnectionLost = true;
-		}
 	}
 }
