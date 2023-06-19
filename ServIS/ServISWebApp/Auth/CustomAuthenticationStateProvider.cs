@@ -96,7 +96,8 @@ namespace ServISWebApp.Auth
 			}
 			catch (Exception ex)
 			{
-				logger.LogError(ex, $"Failed to load user with id '{userId}'.");
+				// This is only a warning and not an error because it is triggered also e.g. when the user is in the profile section and logs out.
+				logger.LogWarning(ex, $"Failed to load user with id '{userId}'.");
 
 				user = null;
 			}
