@@ -15,6 +15,7 @@ namespace ServISWebApp.BackgroundServices
 		private readonly EmailManager emailManager;
 		private readonly string baseUrl;
 		private event Func<Task>? updateEvent;
+		private bool isEvaluationInProgress = false;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AuctionEvaluatorService"/> class 
@@ -260,6 +261,17 @@ namespace ServISWebApp.BackgroundServices
 		{
 			updateEvent += async () =>
 			{
+				if (isEvaluationInProgress)
+				{
+					/* We don't want to start a new evaluation if the preceding one is still in progress, 
+					 * it may cause some problems like sending multiple (even blank) emails. This shouln't happen as there is not too small interval set, 
+					 * but due to defensive programming this kind of precaution is being made. Keep in mind that because of the mentioned interval, we dont need locks,
+					 * the bool field should be sufficient. */
+					return;
+				}
+
+				isEvaluationInProgress = true;
+
 				var dateTimeNow = DateTime.Now;
 				var endedAuctionOffers = await GetEndedAuctionOffersAsync(dateTimeNow, includeEvaluated: false);
 				if (endedAuctionOffers.Count == 0)
@@ -268,6 +280,8 @@ namespace ServISWebApp.BackgroundServices
 				}
 
 				await EvaluateAuctionOffersAsync(dateTimeNow, endedAuctionOffers);
+
+				isEvaluationInProgress = false;
 			};
 		}
 	}
