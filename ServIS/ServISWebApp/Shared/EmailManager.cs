@@ -75,16 +75,7 @@ namespace ServISWebApp.Shared
 		/// </exception>
 		public async Task<(List<Thread>, int)> GetThreadsAsync(int pageNumber, int pageItemsCount)
 		{
-			var skip = (pageNumber - 1) * pageItemsCount;
-			var take = pageItemsCount;
-
-			var threadGroups = await GetMessageSummariesPerThreadAsync();
-
-			var allThreadsCount = threadGroups.Count();
-
-			threadGroups = threadGroups.OrderByDescending(g => g.Max(msgSumm => msgSumm.Date))
-									.Skip(skip)
-									.Take(take);
+			var (threadGroups, allThreadsCount) = await GetPaginatedMessageSummariesPerThreadAsync(pageNumber, pageItemsCount);
 
 			var threadsBag = new ConcurrentBag<Thread>();
 			var createThreadTasks = new List<Task>();
@@ -136,16 +127,7 @@ namespace ServISWebApp.Shared
 		/// </exception>
 		public async Task<(List<Thread>, int)> UpdateThreadsAsync(List<Thread> threads, int pageNumber, int pageItemsCount)
 		{
-			var skip = (pageNumber - 1) * pageItemsCount;
-			var take = pageItemsCount;
-
-			var threadGroups = await GetMessageSummariesPerThreadAsync();
-
-			var allThreadsCount = threadGroups.Count();
-
-			threadGroups = threadGroups.OrderByDescending(g => g.Max(msgSumm => msgSumm.Date))
-									.Skip(skip)
-									.Take(take);
+			var (threadGroups, allThreadsCount) = await GetPaginatedMessageSummariesPerThreadAsync(pageNumber, pageItemsCount);
 
 			var threadsBag = new ConcurrentBag<Thread>(threads);
 			var loadThreadTasks = new List<Task>();
@@ -179,7 +161,7 @@ namespace ServISWebApp.Shared
 
 			await Task.WhenAll(loadThreadTasks);
 
-			threads = threadsBag.TakeLast(take) // in case new threads have appeared we want to return only *take* newest threads
+			threads = threadsBag.TakeLast(pageItemsCount) // in case new threads have appeared we want to return only pageItemsCount newest threads
 							.OrderBy(t => t.Messages.Last().DateTime)
 							.ToList();
 
@@ -884,6 +866,35 @@ namespace ServISWebApp.Shared
 			var threadGroups = gmailMessages.GroupBy(g => g.GMailThreadId);
 
 			return threadGroups;
+		}
+
+		/// <summary>
+		/// Retrieves a list of message summaries asynchronously based on the specified page number and the number of items per page.
+		/// </summary>
+		/// <param name="pageNumber">The page number.</param>
+		/// <param name="pageItemsCount">The number of message summaries that should be displayed per page.</param>
+		/// <returns>
+		/// A task that represents the asynchronous operation.
+		/// The task result contains a tuple containing the list of retrieved message summaries 
+		/// and the total count of ALL existing message summaries (not just the ones returned for the page <paramref name="pageNumber"/>).
+		/// </returns>
+		private async Task<(IEnumerable<IGrouping<ulong?, IMessageSummary>>, int)> GetPaginatedMessageSummariesPerThreadAsync(
+			int pageNumber, 
+			int pageItemsCount
+		)
+		{
+			var skip = (pageNumber - 1) * pageItemsCount;
+			var take = pageItemsCount;
+
+			var threadGroups = await GetMessageSummariesPerThreadAsync();
+
+			var allThreadsCount = threadGroups.Count();
+
+			threadGroups = threadGroups.OrderByDescending(g => g.Max(msgSumm => msgSumm.Date))
+									.Skip(skip)
+									.Take(take);
+
+			return (threadGroups, allThreadsCount);
 		}
 
 		private void StartUpdatingExistingThreadEmails(
