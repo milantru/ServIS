@@ -16,6 +16,7 @@ namespace ServISWebApp.BackgroundServices
 		private readonly string baseUrl;
 		private event Func<Task>? updateEvent;
 		private bool isEvaluationInProgress = false;
+		private ILogger<AuctionEvaluatorService> logger;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AuctionEvaluatorService"/> class 
@@ -27,12 +28,14 @@ namespace ServISWebApp.BackgroundServices
         public AuctionEvaluatorService(
 			IServISApi api,
 			EmailManager emailManager,
-			string baseUrl
+			string baseUrl,
+			ILogger<AuctionEvaluatorService> logger
 		) : base(interval: TimeSpan.FromMinutes(1))
 		{
 			this.api = api;
 			this.emailManager = emailManager;
 			this.baseUrl = baseUrl;
+			this.logger = logger;
 
 			RegisterEventHandler();
 		}
@@ -277,11 +280,21 @@ namespace ServISWebApp.BackgroundServices
 					return;
 				}
 
-				isEvaluationInProgress = true;
+				try
+				{
+					isEvaluationInProgress = true;
+					await EvaluateAuctionOffersAsync(dateTimeNow, endedAuctionOffers);
+				}
+				catch (Exception ex)
+				{
+					var ids = endedAuctionOffers.Select(ao => ao.Id);
 
-				await EvaluateAuctionOffersAsync(dateTimeNow, endedAuctionOffers);
-
-				isEvaluationInProgress = false;
+					logger.LogCritical(ex, "Failed to evaluate auction offers with ids: {AuctionOffersIds}.", ids);
+				}
+				finally
+				{
+					isEvaluationInProgress = false;
+				}
 			};
 		}
 	}

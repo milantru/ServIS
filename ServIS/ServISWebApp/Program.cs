@@ -93,8 +93,9 @@ internal class Program
             var emailManager = provider.GetRequiredService<EmailManager>();
             var api = provider.GetRequiredService<IServISApi>();
             var baseUrl = provider.GetRequiredService<IConfiguration>().GetValue<string>("AppBaseUrl");
+            var logger = provider.GetRequiredService<ILogger<AuctionEvaluatorService>>();
 
-            return new(api, emailManager, baseUrl);
+			return new(api, emailManager, baseUrl, logger);
         });
         builder.Services.AddScoped<Modals>(factory =>
         {
