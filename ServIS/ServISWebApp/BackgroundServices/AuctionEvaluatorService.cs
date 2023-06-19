@@ -264,20 +264,20 @@ namespace ServISWebApp.BackgroundServices
 				if (isEvaluationInProgress)
 				{
 					/* We don't want to start a new evaluation if the preceding one is still in progress, 
-					 * it may cause some problems like sending multiple (even blank) emails. This shouln't happen as there is not too small interval set, 
-					 * but due to defensive programming this kind of precaution is being made. Keep in mind that because of the mentioned interval, we dont need locks,
-					 * the bool field should be sufficient. */
+					* it may cause some problems like sending multiple (even blank) emails. This shouln't happen as there is not too small interval set, 
+					* but due to defensive programming this kind of precaution is being made. Keep in mind that because of the mentioned interval, we dont need locks,
+					* the bool field should be sufficient. */
+					return;
+				}
+
+				var dateTimeNow = DateTime.Now;
+				var endedAuctionOffers = await GetEndedAuctionOffersAsync(dateTimeNow, includeEvaluated: false);
+				if (endedAuctionOffers.Count == 0 || isEvaluationInProgress)
+				{
 					return;
 				}
 
 				isEvaluationInProgress = true;
-
-				var dateTimeNow = DateTime.Now;
-				var endedAuctionOffers = await GetEndedAuctionOffersAsync(dateTimeNow, includeEvaluated: false);
-				if (endedAuctionOffers.Count == 0)
-				{
-					return;
-				}
 
 				await EvaluateAuctionOffersAsync(dateTimeNow, endedAuctionOffers);
 
