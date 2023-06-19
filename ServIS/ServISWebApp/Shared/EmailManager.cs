@@ -129,7 +129,7 @@ namespace ServISWebApp.Shared
 		{
 			var (threadGroups, allThreadsCount) = await GetPaginatedMessageSummariesPerThreadAsync(pageNumber, pageItemsCount);
 
-			var threadsBag = new ConcurrentBag<Thread>(threads);
+			var newThreads = new ConcurrentBag<Thread>();
 			var loadThreadTasks = new List<Task>();
 
 			foreach (var threadGroup in threadGroups)
@@ -138,7 +138,7 @@ namespace ServISWebApp.Shared
 				{
 					var threadId = threadGroup.Key!.Value;
 
-					var thread = threadsBag.FirstOrDefault(t => t.Id == threadId);
+					var thread = threads.FirstOrDefault(t => t.Id == threadId);
 
 					if (thread is not null)
 					{// existing thread
@@ -151,7 +151,7 @@ namespace ServISWebApp.Shared
 						var shouldSkipThread = await ShouldSkipAsync(newThread);
 						if (!shouldSkipThread)
 						{
-							threadsBag.Add(newThread);
+							newThreads.Add(newThread);
 						}
 					}
 				});
@@ -161,8 +161,11 @@ namespace ServISWebApp.Shared
 
 			await Task.WhenAll(loadThreadTasks);
 
-			threads = threadsBag.TakeLast(pageItemsCount) // in case new threads have appeared we want to return only pageItemsCount newest threads
-							.OrderBy(t => t.Messages.Last().DateTime)
+			var newThreadsOrdered = newThreads.OrderBy(newThread => newThread.Messages.Last().DateTime);
+
+			threads.AddRange(newThreadsOrdered);
+
+			threads = threads.TakeLast(pageItemsCount) // in case new threads have appeared we want to return only pageItemsCount newest threads
 							.ToList();
 
 			return (threads, allThreadsCount);
