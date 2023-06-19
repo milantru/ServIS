@@ -990,11 +990,10 @@ namespace ServISData
 				queryTmp2 = queryTmp1.Where(ab => ab.AuctionOffer.Id == auctionOfferId && ab.Id != maxAuctionBid.Id);
 			}
 
-			await Task.CompletedTask;
 			return queryTmp2
 				.OrderByDescending(ab => ab.Bid)
 				.AsNoTracking()
-				.AsEnumerable()
+				.AsEnumerable() // this has to come before DistinctBy, in the current version of ef core its translation to SQL is not yet supported
 				.DistinctBy(ab => ab.User.Id)
 				.ToList();
 		}
