@@ -163,7 +163,7 @@
 
 		try
 		{
-			(Threads, allThreadsCount) = await emailManager.UpdateThreadsAsync(Threads ?? new(), currentPage, pageItemsCount);
+			(Threads, allThreadsCount) = await emailManager.UpdateThreadsAsync(Threads, currentPage, pageItemsCount);
 		}
 		catch (ImapCommandException ex)
 		{
