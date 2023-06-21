@@ -6,7 +6,7 @@
 @if (excavatorTypeExists && ExcavatorType is not null)
 {
 	<AuthorizeView Roles="Administrator">
-		<a href="/admin/novy-stroj/@ExcavatorTypeId">Pridať nový stroj tohto typu</a>
+		<a href="/admin/novy-stroj/@ExcavatorTypeId">Pridať nový bager tohto typu</a>
 	</AuthorizeView>
 
 	<ExcavatorsLister ExcavatorType="@ExcavatorType"
