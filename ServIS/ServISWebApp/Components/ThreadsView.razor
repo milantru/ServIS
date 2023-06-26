@@ -100,8 +100,8 @@ else
 	private async Task DeleteSelectedThreadsAsync()
 	{
 		var isDeletionConfirmed = await modals.DisplayConfirmationAsync(
-			confirmationMessage: "Naozaj chcete vymazať všetky vybrané správy?",
-			title: "Vymazanie vybraných správ"
+			confirmationMessage: "Naozaj chcete vymazať vybrané konverzácie natrvalo?",
+			title: "Vymazať vybrané konverzácie"
 		);
 		if (!isDeletionConfirmed)
 		{

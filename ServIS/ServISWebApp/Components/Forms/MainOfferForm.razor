@@ -30,7 +30,7 @@
 		</div>
 
 		<div class="form-group">
-			<label for="excavator-type">Typy strojov:</label>
+			<label for="excavator-type">Typy bagrov:</label>
 			<ItemsSelector ItemType="ExcavatorType" 
 						   @bind-SelectedItem="Item.ExcavatorType"
 						   Items="@ExcavatorTypes"
@@ -165,7 +165,7 @@
 
 		if (!IsExcavatorTypeSelected())
 		{
-			messageStore.Add(() => Item.ExcavatorType, $"Nie je vybraný žiaden typ stroja.");
+			messageStore.Add(() => Item.ExcavatorType, $"Nie je vybraný žiaden typ bagra.");
 		}
 	}
 

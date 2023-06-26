@@ -22,7 +22,7 @@
         </div>
 
         <div class="form-group">
-            <label>Stroje obsahujúce diel:</label>
+            <label>Bagre obsahujúce diel:</label>
 		    @if (AllExcavators != null && AllExcavatorsChecked != null && AllExcavators.Count == AllExcavatorsChecked.Count)
 		    {
                 <ChecklistTable ItemType="Excavator"
@@ -30,7 +30,7 @@
 							    @bind-ItemsChecked="AllExcavatorsChecked" 
 							    Context="excavator" >
 				    <HeaderCols>
-					    <th>Názov:</th>
+					    <th>Názov</th>
 				    </HeaderCols>
 				    <BodyCols>
 					    <td>@excavator.Name</td>

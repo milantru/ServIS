@@ -1,4 +1,4 @@
-﻿@page "/typ-stroja/{ExcavatorTypeId:int}"
+﻿@page "/typ-bagra/{ExcavatorTypeId:int}"
 
 @inject ILogger<Excavators> logger
 @inject IServISApi api
@@ -6,7 +6,7 @@
 @if (excavatorTypeExists && ExcavatorType is not null)
 {
 	<AuthorizeView Roles="Administrator">
-		<a href="/admin/novy-stroj/@ExcavatorTypeId">Pridať nový bager tohto typu</a>
+		<a href="/admin/novy-bager/@ExcavatorTypeId">Pridať nový bager tohto typu</a>
 	</AuthorizeView>
 
 	<ExcavatorsLister ExcavatorType="@ExcavatorType"
@@ -14,7 +14,7 @@
 }
 else if (!excavatorTypeExists)
 {
-	<p>Tento typ stroja neexistuje.</p>
+	<p>Tento typ bagra neexistuje.</p>
 }
 
 @code {

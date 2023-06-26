@@ -31,17 +31,17 @@
 								<GridColumn Field="@nameof(SparePart.Name)" 
 											HeaderText="Názov" />
 								<GridColumn Field="@($"{nameof(SparePart.Excavators)}.{nameof(ICollection<Excavator>.Count)}")" 
-											HeaderText="Počet strojov s dielom" 
+											HeaderText="Počet bagrov s dielom" 
 											AllowSearching="false" 
 											CustomAttributes="@customAttributes" />
 							</MyGridColumns>
 						</ItemsManagement>
 					</TabPage>
 
-					<TabPage TabLabel="Stroje">
+					<TabPage TabLabel="Bagre">
 						<ItemsManagement ItemType="Excavator"
 										 ItemFormType="ExcavatorForm"
-										 Title="Správa strojov"
+										 Title="Správa bagrov"
 										 GetItemsAsync="api.GetExcavatorsAsync"
 										 GetItemsCountAsync="() => api.GetExcavatorsCountAsync()"
 										 DeleteItemAsync="api.DeleteExcavatorAsync"
@@ -64,10 +64,10 @@
 						</ItemsManagement>
 					</TabPage>
 
-					<TabPage TabLabel="Typy strojov">
+					<TabPage TabLabel="Typy bagrov">
 						<ItemsManagement ItemType="ExcavatorType"
 										 ItemFormType="ExcavatorTypeForm"
-										 Title="Správa typov strojov"
+										 Title="Správa typov bagrov"
 										 GetItemsAsync="api.GetExcavatorTypesAsync"
 										 GetItemsCountAsync="api.GetExcavatorTypesCountAsync"
 										 DeleteItemAsync="api.DeleteExcavatorTypeAsync">
@@ -77,17 +77,17 @@
 								<GridColumn Field="@($"{nameof(ExcavatorType.Category)}.{nameof(ExcavatorCategory.Category)}")" 
 											HeaderText="Kategória" />
 								<GridColumn Field="@($"{nameof(ExcavatorType.ExcavatorsOfThisType)}.{nameof(ICollection<Excavator>.Count)}")" 
-											HeaderText="Počet strojov"
+											HeaderText="Počet bagrov"
 											AllowSearching="false"
 											CustomAttributes="@customAttributes" />
 							</MyGridColumns>
 						</ItemsManagement>
 					</TabPage>
 
-					<TabPage TabLabel="Typy vlastností strojov">
+					<TabPage TabLabel="Typy vlastností bagrov">
 						<ItemsManagement ItemType="ExcavatorPropertyType"
 										 ItemFormType="ExcavatorPropertyTypeForm"
-										 Title="Správa typov vlastností strojov"
+										 Title="Správa typov vlastností bagrov"
 										 GetItemsAsync="api.GetExcavatorPropertyTypesAsync"
 										 GetItemsCountAsync="api.GetExcavatorPropertyTypesCountAsync"
 										 DeleteItemAsync="api.DeleteExcavatorPropertyTypeAsync">
@@ -102,19 +102,19 @@
 									<Template>@(((ExcavatorPropertyType)ept).InputType.GetLabel())</Template>
 								</GridColumn>
 								<GridColumn Field="@($"{nameof(ExcavatorPropertyType.ExcavatorTypesWithThisProperty)}.{nameof(ICollection<ExcavatorType>.Count)}")" 
-											HeaderText="Počet typov strojov s vlastnosťou" 
+											HeaderText="Počet typov bagrov s vlastnosťou" 
 											AllowSearching="false" 
 											CustomAttributes="@customAttributes" />
 							</MyGridColumns>
 						</ItemsManagement>
 					</TabPage>
 
-					<TabPage TabLabel="Kategórie a značky strojov">
+					<TabPage TabLabel="Kategórie a značky bagrov">
 						<div class="d-flex flex-wrap">
 							<div class="w-50-100">
 								<ItemsManagement ItemType="ExcavatorCategory"
 												 ItemFormType="ExcavatorCategoryForm"
-												 Title="Správa kategórií strojov"
+												 Title="Správa kategórií bagrov"
 												 GetItemsAsync="api.GetExcavatorCategoriesAsync"
 												 GetItemsCountAsync="api.GetExcavatorCategoriesCountAsync"
 												 DeleteItemAsync="api.DeleteExcavatorCategoryAsync">
@@ -122,7 +122,7 @@
 										<GridColumn Field="@nameof(ExcavatorCategory.Category)" 
 													HeaderText="Názov kategórie" />
 										<GridColumn Field="@nameof(ExcavatorCategory.ExcavatorTypesOfThisCategory)" 
-													HeaderText="Počet strojov" 
+													HeaderText="Počet bagrov" 
 													Context="ec" 
 													AllowSearching="false" 
 													CustomAttributes="@customAttributes">
@@ -138,14 +138,14 @@
 							<div class="w-50-100">
 								<ItemsManagement ItemType="ExcavatorBrand"
 												 ItemFormType="ExcavatorBrandForm"
-												 Title="Správa značiek strojov"
+												 Title="Správa značiek bagrov"
 												 GetItemsAsync="api.GetExcavatorBrandsAsync"
 												 GetItemsCountAsync="api.GetExcavatorBrandsCountAsync"
 												 DeleteItemAsync="api.DeleteExcavatorBrandAsync">
 									<MyGridColumns>
 										<GridColumn Field="@nameof(ExcavatorBrand.Brand)" HeaderText="Názov značky" />
 										<GridColumn Field="@nameof(ExcavatorBrand.ExcavatorTypesOfThisBrand)" 
-													HeaderText="Počet strojov" 
+													HeaderText="Počet bagrov" 
 													Context="eb" 
 													AllowSearching="false" 
 													CustomAttributes="@customAttributes">

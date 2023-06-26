@@ -13,7 +13,7 @@
 }
 else if (Excavators.Count == 0)
 {
-	<p>Momentálne neexistujú žiadne stroje požadovaného typu.</p>
+	<p>Momentálne neexistujú žiadne bagre požadovaného typu.</p>
 }
 else
 {
@@ -57,8 +57,8 @@ else
 	private async Task DeleteExcavatorAsync(Excavator excavator)
 	{
 		var isDeletionConfirmed = await modals.DisplayConfirmationAsync(
-			confirmationMessage: "Naozaj chcete tento stroj vymazať natrvalo?",
-			title: "Vymazať stroj natrvalo"
+			confirmationMessage: "Naozaj chcete tento bager vymazať natrvalo?",
+			title: "Vymazať bager natrvalo"
 		);
 		if (!isDeletionConfirmed)
 		{

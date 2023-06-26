@@ -48,7 +48,7 @@
 			<div class="row">
 				<div class="d-flex">
 					<div class="form-group w-100">
-						<label for="excavator">Stroje:</label>
+						<label for="excavator">Bagre:</label>
 						<ItemsSelector ItemType="Excavator"
 									   @bind-SelectedItem="Item.Excavator"
 									   Items="@Excavators"
@@ -196,7 +196,7 @@
 
 		if (!IsExcavatorSelected())
 		{
-			messageStore.Add(() => Item.Excavator, $"Nie je vybraný žiaden stroj.");
+			messageStore.Add(() => Item.Excavator, $"Nie je vybraný žiaden bager.");
 		}
 	}
 

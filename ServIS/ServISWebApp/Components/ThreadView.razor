@@ -47,7 +47,7 @@ else
 		</div>
 		<div class="reply-container">
 			<textarea @bind="ReplyText" @bind:event="oninput"></textarea>
-			<button disabled="@IsReplyButtonDisabled" @onclick="SendReplyAsync">Poslať</button>
+			<button disabled="@IsReplyButtonDisabled" @onclick="SendReplyAsync">Odoslať</button>
 		</div>
 	</div>
 }
@@ -172,8 +172,8 @@ else
 	private async Task DeleteThreadAsync()
 	{
 		var isDeletionConfirmed = await modals.DisplayConfirmationAsync(
-			confirmationMessage: "Naozaj chcete vymazať konverzáciu?", 
-			title: "Vymazanie konverzácie"
+			confirmationMessage: "Naozaj chcete vymazať túto konverzáciu natrvalo?",
+			title: "Vymazať konverzáciu"
 		);
 		if (!isDeletionConfirmed)
 		{

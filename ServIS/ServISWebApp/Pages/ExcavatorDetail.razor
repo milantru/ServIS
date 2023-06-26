@@ -1,4 +1,4 @@
-﻿@page "/stroj/{ExcavatorId:int}"
+﻿@page "/bager/{ExcavatorId:int}"
 
 @inject ILogger<ExcavatorDetail> logger
 @inject IServISApi api
@@ -47,7 +47,7 @@
 
 		<div class="row">
 			<div class="col">
-				<p>Vlastnosti stroja:</p>
+				<p>Vlastnosti bagra:</p>
 				<table class="table">
 					<tbody>
 						@foreach (var property in Excavator.Properties)
@@ -65,7 +65,7 @@
 }
 else if (!excavatorExists)
 {
-	<p>Tento stroj neexistuje.</p>
+	<p>Tento bager neexistuje.</p>
 }
 
 @code {
@@ -99,7 +99,7 @@ else if (!excavatorExists)
 
 	private void GoToExcavatorEditPage()
 	{
-		navMan.NavigateTo($"/admin/uprava-stroja/{Excavator.Id}");
+		navMan.NavigateTo($"/admin/uprava-bagra/{Excavator.Id}");
 	}
 
 	private async Task SetExcavatorAsync()

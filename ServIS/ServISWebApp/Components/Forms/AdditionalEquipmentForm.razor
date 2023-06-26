@@ -23,7 +23,7 @@
 		<br />
 
 		<div class="form-group">
-			<label for="excavator-category">Pre akú kategóriu strojov:</label>
+			<label for="excavator-category">Pre akú kategóriu bagrov:</label>
 			<ItemsSelector ItemType="ExcavatorCategory"
 					   @bind-SelectedItem="Item.ExcavatorCategory"
 					   Items="AllExcavatorCategories"
@@ -207,7 +207,7 @@
 
 		if (!IsExcavatorCategorySelected())
 		{
-			messageStore.Add(() => Item.ExcavatorCategory, $"Nie je vybraná kategória strojov.");
+			messageStore.Add(() => Item.ExcavatorCategory, $"Nie je vybraná kategória bagrov.");
 		}
 
 		if (!IsCategorySelected())

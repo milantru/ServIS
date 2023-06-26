@@ -1,12 +1,12 @@
-﻿@page "/admin/novy-stroj/{ExcavatorTypeId:int}"
-@page "/admin/uprava-stroja/{ExcavatorId:int}"
+﻿@page "/admin/novy-bager/{ExcavatorTypeId:int}"
+@page "/admin/uprava-bagra/{ExcavatorId:int}"
 
 @attribute [Authorize(Roles = "Administrator")]
 @inject ILogger<CreateExcavator> logger
 @inject IServISApi api
 @inject NavigationManager navMan
 
-<h3>Stroje- @(ExcavatorTypeId.HasValue ? "vytvorenie nového" : "úprava existujúceho") záznamu</h3>
+<h3>Bagre- @(ExcavatorTypeId.HasValue ? "vytvorenie nového" : "úprava existujúceho") záznamu</h3>
 
 @if (Excavator == null)
 {
@@ -14,7 +14,7 @@
 }
 else
 {
-	<ExcavatorForm @bind-Item="Excavator" OnSave="@(() => navMan.NavigateTo($"/typ-stroja/{Excavator.Type.Id}"))" />
+	<ExcavatorForm @bind-Item="Excavator" OnSave="@(() => navMan.NavigateTo($"/typ-bagra/{Excavator.Type.Id}"))" />
 }
 
 @code {
