@@ -1,4 +1,85 @@
-\chapter{Analýza zadania}
+\chapter{Analýza}
+
+TBA: Uvodna rec o tom ako si ideme rozmysliet naplenenie poziadavok z uvodu a zaroven z casti Navrh UI (predosla kapitola).
+
+\section{Výber typu aplikácie}
+
+Kvôli požiadavke P10~(\ref{dostupnost}) dáva dobrý zmysel vytvoriť náš systém ako webovú aplikáciu~-- vyriešime tým problém s distribúciou softvéru k (aj potenciálne novým) zákazníkom, a takisto vyriešime problém s potenciálne zastaralými počítačmi vo firme. Statická stránka by nám nestačila nakoľko chceme administrátorom umožniť dynamickú zmenu obsahu.
+
+\section{Výber jazyka a~frameworku}
+
+Teraz keď už vieme, že ideme vytvárať webovú aplikáciu si musíme rozmyslieť v akom jazyku a pomocou akého frameworku ju budeme vyvíjať.
+
+\subsection{Výber backend jazyka}
+
+Na tvorbu webovej aplikacie s~bohatym UI sa hodi high level jazyk, napr Java alebo C\#. Autor ovlada C\#, preto volime C\# a platformu .NET, ktora je s nim spojena.
+
+\subsection{SPA}
+
+SPA by nam pomohli s interktivitou nasho UI (tym sa mysli napr zobrazovanie/schovavanie formov alebo obsah zorbazovany/schovavany podla toho aky uzivatel je prihlaseny a HLAVNE odpocet aukcnych ponuk), kedze kod je vykonavany rychlejsie lebo je vykonavany priamo na klientovi.
+
+Aplikacia by mohla bezat aj offline, ale to pre nas neni podstatne.
+
+Nevyhodou je ze by sme museli vytvarart nejake bezpecne API, napr pre pracu s databazou.
+
+Takisto je nevyhodou dlhsi prvotny nacitavaci cas (lebo cakame kym sa zdrojaky stiahnu), ktory by mohol odradit novych potencialnych zakaznikov.
+
+Prikladom tohto by boli napr JS frameworky ako React, Angular atď alebo C\#ový Blazor WebAssembly.
+
+\subsection{Klasické webové aplikácie}
+
+Zdá sa že toto by bolo dobre pretože kód je vykonavany na serveri, preto mozeme priamo pracovat s databazou, nemusime vytvarat api.
+
+Uzivatelovi sa serviruje len HTML, CSS, JS, takze nemali by mat starsie pocitace problem.
+
+Navyse kvoli tomu su CEO friendly, co znamena ze search-enginy ako napr Google ich vie lahsie najst, a ich prvotny nacitavaci cas je rychly, co je tiez dobre pre ziskavanie novych zakaznikov.
+
+ALE vracaju sa zo serveru cele stranky... No a ked sa pozrieme na nase UI, tak vidime ze je celkom interkativne a castokrat meni len cast aplikacie, nie celu (znovu moze uviest priklady ako v SPA).
+
+Tento problem by sa mozno dal vyriesit napr. pomocou nejakych featur v ASP.NET MVC, ale ako si mozme v casti Navrh UI vsimnut, tak viacero casti aplikacie vyzera rovnako, a preto by sa nam hodilo, ak by sme tieto rovnake/podobne casti mohli zadefinovat raz a potom vyuzivat na viacerych miestach. ASP.NET MVC nam umoznuje definovat celu stranku ale nie len cast stranky~-- komponentu. Existuje este jedna moznost ktora nam prinesie vyhody SPA, klasickych webovych aplikacii a zaroven nam umozni definvoat spominane komponenty.
+
+\subsection{Blazor Server}
+
+Existuej však ešte jedna možnosť~--Blazor Server. Tento framework je niečo ,,medzi``. Poskytuje výhody klasickej webovej aplikacie v tom zmysle, že má rýchle prvotne nacitanie stranky, serviruje uzivatelom iba HTML, CSS, JS. Ďalšou výhodou je že kód je iba na serveri preto mozme komunikovat s databazou priamo a nemusime vytvarat separatne API. Ale zároven nam poskytuje výhody SPA interaktivity preto, pretoze pri zmene UI sa neposiela zo serveru cela stranka ale iba zmeny. Nie je to síce az tak rýchle ako keby kod bezal u clienta ale kedze my netvorime nejaku narocnu real timovu aplikaciu, tka nam to staci. Zaroven by bolo nevyhodou to ze sa vytvara zataz na server, ale kedze program je urceny pre male firmy, ktore nemaju az tak vysoky pocet uzivatelov tak nam to nevadi, plus dalsou nevyhodou by mohlo byt ze nemoze apliakcia bezat offline, ale to nam takisto nevadi, to sme ani nechceli.
+
+Navyše kvôli výberu tohto frameworku budeme môcť písať aj forntend, aj backend v jazyku C\#.
+
+\section{Voľba databázy}
+
+TODO
+
+\subsection{Návrh relačného modelu databázy}
+
+TODO
+
+\subsection{Voľba typu databázy a databázového servera}
+
+TODO
+
+\subsection{ORM}
+
+TODO
+
+\section{Aukcia- odpočet a vyhodnocovanie}
+
+TODO
+
+---
+
+PO TADE JE NOVY TEXT
+
+---
+
+TBA: Ako vidíme tak potrebujeme bohaty frontend, na to sa hodi napr JavaScriptové frameworky ako su React, Vue atd., a takisto nam nestaci Backend as a Service (ktory poskytuje napr Amazon...), lebo napr kvoli vyhodnocovaniu aukcie, takze preto vlastny backend. Na tvorbu webovej aplikacie s bohatym UI sa hodi high level jazyk, napr Java alebo C\#. Autor ovlada C\#, preto volime C\# a platformu .NET, ktora je s nim spojena. Backend by sme mohli implementovat pomocou frmeworku ASP.NET MVC. No este existuje ina varianta a tou je Blazor. Ten nam umozni vyuzivat komponenty (to sa nam hodi napr. aj kvoli implementácii odpočtu) a takisto nám umožní písať frontend aj backend v rovnakom jazyku -- C\#.
+
+Blazor poskytuje viaceo hosting modelov a v dobe vyberu technologii existovali dva -- Blazor WebAssebmly a Blazor Server. Blazor WebAssembly funguje skor na sposob SPA, kde logika aplikacie bezi na klientskom pocitaci vo webovom prehliadaci, a su s nim spojene nejake problemy [vymenujem, napr to ze search engingy mozu mat problem s nim, P10 aby to uzivatelom rozbehol pc, aby nebol zastaraly prehliadac, prvotne nacitanie trva dlho (lebo stahuje zdrojaky) co by mohlo potencialnych zakaznikov odradit, a tiez nejake WebApi na server by sme museli vytvarat). Naproti Blazor Server sa podoba skor tradicnemu web app pristupu a hodi sa nam viac lebo je CEO-friendly, kod bezi na servery a uzivatel dostane len HTML, CSS, JS, preto aj starsie pc by nemali mat problem s rozbehnutim, a takisto nema preto problem s dlhym prvotnym nacitanim, a navyse nemusime vytvarata WebApi.
+
+Preto si volime C\# (.NET) a Blazor Server.
+
+
+---------
+
+
 
 V~tejto kapitole sa zamyslíme nad tým, ako splniť požiadavky definované v~Úvode~(\ref{poziadavky}).
 
