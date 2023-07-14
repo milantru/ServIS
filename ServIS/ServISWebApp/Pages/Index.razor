@@ -5,8 +5,6 @@
 @inject IServISApi api
 @inject Modals modals
 
-<PageTitle>@(config.GetValue<string>("CompanyName")) | Domov</PageTitle>
-
 <AuthorizeView Roles="Administrator">
 	<a href="/admin/nova-ponuka">Pridať novú ponuku</a>
 </AuthorizeView>
