@@ -1,5 +1,4 @@
 \chapter{Úvod}
-\addcontentsline{toc}{chapter}{Úvod}
 
 V~súčasnosti existujú malé firmy, ktoré fungujú ako dodávatelia rôznych drahých produktov. Tieto firmy môžu ponúkať na~predaj okrem nových produktov aj staré produkty, ktoré prešli nejakou opravou. Takisto stojí za~zmienku, že kedže ide o~dodávateľov drahých produktov, tak zákazníci sa najprv s~firmou musia dohodnúť na~detailoch obchodu, a~až potom je možné dodanie produktu.
 
@@ -8,13 +7,15 @@ Spoločným problémom takýchto firiem býva, že ich ľudia nepoznajú. Preto 
 My sme dostali ponuku na~tvorbu riešenia od~jednej z~takýchto firiem. Konkrétne ide o~firmu, ktorá sa zaoberá predajom a~opravou bagrov (ďalej už len klientská firma). Po~konzultácii s~majiteľom (ďalej už len klient) sme zistili, že klientksá firma ponúka služby v~podobe výkopových prác, predaja a~opravy bagrov, a~takisto predaja prídavných zariadení pre~bagre. Taktiež sme zistili, že doteraz fungovala komunikácia medzi klientskou firmou a~zákazníkmi prostredníctvom telefonátov, emailov alebo sa strany fyzicky stretli a~dohodli obchod. Klient od~nás vyžaduje riešenie, ktoré by spĺňalo požiadavky uvedené v~následujúcej podkapitole.
 
 \section{Požiadavky na systém}
+\label{poziadavky}
 
-V priebehu niekoľkých stretnutí sme s~klientom prebrali a~vypracovali následujúce požiadavky, ktoré softvér musí spĺňať:
+V priebehu niekoľkých stretnutí sme s~klientom prebrali a~vypracovali následujúce požiadavky, ktoré musí softvér spĺňať:
 
 \begin{itemize}
 \item \textbf{P1 Roly užívateľa}
+\label{roly uzivatela}
 
-Jednou z~požiadaviek je, že softvér má rozlišovať zamestnancov firmy spravujúcich systém (ďalej už len administrátori, resp. administrátor) a~bežných zákazníkov. Obom rolám sa bude zobrazovať len obsah podľa funkcionalít, ktoré majú k~dispozícii. Čiže napr.~zákazník si bude môcť zobraziť detail bagra a~vyjadriť oň nejakým spôsobom záujem, ale nezobrazí sa mu možnosť na~jeho vymazanie. V~prípade administrátora bude možné bager napr.~vymazať, ale nedáva zmysel, aby mohol administrátor vyjadrovať záujem o~bager.
+Jednou z~požiadaviek je, že softvér má rozlišovať zamestnancov firmy spravujúcich systém (ďalej už len administrátori, resp.~administrátor) a~bežných zákazníkov. Obom rolám sa bude zobrazovať len obsah podľa funkcionalít, ktoré majú k~dispozícii. Čiže napr.~zákazník si bude môcť zobraziť detail bagra a~vyjadriť oň nejakým spôsobom záujem, ale nezobrazí sa mu možnosť na~jeho vymazanie. V~prípade administrátora bude možné bager napr.~vymazať, ale nedáva zmysel, aby mohol administrátor vyjadrovať záujem o~bager.
 
 \item \textbf{P2 Predstavenie ponuky zákazníkom}
 
@@ -23,15 +24,15 @@ Ako už bolo spomenuté, klientská firma predáva bagre a~prídavné zariadenia
 \begin{itemize}
 \item \textbf{P2.1 Hlavná ponuka}
 
-Hlavná ponuka predstavuje bagre určitého typu (t.~j.~určitej kombinácie značky a~kategórie). Hlavná ponuka obsahuje opis typu bagrov a~fotku reprezentujúcu daný typ bagrov. Po~rozkliknutí nejakej hlavnej ponuky sa zobrazia bagre typu asociovaného s~vybranou ponukou.
+Hlavná ponuka predstavuje bagre určitého typu (t.~j.~určitej kombinácie značky a~kategórie). Hlavná ponuka obsahuje opis typu bagrov a~fotku reprezentujúcu daný typ bagrov. Všetky tieto údaje okrem opisu sú povinné. Po~rozkliknutí nejakej hlavnej ponuky sa zobrazia bagre typu asociovaného s~vybranou ponukou.
 
 \item \textbf{P2.2 Bager}
 
-Každý bager má obsahovať informácie: názov, značku, kategóriu, opis, fotky a~vlastnosti. Tieto informácie majú byť viditeľné pre~každého užívateľa, t.~j.~ako pre~bežného zákazníka, tak aj pre~administrátora. Navyše má ešte stroj obsahovať informáciu o~náhradných dieloch~-- táto informácia má byť viditeľná iba pre~administrátorov. Navyše môžu existovať bagre, ktoré nepatria do~ponuky a~môžu byť využité výhradne iba v~aukcii (viac o~aukcii v~P4).
+Každý bager má obsahovať informácie: názov, značku, kategóriu, opis, fotky a~vlastnosti, pričom všetky okrem opisu sú povinné. Vlastnosti bagra sú určené kombináciou jeho značky a~kategórie (teda typom bagra, každý typ bagra môže mať rôzne vlastnosti, napr. jeden typ bagra by mohol mať vlastnosť ťažná sila, iný typ bagra by mohol mať vlasnosť šírka lyžice). Informácie o~bagri majú byť viditeľné pre~každého užívateľa, t.~j.~ako pre~bežného zákazníka, tak aj pre~administrátora. Navyše má ešte stroj obsahovať informáciu o~náhradných dieloch~-- táto informácia má byť viditeľná iba pre~administrátorov. Taktiež platí, že môžu existovať bagre, ktoré nepatria do~ponuky a~môžu byť využité výhradne iba v~aukcii (viac o~aukcii v~P4).
 
 \item \textbf{P2.3 Prídavné zariadenie}
 
-Každé prídavné zariadenie má obsahovať informácie: názov, značka, kategória, pre~akú kategóriu strojov je zariadenie určené, opis a~fotky. Tieto informácie majú byť viditeľné rovnako pre~každého užívateľa.
+Každé prídavné zariadenie má obsahovať informácie: názov, značka, kategória, pre~akú kategóriu bagrov je prídavné zariadenie určené, opis a~fotky, pričom všetky okrem opisu sú povinné. Tieto informácie majú byť viditeľné rovnako pre~každého užívateľa.
 
 \item \textbf{P2.4 Správa bagrov, prídavných zariadení a hlavných ponúk}
 
@@ -50,12 +51,16 @@ Dopyt by mal v~sebe obsahovať informácie o~žiadanom predmete, údaje o~užív
 
 \item \textbf{P4 Aukcia}
 
-Keď sme v~predošlých podmienkách spomínali ponuku strojov a~prídavných zariadení, tak išlo o~nové produkty. No ako už bolo skôr spomenuté, klientská firma sa špecializuje aj na~opravu bagrov. Klient vyžaduje, aby mohol administrátor v~systéme vytvoriť aukčnú ponuku, do~ktorej by okrem špecifikovania jej konca a~počiatočnej sumy (vyvolávacej ceny), vedel zaradiť opravený bager, a~aby systém umožnil zákazníkom ponúkať sumy (prvá ponúknutá suma môže byť rovná počiatočnej sume, nasledujúce ponúkané sumy musia mať medzi sebou rozdiel aspoň 100 eur), pričom po~skončení dražby zákazník s~najvyššou ponúknutou sumou vyhráva dražený bager.
+Keď sme v~predošlých podmienkách spomínali ponuku strojov a~prídavných zariadení, tak išlo o~nové produkty. No ako už bolo skôr spomenuté, klientská firma sa špecializuje aj na~opravu bagrov.
+
+Klient vyžaduje, aby mohol administrátor v~systéme vytvoriť aukčnú ponuku, ktorej môže špecifikovať dátum jej konca, pričom administrátor nesmie byť schopný nastaviť túto hodnotu do~minulosti, počiatočnú sumu (vyvolávaciu cenu), ktorá nesmie byť záporná, popis ponuky (v~popise môže napísať napr.~čo bolo v~bagri opravované), a~takisto aby mohol do ponuky vybrať (opravený) bager. Všetky tieto údaje okrem popisu sú povinné.
+
+Ďalej klient vyžaduje aby systém umožnil zákazníkom ponúkať sumy (prvá ponúknutá suma môže byť rovná počiatočnej sume, nasledujúce ponúkané sumy musia mať medzi sebou rozdiel aspoň 100 eur), pričom po~skončení dražby zákazník s~najvyššou ponúknutou sumou vyhráva dražený bager.
 
 \begin{itemize}
 \item \textbf{P4.1 Správanie aukcie}
 
-Keď aukcia skončí, systém má upozorniť jej účastníkov (poslať email) na~to, či vyhrali alebo prehrali dražbu. Taktiež má softvér upozorniť administrátora systému na~to, že aukcia skončila a~kto je jej víťazom. V~prípade, že aukcia skončila bez víťaza (nikto sa jej nezúčastnil), tak má softvér dražbu automaticky reštartovať, posunúť termín konca dražby o~týždeň a~upozorniť o~tom administrátora (poslať mu email).
+Keď aukcia skončí, systém má upozorniť jej účastníkov (poslať email s~automaticky generovanou správou) na~to, či vyhrali alebo prehrali dražbu. Taktiež má softvér upozorniť administrátora systému na~to, že aukcia skončila a~kto je jej víťazom. V~prípade, že aukcia skončila bez~víťaza (nikto sa jej nezúčastnil), tak stále platí, že má na~to softvér administrátora upozorniť, ale~taktiež má dražbu automaticky reštartovať, posunúť termín konca dražby o~týždeň a~upozorniť o~tom administrátora (poslať mu email).
 
 \item \textbf{P4.2 Odpočet a ďalšie údaje}
 
@@ -64,16 +69,16 @@ Okrem toho sa od~nášho softvéru vyžaduje, aby bol pri~každej aukčnej ponuk
 
 \item \textbf{P5 Správy}
 
-Keďže posielanie dopytov a~správanie aukcie zahŕňa posielanie emailov administrátorom, tak je tiež žiadúce, aby sa emaily dali prečítať nielen\\z~Gmailu (emailová služba používaná klientom), ale aj z~nášho systému a~rovnako aby systém administrátorom umožnil na~ne odpovedať.
+Keďže posielanie dopytov a~správanie aukcie zahŕňa posielanie emailov administrátorom, tak je tiež žiadúce, aby sa emaily dali prečítať nielen z~Gmailu (emailová služba používaná klientom), ale aj z~nášho systému a~rovnako aby systém administrátorom umožnil na~ne odpovedať.
 
 \begin{itemize}
 \item \textbf{P5.1 Podobnosť s~Gmailom}
 
-Nakoľko je klient zvyknutý na~prácu s~Gmailom, tak sa má schránka podobať na~Gmail. Teda aspoň funkcionalitou, t.~j.~pri~príchode\\do~schránky sa zobrazia najnovšie správy pre~každú\\konverzáciu (vlákno) zoradené zhora smerom dole od~najnovšej po~najstaršiu.
+Nakoľko je klient zvyknutý na~prácu s~Gmailom, tak sa má schránka podobať na~Gmail. Teda aspoň funkcionalitou, t.~j.~pri~príchode do~schránky sa zobrazia najnovšie správy pre~každú konverzáciu (vlákno) zoradené zhora smerom dole od~najnovšej po~najstaršiu.
 
 Po~rozkliknutí nejakej zo~správ sa zobrazí celá konverzácia (každá správa vo~vybranom vlákne) zoradená zhora dole od~najstaršej po~najnovšiu.
 
-Ďalej má schránka umožňovať označovanie správ, pričom označené správy budeme môcť hromadne vymazať alebo označiť za~prečítané, resp.~neprečítané. Ak sú označené správy neprečítané, zobrazí sa tlačidlo umožňujúce označenie vybraných správ ako prečítané, ak sú\\všetky označené správy prečítané, tak sa zobrazí tlačidlo umožňujúce označiť vybrané správy ako neprečítané, a~ak označené správy obsahujú aj prečítané, aj neprečítané správy, tak sa zobrazí tlačidlo umožňujúce označiť vybrané správy ako prečítané.
+Ďalej má schránka umožňovať označovanie správ, pričom označené správy budeme môcť hromadne vymazať alebo označiť za~prečítané, resp.~neprečítané. Ak sú označené správy neprečítané, zobrazí sa tlačidlo umožňujúce označenie vybraných správ ako prečítané, ak sú všetky označené správy prečítané, tak sa zobrazí tlačidlo umožňujúce označiť vybrané správy ako neprečítané, a~ak označené správy obsahujú aj prečítané, aj neprečítané správy, tak sa zobrazí tlačidlo umožňujúce označiť vybrané správy ako prečítané.
 
 Podobne po~rozkliknutí nejakej zo~správ sa nám zobrazí celá konverzácia a~administrátor bude môcť celú konverzáciu vymazať alebo~označiť za~neprečítanú, a~taktiež bude môcť odoslať novú správu do~konverzácie (odpovedať na~správy). 
 
@@ -85,12 +90,12 @@ Okrem toho budeme ešte od~softvéru vyžadovať, aby v~správach, ktoré boli o
 
 \item \textbf{P5.3 Automaticky generované správy}
 
-Okrem toho je tiež žiadúce, aby systém umožnil administrátorom upravovať formát automaticky odosielaných (generovaných) správ týkajúcich sa aukcie.
+Okrem toho je tiež žiadúce, aby systém umožnil administrátorom upravovať formát automaticky generovaných (odosielaných) správ týkajúcich sa aukcie.
 \end{itemize}
 
 \item \textbf{P6 Registrácia a~prihlásenie užívateľov}
 
-Ďalšou požiadavkou je, aby softvér umožnil zákazníkom registrovať sa\\do~systému a~následne sa doň prihlásiť. Do~systému sa môžu prihlasovať rovnakým spôsobom ako bežní zákazníci aj administrátori. Systém má rozlíšiť, či ide o~účet bežného zákazníka alebo o~administrátorský (dôležité pre~P1). Každý užívateľ má mať po~prihlásení výhodu v~tom, že do~formulárov nemusí zadávať svoje osobné údaje.
+Ďalšou požiadavkou je, aby softvér umožnil zákazníkom registrovať sa do~systému a~následne sa doň prihlásiť. Do~systému sa môžu prihlasovať rovnakým spôsobom ako bežní zákazníci aj administrátori. Systém má rozlíšiť, či ide o~účet bežného zákazníka alebo o~administrátorský (dôležité pre~P1). Každý užívateľ má mať po~prihlásení výhodu v~tom, že do~formulárov nemusí zadávať svoje osobné údaje.
 
 \begin{itemize}
 \item \textbf{P6.1 Funkcionality pre~neprihlásených užívatelov}
@@ -99,7 +104,7 @@ No požiadavkou je takisto aj to, aby aj neprihlásení užívatelia mohli posie
 
 \item \textbf{P6.2 Registrácia a~prihlasovanie užívateľa}
 
-Pri~registrácií si bude môcť užívateľ vybrať svoje užívateľské meno, heslo, takisto bude môcť zadať svoje meno, priezvisko a~email. Všetky spomenuté údaje sú povinné. Nepovinnými údajmi, ktoré môže užívateľ ďalej zadať, sú telefónne číslo a~mesto.
+Pri~registrácií si bude môcť užívateľ vybrať svoje prihlasovacie (užívateľské) meno, heslo, takisto bude môcť zadať svoje (krstné) meno, priezvisko a~email. Všetky spomenuté údaje sú povinné. Nepovinnými údajmi, ktoré môže užívateľ ďalej zadať, sú telefónne číslo a~mesto.
 
 Pri~prihlasovaní do~systému má užívateľ zadať svoje prihlasovacie meno a~heslo.
 
@@ -115,7 +120,7 @@ Keď si zákazník zakúpi bager, tak po~nejakom čase má firma vykonať kontro
 \begin{itemize}
 \item \textbf{P7.1 Náhradný diel}
 
-Jeden bager môže obsahovať viacero náhradných dielov (počet nás nezaujíma) a~jeden náhradný diel sa môže nachádzať vo~viacerých bagroch. Náhradný diel obsahuje informácie: katalógové číslo, názov.
+Jeden bager môže obsahovať viacero náhradných dielov (počet dielov rovnakého druhu v~bagri nás nezaujíma) a~jeden náhradný diel sa môže nachádzať vo~viacerých bagroch. Náhradný diel obsahuje informácie: katalógové číslo, názov (obe sú povinné).
 
 \item \textbf{P7.2 Správa náhradných dielov}
 
@@ -133,7 +138,7 @@ Navyše klient žiada časť aplikácie, kde bude opísaná firma a~jej históri
 \item \textbf{P10 Dostupnosť}
 \label{dostupnost}
 
-Nakoľko klientovi ide o~to, aby dostal ponuku viac do~povedomia (i~potenciálne nových) zákazníkov, je žiadúce, aby bol softvér jednoducho dostupný každému užívateľovi~-- tým sa myslí, že užívateľ si nemusí sťahovať, inštalovať žiaden softvér, a~takisto v~prípade administrátorov sa chceme vyhnúť problémom s~kompatibilitou (s~pozorovania autor vie, že firmy častokrát používajú staré počítače s~potenciálne starým softvérom, čo by mohlo spôsobovať problémy s~prevádzkou nášho systému).
+Nakoľko klientovi ide o~to, aby dostal ponuku viac do~povedomia (i~potenciálne nových) zákazníkov, je žiadúce, aby bol softvér jednoducho dostupný každému užívateľovi~-- tým sa myslí, že užívateľ si nemusí sťahovať, inštalovať žiaden softvér, a~takisto v~prípade administrátorov sa chceme vyhnúť problémom s~kompatibilitou (z~pozorovania autor vie, že firmy častokrát používajú staré počítače s~potenciálne starým softvérom, čo by mohlo spôsobovať problémy s~prevádzkou nášho systému, napr. sa využívajú počítače s operačným systémom XP).
 
 \item \textbf{P11 Náklady}
 

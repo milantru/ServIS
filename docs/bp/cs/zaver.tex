@@ -1,45 +1,57 @@
 \chapter*{Záver}
 \addcontentsline{toc}{chapter}{Záver}
 
-V~závere zhodnotíme ako sa nám podarilo naplniť požiadavky definované v~Úvode, konkrétne v~podkapitole~Požiadavky na~softvér~(\ref{poziadavky}).
+V~závere zhodnotíme ako sa nám podarilo naplniť požiadavky definované v~Úvode, konkrétne v~podkapitole~Požiadavky na~systém~(viď~\ref{poziadavky}).
 
 \begin{itemize}
-\item \textbf{P1 Dostupnosť}
+\item \textbf{P1 Roly užívateľa}
 
-Náš systém je webovou aplikáciou, ktorá je dostupná pre~užívateľov odkiaľkoľvek (samozrejme za~predpokladu, že majú prístup k~internetu).
+Aplikácia rozlišuje zákazníka a~administrátora, a~podľa toho zobrazuje obsah. Administrátorovi nezobrazuje napr.~na~stránke s~detailom bagra tlačidlo pre~dopyt (a~teda ani formulár pre~dopyt) a~zákazníkovi aplikácia nezobrazí napr.~tlačidlá pre~vymazanie hlavnej ponuky na~domovskej stránke.
 
-\item \textbf{P2 Náklady}
+\item \textbf{P2 Predstavenie ponuky zákazníkom}
 
-Všetky balíčky využívané aplikáciou sú buď úplne zdarma alebo~využívame ich bezplatné verzie. Čo sa týka databázového servera, tak ten takisto využívame v~jeho bezplatnej verzii.
+Systém je schopný načítať z~databázy hlavné ponuky, bagre, prídavné zariadenia a~zobraziť ich užívateľom. Takisto umožňuje administrátorom tieto položky okrem pridávania aj upravovať alebo~mazať.
 
-\item \textbf{P3 Minimálna obsluha softvéru}
+\item \textbf{P3 Posielanie dopytu}
 
-Táto požiadavka sa odzrkadľuje v~správaní aukcie. V~prípade, že aukčná ponuka skončí bez~toho, aby sa jej niekto účastnil, posunie sa jej termín ukončenia aj bez~zásahu administrátora.
+Systém umožňuje užívateľom odosielať dopyt prostredníctvom formulára, ktorý odošle email administrátorovi s~potrebnými informáciami o~užívateľovi a~jeho záujme o~danú položku.
 
-\item \textbf{P4 Predstavenie ponuky zákazníkom}
+\item \textbf{P4 Aukcia}
 
-Systém je schopný načítať z~databázy dáta strojov aj prídavných zariadení a~zobraziť ich užívateľom.
+V~aplikácií existuje aukcia bagrov. Administrátorom je umožnené vytvárať aukčné ponuky, v~ktorých sa draží (administrátorom vybraný) bager. Zákazníkom je v~prípade záujmu umožnené ponúkať sumy do~dražby. Po~skončení odpočtu prebehne vyhodnocovanie aukčných ponúk, kde sa rozhodne kto je ich víťazom. Víťaz je oboznámený prostredníctvom emailu, že vyhral. Porazení sú informovaní o~skutočnosti, že sa im aukciu nepodarilo vyhrať. Administrátor je upozornený, že aukčná ponuka skončila a~kto je jej víťazom. Ak aukcia skončila bez~víťaza (nikto sa jej nezúčastnil), tak administrátor je aj v~tomto prípade o~tom upozornený a~dražba je reštartovaná (termín konca aukčnej ponuky je posunutý o~týždeň).
 
-\item \textbf{P5 Aukcia}
+\item \textbf{P5 Správy}
 
-V~aplikácií existuje aukcia strojov. Administrátorom je umožnené vytvárať aukčne ponuky, v~ktorých sa draží (adminom vybraný) stroj. Užívateľom je v~prípade záujmu umožnené ponúkať sumy do~dražby. Po~skončení odpočtu prebehne vyhodnocovanie aukčných ponúk, kde sa rozhodne kto je ich víťazom. Víťaz je oboznámený prostredníctvom emailu, že vyhral. Porazení sú informovaní o~skutočnosti, že sa im aukciu nepodarilo vyhrať. Admin je upozornený, že aukčná ponuka skončila a~kto je jej víťazom.
+V aplikácii sa nachádza emailová schránka pripomínajúca Gmail. Ak v~aplikácii administrátor otvorí nejakú z~konverzácií, ktorej prvý email (správa) pochádza z~našej aplikácie, tak sa pri~prvom emaile bude nachádzať vložené okno prepájajúce stránku aplikácie odkiaľ bol email odoslaný. Ďalej sa v~aplikácii nachádzajú nastavenia správ, kde si môže administrátor meniť formát automaticky generovaných správ.
 
-\item \textbf{P6 Dopyt}
+\item \textbf{P6 Registrácia a~prihlásenie užívateľov}
 
-Systém umožňuje užívateľom podávať dopyt prostredníctvom formulára, ktorý odošle email administrátorovi s~potrebnými informáciami o~užívateľovi a~jeho záujme o~danú položku.
+Systém umožňuje bežným užívateľom vytvoriť si účet v~systéme, a~takisto sa doň prihlásiť (možnosť odhlásenia je samozrejmosťou). A~po~prihlásení už nemusia do~formulárov (pri~posielaní dopytu alebo~pri~zapájani sa do~aukcie) zadávať svoje údaje. V~aplikácii sa takisto nachádza aj profil užívateľa, kde si môže upravovať svoje údaje.
 
 \item \textbf{P7 Prístup k súčiastkam strojov}
 
-V~aplikácií si vie administrátor po~kliknutí na~profil v~správe strojov rozkliknúť detail nejakého konkrétneho stroja. Okrem iných údajov o~spomínanom stroji sa mu zobrazí aj zoznam náhradných dielov, ktoré stroj obsahuje.
+V~aplikácií si vie administrátor v~sekcii~Správa webu po~kliknutí na~kartu~Bagre rozkliknúť detail nejakého konkrétneho bagra. Okrem iných údajov o~spomínanom bagri sa mu zobrazí aj zoznam náhradných dielov, ktoré bager obsahuje. Podobne na karte Náhradné diely sa nachádza zoznam náhradných dielov. Okrem pridávania nových náhradných dielov tam môže administrátor upravovať existujúce náhradné diely. Navyše po~rozkliknutí detailu nejakého z~náhrandých dielov sa mu zobrazí zoznam bagrov, ktoré obsahujú daný náhradný diel.
 
-\item \textbf{P8 Registrácia a prihlásenie užívateľov}
+\item \textbf{P8 Objednávanie výkopových prác}
 
-Systém umožňuje bežným užívateľom vytvoriť si účet v~systéme, a~takisto sa doň prihlásiť (možnosť odhlásenia je samozrejmosťou). A~po~prihlásení už nemusia do~formulárov (pri posielaní dopytu alebo pri~zapájani sa do~aukcie) zadávať svoje údaje.
+V aplikácií sa nachádza sekcia (stránka) Služby, kde okrem informácií o~službách firmy (výkopových prácach) sa nachádza aj formulár, ktorým môžu užívatelia požiadať o~služby firmy.
+
+\item \textbf{P9 Sekcie O nás a Kontakt}
+
+V aplikácií sa tiež nachádzajú sekcie (Stránky)~O~nás s~miestom pre~informácie o~firme (napr.~jej histórii) a~Kontakt s~miestom pre~telefónne čísla a~emaily na~firmu (prípadne aj na~pridružené firmy).
+
+\item \textbf{P10 Dostupnosť}
+
+Náš systém je webovou aplikáciou, ktorá je dostupná pre~užívateľov odkiaľkoľvek (samozrejme za~predpokladu, že majú prístup k~internetu). Čo sa týka problému s~kompatibilitou spojenou so~starými počítačmi so~starým softvérom, ktoré by mohli firmy využívať, tak na~to sme brali ohľad počas analýzy. Konkrétne pri~výbere frameworku pre~vývoj webovej aplikácie (viď~podkapitolu~\ref{vyber typu webovej aplikacie}).
+
+\item \textbf{P11 Náklady}
+
+Všetky balíčky využívané aplikáciou sú buď úplne zdarma alebo~využívame ich bezplatné verzie. Čo sa týka databázového servera, tak ten takisto využívame v~jeho bezplatnej verzii.
 \end{itemize}
 
 \section{GDPR}
 
-Keďže je náš systém webovou aplikáciou zhromažďujúcou užívateľské údaje, tak je potrebné riešiť zásady ochrany osobných údajov. Autor nie je právnikom, a~teda nemôže oficiálne prehlásiť, že systém je v~súlade s~GDPR\footnote{\url{https://en.wikipedia.org/wiki/General_Data_Protection_Regulation}}. Ale systém bol navrhnutý tak, aby zásady splnil. Užívateľa upozorňuje na~podmienky a~zásady používania systému. Takisto užívateľovi umožnuje vlastné dáta zmazať zo~systému, zobraziť a~exportovať ich na~vyžiadanie. Dáta síce nie sú šifrované softvérovo, ale táto podmienka sa dá splniť pri~výbere hostingu. Stačí si vybrať hosting, ktorý ponúka disky podporujúce šifrovanie dát.
+V podkapitole Sekcie Podmienky používania a~Zásady ochrany osobných údajov (viď~\ref{gdpr}) bolo spomenuté, že by bolo vhodné, aby naša aplikácia spĺňala GDPR. Autor nie je právnikom, a~preto nemôže prehlásiť, že aplikácia spĺňa GDPR, ale v snahe pripraviť ju pre spĺnenie tejto regulácie sa vytvorili stránky pre~vloženie právnických textov (podmienky používania a~zásady ochrany osobných údajov), a takisto sa na profil užívateľa pridali tlačidlá~-- jedno pre vymazanie svojho účtu zo~systému a~druhé pre~exportovanie (stiahnutie) vlastných dát v~textovej forme. Zároveň aplikácia užívateľa upozorňuje na~podmienky a~zásady používania systému v~častiach, kde poskytuje svoje osobné údaje. Ďalej užívateľské dáta síce nie sú šifrované softvérovo, ale táto podmienka sa dá splniť pri~výbere hostingu. Stačí si vybrať hosting, ktorý ponúka disky podporujúce šifrovanie dát.
 
 \section{Možné vylepšenia}
 
@@ -48,15 +60,9 @@ Softvér síce spĺňa požiadavky a~jeho funkčnosť je dostatočná, ale stál
 \begin{itemize}
 \item \textbf{Výkonnosť listovania ponuky}
 
-Ponuku firmy (napr.~stroje) prečítame z~databázy a~vylistujeme jednotlívé položky. Nevyužívame žiadnu virtualizáciu, ani~stránkovanie. Keďže systém je určený pre~malé firmy a~nepredpokladá sa veľká ponuka, tak táto skutočnosť nepredstavuje problem. No v~budúcnosti, ak by sa firme používajúcej náš systém darilo a~rozhodla by sa rozšíriť ponuku, mohla by sa virtualizácia alebo~stránkovanie hodiť.
+Ponuku firmy (napr.~bagre) prečítame z~databázy a~vylistujeme jednotlívé položky. Nevyužívame žiadnu virtualizáciu, ani~stránkovanie. Keďže systém je určený pre~malé firmy a~nepredpokladá sa veľká ponuka, tak táto skutočnosť nepredstavuje problém. No v~budúcnosti, ak by sa firme používajúcej náš systém darilo a~rozhodla by sa rozšíriť ponuku, mohla by sa virtualizácia alebo~stránkovanie hodiť.
 
-\item \textbf{Vylepšenie manažovania správ}
+\item \textbf{Upozornenie na prehliadku bagra}
 
-Systém síce umožňuje administrátorovi~prijímať emaily, a~takisto na~nich odpovedať, mazať ich, a~tiež označovať správy ako prečítané/neprečítané. No je v~tom trocha pomalý. Akcie síce netrvajú hodiny, a~ani minúty, ale do budúcna je to určite niečo, na~čom by bolo dobré popracovať.
-
-Takisto by bolo dobré správam pridať~stránkovanie, vyhľadávanie a~triedenie podľa dátumu. Hlavným dôvodom existencie správ je umožniť administrátorovi reagovať na~dopyt užívateľov, a~takisto admina upozorňovať na~stav aukčných ponúk. Z~podstaty obsahu správ sa čas na~ich vybavenie odhaduje na~jednotky dní. A~teda predpokladáme, že počet správ v~schránke nebude príliš vysoký. V~prípade, že by ich admin nemazal stále platí, že relevantné správy sa budú nachádzať na~vrchu schránky. Ako vidíme, spomínané vlastnosti preto nie sú pre~naše účely nevyhnutné. Ale takisto ide o~funkcionality, ktoré by mohli oceniť firmy obzvlášť v~budúcnosti, kedy by sa zvýšením počtu zákazníkov zvýšila aj~frakvencia prichádzajúcich správ.
-
-\item \textbf{Upozornenie na prehliadku stroja}
-
-Vo~svete to funguje tak, že keď si užívateľ zakúpi stroj, tak po~určitom čase by firma mala prísť na~prehliadku a~stroj skontrolovať. Preto by sme do~nášho systému mohli pridať funkcionalitu, ktorá by fungovala následovne. Ak užívateľ odošle dopyt na~nejaký stroj a~obchod prebehne úspešne, admin by túto skutočnosť zaznačil v~systéme, čím by užívateľovi priradil dopytovaný stroj. Potom by sa spustil časovač, ktorý by po~uplynutí definovaného času upozornil administrátora na~blížiacu sa prehliadku.
+Vo~svete to funguje tak, že keď si užívateľ zakúpi bager, tak po~určitom čase by firma mala prísť na~prehliadku a~bager skontrolovať. Preto by sme do~nášho systému mohli pridať funkcionalitu, ktorá by fungovala následovne. Ak užívateľ odošle dopyt na~nejaký stroj a~obchod prebehne úspešne, admin by túto skutočnosť zaznačil v~systéme, čím by užívateľovi priradil dopytovaný bager. Potom by sa spustil časovač, ktorý by po~uplynutí definovaného času upozornil administrátora na~blížiacu sa prehliadku.
 \end{itemize}

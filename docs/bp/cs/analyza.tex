@@ -1,150 +1,128 @@
 \chapter{Analýza}
 
-TBA: Uvodna rec o tom ako si ideme rozmysliet naplenenie poziadavok z uvodu a zaroven z casti Navrh UI (predosla kapitola).
+V~tejto kapitole si na~základe potrieb vyplývajúcich z~návrhu užívateľského rozhrania (viď~kap.~\ref{navrh ui}) rozhodneme, aké technológie a prístupy sa nám hodia na~implementáciu systému, a~teda aké využijeme.
 
 \section{Výber typu aplikácie}
 
-Kvôli požiadavke P10~(\ref{dostupnost}) dáva dobrý zmysel vytvoriť náš systém ako webovú aplikáciu~-- vyriešime tým problém s distribúciou softvéru k (aj potenciálne novým) zákazníkom, a takisto vyriešime problém s potenciálne zastaralými počítačmi vo firme. Statická stránka by nám nestačila nakoľko chceme administrátorom umožniť dynamickú zmenu obsahu.
+Kvôli požiadavke P10~(Dostupnosť, viď v~podkap.~\ref{poziadavky}) dáva dobrý zmysel vytvoriť náš systém ako webovú aplikáciu~-- vyriešime tým problém s~distribúciou softvéru k~(aj potenciálne novým) zákazníkom. Statická stránka by nám nestačila nakoľko chceme administrátorom umožniť dynamickú zmenu obsahu (napr.~pridávanie alebo~mazanie bagrov, prídavných zariadení atď.).
 
-\section{Výber jazyka a~frameworku}
+\section{Rozdelenie na~frontendovú a~backendovú časť}
+\label{rozdelenie na frontendovu a backendovu cast}
 
-Teraz keď už vieme, že ideme vytvárať webovú aplikáciu si musíme rozmyslieť v akom jazyku a pomocou akého frameworku ju budeme vyvíjať.
+Kvôli lepšej organizácií kódu dáva pre~našu aplikáciu dobrý zmysel rozdeliť ju na~frontendovú a~backendovú časť. Frontendová časť pokryje užívateľské rozhranie navrhnuté v~kap.~\ref{navrh ui} a~backendová časť pokryje zbytok logiky systému (napr.~prácu s~databázou, aukčný odpočet atď.).
 
-\subsection{Výber backend jazyka}
+V~súčasnosti rôzne spoločnosti, napr. Amazon alebo Cloudfare, poskytujú backendové služby, tzv.~\href{https://www.cloudflare.com/en-gb/learning/serverless/glossary/backend-as-a-service-baas/}{Backend-as-a-Service~(Baas)}. Ak by sme sa rozhodli využiť takúto službu, ušetrilo by nám to implementovanie užívateľskej autentifikácie (vyžadované požiadavkou~P6) alebo~práce s~databázou (vyžadované napr.~požiadavkou~P2.4). Ale ak by sme chceli naimplementovať napr.~vyhodnocovanie aukcie alebo~funkcionalitu, ktorá umožní meniť administrátorovi formát automaticky generovaných správ týkajúcich sa aukcie (vyžadované v~požiadavkách~P4 a~P5.3), tak BaaS by nám na~to nestačil. Navyše ak spoločnosť neposkytuje bezplatnú možnosť využívania BaaS, využitie BaaS by bolo v~rozpore s~požiadavkou~P11. Kvôli týmto dôvodom si budeme musieť naimplementovať vlastnú backendovú časť.
 
-Na tvorbu webovej aplikacie s~bohatym UI sa hodi high level jazyk, napr Java alebo C\#. Autor ovlada C\#, preto volime C\# a platformu .NET, ktora je s nim spojena.
+Pre~implementáciu backendovej časti by sa mohli hodiť vysokoúrovňové jazyky, akými sú napr.~Java alebo~C\#. Nakoľko ide o podobné jazyky a autor jazyk Java neovláda, ale C\# áno, tak si volíme C\# a~platformu~.NET, ktorá je s~ním spojená.
 
-\subsection{SPA}
+V~prípade frontendovej časti je zvyčajnou voľbou jazyk~JavaScript, a~keďže s~ním už má autor nejaké skúsenosti, tak predstavuje jednu z~možností. No v~súčasnosti je možné využiť aj vo~frontendovej časti jazyk C\#. Ako už bolo spomenuté, autor tento jazyk pozná. Navyše ak by sme si vybrali C\#, tak by to znamenalo, že frontendová aj backendová časť, by boli obe napísané v~rovnakom jazyku, čo by mohlo viesť k~zjednodušeniu implementácie. A~preto je C\# ďalšou z~možností jazykov, ktoré môžeme využiť vo~frontendovej časti. Obe jazyky so~sebou prinášajú svoje frontendové frameworky, ktoré nám dokážu uľahčiť implementáciu frontendovej časti. V~následujúcej podkapitole sa pozrieme na~možné typy webovej aplikácie a~frameworky, ktoré môžme využiť na~ich implementáciu. Podľa toho si vyberieme jazyk pre~frontendovú časť.
 
-SPA by nam pomohli s interktivitou nasho UI (tym sa mysli napr zobrazovanie/schovavanie formov alebo obsah zorbazovany/schovavany podla toho aky uzivatel je prihlaseny a HLAVNE odpocet aukcnych ponuk), kedze kod je vykonavany rychlejsie lebo je vykonavany priamo na klientovi.
+\section{Výber typu webovej aplikácie}
+\label{vyber typu webovej aplikacie}
 
-Aplikacia by mohla bezat aj offline, ale to pre nas neni podstatne.
+V~predchádzajúcej podkapitole sme si rozdelili aplikáciu na~frontendovú a~backendovú časť. Takisto sme si predstavili jazyky, ktoré by sme mohli v~týchto častiach využiť. Každý jazyk so~sebou nesie i~svoje frameworky. V~tejto podkapitole sa pozrieme na~to, aký typ webovej aplikácie by mal byť náš systém a~podľa toho si aj zvolíme jazyk s~frameworkom.
 
-Nevyhodou je ze by sme museli vytvarart nejake bezpecne API, napr pre pracu s databazou.
+\subsection{Single-page application}
+\label{single page application}
 
-Takisto je nevyhodou dlhsi prvotny nacitavaci cas (lebo cakame kym sa zdrojaky stiahnu), ktory by mohol odradit novych potencialnych zakaznikov.
+\href{https://developer.mozilla.org/en-US/docs/Glossary/SPA}{Single-page application~(SPA)} je druh webovej aplikácie, ktorá po~príchode užívateľa na~stránku načíta jeden webový dokument, a~potom už iba mení jeho obsah. Väčšina logiky aplikácie sa vykonáva na~strane klienta, preto je aplikácia veľmi rýchla z~hľadiska interakcie s~užívateľom.
 
-Prikladom tohto by boli napr JS frameworky ako React, Angular atď alebo C\#ový Blazor WebAssembly.
+Ako už bolo skôr spomenuté, naša aplikácia mení obsahovú časť podľa toho, v~akej sekcii sa užívateľ nachádza (viď~\ref{hlavne rozlozenie aplikacie}). Takisto v~sekcii~,,Správa webu`` preklikávaním medzi kartami sa mení obsah, ktorý vidí užívateľ (spomenuté v~\ref{splnenie p5 p7 a sprava predmetov}). Podobne na~stránkach s~formulármi (detail bagra, prídavného zariadenia, aukčnej podnuky alebo~sekcia Služby) chceme umožniť zobrazovanie a~schovávanie formulára (spomenuté v~\ref{detail bagra pridavneho zariadenia}, \ref{detail aukcnej ponuky} a~\ref{splnenie p8}). Aj kvôli týmto dôvodom sa zdá, že voľba SPA by bola rozumná.
 
-\subsection{Klasické webové aplikácie}
+Jazyk JavaScipt nám ponúka viacero frontendových frameworkov pre~tvorbu SPA aplikácií, napr.~AngularJS, ReactJS, Vue atď. Systém by sa dal naimplementovať ktorýmkoľvek z týchto frameworkov, no kvôli predošlej skúsenosti autora si ako zástupcu JavaScriptových frameworkov zvolíme ReactJS. Ďalej jazyk C\# nám ponúka framework Blazor WebAssembly.
 
-Zdá sa že toto by bolo dobre pretože kód je vykonavany na serveri, preto mozeme priamo pracovat s databazou, nemusime vytvarat api.
+Obe frameworky, ReactJS aj Blazor WebAssembly, fungujú na~princípe komponentov. Komponent si môžeme predstaviť ako nejakú ucelenú časť stránky, napr.~tlačidlo, formulár, navigácia atď. Akonáhle je komponent zadefinovaný, môže sa využívať vo~viacerých častiach webu. Všimnime si, že v~našom návrhu užívateľského rozhrania sa nachádza viacero častí, ktoré vyzerajú úplne rovnako (príp.~sú rozdiely minimálne, ale to sa dá vyriešiť parametrizáciou komponentov), napr.~formuláre v~časti s~detailami bagra, prídavného zariadenia alebo~v~sekcii~Služby (viď~pravú stranu obrázkov~\ref{detail bagra pridavneho zariadenia}, \ref{detail aukcnej ponuky}, \ref{splnenie p8}).
 
-Uzivatelovi sa serviruje len HTML, CSS, JS, takze nemali by mat starsie pocitace problem.
+Zatiaľ sa zdá, že obe frameworky by boli dobrou voľbou. No použitie SPA prístupu by nám takisto prinieslo zopár nevýhod:
 
-Navyse kvoli tomu su CEO friendly, co znamena ze search-enginy ako napr Google ich vie lahsie najst, a ich prvotny nacitavaci cas je rychly, co je tiez dobre pre ziskavanie novych zakaznikov.
+\begin{itemize}
+\item \textbf{Prvotný čas načítania stránky}
 
-ALE vracaju sa zo serveru cele stranky... No a ked sa pozrieme na nase UI, tak vidime ze je celkom interkativne a castokrat meni len cast aplikacie, nie celu (znovu moze uviest priklady ako v SPA).
+Ako bolo spomenuté, väčšina logiky aplikácie sa vykonáva na~strane klienta, kvôli tomu sa pri~prvotnom načítaní stránky sťahujú zdrojové kódy aplikácie, a~to spôsobuje zdržanie. Toto správanie by mohlo odradiť nových potenciálnych zákazníkov.
 
-Tento problem by sa mozno dal vyriesit napr. pomocou nejakych featur v ASP.NET MVC, ale ako si mozme v casti Navrh UI vsimnut, tak viacero casti aplikacie vyzera rovnako, a preto by sa nam hodilo, ak by sme tieto rovnake/podobne casti mohli zadefinovat raz a potom vyuzivat na viacerych miestach. ASP.NET MVC nam umoznuje definovat celu stranku ale nie len cast stranky~-- komponentu. Existuje este jedna moznost ktora nam prinesie vyhody SPA, klasickych webovych aplikacii a zaroven nam umozni definvoat spominane komponenty.
+\item \textbf{SPA nie sú ,,SEO-friendly``}
+
+\href{https://mailchimp.com/marketing-glossary/seo/}{Search engine optimization (SEO)} je proces optimalizovania stránky na~to, aby bola jednoducho dohľadateľná vyhľadávačmi (search engines). Vyhľadávače, akým je napr.~Google, prechádzajú stránky na internete, hodnotia ich a~na základe toho vedia usúdiť, či je stránka pre užívateľa relevantná.
+
+V~prípade SPA aplikácii nastáva problém, pretože obsah je užívateľom generovaný dynamicky a~vyhľadávače majú pri~prechádzaní s~týmto správaním SPA aplikácií problém. Nie je síce nemožné vytvoriť ,,SEO-friendly`` SPA aplikáciu, ale ide o~komplikovanejší proces. Viac informácii na túto tému \href{https://novateus.com/blog/single-page-applications-spas-most-discussed-pros-cons/}{tu} a \href{https://www.cloudways.com/blog/single-page-website-spa-seo/}{tu}.
+
+\item \textbf{Potenciálny problém so~staršími verziami prehliadačov}
+
+Tento bod sa vzťahuje skôr špeciálne k Blazor WebAssembly. Aktuálne verzie prehliadačov obsahujú všetky nástroje potrebné pre~bezproblémový beh SPA aplikácií (resp. podporujú technológiu web assembly). Avšak ako bolo spomenuté v~požiadavke P10 (Dostupnosť, viď~v~podkap.~\ref{poziadavky}), hrozí, že firemné počítače môžu využívať staré verzie prehliadačov, na~ktorých by SPA aplikácie nemuseli fungovať správne. Táto myšlienka vychádza z toho, že v prehliadači Google Chrome (ktorý je v roku 2023 najpopulárnejším prehliadačom, viď odkaz \href{https://www.oberlo.com/statistics/browser-market-share}{tu}.) nebola technológia web assembly vôbec podporovaná do verzie 50 (viď odkaz \href{https://caniuse.com/wasm}{tu}) a najvyššia podporovaná verzia priehliadača Google Chrome na počítačoch s operačným systémom Windows XP neprevyšuje verziu 50 (viď odkazy \href{https://msfn.org/board/topic/175404-chrome-49-update/}{tu}, \href{https://chrome.googleblog.com/2015/11/updates-to-chrome-platform-support.html}{tu} a \href{https://chromereleases.googleblog.com/2015/09/}{tu}).
+\end{itemize}
+
+\subsection{Multi-page application}
+\label{multi page application}
+
+\href{https://www.linkedin.com/pulse/single-page-application-vs-multi-page-what-better-your-/}{Multi-page application (MPA)} je druh webovej aplikácie, ktorá využívia klasický prístup~-- keď užívateľ klikne na~nejaký odkaz, odošle sa serveru žiadosť, a~ten vráti užívateľovi ako odpoveď celú stránku. Väčsina logiky aplikácie sa vykonáva na~serveri a~užívateľovi sa podáva iba HTML, CSS a JavaScript.
+
+Autorovi sa nepodarilo nájsť žiadne JavaScriptové MPA frameworky, ale v~prípade jazyka~C\# je známym~\href{https://dotnet.microsoft.com/en-us/apps/aspnet/mvc}{ASP.NET MVC}. Ak by sme si zvolili tento framework, a teda využili MPA prístup, tak pri preklikávaní odkazmi navigácie by každá zmena obsahovej časti aplikácie (viď~\ref{hlavne rozlozenie aplikacie})) síce znamenala načítanie novej stránky, ale to by nepredstavovalo problém. Takisto by sa dali pomocou frameworku ASP.NET MVC naimplementovať stránky s formulármi (detail bagra, prídavného zariadenia, aukčnej podnuky alebo~sekcia Služby) a aj prepínanie medzi kartami v~sekcii~,,Správa webu`` (spomenuté v~\ref{splnenie p5 p7 a sprava predmetov}).
+
+Takže sa zdá, že aj implementácia pomocou MPA prístupu je možná a navyše má oproti SPA výhody:
+
+\begin{itemize}
+\item \textbf{Prvotný čas načítania stránky}
+
+Narozdiel od~SPA sa väčšina logiky vykonáva na~serveri, kde sú aj uložené zdrojové kódy aplikácie, kvôli tomu si ich užívateľ nemusí sťahovať k~sebe a~prvotné načítanie stránky nie je pomalé.
+
+\item \textbf{MPA sú \uv{SEO-friendly}}
+
+Vyhľadávače, akým je napr. Google, nemajú problém pri~prechádzaní obsahu takýchto aplikácií. Preto sú MPA aplikácie \uv{SEO-friendly}.
+
+\item \textbf{Neexistuje problém so~staršími verziami prehliadačov}
+
+Kedže sa užívateľom podáva iba HTML, CSS, príp. JavaScript, a teda nie je nutné spúšťať kód typu web assembly, tak ani staršie verzie prehliadačov by nemali mať problém s behom aplikácie. Takže nedochádza k porušeniu požiadavky P10 (viď~\ref{poziadavky}).
+\end{itemize}
+
+To boli výhody oproti SPA aplikáciam, ale MPA aplikácie majú takisto nevýhody:
+
+\begin{itemize}
+\item \textbf{Záťaž vyvíjaná na server}
+
+Ako bolo spomenuté, užívateľ každým kliknutím na odkaz odosiela žiadosť na server, ktorú musí server spracovať a následne odoslať odpoveď~-- to vyvíja záťaž na server. V prípade veľkého množstva užívateľov by to mohlo predstavovať problém, ale my vytvárame aplikáciu pre malé firmy, kde sa nepredokladá obrovské množstvo pripojení v rovnakú chvíľu. Takže táto nevýhoda je pre nás nepodstatná.
+
+\item \textbf{Absencia komponent}
+
+V predošlej časti textu bolo spomenuté, že jednou z výhod frameworkov ReactJS a Blazor WebAssembly je koncept komponentov. V prípade ASP.NET MVC tento koncept chýba, alebo presnejšie, nie je natívne podporovaný, ale dá sa napodobniť (viď odkaz \href{https://stackoverflow.com/questions/23518499/creating-reusable-html-view-components-using-razor-in-asp-net-mvc}{tu}). Takže napríklad implementácia časti s preklikovateľnými kartami (\ref{splnenie p5 p7 a sprava predmetov}) alebo častí, ktoré sú totožné, napr.~formuláre v~časti s~detailami bagra, prídavného zariadenia alebo~v~sekcii~Služby (viď~pravú stranu obrázkov~\ref{detail bagra pridavneho zariadenia}, \ref{detail aukcnej ponuky}, \ref{splnenie p8}) by sa dala realizovať i bez duplicitného kódu, ale nebolo by to až tak prehľadné ako v spomínaných frameworkoch, ktoré podporujú koncept komponentov nativne.
+\end{itemize}
+
+Zdá sa, že MPA aplikácie by vyriešili nejaké z nevýhod SPA aplikácii, ale takisto nie sú dokonalé a nesú so sebou nejaké nevýhody, ktoré však pre nás nie sú príliš podstatné. Preto by sa zdalo, že MPA je prístup, ktorý by sme mali využiť. Existuje však ešte jedna alternatíva, a tou je Blazor Server, o ktorom si povieme v následujúcej časti textu.
 
 \subsection{Blazor Server}
 
-Existuej však ešte jedna možnosť~--Blazor Server. Tento framework je niečo ,,medzi``. Poskytuje výhody klasickej webovej aplikacie v tom zmysle, že má rýchle prvotne nacitanie stranky, serviruje uzivatelom iba HTML, CSS, JS. Ďalšou výhodou je že kód je iba na serveri preto mozme komunikovat s databazou priamo a nemusime vytvarat separatne API. Ale zároven nam poskytuje výhody SPA interaktivity preto, pretoze pri zmene UI sa neposiela zo serveru cela stranka ale iba zmeny. Nie je to síce az tak rýchle ako keby kod bezal u clienta ale kedze my netvorime nejaku narocnu real timovu aplikaciu, tka nam to staci. Zaroven by bolo nevyhodou to ze sa vytvara zataz na server, ale kedze program je urceny pre male firmy, ktore nemaju az tak vysoky pocet uzivatelov tak nam to nevadi, plus dalsou nevyhodou by mohlo byt ze nemoze apliakcia bezat offline, ale to nam takisto nevadi, to sme ani nechceli.
+\href{https://learn.microsoft.com/en-us/aspnet/core/blazor/hosting-models?view=aspnetcore-7.0\#blazor-server}{Blazor Server} je framework jazyka C\# a~je to framework na vývoj webových aplikácií, ktoré sú ,,tak niečo medzi`` SPA a MPA aplikáciami. Väčšina kódu aplikácie sa vykonáva na serveri ako v prípade MPA aplikácií. Rozdiel je v tom, že ak na strane klienta dôjde k zmene nejakej časti užívateľského rozhrania, tak namiesto toho, aby server odoslal klientovi celú stránku, odošle iba potrebné zmeny. To umožňuje vytváranie interaktívneho užívateľského rozhrania ako v prípade SPA aplikácií.
 
-Navyše kvôli výberu tohto frameworku budeme môcť písať aj forntend, aj backend v jazyku C\#.
+Ak by sme využili Blazor Server na vývoj našej aplikácie, tak by mala naša aplikácia rovnaké výhody ako má MPA aplikácia oproti SPA aplikácii (viď~časť~\ref{multi page application}). No navyše oproti MPA aplikácii by mala výhody:
 
-\section{Voľba databázy}
+\begin{itemize}
+\item \textbf{Existencia komponentov}
 
-TODO
+V SPA časti bolo v súvise s frameworkmi ReactJS a Blazor WebAssembly spomenuté, že koncept komponentov by sa nám v našej aplikácii hodil (viď~časť~\ref{single page application}). Potom v časti MPA sme spomenuli, že ASP.NET MVC by nám síce umožňil využívať koncept komponentov, ale natívne tento koncept nepodporuje a implementácia by nebola taká jednoduchá, priamočiara ako v prípade frameworkov, ktoré tento koncept podporujú natívne (viď~\ref{multi page application}). Našťastie je Blazor Server jeden z~frameworkov, ktorý tento koncept komponentov natívne podporuje.
+\end{itemize}
 
-\subsection{Návrh relačného modelu databázy}
-
-TODO
-
-\subsection{Voľba typu databázy a databázového servera}
-
-TODO
-
-\subsection{ORM}
-
-TODO
-
-\section{Aukcia- odpočet a vyhodnocovanie}
-
-TODO
-
----
-
-PO TADE JE NOVY TEXT
-
----
-
-TBA: Ako vidíme tak potrebujeme bohaty frontend, na to sa hodi napr JavaScriptové frameworky ako su React, Vue atd., a takisto nam nestaci Backend as a Service (ktory poskytuje napr Amazon...), lebo napr kvoli vyhodnocovaniu aukcie, takze preto vlastny backend. Na tvorbu webovej aplikacie s bohatym UI sa hodi high level jazyk, napr Java alebo C\#. Autor ovlada C\#, preto volime C\# a platformu .NET, ktora je s nim spojena. Backend by sme mohli implementovat pomocou frmeworku ASP.NET MVC. No este existuje ina varianta a tou je Blazor. Ten nam umozni vyuzivat komponenty (to sa nam hodi napr. aj kvoli implementácii odpočtu) a takisto nám umožní písať frontend aj backend v rovnakom jazyku -- C\#.
-
-Blazor poskytuje viaceo hosting modelov a v dobe vyberu technologii existovali dva -- Blazor WebAssebmly a Blazor Server. Blazor WebAssembly funguje skor na sposob SPA, kde logika aplikacie bezi na klientskom pocitaci vo webovom prehliadaci, a su s nim spojene nejake problemy [vymenujem, napr to ze search engingy mozu mat problem s nim, P10 aby to uzivatelom rozbehol pc, aby nebol zastaraly prehliadac, prvotne nacitanie trva dlho (lebo stahuje zdrojaky) co by mohlo potencialnych zakaznikov odradit, a tiez nejake WebApi na server by sme museli vytvarat). Naproti Blazor Server sa podoba skor tradicnemu web app pristupu a hodi sa nam viac lebo je CEO-friendly, kod bezi na servery a uzivatel dostane len HTML, CSS, JS, preto aj starsie pc by nemali mat problem s rozbehnutim, a takisto nema preto problem s dlhym prvotnym nacitanim, a navyse nemusime vytvarata WebApi.
-
-Preto si volime C\# (.NET) a Blazor Server.
-
-
----------
-
-
-
-V~tejto kapitole sa zamyslíme nad tým, ako splniť požiadavky definované v~Úvode~(\ref{poziadavky}).
-
-Pre~splnenie požiadavky P1 dáva veľmi dobrý zmysel vytvoriť naše riešenie ako webovú aplikáciu. Týmto spôsobom sa nemusíme starať o~distribúciu programu k~užívateľom. Stačí ak má zákazník~(resp. admin) pripojenie na~internet.
-
-Je síce pravda, že voľba webovej aplikácie zahŕňa i~voľbu hostingu. A~ten nemusí byť lacný. To by mohlo byť v~rozpore s~P2. Ale je potrebné dodať, že ak by sme zvolili klasickú desktopovú aplikáciu, tak by sme ju museli nejakým spôsobom dodať zákazníkovi. A~to by bolo nepraktické, prípadne by mohlo stáť takisto nejaké peniaze. Navyše práve webová aplikácia má~potenciál pomôcť firme tak, že ju zákazník objaví pri surfovaní internetu.
-
-Pre splnenie~P4,~P5~a~P8 je jasné, že budeme potrebovať databázu. A~to na~to, aby si firmy vedeli samé tvoriť ponuku, ktorú si do databázy uložia. Po~príchode zákazníka bude možné ponuku z~databázy načítať a~zobraziť. Podobne v~prípade~P8. Keď sa užívateľ zaregistruje, jeho údaje sa uložia v~databáze a~pri prihlásení sa z~nej prečítajú a~môžu použiť pre vyplnenie formulárov podľa potreby.
-
-Znova sa vrátim k~P5. Kedže ide o aukciu, budeme potrebovať nejaký mechanizmus, ktorý by vedel zabezpečiť odpočet, a~takisto vyhodnotenie aukcie na~pozadí. Taktiež si musíme rozmyslieť, ako sa má aukcia správať v~rôznych situáciách.
-
-Na to, aby sme splnili P6, musí byť náš softvér schopný posielať správy. Z~podmienky P3 usudzujeme, že nikto nebude pri softvére sedieť, a~teda posielanie dopytov by nemalo mať povahu četu. Posielanie správ bude prebiehať prostredníctvom emailov. To nám vytvára novú požiadavku na~softvér. Aby administrátor nemusel preklikávať medzi svojou emailovou schránku a~naším systémom, bolo by dobre integrovať jeho schránku priamo do systému.
-
-\section{Voľba typu aplikácie, jazyka a frameworku}
-
-Po prejdení požiadaviek vieme, že chceme vytvoriť webovú aplikáciu s~bohatým uživateľským rozhraním, ktorá by bola schopná posielať a~prijímať správy, pracovať s~databázou, umožnila nám autentikáciu a~autorizáciu, a~taktiež vykonávať prácu na~pozadí. Pre túto úlohu sa hodia vysokoúrovňové jazyky, ako sú napríklad C\# alebo Java\dots Na~základe autorových skúseností si volíme jazyk C\# a platformu .NET, ktorá je s~ním spojená.
-
-Platforma .NET nám pre vývoj webových aplikácií poskytuje framework\\ASP.NET alebo Blazor. Obe frameworky sú si podobné. Rozdiel náj\-de\-me v~tom, že Blazor umožňuje vytváranie komponent. Komponent si môžeme predstaviť ako logickú časť stránky (napr. tabuľka, tlačidlo\dots). Po~zadefinovaní komponentu ho~vieme „recyklovať“. Tým myslím to, že ho môžeme použiť na viacerých miestach na webe. Na~každom mieste sa bude správať a~vyzerať rovnako (príp.~vie\-me  jeho správanie meniť pomocou parametrov). Táto myšlienka komponentov sa autorovi páči, dobre sa s~ňou pracuje a~neskôr si ukážeme ako nám pomôže vyriešiť problém s odpočtom.
-
-Blazor poskytuje viacero hosting modelov. V~čase rozhodovania existovali dva: Blazor WebAssembly a Blazor Server. Výber WebAssembly by zahŕňal niekoľko problémov. Pri~prvotnej návšteve stránky sa musia klientovi stiahnuť zdrojové kódy aplikácie. To môže chvíľu trvať a~mohlo by to odradiť nových potenciálnych zákazníkov. V~prípade Blazor Server tento problém nemáme, pretože kód beží na~serveri a~užívateľovi sa servíruje už len prerenderovaný HTML, CSS, JavaScript kód stránky. Z~rovnakého dôvodu sú weby vytvorené Blazor Ser\-ve\-rom SEO-friendly (čo znamená, že sú dohľadateľné vyhľadávačmi, akým je napríklad~Google). V~prípade WebAssembly môžu mať vyhľadávače problém. Na to, aby sa dostali k obsahu stránky si musia obsah vygenerovať zo stiahnutých zdrojových kódov. Ale  to môžu mať zakázané z~bezpečnostných dôvodov alebo toho nemusia byť schopné. V~súčasnosti webové prehliadače (Google Chrome, Mozilla Firefox, \dots) podporujú WebAssembly. Ale autor pozorovaním zistil, že vo~firmách sa zvyknú využívať staré počítače s~potenciálne starým softvérom. Takže hrozí, že by sme mali problém WebAssembly rozbehnúť. Kvôli spomenutým dôvodom si volíme Blazor Server.
-
-\section{Návrh systému}
-
-V Úvode sme rozhodli, že náš systém je webová aplikácia, ktorá pracuje s~databázou. Webová aplikácia funguje ako rozhranie pre interakciu s~užívateľmi. Databázu potrebujeme kvôli perzistencii dát. Ako vidíme, obe časti poskytujú vlastnú funkcionalitu. Ak tieto časti oddelíme, pomôžeme rozšíriteľnosti systému.
-
-Keď už vidíme, že systém je zložený z~dvoch častí, poďme si rozmysllieť ako budú spolu interagovať. Webová aplikácia potrebuje pre svoje fungovanie dáta. Tejto závislosti sa nezbavíme. Lenže dátova časť nepotrebuje webovú aplikáciu pre svoje fungovanie. Závislosť z~tejto strany neexistuje.
-
-Majme preto dva projekty: ServISData a ServISWebApp. ServISData slúži ako dátová časť, ktorá je nezávislá a~ServISWebApp poslúži ako webová aplikácia, ktorá je závislá na dátach z projektu ServISData. Architektúru demonštruje obrázok~\ref{architektura systemu}.
-
-\begin{figure}[H]\centering
-\includegraphics[width=140mm]{../img/architektura systemu}
-\caption{Architektúra systému (predstavuje závislosť ServISWebApp od ServISData).}
-\label{architektura systemu}
-\end{figure}
+Je síce pravda, že aj naďalej ostáva nevýhodou vyťažovanie servera ako tomu bolo v prípade MPA aplikácií, ale ako bolo napísané v prechadzajúcej časti textu (viď~časť~\ref{multi page application}), táto nevýhoda pre nás nepredstavuje problém. Navyše výberom tohto frameworku budeme môcť písať aj frontendovú, aj backendovú časť v rovnakom jazyku, čo by mohlo zjednodušiť implementáciu. Preto si volíme ako frontendový jazyk C\# s frameworkom Blazor Server.
 
 \section{Voľba databázy}
+\label{volba databazy}
 
-Vieme, že náš systém potrebuje pre splnenie podmienok~P4, P5 a~P8 databázu. V tejto kapitole si vyberieme typ databázy, databazový server a~rozoberieme si aké entity potrebujeme.
+Z požiadaviek na systém vyplýva, že budeme potrebovať databázu pre~uloženie dát (napr. pre uloženie ponuky bagrov, viď požiadavku P2 v~podkap.~\ref{poziadavky}). Existujú dva druhy databáz~-- tradičné relačné databázy alebo alternatívne nerelačné, tzv.~NoSql, databázy.
+
+\begin{itemize}
+\item \textbf{\href{https://azure.microsoft.com/cs-cz/resources/cloud-computing-dictionary/what-is-a-relational-database/\#whatis}{Relačné databázy}}
+
+Ide o typ databáz, ktorý ukladá a usporiadáva dátové body s~definovanými reláciami pre rýchly prístup. Relačné databázy usporiadávajú dáta do~tabuliek, ktoré obsahujú informácie o~jednotlivých entitách a~predstavujú preddefinované kategórie prostredníctvom riadkov a~stĺpcov. Štruktúrovanie dát týmto spôsobom umožňuje efektivný a~flexibilný prístup. Relačné databázy rozumejú jazyku SQL (Structured Query Language, skr.~SQL), ktorý služí na~ukladanie, načítanie a~manipuláciu s~dátami.
+
+\item \textbf{\href{https://azure.microsoft.com/cs-cz/resources/cloud-computing-dictionary/what-is-nosql-database/}{Nerelačné (NoSql) databázy}}
+
+Tento typ databáz predstavuje databázy \uv{iné než SQL}. Ide o~databázy dokumentové, grafové, key-value atď. Tieto databázy dokážu spracovávať veľké množstvo rýchlo sa meniach neštrukturovaných dát inými způsoby než~relačné databázy s~riadkami a~tabuľkami.
+\end{itemize}
+
+NoSql databázy sa hodia pre veľké množstvo neštrukturovaných dát (viď~odkaz~\href{https://www.coursera.org/articles/relational-vs-non-relational-database#2-when-to-use-a-relational-vs-a-non-relational-database}{tu}). V našom prípade, kedže vytvárame softvér pre malú firmu, nepredpokladáme veľké množstvo dát (napr.~počet bagrov pravdepodobne nepresiahne sto). Taktiež platí, že štruktúra dát je (v~podstate) predom určená (viď~požiadavky P2.1, P2.2, P2.3 atď. v~podkap.~\ref{poziadavky}). Navyše má  autor trocha viacej skúseností s klasickými relačnými databázami než s~NoSql. Kvôli týmto dôvodom si volíme relačnú databázu.
 
 \subsection{Návrh relačného modelu databázy}
 \label{navrh relacneho modelu databazy}
 
-Z P4 vieme, že potrebujeme entity pre bagre a~prídavné zariadenia. Niekoho by mohlo napadnúť spojiť obe entity do~jednej, ale to my nespravíme. Ide o~rozdielne entity, ktoré môžu uchovávať rozdielne informácie (a~ako neskôr v~texte uvidíme, skutočne budú uchovávať rozdielne dáta).
-
-Kedže ide o~ponuku, ktorú chceme prezentovať zákazníkom, chceme okrem textových údajov prezentovať položku, či už stroj alebo~prídavné zariadenie, pomocou fotky. A~nie jednej (predpokladám, že položku budú chcieť firmy predviesť zákazníkom z viacerých uhlov). Znovu by niekomu mohlo napadnúť, že by bol dobrý nápad zlúčiť entitu fotky stroja s~entitou fotky prídavného zariadenia. Ale tieto veci nie sú totožné. Ak by sme entity zlúčili (a~mali teda iba 1 entitu pre~fotku všeobecne), tak by existovala možnosť priradiť fotku prídaného zariadenia stroju (a~naopak). Ale to je nesprávne. Preto znova vytvoríme dve entity. Jedna bude fotka stroja, druhá bude fotka prídavného zariadenia. Pre fotku stroja platí, že patrí práve jednému stroju. Stroj môže mať viacero fotiek. Analogicky platí pre prídavné zariadenia a~ich fotky.
-
-Pri strojoch sa ešte zastavíme. Existujú rôzne značky strojov (napr. Locust, Eurocomach,\dots), a takisto rôzne ketegórie strojov (napr. šmykom riadené nakladače, pásové bagre,\dots). Ďalej v texte, keď budem používať spojenie typ stroja, tak tým myslím kombináciu značky stroja a kategórie stroja. Každý typ stroja sa môže líšiť druhom a formou údajov. Napríklad typ A má hmotnosť ako vlastnosť, ktorú chceme spolu so zbytkom údajov zobraziť užívateľovi. Ďalej typ B má namiesto hmotnosti údaj o výške stroja. Existujú údaje (ako sú napr. meno a opis stroja), ktoré existujú pre každý stroj. Ale takisto existujú údaje, ktoré sa líšia v závislosti od typu stroja. Takýmito údajmi sú vlastnosti stroja. Ako budeme tieto premenlivé údaje ukladať? Jedno z riešení, ktoré by nás mohlo napadnúť je vytvoriť rodičovskú entitu, ktorá by obsahovala údaje spoločné pre všetky typy strojov. A v entitách, ktoré by dedili od rodičovskej triedy by sme dodefinovali premenlivé vlastnosti. Toto riešenie by pravdepodobne fungovalo, lenže má zásadnú nevýhodu. Zakaždým keď si firma zmyslí, že potrebuje nový typ stroja, by entita musela byť manuálne doprogramovaná. Ale kedže my chceme systém navrhnúť všeobecne tak, aby si každá firma vedela zadefinovať vlastnú ponuku strojov, volíme inú alternatívu. Vytvoríme si entitu pre typ stroja. Každý stroj bude nejakého typu. Každý typ obsahuje údaj o~značke a~kategórii. Značka a~kategória sú tiež ďalšími entitami. Typ stroja určuje, akého typu budú vlastnosti konkrétneho stroja. Takže budeme potrebovať entitu typ vlastnosti stoja. Tá obsahuje údaje: názov vlastnosti (napr. hmotnosť, výška,\dots) a~typ hodnoty vlastnosti (napr. číslo, text,\dots). Teda admin bude môcť priradiť typu stroja akého typu bude mať konkrétny stroj vlastnosti.
-
-Stroj vie svoj typ, a~ten vie aké (akého typu) má konkrétny stroj vlastnosti. To, čo ešte nevieme, sú konkrétne hodnoty vlastností stroja. Dovolím si vysvetliť na~príklade. Momentálne máme informáciu o~tom, že konkrétny stroj~S, typu~T, má vlasnosť hmotnosť, ale stále nevieme konkrétnu hodnotu, teda stále nevieme koľko váži. Preto vytvoríme entitu reprezentujúcu vlastnosť stroja. Táto entita vie, akého je typu. A~takisto v~sebe uchováva konkrétnu hodnotu vlastnosti (v~kontexte príkladu, uchováva v~sebe váhu stroja). Každý stroj má v~sebe toľko vlastností, koľko ich je zadefinovaných v~jeho type.
-
-Teraz sa vráťme k~prídavným zariadeniam. Každé prídavné zariadenie má, podobne ako stroj, takisto svoju značku a~patrí do nejakej kategórie. Navyše má oproti strojom aj údaj o~tom, pre akú kategóriu strojov je zariadenie vytvorené. Avšak na rozdiel od~predošlého prípadu so~strojmi, sa tento prípad líši v~tom, že každé prídavné zariadenie, bez ohľadu na~kombináciu typu, kategórie a~kategórie stroja, má druh a~formu údajov rovnakú. Takže stačí ak vytvoríme entitu pre~značku a~kategóriu prídavného zariadenia (entitu pre kategóriu stroja už máme) a~entita reprezentujúca prídavné zariadenie si bude v~sebe držať informáciu o~tom, akej je značky, kategórie a~pre akú kategóriu strojov je vytvorená.
-
-Aby sme splnili P5, budeme potrebovať entitu reprezentujúcu aukčnú ponuku. Aukčná ponuka bude držať informáciu o~tom, aký stroj je v~dražbe. A~takisto údaje o~ponuke (napr. vyvolávacia cena, koniec aukcie,\dots).
-
-No okrem udržania údajov o~aukčnej ponuke a~draženom stroji, si musíme zapamätať i~údaje o~ponukách užívateľov, ktorý sa do~aukcie zapojili. Preto si vytvoríme entitu reprezentujúcu ponuku užívateľa. Bude v~sebe niesť údaje o~tom, ktorý úžívateľ ponúkol sumu, v~akej výške a~pre ktorú aukčnú ponuku.
-
-Entitu užívateľa som načal už v~prechádzajúcom odstavci. Túto entitu skutočne budeme potrebovať a~to aj kvôli splneniu P8. Údaje užívateľov musíme pri~registrácii uchovať, aby sme nimi vedeli predvypĺniť formuláre, a~takisto aby sme vedeli vytvoriť prihlasovanie.
-
-Čítateľ by mohol navrhnúť, že pre splnenie P6 budeme potrebovať entitu reprezentujúcu správy. Toto riešenie by mohlo fungovať, ale ako si neskôr ukážeme, existuje aj iné riešenie. Také, ktoré nám (okrem iného, ale detailnejšie rozobranie príde neskôr) ušetrí úložisko v~databáze. Preto entitu pre správy nevytvárame.
-
-Pre splnenie P7 si vytvoríme entitu, ktorá bude reprezentovať náhradné diely stroja. Každý náhradný diel bude niesť informáciu o~tom, v~ktorých strojoch sa nachádza. A~každý stroj bude vedieť aké diely obsahuje. Každý náhradný diel obsahuje katalógové číslo. Toto číslo je unikátne medzi strojmi, a~preto by mohlo byť použité ako primárny kľúč entity. Ale autor sa z opatrnosti a~kvôli konzistencii (každá entita má id) rozhodol využiť ako primárny kľúč id i~pri náhradných dieloch.
-
-Hlavným predmetom predaja sú stroje. A~preto chceme aby prvé, čo zákazník po~príchode na~stránku uvidí bola ponuka strojov. Takže ešte budeme potrebovať entitu na~reprezentáciu hlavnej ponuky. Táto entita vie aký typ strojov ponúka, a~zároveň obsahuje reprezentatívnu fotku a~opis strojov daného typu.
-
-Pre detailnejšiu predstavu môžeme návrh vidieť na~obrázku~\ref{relacny model uml}.
+V predchádzajúcej časti textu (viď~\ref{volba databazy}) sme si zvolili relačnú databázu, a~preto bude teraz nasledovať vytváranie \href{https://www.geeksforgeeks.org/relational-model-in-dbms/}{relačného modelu databázy} (ide o~reprezentáciu dát uložených v~relačnej databáze). Ako už bolo spomenuté v~predchádzajúcej časti textu, štruktúra dát (a~teda aj samotné entity) boli viac-menej zadané už v~podkapitole s~požiadavkami na~systém (viď~\ref{poziadavky}), v~tejto kapitole si upresníme ich formu a~vzťahy medzi nimi (resp.~kardinality). Pre~lepšiu predstavu vytváraného relačného modelu viď~obr.~\ref{relacny model uml}.
 
 \begin{figure}[H]\centering
 \includegraphics[width=140mm]{../img/relacny model uml}
@@ -152,17 +130,123 @@ Pre detailnejšiu predstavu môžeme návrh vidieť na~obrázku~\ref{relacny mod
 \label{relacny model uml}
 \end{figure}
 
-Pozorný čítateľ si mohol všimnúť, že na~obrázku existuje entita, ktorú sme ešte nespomenuli. Ide o~entitu reprezentujúcu automaticky generované správy. Na~dôvod jej existencie sa pozrieme neskôr. Zatiaľ len~prezradím, že táto entita sa využije pri fungovaní aukcie.
+\begin{itemize}
+\item \textbf{Entita Excavator}
 
-\subsection{Voľba typu databázy a databázového servera}
+V požiadavke P2.2 (Bager, viď~podkap.~\ref{poziadavky}) je napísané, že každý bager má mať názov, značku, kategóriu, opis, fotky, vlastnosti, a~tiež informáciu o~tom, aké náhradné diely obsahuje. Taktiež tam bolo napísané, že môžu existovať bagre, ktoré sú určené iba pre aukciu. To, či je bager určený iba pre aukciu, vieme zachytiť pomocou boolovskej vlastnosti (viď~entitu~Excavator na~obr.~\ref{relacny model uml}). Podobne vieme pomocou vlastností v entite zachytiť aj názov a opis.
 
-Kvôli tomu, že naše dáta majú presne definovanú štruktúru, si volíme relačnú databázu. Tá nám poskytne rýchly prístup k~dátam, a~takisto zaručí ich neporušenosť. Ďalším plusom je, že autor má s~relačnými databázami trochu viac skúseností, než s~NoSql databázami.
+\item \textbf{Entita ExcavatorType}
 
-Čo sa týka databázového servera, tak si najprv poďme rozmyslieť, čo od~neho budeme vyžadovať. Kvôli P2 chceme, aby bol server (v~najlepšom prípade) bezplatný. Taktiež musí byť kompatibilný s~platformou .NET. Tieto požiadavky spĺňajú servery: Microsoft SQL Server, Oracle Database a~MySQL. V~prípade prvých dvoch serverov je síce pravda, že poskytujú aj bezplatnú verziu, ale tie sú obmedzené na~kapacitu. Ale aj napriek obmedzeniu je kapacita dosť veľká. V~prípade Community verzie MySql takéto obmedzenie kapacity nemáme žiadne. V~budúcnosti, ak by sa firme darilo a~získala by viacej zákazníkov, prípadne rozšírila ponuku, by sa nám mohla neobmedzená kapacita servera hodiť. Preto si volíme MySql.
+Čo sa týka značky a~kategórie, tak tie by by sme takisto mohli v~entite reprezentujúcej bager zachytiť pomocou vlastností, ale to by znamenalo, že za~každým pri~vytváraní nového záznamu pre bager by sa musela špecifikovať hodnota týchto vlastností. Takisto platí, že viacero bagrov môže byť tej istej kategórie a~značky. Ak by sa mali pri každom vytváraní záznamu bagra vypisovať hodnoty pre značku a kategóriu, mohlo by to viesť k~zbytočným chybám (preklepom), a takisto by to pre administrátora nebolo príliš pohodlné. Preto vytvoríme novú entitu reprezentujúcu typ bagra (viď~ExcavatorType na~obr.~\ref{relacny model uml}), ktorá nám bude určovať kategóriu a~značku bagra. Tato entita však nebude obsahovať vlastnosi ani pre~značku bagra, ani pre~kategóriu bagra.
 
-\subsection{ORM}
+\item \textbf{Entita ExcavatorBrand a ExcavatorCategory}
 
-Keď už máme vybraný databázový server, poďme si rozmyslieť ako s~ním budeme pracovať. Potrebujeme vytvoriť databázu s~tabuľkami, vkladať, editovať, čítať a~mazať dáta. Všetky tieto úkony by sme mohli vykonať tak, že budeme písať kód s SQL syntaxou. Ale keďže autor nemá veľa skúseností s~jazykom SQL, prichádza do úvahy využiť nejaký z~ORM frameworkov (z~ang. object relational mapping). Asi najznámejšími na~platforme .NET sú: Dapper a~Entitfy~Framework~Core. Využívanie frameworku Dapper zahŕňa písanie SQL kódu. Pretože sa snažíme obmedziť písanie SQL kódu, nedáva zmysel si vybrať Dapper. Našou voľbou je preto Entity Framework Core. Konkrétne s~prístupom založeným na~kóde (anglicky code first approach). To znamená, že entity z~relačného modelu najprv napíšeme do~C\# kódu ako triedy a z~nich Entity~Framework~Core vytvorí tabuľky databázy.
+Značka bagra, rovnako ako aj kategória bagra, by mali byť novými osobitnými entitami (viď~entity~ExcavatorBrand a~ExcavatorCategory na~obr.~\ref{relacny model uml}), entita reprezentujúca značku bagra by obsahovala vlastnosť s~údajom o~značke bagra a~entita reprezentujúca kategóriu bagra by obsahovala vlastnosť s~údajom o~kategórii bagra. To je z toho dôvodu, že môžu existovať viaceré typy bagra, ktoré by boli rovnakej značky, ale líšili by sa kategóriou (alebo naopak, boli by rovnakej kategórie, ale líšili by sa značkou). Tým, že by sme zo~značky bagra a~kategórie bagra spravili samostatné entity, zamedzili by sme opakujúcim sa hodnotám v~databáze. Takisto kvôli tomuto bude stačiť ak si administrátor v~aplikácii uloží značku (resp.~kategóriu) bagra iba raz, čo môže zamedziť zbytočným chybám (preklepom).
+
+\item \textbf{Entita ExcavatorPhoto}
+
+Tiež boli v súvislosti s bagrami spomenuté fotky bagrov~-- a~tie budú našou ďalšou entitou (viď entitu ExcavatorPhoto na~obr.~\ref{relacny model uml}). Každý bager môže mať viacero fotiek, pričom tieto fotky budeme chcieť zobrazovať napr. v časti aplikácie s detailom bagra, ktorá bola spomenutá v~časti~\ref{detail bagra pridavneho zariadenia} (viď vľavo hore na~obr.~\ref{detail}) alebo~tiež na kartách strojov, ktoré boli spomenuté v~časti~\ref{ponuka novych bagrov} (viď~obr.~\ref{excavator cards}). Entita reprezentujúca fotku bagra by mala okrem samotnej fotky obsahovať aj boolovskú vlastnosť určujúcu, či je fotka titulná. Vďaka tejto vlastnosti budeme môcť presne určiť, aká fotka bagra sa má zobrazovať na~jeho karte.
+
+\item \textbf{Entita SparePart}
+
+Okrem fotiek boli v súvislosti s bagrami spomenuté aj náhradné diely. Náhradný diel bude predstavovať ďalšiu entitu (viď~entitu SparePart na~obr.~\ref{relacny model uml}) a~jeho údaje boli definované v~P7.1~-- má obsahovať katalógové číslo (ide o~celé číslo, neobsahuje iné znaky ako číslice) a~názov náhradného dielu. Každý bager môže obsahovať viacero rôznych náhradných dielov a~jeden náhradný diel sa môže nachádzať vo~viacerých bagroch.
+
+\item \textbf{Entita ExcavatorPropertyType a ExcavatorProperty}
+
+Ďalej boli v súvislosti s bagrami spomenuté aj vlastnosti bagra, ktoré sú určené jeho typom (ako bolo spomenuté v~požiadavke~P2.2). Tu je dôležité uvedomiť si, že typ bagra v skutočnosti určuje typ vlastnosti bagra. Napríklad typ bagra X môže mať vlastnosť hmotnosť a ďalší typ bagra Y môže mať takisto vlastnosť hmotnosť, ale okrem nej môže mať aj vlasnosť šírka lyžice. Všimnime si, že hovoríme o typoch vlastností bagra, ale nie o~konkrétnych hodnotách vlastností, teda napr. koľko vážia bagre typu X, to nemôžeme vedieť, pretože presná hodnota je určená konkrétym bagrom a nie jeho typom. Z toho vyplýva, že budeme potrebovať entitu na reprezentáciu typu vlastnosti bagra (viď entitu ExcavatorPropertyType na obr. \ref{relacny model uml}), ale takisto aj entitu reprezentujúcu (konkrétnu) vlastnosť, ktorá by v sebe niesla konkrétnu hodnotu určenú konkrétnym bagrom (viď entitu ExcavatorProperty na obr. \ref{relacny model uml}). Entita reprezentujúca typ vlastnosti bagra by v sebe mala obsahovať okrem názvu (aby sme vedeli, čo je to za vlastnosť, napr. hmotnosť) aj typ hodnoty danej vlastnosti, aby sme vedeli, či ide o číslo, krátky text, dlhší opis alebo~dátum (s~určením typu hodnoty danej vlastnosti nám pomôže enum~InputType, ktorý môžeme vidieť na~obr.~\ref{relacny model uml}). Tento údaj nám dovolí zlepšiť užívateľské rozhranie, konkrétne typy polí pre hodnoty vlastností bagra vo formulári pre vytvorenie/úpravu bagrov, ktorý bol spomenutý v časti \ref{vytvorenie noveho a uprava existujuceho bagra} (viď obr. \ref{excavator form}).
+
+\item \textbf{Entita MainOffer}
+
+V požiadavke P2 sa vyžaduje, aby existovala aj hlavná ponuka~-- tá bude našou ďalšou entitou (viď entitu MainOffer na obr. \ref{relacny model uml}). Konkrétne v požiadavke P2.1 je napísané, že hlavná ponuka reprezentuje typ bagrov a má obsahovať opis, a tiež fotku danéhu typu. V predošlom texte bolo spomenuté, že môžu existovať bagre, ktoré by boli určené iba pre aukciu, a~teda nenachádzali by sa v ponuke (nových) bagrov. Preto môže nastať situácia, kde by sme chceli, aby sa v databáze nachádzal typ bagra, ale~nechceme, aby existovala v databáze hlavná ponuka pre tento typ bagra. Zároveň platí, že hlavná ponuka predstavuje bagre jedného typu.
+
+\item \textbf{Entita AdditionalEquipment}
+
+V požiadavke P2 je tiež spomenutá aj ponuka prídavných zariadení, preto si vytvoríme aj entitu pre reprezentáciu prídavného zariadenia (viď entitu AdditionalEquipment na obr. \ref{relacny model uml}), tá má podľa požiadavky~P2.3 obsahovať názov, opis, fotky, značku a~kategóriu prídavného zariadenia, ale takisto aj údaj o tom, pre akú kategóriu bagrov je prídavné zariadenie určené. Z~rovnakého dôvodu prečo sme vytvorili novú entitu pre~kategóriu bagra (entita ExcavatorCategory, ktorá bola spomenutá v~prechádzajúcom texte), vytvoríme aj entity reprezentujúce značku prídavného zariadenia (viď~entitu~AdditionalEquipmentBrand na~obr.~\ref{relacny model uml}) a~kategóriu prídavného zariadenia (viď~entitu~AdditionalEquipmentCategory na~obr.~\ref{relacny model uml}). Ďalej čo sa týka fotiek prídavného zariadenia, tak by sa naskytovala možnosť zmeniť entitu reprezentujúcu fotky bagrov (ExcavatorPhoto) na~entitu reprezentujúcu fotky všeobecne (aj bagrov, aj prídavných zariadení). No~tento prístup by nám umožnil priradiť fotku prídavného zariadenia bagru (a~naopak), čo nie je správne. Preto namiesto toho vytvoríme, rovnako ako v~prípade fotky bagra, novú entitu reprezentujúcu fotku prídavného zariadenia (viď~entitu~AdditionalEquipmentPhoto na~obr.~\ref{relacny model uml}).
+
+\item \textbf{Entita User}
+
+Ďalej z požiadavky P6 vieme, že budeme potrebovať entitu reprezentujúcu užívateľa (viď~entitu~User na~obr.~\ref{relacny model uml}). Konkrétne z~P6.3 vieme, že o užívateľovi potrebujeme vedieť jeho prihlasovacie meno, heslo, (krstné) meno, priezvisko, email, príp.~aj telefónné číslo a~bydlisko (mesto). No okrem týchto údajov sa nám tiež kvôli požiadavke P6.1 hodí údaj, či je užívateľ dočasný. Presnejšie je to kvôli tomu, aby aj neprihlásený užívateľ mohol ponúkať sumy do dražby. Po ponúknutí sumy by sa do~databázy uložila informácia o tom, kto ponúkol sumu (a~tiež čo to bolo za~aukčnú ponuku). Po prejdení termínu konca aukčnej ponuky a~vyhodnotení aukcie sa budú môcť tieto dočasné účty vymazať. Okrem toho by sa nám tiež hodil údaj o~tom, či je užívateľ bežným zákazníkom alebo~administrátorom, aby mu podľa toho vedel systém zobraziť správny obsah (vychádza z~P1~Roly užívateľa, viď~podkap.~\ref{poziadavky}). Všetky tieto údaje by mali byť zahrnuté vo~vlastnostiach entity User.
+
+\item \textbf{Entita AuctionOffer}
+
+Z požiadavky P4 vieme, že administrátor by mal byt schopný zaradiť bager do~aukcie a~vytvoriť tak aukčnú ponuku~-- to bude našou ďalšou entitou (viď~entitu~AuctionOffer na~obr.~\ref{relacny model uml}). Takisto z~požiadavky P4 vieme, že administrátor by mal mať možnosť zadať dátum konca aukčnej ponuky, počiatočnú sumu a~popis ponuky (v~ňom môže byť napísané napr.~čo bolo v~bagri opravené). Preto budú tieto údaje vlastnosťami entity~AuctionOffer.
+
+\item \textbf{Entita AuctionBid}
+
+Okrem entity AuctionOffer vyplýva z požiadavky P4 aj entita reprezentujúca ponuku (sumu) ponúknutú zákazníkom (viď~entitu~AuctionBid na~obr.~\ref{relacny model uml}). Údaj o tom, koľko zákazník ponúkol, je vlastnosťou entity~AuctionBid.
+
+\item \textbf{Entita AutogeneratedMessage}
+
+Našou poslednou entitou bude entita pre~automaticky generované správy, ktorej potreba vyplýva z~požiadaviek~P4.1 a~P5.3. Z~P4.1 vieme, že budeme potrebovať odosielať automaticky generované správy~-- konkrétne budeme potrebovať odosielať správy víťazom dražieb, porazeným, ale~takisto aj administrátorom v~prípade, že dražba skončila (a~to aj v prípade, že skončila bez víťaza). Všetky tieto prípady zachytáva enum~For, ktorý môžeme vidieť na~obr.~\ref{relacny model uml}. Ďalej z~P5.3 vieme, že chceme dovoliť administrátorom upravovať formát automaticky generovaných správ, preto potrebujeme entitu reprezentujúcu automaticky generovanú správu (viď~entitu~AutogeneratedMessage na~obr.~\ref{relacny model uml}). V~požiadavke~P4.1 je napísané, že sa tieto automaticky generované správy majú posielať ako emaily, preto by mala entita~AutogeneratedMessage obsahovať vlastnosti pre~predmet a~samotný text správy. Tiež by mala obsahovať vlastnosť určujúcu pre~koho, resp.~pre~akú príležitosť, je automaticky generovaná správa určená.
+
+\end{itemize}
+
+\subsection{Voľba databázového servera}
+
+Čo sa týka databázového servera, tak si najprv poďme rozmyslieť, čo od~neho budeme vyžadovať. Kvôli požiadavke P11 (Náklady, viď~podkap.~\ref{poziadavky}) chceme, aby bol server (v~najlepšom prípade) bezplatný. Taktiež musí byť kompatibilný s~platformou .NET. Tieto požiadavky spĺňajú servery: \href{https://www.microsoft.com/en-us/sql-server/sql-server-2022-comparison}{Microsoft SQL Server (Express edition)}, \href{https://www.oracle.com/database/technologies/appdev/xe.html}{Oracle Database (Express edition)} a~\href{https://dev.mysql.com/downloads/mysql/}{MySQL (Community server)}. V~prípade prvých dvoch serverov je síce pravda, že poskytujú aj bezplatnú verziu, ale sú obmedzené na~kapacitu (pri serveri Microsoft SQL je to 10~GB, pri Oracle Database je to 12~GB). Síce je pravda, že aj napriek obmedzeniu je kapacita pre naše účely (pre malé firmy) dostatočne veľká, ale v~prípade Community verzie MySql takéto obmedzenie kapacity nemáme žiadne. V~budúcnosti, ak by sa firme darilo a~získala by viacej zákazníkov, prípadne rozšírila ponuku, by sa nám mohla neobmedzená kapacita servera hodiť. Preto si volíme MySql.
+
+\subsection{Object Relational Mapping}
+
+\href{https://www.freecodecamp.org/news/what-is-an-orm-the-meaning-of-object-relational-mapping-database-tools/}{Object Relational Mapping (ORM)} je technika využívaná pri prepájaní \href{https://www.freecodecamp.org/news/four-pillars-of-object-oriented-programming/}{objektovo orientovaného programovania (OOP)} a (vo väčšine prípadov) relačných databáz. Pri~práci s~relačnou databázou môžeme vytvárať, čítať, editovať a mazať dáta z~databázy pomocou jazyka SQL (SQL skripty), ale~takisto môžme využiť ORM nástroje pre~uľahčenie práce. Populárnymi ORM nástrojmi na~platforme~.NET sú napr.~frameworky Dapper alebo~Entitity Framework Core (ďalej už len EF Core).
+
+Ako bolo spomenuté, v našom programe by sme mohli využiť pre~prácu s~databázou (\uv{čisté}) SQL skripty. Výhodou tohto prístupu je väčšia kontrola nad~SQL dotazmi, a~rýchlosť vykonania dotazov. Nevýhodou je, že tento prístup nám neposkytuje automatické \href{https://www.linkedin.com/advice/0/how-do-you-handle-user-input-validation-sanitization}{sanitizovanie dotazov}, a takisto neposkytuje dopĺňanie kódu (nápovedu) ako napr.~pri~C\# kóde vo~Visual Studiu. Navyše je tento prístup dosť pracný, a~to v~tom zmysle, že by sme museli napísať veľa SQL kódu už len pre vytvorenie tabuliek. Alternatívou by bolo využitie nejakého ORM frameworku, napr.~Dapper alebo~EF Core, tento prístup by nám poskytol automatické dopĺňanie kódu vo~Visual Studiu, pretože by sme pracovali so~C\# kódom. Obe frameworky si teraz porovnáme. 
+
+Dapper je jednoduchším frameworkom oproti frameworku EF Core s~menším počtom funkcionalít. Umožňuje spúšťať SQL dotazy a ich výsledky mapovať na~.NET objekty. Výhodou naďalej ostáva kontrola nad~tvarom dotazu a~rýchlosť vykonania dotazu, pretože stále pracujeme s~dotazmi napísanými jazykom~SQL. Ale naďalej ostáva nevýhodou, že by sme museli pracne pomocou jazyka SQL vytvárať všetky tabuľky.
+
+EF Core je mohutnejší ORM framework s viacerými funkcionalitami. Jeho nevýhodou oproti predošlým možnostiam je, že vykonávanie dotazov je pomalšie, no stále ide o rozumné časy, ktoré pre~nás nepredstavujú problém (viac o~časovej výkonnosti spomínaných možností je možné nájsť \href{https://github.com/DapperLib/Dapper\#performance}{tu} alebo~aj \href{https://levelup.gitconnected.com/dapper-vs-ef-core-which-orm-framework-should-you-choose-for-your-net-application-54f2723b176a}{tu}). Oproti predošlým možnostiam nám však umožňuje využiť prístup \href{https://www.entityframeworktutorial.net/code-first/what-is-code-first.aspx}{code first} pri~vytváraní tabuliek. Tento prístup nám umožní zamerať sa na~doménu našej aplikácie, pričom bude stačiť vytvoriť pomocou C\# kódu (doménové) modely (ide o~C\# triedy predstavujúce entity vytvorené v~časti~\ref{navrh relacneho modelu databazy}), a z~nich si pomocou frameworku EF Core budeme schopný nechať vygenerovať SQL kód a~vytvoriť tabuľky bez toho, aby sme museli manuálne písať SQL skripty. To nám môže potenciálne zjednodušiť a~urýchliť implementáciu systému. Preto si zvolíme ako ORM framework~EF Core. Viac informácií o~frameworkoch Dapper a~EF Core je možné nájsť \href{https://www.c-sharpcorner.com/article/dapper-vs-entity-framework-core/}{tu}.
+
+\section{Aukcia- odpočet a vyhodnocovanie}
+\label{aukcia odpocet a vyhodnocovanie}
+
+V požiadavke P4.2 (Odpočet a ďalšie údaje, viď~v~podkap.~\ref{poziadavky}) sa vyžaduje odpočet do~konca dražby. Túto požiadavku by sme splnili implementáciou častí aplikácie navrhnutých v častiach textu \ref{aukcne ponuky} (Aukčné ponuky, odpočet by sa nachádzal v spodnej časti vylistovaných kariet, viď obr. \ref{auction offer cards}) a~\ref{detail aukcnej ponuky} (Detail aukčnej ponuky, odpočet by sa nachádzal v~texte so~základnými informáciami, viď vpravo hore na~obr.~\ref{auction offer detail}). V tejto podkapitole si rozoberieme ako by sme mohli implementovať odpočet (a aj vyhodnocovanie aukčných dražieb) v~spomínaných častiach aplikácie.
+
+Keďže každá zo spomínaných častí aplikácie zobrazuje informácie o~aukčnej ponuke, musí mať prístup k~entite~AuctionOffer, ktorú sme si zadefinovali v~časti~\ref{navrh relacneho modelu databazy}. Táto entita obsahuje okrem iného aj dátum, kedy končí aukčná ponuka. Ak od neho odčítame aktuálny dátum a~čas (pomocou \verb|DateTime.Now|), tak získame koľko času ostáva do~konca aukčnej ponuky a tento údaj môžeme zobraziť užívateľovi. Lenže to nám nestačí, pre~odpočet budeme potrebovať, aby sa nový údaj zobrazil každú sekundu. Na to by sme mohli využiť \href{https://learn.microsoft.com/en-us/dotnet/api/system.timers.timer?view=net-6.0}{triedu \texttt{Timer}}, ktorú nám platforma .NET ponúka. Po prejdení určitého intervalu (ktorý si vieme zadať pri vytvorení inštancie) vygeneruje udalosť. Takže ak si nastavíme interval jednu sekundu a zaregistrujeme si metódu, ktorá by prepočítala čas do konca aukčnej ponuky a prekreslila údaj na stránke, tak dosiahneme požadovaného odpočtu.
+
+Implementácia by mohla byť realizovaná tak, že by pre~každé miesto s~odpočtom existovala jedna inštancia triedy~\verb|Timer|. To by však znamenalo mrhanie zdrojmi (viac informácií \href{https://learn.microsoft.com/en-us/dotnet/api/system.threading.timer.dispose?view=net-6.0}{tu}). Lepším riešením by bolo vytvoriť službu (triedu, ktorá by sa mohla volať napr.~\verb|EverySecondTimerService|), ktorá by nám dovolila registrovať ľubovoľné metódy (v~našom prípade metódy pre~prepočítanie a~prekreslenie odpočtu) a~každú sekundu by zavolala registrované metódy. Potom by nám stačilo vytvoriť jednu inštanciu spomínanej služby, ktorá by využívala jednu inštanciu triedy~\verb|Timer| a~pomocou \href{https://learn.microsoft.com/en-us/aspnet/core/blazor/fundamentals/dependency-injection}{dependency injection}, ktorý je vstavaný vo~frameworku~Blazor Server, si vyžiadať inštanciu triedy~\verb|EverySecondTimerService| z~každého miesta s~odpočtom v~aplikácii podľa potreby.
+
+Triedu \verb|Timer| by sa nám tiež hodilo využiť aj pre~vyhodnocovanie dražieb. Povedzme, že napr. každú minútu by systém prešiel všetky aukčné ponuky, ktoré by už neboli aktívne (t.~j.~prešiel ich termín konca) a~pre~každú z aukčných ponúk by sa zistilo, ktorý užívateľ ponúkol najvyššiu sumu a~oboznámime ho, že vyhral. Taktiež by systém oboznámil ostatných účastníkov dražby s tým, že dražbu nevyhrali, a~takisto by boli oboznámil aj administrátorov, že dražba skončila (a~to aj v prípade, že skončila bez~víťaza). Trieda, ktorá by bola zodpovedná za tento proces by sa mohla volať napr.~\verb|AuctionEvaluatorService|.
+
+Zároveň si všimnime, že tu už máme dve triedy (\verb|EverySecondTimerService| a~\verb|AuctionEvaluatorService|), ktoré by využívali triedu~\verb|Timer|. Obe chcú zadať interval (v~prípade \verb|EverySecondTimerService| ide o sekundu, v prípade \verb|AuctionEvaluatorService| ide o minútu) a~špecifikovať čo sa má diať (napr.~pomocou \verb|AuctionEvaluatorService| chceme každú minútu skontrolovať aukčné ponuky a~v~prípade potreby ich aj vyhodnotiť). Aby sme zamedzili duplicitnému kódu, tak by sme mohli vytvoriť rodičovksú triedu~\verb|TimerService| (viď~obr.~\ref{timer services uml}), ktorá by pokryla túto spoločnú logiku.
+
+\begin{figure}[H]\centering
+\includegraphics[width=140mm]{../img/timer services uml}
+\caption{Časové služby využívajúce triedu \texttt{Timer}.}
+\label{timer services uml}
+\end{figure}
+
+Interval by sa mohol predať potomkami prostredníctom parametra konštruktora triedy~\verb|TimerService| a pomocou abstraktnej metódy \verb|GetEventHandlers| triedy~\verb|TimerService| by si potomkovia mohli zadefinovať čo sa má diať. Takže v prípade triedy \verb|EverySecondTimerService| by to bolo prepočítanie a~prekreslenie odpočtu (resp.~zavolanie registrovaných metód) a v prípade triedy \verb|AuctionEvaluatorService| by to bolo prejdenie aukčných ponúk a~vyhodnotenie tých ktoré by boli neaktívne.
+
+Ďalej je potrebné si uvedomiť, že kód oboch služieb (\verb|EverySecondTimerService| a~\verb|AuctionEvaluatorService|) musí bežať na~pozadí v~osobitnom vlákne, aby neblokoval program a~neznepríjemňoval tým užívateľovi prácu s~aplikáciou. Pre implementáciu kódu bežiaceho na~pozadí nám .NET poskytuje viacero možností, pre naše účely by sa hodili napr. rozhranie \href{https://learn.microsoft.com/en-us/aspnet/core/fundamentals/host/hosted-services?view=aspnetcore-7.0&tabs=visual-studio\#ihostedservice-interface}{\texttt{HostedService}} alebo trieda \href{https://learn.microsoft.com/en-us/aspnet/core/fundamentals/host/hosted-services?view=aspnetcore-7.0&tabs=visual-studio\#backgroundservice-base-class}{\texttt{BackGroundService}}. Pre naše účely by sa dali využiť obe možnosti, no trieda~\verb|BackGroundService| je určená pre~dlhotrvajúce úlohy bežiace na~pozadí (viac informácií \href{https://www.compositional-it.com/news-blog/background-tasks-in-net}{tu}), navyše autorovi vyhovuje viac možnosť s~triedou \verb|BackGroundService|, preto použijeme túto možnosť, a~to tak, že trieda \verb|TimerService| bude dediť od~triedy~\verb|BackGroundService|.
+
+Trieda \verb|TimerService| zdedí od triedy \verb|BackGroundService| abstraktnú metódu \href{https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.hosting.backgroundservice.executeasync?view=dotnet-plat-ext-7.0\#microsoft-extensions-hosting-backgroundservice-executeasync(system-threading-cancellationtoken)}{ExecuteAsync}. V~triede \verb|TimerService| by sme ju mohli naimplementovať tak, že poz zavolaní by sa inicializovala inštancia triedy~\verb|Timer|, na ktorej by sa zavolala metóda \href{https://learn.microsoft.com/en-us/dotnet/api/system.timers.timer.start}{\texttt{Start}}). Inicializácia by spočítavala v~tom, že na udalosť \href{https://learn.microsoft.com/en-us/dotnet/api/system.timers.timer.elapsed}{Elaped} inštancie triedy \verb|Timer| by sa zaregstrovali metódy (obsluhy udalostí) definované v potomkoch, tie vieme získať pomocou metódy \verb|GetEventHandlers| (ktorú sme spomenuli skôr v~texte). Ďalej nám už len stačí registrovať služby \verb|EverySecondTimerService| a~\verb|AuctionEvaluatorService| pomocou metódy \verb|AddHostedService| (viac informácii \href{https://learn.microsoft.com/en-us/dotnet/core/extensions/timer-service?pivots=dotnet-7-0}{tu}). Potom po~spustení aplikácie a~registrácií služieb sa už framework postará o~zavolanie našej implementácie metódy \verb|ExecuteAsync| (a~tým spustí na~pozadí naše služby).
+
+%\section{Zmena UI podla Roly}
+
+%TODO?
+
+%\section{Posielanie a prijimanie sprav}
+
+%TODO?
+
+%\subsection{Injectovanie vlastnych dat, napr url do emailov}
+
+%TODO? (do spravy je problem lebo by videl uzivatel, do headru je ok)
+
+%\subsection{Posielanie automaticky generovanych sprav, resp tvorba sablon}
+
+%TODO? (default spravy by mohli byt v db ale to by sa vymazali kebyze sa raz prepisu, mohli by byt v roznych stlpcoch sice ale nechcel som pridavat do db aby sa nezvysoval cost za db... asi som to mohol radsej tak spravit no...)
+
+%\section{Management, data grid od Syncfusionu}
+
+%TODO?
+
+\iffalse
+
+---
+
+PO TADE JE NOVY TEXT
+
+---
 
 \section{Aukcia- odpočet a vyhodnocovanie}
 
@@ -180,20 +264,11 @@ V~oboch prípadoch (odpočet i~vyhodnocovanie) sme sa rozhodli využiť vlákna 
 
 \section{Posielanie a prijímanie správ}
 
-Z pozorovania autor vie, že zákazníci týchto firiem, a rovnako i samotné firmy, sú zvyknuté na komunikáciu pomocou emailov.
-
-V~predchádzajúcom texte sme už viackrát spomínali, že budeme posielať správy. Jednak kvôli spĺneniu P6, ale takisto pre~upozorňovanie účastníkov a~administrátorov na~priebeh aukcií. Tiež sme si povedali, že správy nebudú reprezentované entitami v~databáze. Ako teda vyriešime túto úlohu? Ak bude posielanie správ~(dopytov, notifikácií z~aukcie) implementované prostredníctvom posielania emailov do~emailovej schránky firmy, tak ušetríme miesto v~databáze. To nám môže potenciálne znížiť náklady, čo je v~prospech~P2. Nevýhodou by však bolo, že administrátor by musel chodiť kontrolovať emaily mimo našu aplikáciu. Tejto nevýhody sa dokážeme zbaviť. A to tak, že vytvoríme zjednodušenú emailovú schránku priamo v~našej aplikácii. Týmto spôsobom docielime toho, že užívateľ vie odoslať správu z~nášho systému, náš systém vie odoslať správu o~stave aukcií, admin si ich v~našej aplikácii vie prečítať a reagovať na ne. Zároveň sa nestaráme o~ukladanie správ v databáze, takže šetríme úložisko. A~čo viac, zákazníci vedia kontaktovať firmu i~mimo nášho systému (keď zákazník pošle firme email z~miesta mimo nášho systému, admin si ho vie aj napriek tomu v~našej aplikácii prečítať).
-
 Dospeli sme k~tomu, že nepotrebujeme správy len odosielať ale potrebujeme ich aj čítať. Ešte predtým, než si zvolíme spôsob akým budeme správy prijímať a~posielať, si poďme vybrať akú emailovú službu budeme využívať. Od~služby vyžadujeme, aby podporovala protokoly IMAP~(pre~prijímanie správ) a~SMTP~(pre~posielanie správ). Jednou zo~služieb ktorá spĺňa podmienku je Gmail od~spoločnosti Google. Ide o~veľkú spoločnosť, ktorú pozná snáď každý a~autor dôveruje ich zabezpečeniu. Ďalším plusom je to, že k~tejto službe existuje dokumentácia. Navyše služba poskytuje API~(z~ang. application programming interface), ktoré by sme mohli využiť v~prípade potreby. Čítateľ by mohol poznamenať, že API by sme mohli vyyužiť ku~kompletnej implementácii našej schránky. Dôvodom prečo nevyužijeme API služby pre~kompletnú implementáciu je ten, že to čo ideme vytvoriť sa skôr podobá emailovému klientovi. Na~jeho implemenáciu je vhodnejšie použiť protokoly~IMAP a~SMTP ~(rovnako to spomína i~dokumentácia API\footnote{\url{https://developers.google.com/gmail/api/guides}}). Ako vidíme, Gmail sa zdá byť dobrým kandidátom, a~preto si ho zvolíme.
 
 Ďalej potrebujeme zistiť ako môžeme využívať protokoly IMAP a~SMTP z~nášho programu. Zdá sa, že najznámejšími balíčkami pre~prácu s~týmito protokolmi sú MailKit a~AE.Net.Mail. Obe umožňujú prácu s~IMAP i~SMTP, ale AE.Net.Mail nebol už dlhšiu dobu aktualizovaný. A~preto, ak sa z~tohto systému stane dlhodobejší projekt, sa zdá byť lepšou možnosťou MailkKit.
 
-\subsection{Automaticky generované správy}
-
-Spomínali sme, že systém bude sám automaticky odosielať správy, či už víťazom aukcie, porazeným alebo~adminom, o~stave aukcie. Ak by náš systém využívali viaceré firmy, je prirodzené, že by si chceli tvar automaticky generovaných správ upraviť. Náš~systém firmám túto funkcionalitu umožní. Preto sme si v~časti~Návrh~relačného~modelu~datábazy~(\ref{navrh relacneho modelu databazy}) dopredu pripravili entitu reprezentujúcu automaticky generované správy.
-
 %\section{Ďalší kód tretích strán}
 %TBA? (Fontawesome, Syncfusion) + pridať že management treba na zaciatok %analyzy (ako do db sa daju veci? Treba inteface pre adminov!)
 
-%\section{GDPR}
-%TBA?
+\fi
