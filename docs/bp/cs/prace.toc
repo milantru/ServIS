@@ -1,88 +1,91 @@
 \babel@toc {slovak}{}\relax 
-\contentsline {chapter}{\numberline {1}Úvod}{4}{chapter.1}%
-\contentsline {section}{\numberline {1.1}Požiadavky na systém}{4}{section.1.1}%
-\contentsline {section}{\numberline {1.2}Cieľ práce}{8}{section.1.2}%
-\contentsline {chapter}{\numberline {2}Návrh užívateľského rozhrania}{10}{chapter.2}%
-\contentsline {section}{\numberline {2.1}Hlavné rozloženie aplikácie}{10}{section.2.1}%
-\contentsline {section}{\numberline {2.2}Modálne potvrdzovacie okno}{11}{section.2.2}%
-\contentsline {section}{\numberline {2.3}Sekcie Podmienky používania a Zásady ochrany osobných údajov}{12}{section.2.3}%
-\contentsline {section}{\numberline {2.4}Splnenie P2 a P3}{13}{section.2.4}%
-\contentsline {subsection}{\numberline {2.4.1}Hlavná ponuka}{15}{subsection.2.4.1}%
-\contentsline {subsection}{\numberline {2.4.2}Vytvorenie novej a~úprava existujúcej hlavnej ponuky}{16}{subsection.2.4.2}%
-\contentsline {subsection}{\numberline {2.4.3}Ponuka (nových) bagrov}{17}{subsection.2.4.3}%
-\contentsline {subsection}{\numberline {2.4.4}Ponuka prídavných zariadení}{18}{subsection.2.4.4}%
-\contentsline {subsection}{\numberline {2.4.5}Detail bagra, prídavného zariadenia}{18}{subsection.2.4.5}%
-\contentsline {subsection}{\numberline {2.4.6}Dopyt}{19}{subsection.2.4.6}%
-\contentsline {subsection}{\numberline {2.4.7}Vytvorenie nového a úprava existujúceho bagra}{20}{subsection.2.4.7}%
-\contentsline {subsection}{\numberline {2.4.8}Úprava bagrov, ktoré nie sú v ponuke (nových) bagrov}{21}{subsection.2.4.8}%
-\contentsline {subsection}{\numberline {2.4.9}Vytvorenie nového a úprava existujúceho prídavného zariadenia}{21}{subsection.2.4.9}%
-\contentsline {section}{\numberline {2.5}Splnenie P4}{22}{section.2.5}%
-\contentsline {subsection}{\numberline {2.5.1}Aukčné ponuky}{24}{subsection.2.5.1}%
-\contentsline {subsection}{\numberline {2.5.2}Detail aukčnej ponuky}{24}{subsection.2.5.2}%
-\contentsline {subsection}{\numberline {2.5.3}Ponúkanie sumy do~dražby}{25}{subsection.2.5.3}%
-\contentsline {subsection}{\numberline {2.5.4}Vytvorenie novej a úprava existujúcej aukčnej ponuky}{26}{subsection.2.5.4}%
-\contentsline {section}{\numberline {2.6}Splnenie P8}{28}{section.2.6}%
-\contentsline {section}{\numberline {2.7}Splnenie P9}{29}{section.2.7}%
-\contentsline {section}{\numberline {2.8}Splnenie P5, P7 a~správa predmetov}{31}{section.2.8}%
-\contentsline {subsection}{\numberline {2.8.1}Karta Správy~-- schránka}{32}{subsection.2.8.1}%
-\contentsline {subsection}{\numberline {2.8.2}Karta Správy~-- konverzácia}{34}{subsection.2.8.2}%
-\contentsline {subsection}{\numberline {2.8.3}Karta Správy~-- nastavenia automaticky generovaných správ}{35}{subsection.2.8.3}%
-\contentsline {subsection}{\numberline {2.8.4}Karta Náhradné diely}{36}{subsection.2.8.4}%
-\contentsline {subsection}{\numberline {2.8.5}Karty Bagre, Typy bagrov, Typy vlastností bagrov}{39}{subsection.2.8.5}%
-\contentsline {subsection}{\numberline {2.8.6}Karty~Kategórie a~značky bagrov, Kategórie a~značky prídavných zariadení}{41}{subsection.2.8.6}%
-\contentsline {section}{\numberline {2.9}Splnenie P6}{45}{section.2.9}%
-\contentsline {subsection}{\numberline {2.9.1}Prihlasovací panel}{45}{subsection.2.9.1}%
-\contentsline {subsection}{\numberline {2.9.2}Prihlásenie}{46}{subsection.2.9.2}%
-\contentsline {subsection}{\numberline {2.9.3}Registrácia}{47}{subsection.2.9.3}%
-\contentsline {subsection}{\numberline {2.9.4}Profil}{47}{subsection.2.9.4}%
-\contentsline {chapter}{\numberline {3}Analýza}{50}{chapter.3}%
-\contentsline {section}{\numberline {3.1}Výber typu aplikácie}{50}{section.3.1}%
-\contentsline {section}{\numberline {3.2}Rozdelenie na~frontendovú a~backendovú časť}{50}{section.3.2}%
-\contentsline {section}{\numberline {3.3}Výber typu webovej aplikácie}{51}{section.3.3}%
-\contentsline {subsection}{\numberline {3.3.1}Single-page application}{51}{subsection.3.3.1}%
-\contentsline {subsection}{\numberline {3.3.2}Multi-page application}{52}{subsection.3.3.2}%
-\contentsline {subsection}{\numberline {3.3.3}Blazor Server}{53}{subsection.3.3.3}%
-\contentsline {section}{\numberline {3.4}Voľba databázy}{54}{section.3.4}%
-\contentsline {subsection}{\numberline {3.4.1}Návrh relačného modelu databázy}{55}{subsection.3.4.1}%
-\contentsline {subsection}{\numberline {3.4.2}Voľba databázového servera}{58}{subsection.3.4.2}%
-\contentsline {subsection}{\numberline {3.4.3}Object Relational Mapping}{59}{subsection.3.4.3}%
-\contentsline {section}{\numberline {3.5}Aukcia- odpočet a vyhodnocovanie}{59}{section.3.5}%
-\contentsline {chapter}{\numberline {4}Vývojová dokumentácia}{63}{chapter.4}%
-\contentsline {section}{\numberline {4.1}Backendová časť}{63}{section.4.1}%
-\contentsline {subsection}{\numberline {4.1.1}Trieda CustomAuthenticationStateProvider}{64}{subsection.4.1.1}%
-\contentsline {subsection}{\numberline {4.1.2}Trieda PasswordHasher}{64}{subsection.4.1.2}%
-\contentsline {subsection}{\numberline {4.1.3}Trieda ServISApi a~rozhranie IServISApi}{64}{subsection.4.1.3}%
-\contentsline {subsection}{\numberline {4.1.4}Trieda DataOperations}{64}{subsection.4.1.4}%
-\contentsline {subsection}{\numberline {4.1.5}Trieda EmailManager}{64}{subsection.4.1.5}%
-\contentsline {subsection}{\numberline {4.1.6}Trieda TimerService a~jej potomkovia}{64}{subsection.4.1.6}%
-\contentsline {section}{\numberline {4.2}Frontendová časť}{65}{section.4.2}%
-\contentsline {subsection}{\numberline {4.2.1}Zobrazovanie obsahu podľa roly}{65}{subsection.4.2.1}%
-\contentsline {subsection}{\numberline {4.2.2}Hlavné rozloženie stránky}{65}{subsection.4.2.2}%
-\contentsline {subsection}{\numberline {4.2.3}Modálne potvrdzovacie okno}{66}{subsection.4.2.3}%
-\contentsline {subsection}{\numberline {4.2.4}Stránky s~podmienkami používania a~zásadami ochrany osobných údajov}{66}{subsection.4.2.4}%
-\contentsline {subsection}{\numberline {4.2.5}Stránka s hlavnou ponukou (domovská stránka)}{66}{subsection.4.2.5}%
-\contentsline {subsection}{\numberline {4.2.6}Stránka pre vytvorenie a úpravu hlavnej ponuky}{66}{subsection.4.2.6}%
-\contentsline {subsection}{\numberline {4.2.7}Stránka s ponukou (nových) bagrov}{67}{subsection.4.2.7}%
-\contentsline {subsection}{\numberline {4.2.8}Ponuka prídavných zariadení}{67}{subsection.4.2.8}%
-\contentsline {subsection}{\numberline {4.2.9}Stránka s~detailom bagra, prídavného zariadenia}{67}{subsection.4.2.9}%
-\contentsline {subsection}{\numberline {4.2.10}Stránka pre~vytvorenie a~úpravu bagra}{67}{subsection.4.2.10}%
-\contentsline {subsection}{\numberline {4.2.11}Stránka pre~vytvorenie a~úpravu prídavného zariadenia}{68}{subsection.4.2.11}%
-\contentsline {subsection}{\numberline {4.2.12}Stránka s aukčnými ponukami}{68}{subsection.4.2.12}%
-\contentsline {subsection}{\numberline {4.2.13}Stránka s detailom aukčnej ponuky}{68}{subsection.4.2.13}%
-\contentsline {subsection}{\numberline {4.2.14}Stránka pre~vytvorenie a~úpravu aukčnej ponuky}{69}{subsection.4.2.14}%
-\contentsline {subsection}{\numberline {4.2.15}Stránky Služby, Kontakt a~O~nás}{69}{subsection.4.2.15}%
-\contentsline {subsection}{\numberline {4.2.16}Stránka pre správu webu}{69}{subsection.4.2.16}%
-\contentsline {subsection}{\numberline {4.2.17}Stránka s~prihlasovacím formulárom}{71}{subsection.4.2.17}%
-\contentsline {subsection}{\numberline {4.2.18}Stránka s~registračným formulárom}{71}{subsection.4.2.18}%
-\contentsline {subsection}{\numberline {4.2.19}Stránka s profilom užívateľa}{71}{subsection.4.2.19}%
-\contentsline {chapter}{\numberline {5}Užívateľská dokumentácia}{72}{chapter.5}%
-\contentsline {section}{\numberline {5.1}Predpoklady}{72}{section.5.1}%
-\contentsline {section}{\numberline {5.2}Databáza}{72}{section.5.2}%
-\contentsline {section}{\numberline {5.3}Návod}{72}{section.5.3}%
-\contentsline {chapter}{Záver}{73}{chapter*.2}%
-\contentsline {section}{\numberline {5.4}GDPR}{74}{section.5.4}%
-\contentsline {section}{\numberline {5.5}Možné vylepšenia}{75}{section.5.5}%
-\contentsline {chapter}{\numberline {A}Prílohy}{76}{appendix.A}%
-\contentsline {section}{\numberline {A.1}Implementácia}{76}{section.A.1}%
-\contentsline {section}{\numberline {A.2}Videonávod pre zákazníkov}{76}{section.A.2}%
-\contentsline {section}{\numberline {A.3}Videonávod pre administrátorov}{76}{section.A.3}%
+\contentsline {chapter}{\numberline {1}Úvod}{5}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Požiadavky na systém}{5}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Cieľ práce}{9}{section.1.2}%
+\contentsline {chapter}{\numberline {2}Návrh užívateľského rozhrania}{11}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Hlavné rozloženie aplikácie}{11}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Modálne potvrdzovacie okno}{12}{section.2.2}%
+\contentsline {section}{\numberline {2.3}Sekcie Podmienky používania a Zásady ochrany osobných údajov}{13}{section.2.3}%
+\contentsline {section}{\numberline {2.4}Splnenie P2 a P3}{14}{section.2.4}%
+\contentsline {subsection}{\numberline {2.4.1}Hlavná ponuka}{16}{subsection.2.4.1}%
+\contentsline {subsection}{\numberline {2.4.2}Vytvorenie novej a~úprava existujúcej hlavnej ponuky}{17}{subsection.2.4.2}%
+\contentsline {subsection}{\numberline {2.4.3}Ponuka (nových) bagrov}{18}{subsection.2.4.3}%
+\contentsline {subsection}{\numberline {2.4.4}Ponuka prídavných zariadení}{19}{subsection.2.4.4}%
+\contentsline {subsection}{\numberline {2.4.5}Detail bagra, prídavného zariadenia}{19}{subsection.2.4.5}%
+\contentsline {subsection}{\numberline {2.4.6}Dopyt}{20}{subsection.2.4.6}%
+\contentsline {subsection}{\numberline {2.4.7}Vytvorenie nového a úprava existujúceho bagra}{21}{subsection.2.4.7}%
+\contentsline {subsection}{\numberline {2.4.8}Úprava bagrov, ktoré nie sú v ponuke (nových) bagrov}{22}{subsection.2.4.8}%
+\contentsline {subsection}{\numberline {2.4.9}Vytvorenie nového a úprava existujúceho prídavného zariadenia}{22}{subsection.2.4.9}%
+\contentsline {section}{\numberline {2.5}Splnenie P4}{23}{section.2.5}%
+\contentsline {subsection}{\numberline {2.5.1}Aukčné ponuky}{25}{subsection.2.5.1}%
+\contentsline {subsection}{\numberline {2.5.2}Detail aukčnej ponuky}{25}{subsection.2.5.2}%
+\contentsline {subsection}{\numberline {2.5.3}Ponúkanie sumy do~dražby}{26}{subsection.2.5.3}%
+\contentsline {subsection}{\numberline {2.5.4}Vytvorenie novej a úprava existujúcej aukčnej ponuky}{27}{subsection.2.5.4}%
+\contentsline {section}{\numberline {2.6}Splnenie P8}{29}{section.2.6}%
+\contentsline {section}{\numberline {2.7}Splnenie P9}{30}{section.2.7}%
+\contentsline {section}{\numberline {2.8}Splnenie P5, P7 a~správa predmetov}{32}{section.2.8}%
+\contentsline {subsection}{\numberline {2.8.1}Karta Správy~-- schránka}{33}{subsection.2.8.1}%
+\contentsline {subsection}{\numberline {2.8.2}Karta Správy~-- konverzácia}{35}{subsection.2.8.2}%
+\contentsline {subsection}{\numberline {2.8.3}Karta Správy~-- nastavenia automaticky generovaných správ}{36}{subsection.2.8.3}%
+\contentsline {subsection}{\numberline {2.8.4}Karta Náhradné diely}{37}{subsection.2.8.4}%
+\contentsline {subsection}{\numberline {2.8.5}Karty Bagre, Typy bagrov, Typy vlastností bagrov}{40}{subsection.2.8.5}%
+\contentsline {subsection}{\numberline {2.8.6}Karty~Kategórie a~značky bagrov, Kategórie a~značky prídavných zariadení}{42}{subsection.2.8.6}%
+\contentsline {section}{\numberline {2.9}Splnenie P6}{46}{section.2.9}%
+\contentsline {subsection}{\numberline {2.9.1}Prihlasovací panel}{46}{subsection.2.9.1}%
+\contentsline {subsection}{\numberline {2.9.2}Prihlásenie}{47}{subsection.2.9.2}%
+\contentsline {subsection}{\numberline {2.9.3}Registrácia}{48}{subsection.2.9.3}%
+\contentsline {subsection}{\numberline {2.9.4}Profil}{48}{subsection.2.9.4}%
+\contentsline {chapter}{\numberline {3}Analýza}{51}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Výber typu aplikácie}{51}{section.3.1}%
+\contentsline {section}{\numberline {3.2}Rozdelenie na~frontendovú a~backendovú časť}{51}{section.3.2}%
+\contentsline {section}{\numberline {3.3}Výber typu webovej aplikácie}{52}{section.3.3}%
+\contentsline {subsection}{\numberline {3.3.1}Single-page application}{52}{subsection.3.3.1}%
+\contentsline {subsection}{\numberline {3.3.2}Multi-page application}{53}{subsection.3.3.2}%
+\contentsline {subsection}{\numberline {3.3.3}Blazor Server}{54}{subsection.3.3.3}%
+\contentsline {section}{\numberline {3.4}Voľba databázy}{55}{section.3.4}%
+\contentsline {subsection}{\numberline {3.4.1}Návrh relačného modelu databázy}{56}{subsection.3.4.1}%
+\contentsline {subsection}{\numberline {3.4.2}Voľba databázového servera}{59}{subsection.3.4.2}%
+\contentsline {subsection}{\numberline {3.4.3}Object Relational Mapping}{60}{subsection.3.4.3}%
+\contentsline {section}{\numberline {3.5}Aukcia~-- odpočet a vyhodnocovanie}{61}{section.3.5}%
+\contentsline {chapter}{\numberline {4}Vývojová dokumentácia}{65}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Adresárová štruktúra systému}{65}{section.4.1}%
+\contentsline {section}{\numberline {4.2}Backendová časť}{67}{section.4.2}%
+\contentsline {subsection}{\numberline {4.2.1}Trieda CustomAuthenticationStateProvider}{67}{subsection.4.2.1}%
+\contentsline {subsection}{\numberline {4.2.2}Trieda PasswordHasher}{68}{subsection.4.2.2}%
+\contentsline {subsection}{\numberline {4.2.3}Trieda ServISApi a~rozhranie IServISApi}{68}{subsection.4.2.3}%
+\contentsline {subsection}{\numberline {4.2.4}Trieda DataOperations}{68}{subsection.4.2.4}%
+\contentsline {subsection}{\numberline {4.2.5}Trieda EmailManager}{68}{subsection.4.2.5}%
+\contentsline {subsection}{\numberline {4.2.6}Trieda TimerService a~jej potomkovia}{68}{subsection.4.2.6}%
+\contentsline {section}{\numberline {4.3}Frontendová časť}{68}{section.4.3}%
+\contentsline {subsection}{\numberline {4.3.1}Zobrazovanie obsahu podľa roly}{69}{subsection.4.3.1}%
+\contentsline {subsection}{\numberline {4.3.2}Hlavné rozloženie stránky}{69}{subsection.4.3.2}%
+\contentsline {subsection}{\numberline {4.3.3}Modálne potvrdzovacie okno}{70}{subsection.4.3.3}%
+\contentsline {subsection}{\numberline {4.3.4}Stránky s~podmienkami používania a~zásadami ochrany osobných údajov}{70}{subsection.4.3.4}%
+\contentsline {subsection}{\numberline {4.3.5}Stránka s hlavnou ponukou (domovská stránka)}{70}{subsection.4.3.5}%
+\contentsline {subsection}{\numberline {4.3.6}Stránka pre vytvorenie a úpravu hlavnej ponuky}{70}{subsection.4.3.6}%
+\contentsline {subsection}{\numberline {4.3.7}Stránka s ponukou (nových) bagrov}{71}{subsection.4.3.7}%
+\contentsline {subsection}{\numberline {4.3.8}Ponuka prídavných zariadení}{71}{subsection.4.3.8}%
+\contentsline {subsection}{\numberline {4.3.9}Stránka s~detailom bagra, prídavného zariadenia}{71}{subsection.4.3.9}%
+\contentsline {subsection}{\numberline {4.3.10}Stránka pre~vytvorenie a~úpravu bagra}{71}{subsection.4.3.10}%
+\contentsline {subsection}{\numberline {4.3.11}Stránka pre~vytvorenie a~úpravu prídavného zariadenia}{72}{subsection.4.3.11}%
+\contentsline {subsection}{\numberline {4.3.12}Stránka s aukčnými ponukami}{72}{subsection.4.3.12}%
+\contentsline {subsection}{\numberline {4.3.13}Stránka s detailom aukčnej ponuky}{72}{subsection.4.3.13}%
+\contentsline {subsection}{\numberline {4.3.14}Stránka pre~vytvorenie a~úpravu aukčnej ponuky}{73}{subsection.4.3.14}%
+\contentsline {subsection}{\numberline {4.3.15}Stránky Služby, Kontakt a~O~nás}{73}{subsection.4.3.15}%
+\contentsline {subsection}{\numberline {4.3.16}Stránka pre správu webu}{73}{subsection.4.3.16}%
+\contentsline {subsection}{\numberline {4.3.17}Stránka s~prihlasovacím formulárom}{75}{subsection.4.3.17}%
+\contentsline {subsection}{\numberline {4.3.18}Stránka s~registračným formulárom}{75}{subsection.4.3.18}%
+\contentsline {subsection}{\numberline {4.3.19}Stránka s profilom užívateľa}{75}{subsection.4.3.19}%
+\contentsline {chapter}{\numberline {5}Užívateľská dokumentácia}{77}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Predpoklady}{77}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Databáza}{77}{section.5.2}%
+\contentsline {section}{\numberline {5.3}Návod}{77}{section.5.3}%
+\contentsline {chapter}{\numberline {6}Záver}{79}{chapter.6}%
+\contentsline {section}{\numberline {6.1}GDPR}{80}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Možné vylepšenia}{81}{section.6.2}%
+\contentsline {chapter}{Seznam použité literatury}{83}{chapter*.2}%
+\contentsline {chapter}{\numberline {A}Prílohy}{87}{appendix.A}%
+\contentsline {section}{\numberline {A.1}Implementácia}{87}{section.A.1}%
+\contentsline {section}{\numberline {A.2}Videonávod pre zákazníkov}{87}{section.A.2}%
+\contentsline {section}{\numberline {A.3}Videonávod pre administrátorov}{87}{section.A.3}%
+\contentsline {section}{\numberline {A.4}Prehľad elektronických príloh}{87}{section.A.4}%

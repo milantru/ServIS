@@ -1,6 +1,7 @@
 \chapter{Vývojová dokumentácia}
+\label{vyvojova dokumentacia}
 
-V~tejto kapitole sa pozrieme na~implementáciu nášho~systému. Zameráme sa na~organizáciu a~implementáciu dôležitých častí aplikácie. Cieľom tohto textu nie je opísať správanie každého riadka kódu. Na~to slúži kód samotný~(prípadne komentáre, ktoré autor pridal na~miesta, kde to uznal za~vhodné). Odkaz k~zdrojovým kódom aplikácie sa nachádza v~prílohe~(viď~prílohu~\ref{implementacia}). Náš systém sa skladá z~dvoch projektov~-- ServISWebApp a~ServISData (viď~obr.~\ref{architektura systemu}).
+V~tejto kapitole sa pozrieme na~implementáciu nášho~systému. Zameráme sa na~organizáciu a~implementáciu dôležitých častí aplikácie. Cieľom tohto textu nie je opísať správanie každého riadka kódu. Na~to slúži kód samotný~(prípadne komentáre, ktoré autor pridal na~miesta, kde to uznal za~vhodné). Kód aplikácie sa nachádza v~elektronickej prílohe (pre~prehľad obsahu elektronickej prílohy viď~\ref{prehlad elektronickych priloh}) alebo~je taktiež možné vidieť kód aplikácie v~online repozitári (viď~odkaz v~prílohe~\ref{implementacia}). Náš systém sa skladá z~dvoch projektov~-- ServISWebApp a~ServISData (viď~obr.~\ref{architektura systemu}).
 
 \begin{figure}[H]\centering
 \includegraphics[width=140mm]{../img/architektura systemu}
@@ -9,6 +10,38 @@ V~tejto kapitole sa pozrieme na~implementáciu nášho~systému. Zameráme sa na
 \end{figure}
 
 Zmyslom projektu ServISData je správa databázových entít a~komunikácia s~databázou. Projekt ServISWebApp predstavuje rozhranie pre~užívateľov, a~zároveň obsahuje logiku nášho~systému. ServISWebApp využíva ServISData, aby sa dostal k dátam, ktoré potom môže užívateľom napr. zobrazovať. Navyše projekt ServISWebApp je rozdelený na dve časti~-- frontendová a backendová časť (rozdelenie bolo spomenuté v podkap. \ref{rozdelenie na frontendovu a backendovu cast}).
+
+\section{Adresárová štruktúra systému}
+
+V tejto podkapitole sa pozrieme na adresárovú štruktúru systému a~povieme si na~čo slúžia jednotlivé priečinky, resp.~súbory v~nich. Priečinky označené modrou farbou patria do~frontendovej časti a~priečinky označené červenou farbou patria do~backendovej časti projektu ServISWebApp.
+
+\newpage
+
+\dirtree{%
+.1 ServISWebApp.
+.2 Súbory v koreňovom priečinku projektu ServISWebapp~-- kód slúžiaci (zväčša) na~konfiguráciu a~spustenie programu.
+.2 \textcolor{red}{Auth}~-- triedy slúžiace na~autentifikáciu užívateľa.
+.2 \textcolor{red}{BackgroundServices}~-- triedy procesov bežiacich na pozadí.
+.2 \textcolor{blue}{Components}~-- komponenty využívané na stránkach (priečinok \texttt{Pages}).
+.3 \textcolor{blue}{Buttons}~-- komponenty reprezentujúce rôzne tlačidlá.
+.3 \textcolor{blue}{Forms}~-- komponenty reprezentujúce formuláre.
+.3 \textcolor{blue}{Managements}~-- obsahuje komponentu pre správu bagrov, prídavných zariadení atď..
+.2 \textcolor{blue}{CssProviders}~-- triedy zodpovedné za zmenu kaskádových štýlov vo formulároch.
+.2 \textcolor{blue}{Pages}~-- stránky zložené z~komponentov (priečinok \texttt{Components}).
+.3 \textcolor{blue}{Admin}~-- stránky určené výhradne pre~administrátorov.
+.2 \textcolor{red}{Shared}~-- pomocné triedy využívané z rôznych miest programu.
+.3 \textcolor{red}{Extensions}~-- obsahuje triedu s extension metódami.
+}
+
+\dirtree{%
+.1 ServISData.
+.2 Súbory v koreňovom priečinku projektu ServISData~-- obsahuje kód pre prácu s~databázou, rozhranie projektu ServISData, a~takisto ďalší pomocný kód pre prácu s~modelmi (triedy nachádzajúce sa v~priečinku \texttt{Models}).
+.2 Attributes~-- atribúty modelov (triedy, ktoré sa nachádzajú v~priečinku~\texttt{Models}).
+.2 DataOperations~-- kód určený pre~vykonávanie operácií s~dátami (napr.~filtrovanie, stránkovanie atď.).
+.2 Interfaces~-- rozhrania (napr.~rozhranie~\texttt{IItem}, ktoré spĺňajú všetky modely (triedy nachádzajúce sa v~priečinku \texttt{Models}).
+.2 Migrations~-- priečinok vygenerovaný frameworkom EF Core obsahujúci migrácie~\cite{migrations}.
+.2 Models~-- obsahuje modely (triedy reprezentujúce databázové entity).
+}
 
 \section{Backendová časť}
 
@@ -27,7 +60,7 @@ Trieda obsahuje metódy na prácu s hashami. Umožňuje hashovať heslá, a~tie�
 \subsection{Trieda ServISApi a~rozhranie IServISApi}
 \label{trieda servisapi a rozhranie iservisapi}
 
-Trieda \verb|ServISApi| predstavuje rozhranie (api) projektu~ServISData. Poskytuje metódy pre vytváranie/úpravu, mazanie a~získavanie dát entít databázy opísaných v~časti Návrh relačného modelu databázy (viď~\ref{navrh relacneho modelu databazy}). Táto trieda je implementáciou rozhrania~\verb|IServISApi|. Pri~registrácií \verb|IServISApi| medzi služby, v~súbore~Program.cs, je ako implementácia tohto rozhrania dosadená trieda~\verb|ServISApi|. Preto keď z nejakého komponentu žiadame \verb|IServISApi|, framework (dependency injection) nám poskytne inštanciu triedy~\verb|ServISApi|.
+Trieda \verb|ServISApi| predstavuje rozhranie (API~\cite{api}) projektu~ServISData. Poskytuje metódy pre vytváranie/úpravu, mazanie a~získavanie dát entít databázy opísaných v~časti Návrh relačného modelu databázy (viď~\ref{navrh relacneho modelu databazy}). Táto trieda je implementáciou rozhrania~\verb|IServISApi|. Pri~registrácií \verb|IServISApi| medzi služby, v~súbore~Program.cs, je ako implementácia tohto rozhrania dosadená trieda~\verb|ServISApi|. Preto keď z nejakého komponentu žiadame \verb|IServISApi|, framework (dependency injection) nám poskytne inštanciu triedy~\verb|ServISApi|.
 
 \subsection{Trieda DataOperations}
 \label{trieda dataoperations}
@@ -55,28 +88,28 @@ Frontendová časť má na~starosti prezentovanie dát a~interakciu s~užívate�
 \subsection{Zobrazovanie obsahu podľa roly}
 \label{zobrazovanie obsahu podla roly}
 
-Z požiadavky P1 (Roly užívateľa, viď v podkap. \ref{poziadavky}) vieme, že systém má rozlišovať medzi bežným zákazníkom a administrátorom, a~podľa toho mu upraviť obsah na stránke. Z kapitoly Návrh užívateľského rozhrania (viď \ref{navrh ui}) vieme, že by mali existovať stránky, kde sa zobrazujú/schovávajú len určité časti. Napríklad v navigácii (viď~vľavo na~obr.~\ref{layout}) by sa mal zobraziť odkaz \uv{Správa webu} iba administrátorom. Ale takisto existujú aj prípady, kedy by sme chceli obmedziť prístup na celú stránku. Napr. chceme, aby sa mohol na~stránku pre~vytvorenie (alebo úpravu) hlavnej ponuky (viď obr. \ref{main offer form}) mohol dostať iba administrátor.
+Z požiadavky P1 (Roly užívateľa, viď v podkap.~\ref{poziadavky}) vieme, že systém má rozlišovať medzi bežným zákazníkom a administrátorom, a~podľa toho mu upraviť obsah na stránke. Z kapitoly Návrh užívateľského rozhrania (viď~\ref{navrh ui}) vieme, že by mali existovať stránky, kde sa zobrazujú/schovávajú len určité časti. Napríklad v navigácii (viď~vľavo na~obr.~\ref{layout}) by sa mal zobraziť odkaz \uv{Správa webu} iba administrátorom. Ale takisto existujú aj prípady, kedy by sme chceli obmedziť prístup na celú stránku. Napr. chceme, aby sa mohol na~stránku pre~vytvorenie (alebo úpravu) hlavnej ponuky (viď obr. \ref{main offer form}) mohol dostať iba administrátor.
 
-Platforma .NET nám na to ponúka triedu \href{https://learn.microsoft.com/en-us/aspnet/core/blazor/security/?view=aspnetcore-7.0\#authorizeview-component}{\texttt{AuthorizeView}}, presnejšie ide o komponent, pomocou ktorého vieme špecifikovať aký obsah (a komu, akej role) sa má zobraziť na~stránke. Takže napríklad v prípade navigácie vyzerá implementácia takto:
+Platforma .NET nám na to ponúka triedu~\texttt{AuthorizeView}~\cite{authorizeview}, presnejšie ide o komponent, pomocou ktorého vieme špecifikovať aký obsah (a komu, akej role) sa má zobraziť na~stránke. Takže napríklad v prípade navigácie vyzerá implementácia takto:
 
 \begin{verbatim}
 ...
 <div class="nav-item px-3">
-    <NavLink class="nav-link" href="kontakt">
-        <span class="oi oi-plus" aria-hidden="true"></span> Kontakt
+    <NavLink ... href="kontakt">
+        <span class="oi oi-plus" ..."></span> Kontakt
     </NavLink>
 </div>
 <AuthorizeView Roles="Administrator">
     <div class="nav-item px-3">
-        <NavLink class="nav-link special-background-color" href="admin">
-            <span class="oi oi-cog" aria-hidden="true"></span> Správa webu
+        <NavLink ... href="admin">
+            <span class="oi oi-cog" ...></span> Správa webu
         </NavLink>
     </div>
 </AuthorizeView>
 ...
 \end{verbatim}
 
-V prípade obmedzenia celej stránky využívame atribút \href{https://learn.microsoft.com/en-us/aspnet/core/blazor/security/?view=aspnetcore-7.0\#authorize-attribute}{\texttt{[Authorize]}}. Takže stačí ak do~implementácie, napr. spomínanej stránky pre~vytvorenie (alebo úpravu) hlavnej ponuky, dopíšeme atribút \verb|[Authorize]| následovne:
+V prípade obmedzenia celej stránky využívame atribút~\texttt{[Authorize]}~\cite{authorize attribute}. Takže stačí ak do~implementácie, napr.~spomínanej stránky pre~vytvorenie (alebo~úpravu) hlavnej ponuky, dopíšeme atribút \verb|[Authorize]| následovne:
 
 \begin{verbatim}
 @page "/admin/nova-ponuka"
@@ -86,115 +119,72 @@ V prípade obmedzenia celej stránky využívame atribút \href{https://learn.mi
 ...
 \end{verbatim}
 
-\iffalse
-
-Existuje však ešte jeden (okrajový) prípad. Predošlé ukážky kódu znázorňovali ako zobraziť (iba) administrátorom obsah navyše. No v~návrhu užívateľského rozhrania, napr. v časti Detail bagra, prídavného zariadenia (viď \ref{detail}) je spomenuté, že tlačcidlo \uv{Dopyt} by sa nemalo zobrazovať administrátorom, iba zákazníkom. To znamená, že sa má zobraziť v prípade, že užívateľ nie je prihlásený alebo je prihlásený ako zákzník (nie administrátor). Nanešťastie sa nedá nastaviť niečo ako \uv{zobraz obsah každému okrem roly Administrator}. Pre lepšiu predstavu viď následujúci kód:
-
-\begin{verbatim}
-...
-<AuthorizeView role="User">
-	<Authorized>
-		<button @onclick="ToggleForm">Dopyt</button>
-	</Authorized>
-	<NotAuthorized>
-		<button @onclick="ToggleForm">Dopyt</button>
-	</NotAuthorized>
-</AuthorizeView>
-...
-\end{verbatim}
-
-Na prvý pohľad sa môže zdať, že tlačidlo by sa malo zobraziť iba prihláseným zákazníkom (rola User) a neprihláseným užívateľom, teda vylúčil by sa užívateľ prihlásený s rolou Administrátor (čiže administrátor). V~skutočnosti sa tlačidlo v tomto prípade zobrazí aj administrátorovi. Kód sa vyhodnotí, že uživateľ nie je autorizovaný, lebo nespĺňa rolu User, a~preto nie je autorizovaný a vykreslí sa tlačidlo z tagu \verb|NotAuthorized|.
-
-Z tohto dôvodu vyzerá implementácia na stránke s~detailom bagra (resp.~prídavného zariadenia a~iných stránkach, kde potrebujeme zobraziť obsah každému okrem administrátorov) následovne:
-
-\begin{enumerate}
-\item Vyžiadame si inštanciu triedy \href{https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.components.authorization.authenticationstateprovider?view=aspnetcore-7.0}{\texttt{AuthenticationStateProvider}}, viď:
-
-\verb|@inject AuthenticationStateProvider authStateProvider|
-
-\end{enumerate}
-
-\begin{verbatim}
-...
-<AuthorizeView role="User">
-	<Authorized>
-		<button @onclick="ToggleForm">Dopyt</button>
-	</Authorized>
-	<NotAuthorized>
-		<button @onclick="ToggleForm">Dopyt</button>
-	</NotAuthorized>
-</AuthorizeView>
-...
-\end{verbatim}
-
-\fi
-
 \subsection{Hlavné rozloženie stránky}
 \label{hlavne rozlozenie stranky}
 
-Za hlavné rozloženie stránky, ktoré bolo navrhnuté v~časti~Hlavné rozloženie aplikácie (viď~\ref{hlavne rozlozenie aplikacie}), je zodpovedný komponent~\verb|MainLayout|. V rámci tohto komponentu sme využili komponent~\href{https://help.syncfusion.com/cr/blazor/Syncfusion.Blazor.Popups.SfDialogProvider.html}{\texttt{SfDialogProvider}}, ktorý nám umožní využívať potvrdzovacie modálne okná (tie si opíšeme v~následujúcej časti textu, viď \ref{modalne potvrdzovacie okno2}). Okrem toho sa v~komponente~\verb|MainLayout| využíva komponent~\verb|NavMenu| (navigácia), a~ten v sebe obsahuje komponenty \verb|NavLink| (predstavujú odkazy v navigácii), \verb|AuthorizeView| (viď~\ref{zobrazovanie obsahu podla roly}) a~\verb|LoginPanel|.
+Za hlavné rozloženie stránky, ktoré bolo navrhnuté v~časti~Hlavné rozloženie aplikácie (viď~\ref{hlavne rozlozenie aplikacie}), je zodpovedný komponent~\verb|MainLayout|. V~rámci tohto komponentu sme využili komponent~\texttt{SfDialogProvider}~\cite{sfdialogprovider}, ktorý nám umožní využívať potvrdzovacie modálne okná (tie si opíšeme v~následujúcej časti textu, viď \ref{modalne potvrdzovacie okno2}). Okrem toho sa v~komponente~\verb|MainLayout| využíva komponent~\verb|NavMenu| (navigácia), a~ten v sebe obsahuje komponenty \verb|NavLink| (predstavujú odkazy v navigácii), \verb|AuthorizeView| (viď~\ref{zobrazovanie obsahu podla roly}) a~\verb|LoginPanel|.
 
 Komponent~\verb|LoginPanel| slúži v prípade neprihláseného užívateľa na~presmerovanie na stránky s formulármi pre prihlásenie alebo registráciu. V prípade prihláseného užívateľa slúži na~presmerovanie na~profil alebo~na~odhlásenie. Využíva preto komponent~\verb|AuthorizeView| (viď~\ref{zobrazovanie obsahu podla roly}) a~triedu \verb|CustomAuthenticationStateProvider| (viď~\ref{trieda customauthenticationstateprovider}).
 
 \subsection{Modálne potvrdzovacie okno}
 \label{modalne potvrdzovacie okno2}
 
-V predchádzajúcej časti textu (viď \ref{hlavne rozlozenie stranky}) bolo v~súvislostii s~komponentom \verb|SfDialogProvider| spomenuté potvrdzovacie modálne okno. Potvrdzovacie modálne okno bolo navrhnuté v~podkapitole Modálne potvrdzovacie okno (viď \ref{modalne potvrdzovacie okno}) a~naimplementované v triede \verb|Modals| za pomoci služby (triedy) \href{https://help.syncfusion.com/cr/blazor/Syncfusion.Blazor.Popups.SfDialogService.html?&_ga=2.197376751.151320961.1689274245-1159269374.1655468845#Syncfusion_Blazor_Popups_SfDialogService_ConfirmAsync_System_String_System_String_Syncfusion_Blazor_Popups_DialogOptions_}{\texttt{SfDialogService}}.
+V predchádzajúcej časti textu (viď \ref{hlavne rozlozenie stranky}) bolo v~súvislostii s~komponentom \verb|SfDialogProvider| spomenuté potvrdzovacie modálne okno. Potvrdzovacie modálne okno bolo navrhnuté v~podkapitole Modálne potvrdzovacie okno (viď \ref{modalne potvrdzovacie okno}) a~naimplementované v triede \verb|Modals| za~pomoci služby (triedy)~\texttt{SfDialogService}~\cite{sfdialogservice}.
 
 \subsection{Stránky s~podmienkami používania a~zásadami ochrany osobných údajov}
 
-V podkapitole Sekcie Podmienky používania a~Zásady ochrany osobných údajov (viď \ref{gdpr}) boli navrhnuté stránky s~podmienkami používania a~zásadami ochrany osobných údajov. Implementáciu týchto stránok môžeme nájsť v~súboroch Terms.razor a~PrivacyPolicy.razor.
+V podkapitole Sekcie Podmienky používania a~Zásady ochrany osobných údajov (viď \ref{gdpr}) boli navrhnuté stránky s~podmienkami používania a~zásadami ochrany osobných údajov. Implementáciu týchto stránok môžeme nájsť v~súboroch \verb|Terms.razor| a~\verb|PrivacyPolicy.razor|.
 
 \subsection{Stránka s hlavnou ponukou (domovská stránka)}
 
-Implementáciu časti aplikácie s vylistovanými kartami hlavnej ponuky (slúži ako domovská stránka), ktorá bola navrhnutá v časti Hlavná ponuka (viď~\ref{hlavna ponuka}), môžeme nájsť v súbore Index.razor. Stránka využíva komponenty \verb|AuthorizeView| (viď \ref{zobrazovanie obsahu podla roly}) a~\verb|MainCard| (tento komponent predstavuje kartu hlavnej ponuky). Kód tejto stránky využíva pre získanie dát o hlavných ponukách (reprezentované triedou \verb|MainOffer|) rozhranie (api) projektu ServISData (viď \ref{trieda servisapi a rozhranie iservisapi}).
+Implementáciu časti aplikácie s vylistovanými kartami hlavnej ponuky (slúži ako domovská stránka), ktorá bola navrhnutá v časti Hlavná ponuka (viď~\ref{hlavna ponuka}), môžeme nájsť v~súbore~\verb|Index.razor|. Stránka využíva komponenty \verb|AuthorizeView| (viď \ref{zobrazovanie obsahu podla roly}) a~\verb|MainCard| (tento komponent predstavuje kartu hlavnej ponuky). Kód tejto stránky využíva pre získanie dát o hlavných ponukách (reprezentované triedou \verb|MainOffer|) rozhranie (API) projektu ServISData (viď \ref{trieda servisapi a rozhranie iservisapi}).
 
 \subsection{Stránka pre vytvorenie a úpravu hlavnej ponuky}
 
-Obe stránky, stránka pre vytvorenie novej, ale aj stránka pre úpravu existujúcej hlavnej ponuky (navrhnuté v časti \ref{vytvorenie novej a uprava existujucej hlavnej ponuky}), sú naimplementované v~súbore CreateMainOffer.razor. Implementácia tejto stránky využíva atribút~\verb|[Authorize]| (viď~\ref{zobrazovanie obsahu podla roly}) a~komponent~\verb|MainOfferForm| (formulár pre~vytváranie/úpravu hlavnej ponuky, ktorá je v~kóde reprezentovaná triedou \verb|MainOffer|). Komponent \verb|MainOfferForm|) využíva pre výber typu bagra (v~kóde reprezentovaný triedou \verb|ExcavatorType|) komponent \verb|ItemsSelector|. V prípade, že ide o~úpravu existujúcej hlavnej ponuky, jej dáta sa načítajú pomocou rozhrania projektu ServISData (viď \ref{trieda servisapi a rozhranie iservisapi}) a~predajú formuláru.
+Obe stránky, stránka pre vytvorenie novej, ale aj stránka pre úpravu existujúcej hlavnej ponuky (navrhnuté v~časti~\ref{vytvorenie novej a uprava existujucej hlavnej ponuky}), sú naimplementované v~súbore~\verb|CreateMainOffer.razor|. Implementácia tejto stránky využíva atribút~\verb|[Authorize]| (viď~\ref{zobrazovanie obsahu podla roly}) a~komponent~\verb|MainOfferForm| (formulár pre~vytváranie/úpravu hlavnej ponuky, ktorá je v~kóde reprezentovaná triedou \verb|MainOffer|). Komponent \verb|MainOfferForm|) využíva pre výber typu bagra (v~kóde reprezentovaný triedou \verb|ExcavatorType|) komponent \verb|ItemsSelector|. V prípade, že ide o~úpravu existujúcej hlavnej ponuky, jej dáta sa načítajú pomocou rozhrania projektu ServISData (viď \ref{trieda servisapi a rozhranie iservisapi}) a~predajú formuláru.
 
 \subsection{Stránka s ponukou (nových) bagrov}
 
-Návrh tejto časti aplikácie bol opísaný v časti textu Ponuka (nových) bagrov (viď~\ref{ponuka novych bagrov}). Implementácia stránky sa nachádza v~súbore~Excavators.razor a obsahuje komponenty~\verb|AuthorizeView| (viď~ref{zobrazovanie obsahu podľa roly}) a~\verb|ExcavatorLister|. Pomocou rozhrania projektu ServISData (viď \ref{trieda servisapi a rozhranie iservisapi}) sa získajú objekty typu \verb|Excavator| reprezentujúce bagre a~predajú sa už spomínanej komponente \verb|ExcavatorLister| na~vylistovanie~-- pre každý bager sa zobrazí karta bagra (komponent \verb|ExcavatorCard|). V návrhu tejto časti aplikácie bolo tiež spomenuté, že sa majú vylistovať karty bagrov určitého typu, ktoré neboli určené iba pre~aukciu. Dosiahli sme toho pomocou tried \verb|DataOperations| a (jej vnorenej triedy) \verb|Configuration|, ktoré implementácia stránky taktiež obsahuje (tieto triedy boli spomenuté už skôr v časti~\ref{trieda dataoperations}).
+Návrh tejto časti aplikácie bol opísaný v časti textu Ponuka (nových) bagrov (viď~\ref{ponuka novych bagrov}). Implementácia stránky sa nachádza v~súbore~\verb|Excavators.razor| a~obsahuje komponenty~\verb|AuthorizeView| (viď~\ref{zobrazovanie obsahu podla roly}) a~\verb|ExcavatorLister|. Pomocou rozhrania projektu ServISData (viď \ref{trieda servisapi a rozhranie iservisapi}) sa získajú objekty typu \verb|Excavator| reprezentujúce bagre a~predajú sa už spomínanej komponente \verb|ExcavatorLister| na~vylistovanie~-- pre každý bager sa zobrazí karta bagra (komponent \verb|ExcavatorCard|). V návrhu tejto časti aplikácie bolo tiež spomenuté, že sa majú vylistovať karty bagrov určitého typu, ktoré neboli určené iba pre~aukciu. Dosiahli sme toho pomocou tried \verb|DataOperations| a (jej vnorenej triedy) \verb|Configuration|, ktoré implementácia stránky taktiež obsahuje (tieto triedy boli spomenuté už skôr v časti~\ref{trieda dataoperations}).
 
 \subsection{Ponuka prídavných zariadení}
 
-Návrh tejto stránky sa nachádza v časti textu Ponuka prídavných zariadení (viď \ref{ponuka pridavnych zariadeni}). Implementácia stránky sa nachádza v~súbore AdditionalEquipments.razor a~obsahuje komponenty~\verb|AuthorizeView| (viď~ref{zobrazovanie obsahu podľa roly}) a~\verb|AdditionalEquipmentLister|. Komponent~\verb|AdditionalEquipmentLister| slúži na~vylistovanie kariet prídavných zariadení (komponenty \verb|AdditionalEquipmentCard|), dáta prídavných zariadeniach (reprezentované triedami \verb|AdditionalEquipment|) získava z~rozhrania projektu ServISData (viď \ref{trieda servisapi a rozhranie iservisapi})
+Návrh tejto stránky sa nachádza v časti textu Ponuka prídavných zariadení (viď \ref{ponuka pridavnych zariadeni}). Implementácia stránky sa nachádza v~súbore \verb|AdditionalEquipments.razor| a~obsahuje komponenty~\verb|AuthorizeView| (viď~\ref{zobrazovanie obsahu podla roly}) a~\verb|AdditionalEquipmentLister|. Komponent~\verb|AdditionalEquipmentLister| slúži na~vylistovanie kariet prídavných zariadení (komponenty \verb|AdditionalEquipmentCard|), dáta prídavných zariadeniach (reprezentované triedami \verb|AdditionalEquipment|) získava z~rozhrania projektu ServISData (viď \ref{trieda servisapi a rozhranie iservisapi})
 
 \subsection{Stránka s~detailom bagra, prídavného zariadenia}
 
-Táto časť aplikácie bola navrhnutá v časti Detail bagra, prídavného zariadenia (viď \ref{detail bagra pridavneho zariadenia}). Implementáciu stránky s detailom bagra môžeme nájsť v súbore ExcavatorDetail.razor a~implementáciu stránky s detailom prídavného zariadenia môžeme nájsť v~súbore AdditionalEquipmentDetail.razor. Obidve implementácie využívajú komponenty~\verb|AuthorizeView| (viď~ref{zobrazovanie obsahu podľa roly}), \verb|PhotoSlider| (pre zobrazenie fotiek) a~\verb|DemandForm| (formulár, ktorého návrh bol opísaný v časti \ref{dopyt}). Komponent~\verb|DemandForm| využíva na~odoslanie správy (emailu) triedu \verb|EmailManager| (viď~\ref{trieda emailmanager}). Ďalej obe implementácie stránok čerpajú dáta na~zobrazenie z~rozhrania projektu ServISData (viď \ref{trieda servisapi a rozhranie iservisapi}). V~prípade stránky s~detailom bagra sa získa trieda \verb|Excavator| (obsahujúca dáta bagra) a~v~prípade stránky s~detailom prídavného zariadenia sa získa trieda \verb|AdditionalEquipment| (obsahujúca dáta prídavného zariadenia).
+Táto časť aplikácie bola navrhnutá v časti Detail bagra, prídavného zariadenia (viď \ref{detail bagra pridavneho zariadenia}). Implementáciu stránky s detailom bagra môžeme nájsť v~súbore~\verb|ExcavatorDetail.razor| a~implementáciu stránky s detailom prídavného zariadenia môžeme nájsť v~súbore \verb|AdditionalEquipmentDetail.razor|. Obidve implementácie využívajú komponenty~\verb|AuthorizeView| (viď~\ref{zobrazovanie obsahu podla roly}), \verb|PhotoSlider| (pre zobrazenie fotiek) a~\verb|DemandForm| (formulár, ktorého návrh bol opísaný v časti \ref{dopyt}). Komponent~\verb|DemandForm| využíva na~odoslanie správy (emailu) triedu \verb|EmailManager| (viď~\ref{trieda emailmanager}). Ďalej obe implementácie stránok čerpajú dáta na~zobrazenie z~rozhrania projektu ServISData (viď \ref{trieda servisapi a rozhranie iservisapi}). V~prípade stránky s~detailom bagra sa získa trieda \verb|Excavator| (obsahujúca dáta bagra) a~v~prípade stránky s~detailom prídavného zariadenia sa získa trieda \verb|AdditionalEquipment| (obsahujúca dáta prídavného zariadenia).
 
 \subsection{Stránka pre~vytvorenie a~úpravu bagra}
 \label{stranka pre vytvorenie a upravu bagra}
 
-Návrh tejto časti aplikácie môžeme nájsť v~časti textu~Vytvorenie nového a~úprava existujúceho bagra (viď~\ref{vytvorenie noveho a uprava existujuceho bagra}). Implementácia sa nachádza v~súbore CreateExcavator.razor a obsahuje atribút~\verb|[Authorize]| (viď~ref{zobrazovanie obsahu podľa roly}) a~komponent~\verb|ExcavatorForm|. V prípade, že ide o úpravu existujúceho bagra, sa pomocou rozhrania projektu ServISData (viď \ref{trieda servisapi a rozhranie iservisapi}) načítajú a~následne predajú dáta komponente~\verb|ExcavatorForm|. \verb|ExcavatorForm| je formulár pre~vytváranie/úpravu bagra (bager je reprezentovaný triedou~\verb|Excavator|). V návrhu je napísané, že do~formulára by malo byť možné nahrať viacero fotiek, vybrať typ bagra, a~tiež vybrať aké náhradné diely patria do~bagra. Kvôli tomu formulár obsahuje komponenty~\verb|InputItemPhotos| (pre~nahratie fotiek), \verb|ItemsSelector| (pre~výber typu bagra) a~\verb|ChecklistTable| (pre~výber náhradných dielov).
+Návrh tejto časti aplikácie môžeme nájsť v~časti textu~Vytvorenie nového a~úprava existujúceho bagra (viď~\ref{vytvorenie noveho a uprava existujuceho bagra}). Implementácia sa nachádza v~súbore \verb|CreateExcavator.razor| a~obsahuje atribút~\verb|[Authorize]| (viď~\ref{zobrazovanie obsahu podla roly}) a~komponent~\verb|ExcavatorForm|. V prípade, že ide o úpravu existujúceho bagra, sa pomocou rozhrania projektu ServISData (viď \ref{trieda servisapi a rozhranie iservisapi}) načítajú a~následne predajú dáta komponente~\verb|ExcavatorForm|. \verb|ExcavatorForm| je formulár pre~vytváranie/úpravu bagra (bager je reprezentovaný triedou~\verb|Excavator|). V návrhu je napísané, že do~formulára by malo byť možné nahrať viacero fotiek, vybrať typ bagra, a~tiež vybrať aké náhradné diely patria do~bagra. Kvôli tomu formulár obsahuje komponenty~\verb|InputItemPhotos| (pre~nahratie fotiek), \verb|ItemsSelector| (pre~výber typu bagra) a~\verb|ChecklistTable| (pre~výber náhradných dielov).
 
 \subsection{Stránka pre~vytvorenie a~úpravu prídavného zariadenia}
 
-Implementácia časti aplikácie, ktorá bola navrhnutá v~časti textu~Vytvorenie nového a~úprava existujúceho prídavného zariadenia (viď~\ref{vytvorenie noveho a uprava existujuceho pridavného zariadenia}), obsahuje atribút~\verb|[Authorize]| (viď~ref{zobrazovanie obsahu podľa roly}) a~komponent~\verb|AdditionalEquipmentForm|. V~prípade, že ide o~úpravu existujúceho prídavného zariadenia, sa pomocou rozhrania projektu ServISData (viď~\ref{trieda servisapi a rozhranie iservisapi}) načítajú a~následne predajú dáta komponente~\verb|AdditionalEquipmentForm|. \verb|AdditionalEquipmentForm| je formulár pre~vytváranie/úpravu prídavného zariadenia (prídavné zariadenie je reprezentované triedou~\verb|AdditionalEquipment|). V návrhu je napísané, že do~formulára by malo byť možné nahrať viacero fotiek, vybrať značku a kategóriu prídavného zariadenia, ale aj vybrať typ bagra, pre ktorý je prídavné zariadenie určené. Kvôli tomu formulár obsahuje komponenty~\verb|InputItemPhotos| (pre~nahratie fotiek) a~\verb|ItemsSelector| (túto komponentu obsahuje dokonca trikrát, pre~výber značky a~kategórie prídavného zariadenia, ale~tiež aj pre~výber typu bagra).
+Implementácia časti aplikácie, ktorá bola navrhnutá v~časti textu~Vytvorenie nového a~úprava existujúceho prídavného zariadenia (viď~\ref{vytvorenie noveho a uprava existujuceho pridavného zariadenia}), obsahuje atribút~\verb|[Authorize]| (viď~\ref{zobrazovanie obsahu podla roly}) a~komponent~\verb|AdditionalEquipmentForm|. V~prípade, že ide o~úpravu existujúceho prídavného zariadenia, sa pomocou rozhrania projektu ServISData (viď~\ref{trieda servisapi a rozhranie iservisapi}) načítajú a~následne predajú dáta komponente~\verb|AdditionalEquipmentForm|. \verb|AdditionalEquipmentForm| je formulár pre~vytváranie/úpravu prídavného zariadenia (prídavné zariadenie je reprezentované triedou~\verb|AdditionalEquipment|). V návrhu je napísané, že do~formulára by malo byť možné nahrať viacero fotiek, vybrať značku a kategóriu prídavného zariadenia, ale aj vybrať typ bagra, pre ktorý je prídavné zariadenie určené. Kvôli tomu formulár obsahuje komponenty~\verb|InputItemPhotos| (pre~nahratie fotiek) a~\verb|ItemsSelector| (túto komponentu obsahuje dokonca trikrát, pre~výber značky a~kategórie prídavného zariadenia, ale~tiež aj pre~výber typu bagra).
 
 \subsection{Stránka s aukčnými ponukami}
 
-Návrh stránky s aukčnými ponukami, ktorá bola navrhnutá v~časti~Aukčné ponuky (viď~\ref{aukcne ponuky}), sa nachádza v~súbore~AuctionOffers.razor. Implementácia stránky využíva komponent~\verb|AuthorizeView| (viď~ref{zobrazovanie obsahu podľa roly}) a~na~vylistovanie kariet aukčných ponúk (komponentov typu \verb|AuctionOfferCard|, ktoré v~sebe obsahujú pre~zobrazenie odpočtu komponent~\verb|CountdownDisplayer| využívajúci triedu~\verb|EverySecondTimerService| spomenutú v~časti \ref{trieda timerservice}) využíva komponent~\verb|AuctionOffersLister|. \verb|AuctionOffersLister| získava dáta aukčných ponúk (reprezentované triedami typu \verb|AuctionOffer|) z~rozhrania projektu ServISData (viď~\ref{trieda servisapi a rozhranie iservisapi}).
+Návrh stránky s aukčnými ponukami, ktorá bola navrhnutá v~časti~Aukčné ponuky (viď~\ref{aukcne ponuky}), sa nachádza v~súbore~\verb|AuctionOffers.razor|. Implementácia stránky využíva komponent~\verb|AuthorizeView| (viď~\ref{zobrazovanie obsahu podla roly}) a~na~vylistovanie kariet aukčných ponúk (komponentov typu \verb|AuctionOfferCard|, ktoré v~sebe obsahujú pre~zobrazenie odpočtu komponent~\verb|CountdownDisplayer| využívajúci triedu~\verb|EverySecondTimerService| spomenutú v~časti \ref{trieda timerservice}) využíva komponent~\verb|AuctionOffersLister|. \verb|AuctionOffersLister| získava dáta aukčných ponúk (reprezentované triedami typu \verb|AuctionOffer|) z~rozhrania projektu ServISData (viď~\ref{trieda servisapi a rozhranie iservisapi}).
 
 \subsection{Stránka s detailom aukčnej ponuky}
 
-Stránka s detailom aukčnej ponuky, ktorej návrh je opísaný v~časti~Detail aukčnej ponuky (viď \ref{detail aukcnej ponuky}), je implementovaná v~súbore~AuctionOfferDetail.razor. Stránka využíva komponenty~\verb|AuthorizeView| (viď~\ref{zobrazovanie obsahu podla roly}), \verb|PhotoSlider| (pre zobrazenie fotiek), \verb|CountdownDisplayer| (pre~zobrazenie odpočtu, využíva na~to triedu~\verb|EverySecondTimerService| spomenutú v~časti \ref{trieda timerservice}) a~\verb|AuctionBidForm|. Stránka čerpá dáta aukčnej ponuky na~zobrazenie z~rozhrania projektu ServISData (viď \ref{trieda servisapi a rozhranie iservisapi}). Na~stránke sa tiež využíva trieda obsahujúca dáta o~aukčnej ponuke~-- \verb|AuctionOffer|. Okrem toho implementácia stránky obsahuje aj komponent \verb|AuctionBidForm|, ktorého návrh bol opísaný v~časti~\ref{ponukanie sumy do drazby}. Komponent~\verb|AuctionBidForm| je formulár, ktorý pracuje s triedou \verb|AuctionBid| (predstavuje zákazníkovú ponúknutú sumu do dražby).
+Stránka s detailom aukčnej ponuky, ktorej návrh je opísaný v~časti~Detail aukčnej ponuky (viď \ref{detail aukcnej ponuky}), je implementovaná v~súbore~\verb|AuctionOfferDetail.razor|. Stránka využíva komponenty~\verb|AuthorizeView| (viď~\ref{zobrazovanie obsahu podla roly}), \verb|PhotoSlider| (pre zobrazenie fotiek), \verb|CountdownDisplayer| (pre~zobrazenie odpočtu, využíva na~to triedu~\verb|EverySecondTimerService| spomenutú v~časti \ref{trieda timerservice}) a~\verb|AuctionBidForm|. Stránka čerpá dáta aukčnej ponuky na~zobrazenie z~rozhrania projektu ServISData (viď \ref{trieda servisapi a rozhranie iservisapi}). Na~stránke sa tiež využíva trieda obsahujúca dáta o~aukčnej ponuke~-- \verb|AuctionOffer|. Okrem toho implementácia stránky obsahuje aj komponent \verb|AuctionBidForm|, ktorého návrh bol opísaný v~časti~\ref{ponukanie sumy do drazby}. Komponent~\verb|AuctionBidForm| je formulár, ktorý pracuje s triedou \verb|AuctionBid| (predstavuje zákazníkovú ponúknutú sumu do dražby).
 
 \subsection{Stránka pre~vytvorenie a~úpravu aukčnej ponuky}
 
-Obidve stránky, stránka pre vytvorenie novej, ale~aj stránka pre~úpravu existujúcej aukčnej ponuky (navrhnuté v~časti \ref{vytvorenie novej a uprava existujucej aukcnej ponuky}), sú naimplementované v~súbore CreateAuctionOffer.razor. Implementácia tejto stránky využíva atribút~\verb|[Authorize]| (viď~\ref{zobrazovanie obsahu podla roly}) a~komponent~\verb|AuctionOfferForm| (formulár pre~vytváranie/úpravu aukčnej ponuky, ktorá je v~kóde reprezentovaná triedou \verb|AuctionOffer|). V~návrhu stránky je spomenuté, že formulár by mal umožniť výber bagra (v~kóde reprezentovaný triedou \verb|Excavator|) do~dražby~-- na~to \verb|AuctionOffer|) využíva komponent \verb|ItemsSelector|. V~prípade, že ide o~úpravu existujúcej aukčnej ponuky, jej dáta sa načítajú pomocou rozhrania projektu ServISData (viď \ref{trieda servisapi a rozhranie iservisapi}) a~predajú formuláru.
+Obidve stránky, stránka pre vytvorenie novej, ale~aj stránka pre~úpravu existujúcej aukčnej ponuky (navrhnuté v~časti \ref{vytvorenie novej a uprava existujucej aukcnej ponuky}), sú naimplementované v~súbore \verb|CreateAuctionOffer.razor|. Implementácia tejto stránky využíva atribút~\verb|[Authorize]| (viď~\ref{zobrazovanie obsahu podla roly}) a~komponent~\verb|AuctionOfferForm| (formulár pre~vytváranie/úpravu aukčnej ponuky, ktorá je v~kóde reprezentovaná triedou \verb|AuctionOffer|). V~návrhu stránky je spomenuté, že formulár by mal umožniť výber bagra (v~kóde reprezentovaný triedou \verb|Excavator|) do~dražby~-- na~to \verb|AuctionOffer|) využíva komponent \verb|ItemsSelector|. V~prípade, že ide o~úpravu existujúcej aukčnej ponuky, jej dáta sa načítajú pomocou rozhrania projektu ServISData (viď \ref{trieda servisapi a rozhranie iservisapi}) a~predajú formuláru.
 
 \subsection{Stránky Služby, Kontakt a~O~nás}
 
-Návrh stránky Služby bol opísaný v~podkapitole~Splnenie P8 (viď~\ref{splnenie p8}). Implementáciu stránky môžeme nájsť v~súbore~Services.razor, využíva komponent~\verb|DemandForm|.
+Návrh stránky Služby bol opísaný v~podkapitole~Splnenie P8 (viď~\ref{splnenie p8}). Implementáciu stránky môžeme nájsť v~súbore~\verb|Services.razor|, využíva komponent~\verb|DemandForm|.
 
-Ďalej návrh stránok Kontakt a~O~nás bol opísaný v~podkapitole~Splnenie P9 (viď~\ref{splnenie p9}). Implementáciu stránky Kontakt môžeme nájsť v~súbore Contact.razor a~implementáciu stránky~O~nás môžeme nájsť v~súbore~About.razor.
+Ďalej návrh stránok Kontakt a~O~nás bol opísaný v~podkapitole~Splnenie P9 (viď~\ref{splnenie p9}). Implementáciu stránky Kontakt môžeme nájsť v~súbore~\verb|Contact.razor| a~implementáciu stránky~O~nás môžeme nájsť v~súbore~\verb|About.razor|.
 
 \subsection{Stránka pre správu webu}
 
-V podkapitole Splnenie P5, P7 a~správa predmetov (viď \ref{splnenie p5 p7 a sprava predmetov}) bola navrhnutá emailová schránka a~časť aplikácie pre~správu obsahu webu (administrátorská stránka). Implementácia administrátorskej stránky sa nachádza v~súbore~AdministratorPage.razor a~využíva atribút~\verb|[Authorize]| (viď~ref{zobrazovanie obsahu podľa roly}), komponent \verb|TabControl| s komponentmi \verb|TabPage| (tvoria panel s kartami Správy, Náhradné diely atď., viď~vrchnú časť obr.~\ref{messages}). 
+V podkapitole Splnenie P5, P7 a~správa predmetov (viď \ref{splnenie p5 p7 a sprava predmetov}) bola navrhnutá emailová schránka a~časť aplikácie pre~správu obsahu webu (administrátorská stránka). Implementácia administrátorskej stránky sa nachádza v~súbore~\verb|AdministratorPage.razor| a~využíva atribút~\verb|[Authorize]| (viď~ref{zobrazovanie obsahu podľa roly}), komponent \verb|TabControl| s komponentmi \verb|TabPage| (tvoria panel s kartami Správy, Náhradné diely atď., viď~vrchnú časť obr.~\ref{messages}). 
 
 Na karte Správy sa zobrazuje komponent \verb|Message|, ktorý v~sebe obsahuje komponenty \verb|ThreadsView| (pohľad s~vylistovanými konverzáciami, ktoré sú reprezentované komponentom \verb|ThreadRow|), \verb|ThreadView| (pohľad, ktorý sa zobrazí pri otvorení konverzácie, zobrazí správy v konverzácii reprezentované komponentmi typu \verb|Message|) a~\verb|MessageSettings| (pohľad, ktorý sa zobrazí pri prekliknutí do~časti s~nastaveniami správ, využíva rozhranie projektu ServISData, viď~\ref{trieda servisapi a rozhranie iservisapi} a~komponenty typu \verb|AutogeneratedMessageForm| pre~editáciu tvaru automaticky generovaných správ, ktoré sú v~kóde reprezentované triedou~\verb|AutogeneratedMessage|). Ďalej sa na~karte pre~získanie správ z~Gmailu využíva trieda~\verb|EmailManager| (viď \ref{trieda emailmanager}).
 
@@ -228,16 +218,16 @@ Podobne ako v predošlej karte aj tu sa nachádzajú dve tabuľky, jedna je pre~
 
 \subsection{Stránka s~prihlasovacím formulárom}
 
-Návrh tejto časti aplikácie bol opísaný v~časti~Prihlásenie (viď~\ref{prihlasenie}). Jej implementácia sa nachádza v~súbore~Login.razor. Pre~získanie dát užívateľa (napr.~aby sme zistili, či je prihlasovaný užívateľ vôbec evidovaný v~systéme) sa využíva rozhranie projektu ServISData (viď \ref{trieda servisapi a rozhranie iservisapi}). Pre~skontrolovanie správnosti hesla sa využíva trieda~\verb|PasswordHasher| (viď~\ref{trieda passwordhasher}), ďalej pre~samotné prihlásenie sa využíva trieda~\verb|CustomAuthenticationStateProvider| (viď~\ref{trieda customauthenticationstateprovider}).
+Návrh tejto časti aplikácie bol opísaný v~časti~Prihlásenie (viď~\ref{prihlasenie}). Jej implementácia sa nachádza v~súbore~\verb|Login.razor|. Pre~získanie dát užívateľa (napr.~aby sme zistili, či je prihlasovaný užívateľ vôbec evidovaný v~systéme) sa využíva rozhranie projektu ServISData (viď \ref{trieda servisapi a rozhranie iservisapi}). Pre~skontrolovanie správnosti hesla sa využíva trieda~\verb|PasswordHasher| (viď~\ref{trieda passwordhasher}), ďalej pre~samotné prihlásenie sa využíva trieda~\verb|CustomAuthenticationStateProvider| (viď~\ref{trieda customauthenticationstateprovider}).
 
 \subsection{Stránka s~registračným formulárom}
 \label{stranka s registracnym formularom}
 
-Táto časť aplikácie bola navrhnutá v~časti Registrácia (viď~\ref{registracia}). Jej implementácia sa nachádza v~súbore Register.razor a~obsahuje formulár pre~registráciu užívateľov reprezentovaný komponentom~\verb|UserForm|. \verb|UserForm| pracuje s~triedou~\verb|User|, ktorá predstavuje dáta užívateľa. Pomocou triedy~\verb|PasswordHasher| (viď~\ref{trieda passwordhasher}) vytvorí hash hesla užívateľa a~pomocou rozhrania projektu ServISData (viď \ref{trieda servisapi a rozhranie iservisapi}) ho zaregistruje do~systému (resp. uloží jeho dáta do~databázy).
+Táto časť aplikácie bola navrhnutá v~časti Registrácia (viď~\ref{registracia}). Jej implementácia sa nachádza v~súbore~\verb|Register.razor| a~obsahuje formulár pre~registráciu užívateľov reprezentovaný komponentom~\verb|UserForm|. \verb|UserForm| pracuje s~triedou~\verb|User|, ktorá predstavuje dáta užívateľa. Pomocou triedy~\verb|PasswordHasher| (viď~\ref{trieda passwordhasher}) vytvorí hash hesla užívateľa a~pomocou rozhrania projektu ServISData (viď \ref{trieda servisapi a rozhranie iservisapi}) ho zaregistruje do~systému (resp. uloží jeho dáta do~databázy).
 
 \subsection{Stránka s profilom užívateľa}
 
-V časti Profil (viď~\ref{profil}) bola navrhnutá časť aplikácie s~profilom užívateľa, jej implementácia sa nachádza v~súbore Profile.razor a~obsahuje komponent~\verb|UserForm|, predstavujúci formulár s~informáciami o~užívateľovi, ktorý už bol opísaný v~predchádzajúcej časti textu (viď~\ref{stranka s registracnym formularom}). Takisto využíva triedu~\verb|CustomAuthenticationStateProvider| (viď~\ref{trieda customauthenticationstateprovider}) pre~získanie informácií o~užívateľovi, ktoré predá komponentu~\verb|UserForm| na~zobrazenie a~prípadnú editáciu.
+V časti Profil (viď~\ref{profil}) bola navrhnutá časť aplikácie s~profilom užívateľa, jej implementácia sa nachádza v~súbore~\verb|Profile.razor| a~obsahuje komponent~\verb|UserForm|, predstavujúci formulár s~informáciami o~užívateľovi, ktorý už bol opísaný v~predchádzajúcej časti textu (viď~\ref{stranka s registracnym formularom}). Takisto využíva triedu~\verb|CustomAuthenticationStateProvider| (viď~\ref{trieda customauthenticationstateprovider}) pre~získanie informácií o~užívateľovi, ktoré predá komponentu~\verb|UserForm| na~zobrazenie a~prípadnú editáciu.
 
 \iffalse
 

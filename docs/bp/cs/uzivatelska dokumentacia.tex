@@ -3,21 +3,51 @@
 Návod pre zákazníkov ako pracovať s~aplikáciou je možné nájsť v~podobe videa na~adrese v~prílohe (viď~\ref{videonavod pre zakaznikov}), takisto je v~prílohe možné nájsť aj videonávod na~používanie aplikácie pre~administrátorov (viď~\ref{videonavod pre administratorov}). Čo sa týka procesu nasadenia systému, tak ten si opíšeme v~tejto kapitole.
 
 \section{Predpoklady}
+\label{predpoklady}
 
-Pre úspešné nainštalovanie a~spustenie aplikácie budeme potrebovať:
+Pre úspešné nainštalovanie, spustenie a~fungovanie aplikácie budeme potrebovať:
 
 \begin{itemize}
 \item Počítač s~operačným systémom Windows~10 alebo~vyššie
 \item Prístup na internet
-\item .NET 6 alebo~vyššie
+\item Visual Studio 2022~\cite{visual studio} (budeme potrebovať .NET~6 alebo~vyššie)
 \item Databáza MySql (viac v~následujúcej podkapitole~\ref{databaza})
 \end{itemize}
 
 \section{Databáza}
 \label{databaza}
 
-Aplikácia ServIS využíva pre ukladanie dát databázu~MySql, ktorá nie je súčasťou aplikácie, a~preto je nutné si ju osobitne stiahnuť a~nainštalovať. Odkaz na~stiahnutie je možné nájsť \href{https://dev.mysql.com/downloads/mysql/}{tu} a~návod na~inštaláciu \href{https://dev.mysql.com/doc/refman/8.0/en/installing.html}{tu}.
+Aplikácia ServIS využíva pre ukladanie dát databázu~MySql, ktorá nie je súčasťou aplikácie, a~preto je nutné si ju osobitne stiahnuť a~nainštalovať. Odkaz na~stiahnutie je možné nájsť na~stránkach databázy~\cite{mysql}, rovnako ako aj návod na~inštaláciu~\cite{mysql navod}.
 
 \section{Návod}
 
-TODO
+V~tejto podkapitole si povieme ako spustiť aplikáciu lokálne. Návod sa spolieha, že sú splnené všetky predpoklady z~podkapitoly~\ref{predpoklady}, a~takisto na to, že čítateľ už má k dispozícií repozitár aplikácie (jednou z~možností ako získať repozitár aplikácie je stiahnuť si ho z~online repozitára, pre odkaz naň viď prílohu~\ref{implementacia}).
+
+\begin{enumerate}
+  \item V priečinku (repozitári) aplikácie si dvojitým kliknutím na~\verb|ServIS.sln| otvoríme aplikáciu v programe Visual Studio 2022.
+  \item V \verb|appsettings.json| sa nachádza konfigurácia aplikácie, kde je možné nastaviť napr.~názov firmy, aký má byť minimálny rozdiel medzi ponukami v aukcii atď. Nastavíme ju podľa svojich údajov (\verb|Logging| a~\verb|AllowedHosts| môžeme ignorovať).
+  \item Pravým tlačidlom myšy klikneme na projekt ServISData, a~potom klikneme na ManageUserSecrets. Jeho obsah by mal vyzerať takto:
+  
+\begin{verbatim}
+{
+	"ConnectionStrings": {
+        "Default": "CONNECTION_STRING"
+    }
+}
+\end{verbatim}  
+  
+Namiesto \verb|CONNECTION_STRING| vložíme svoj connection string databázy (stačí ak využijeme štandardný tvar connection stringu~\cite{standard connection string}).
+
+  \item Pravým tlačidlom myšy klikneme na projekt ServISWebApp, a~potom klikneme na ManageUserSecrets. Jeho obsah by mal vyzerať takto:
+  
+\begin{verbatim}
+{
+    "SyncfusionLicenseKey": "LICENSE_KEY",
+    "EmailAppPassword": "APP_PASSWORD"
+}
+\end{verbatim}  
+  
+Namiesto \verb|LICENSE_KEY| vložíme svoj licenčný kľúč (postup získania kľúča je opísaný v~dokumentácii spoločnosti Syncfusion~\cite{license key}). Namiesto \verb|APP_PASSWORD| vložíme svoje emailové heslo aplikácie (postup získania emailového hesla aplikácie je opísaný na stránkach podpory spoločnosti Google~\cite{app password}).
+  
+  \item Kliknutím na zelený play button v hornej časti Visual Studia sa program preloží a~spustí. Po nejakej chvíli by sa nám malo zapnúť okno internetového prehliadača s našou aplikáciou.
+\end{enumerate}

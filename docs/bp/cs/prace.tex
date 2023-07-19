@@ -3,33 +3,33 @@
 %% Verze pro jednostranný tisk:
 % Okraje: levý 40mm, pravý 25mm, horní a dolní 25mm
 % (ale pozor, LaTeX si sám přidává 1in)
-\documentclass[12pt,a4paper]{report}
-\setlength\textwidth{145mm}
-\setlength\textheight{247mm}
-\setlength\oddsidemargin{15mm}
-\setlength\evensidemargin{15mm}
-\setlength\topmargin{0mm}
-\setlength\headsep{0mm}
-\setlength\headheight{0mm}
+%\documentclass[12pt,a4paper]{report}
+%\setlength\textwidth{145mm}
+%\setlength\textheight{247mm}
+%\setlength\oddsidemargin{15mm}
+%\setlength\evensidemargin{15mm}
+%\setlength\topmargin{0mm}
+%\setlength\headsep{0mm}
+%\setlength\headheight{0mm}
 % \openright zařídí, aby následující text začínal na pravé straně knihy
 \let\openright=\clearpage
 
 %% Pokud tiskneme oboustranně:
-% \documentclass[12pt,a4paper,twoside,openright]{report}
-% \setlength\textwidth{145mm}
-% \setlength\textheight{247mm}
-% \setlength\oddsidemargin{14.2mm}
-% \setlength\evensidemargin{0mm}
-% \setlength\topmargin{0mm}
-% \setlength\headsep{0mm}
-% \setlength\headheight{0mm}
-% \let\openright=\cleardoublepage
+\documentclass[12pt,a4paper,twoside,openright]{report}
+\setlength\textwidth{145mm}
+\setlength\textheight{247mm}
+\setlength\oddsidemargin{14.2mm}
+\setlength\evensidemargin{0mm}
+\setlength\topmargin{0mm}
+\setlength\headsep{0mm}
+\setlength\headheight{0mm}
+\let\openright=\cleardoublepage
 
 %% Vytváříme PDF/A-2u
 \usepackage[a-2u]{pdfx}
 
 %% Přepneme na českou sazbu a fonty Latin Modern
-\usepackage[slovak]{babel}
+\usepackage[slovak]{babel} % zmenil som na slovak
 \usepackage{lmodern}
 \usepackage[T1]{fontenc}
 \usepackage{textcomp}
@@ -59,6 +59,7 @@
 
 %%% Vlastné balíčky
 \usepackage{float}          % pre vkladanie obrázkov
+\usepackage{dirtree}        % pre vytvaranie folder tree
 \emergencystretch 3em       % aby nevycnievali riadky
 
 %%% Údaje o práci
@@ -103,15 +104,14 @@ Rád by som sa poďakoval vedúcemu práce~Mgr.~Pavlovi Ježkovi,~Ph.D. za~jeho 
 
 % Abstrakt (doporučený rozsah cca 80-200 slov; nejedná se o zadání práce)
 \def\Abstrakt{%
-Cieľom tejto práce bolo vytvoriť softvérové dielo pre~malé firmy zaoberajúce sa zemnými a~výkopovými prácami, opravou a~predajom bagrov, ktoré nemajú prístup k~vhodnému softvérovému riešeniu pre~svoju činnosť.
+Cieľom tejto práce bolo vytvoriť softvérové dielo pre~malé firmy zaoberajúce sa zemnými a~výkopovými prácami, opravou a~predajom bagrov, ktoré nemajú prístup k~vhodnému softvérovému riešeniu pre~svoju činnosť. Pri~riešení práce sme vychádzali z~konzultácií s~majiteľom jednej z~takýchto firiemm.
 
-Potreba a~správanie funkcionalít bola prekonzultovaná s~majiteľom jednej z~týchto firiem.
-
-Vzniknutý softvér predstavuje riešenie problému, je schopný zobraziť ponuku (stroje, prídavné zariadenia) a~umožňuje užívateľom dopyt (v~podobe emailov) na~tieto ponuky. V~aplikácii tiež existuje aukcia, kde sa dražia opravené bagre. Užívatelia si tiež môžu v~aplikácií vytvoriť účet. Vymenované funkcionality môžu využívať prihlásení aj neprihlásení užívatelia. Bežní prihlásení užívatelia nemusia vyplňovať informácie o~sebe vo~formulároch pri~dopytovaní sa na~ponuku. Prihlásení admini majú možnosť spravovať stránku. Tj.~pridávať nové, editovať a~mazať existujúce ponuky, odpovedať na~správy atď.
-
+Vzniknutá webová aplikácia, napísaná pomocou frameworku Blazor Server, predstavuje riešenie problému. Je schopná zobraziť ponuku (bagre, prídavné zariadenia) a~umožňuje užívateľom odosielať dopyt (v~podobe emailov) na~tieto ponuky. V~aplikácii tiež existuje aukcia, kde sa môžu dražiť opravené bagre. Užívatelia si tiež môžu v~aplikácií vytvoriť účet. Vymenované funkcionality môžu využívať prihlásení aj neprihlásení užívatelia. Bežní prihlásení užívatelia nemusia vyplňovať informácie o~sebe vo~formulároch pri~dopytovaní sa na~ponuku. Prihlásení administrátori majú možnosť spravovať stránku, t.~j.~pridávať nové, editovať a~mazať existujúce ponuky, odpovedať na~správy atď.
 }
 \def\AbstraktEN{%
-Abstract.
+The aim of this bachelor thesis was to create a~software for small companies dealing with earth and excavation works, repairing and~selling excavators, which do not have access to a~suitable software solution for~their activity. The solution to the work was based on consultations with~the~owner~of~one~of~these companies.
+
+The resulting web application, written using the Blazor Server framework, represents a~solution to the~problem. It is able to display the offer (excavators, additional equipment) and~allows users to send inquiries (in~the form of~emails) to these offers. There is also an auction in the application, where repaired excavators can be auctioned. Users can also create an account in the application. The listed functionalities can be used by both logged-in and non-logged-in users. Regular registered users do not have to fill in information about themselves in the forms when inquiring about the offer. Logged-in administrators can manage the page, i.e. add new, edit and delete existing offers, reply to messages, etc.
 }
 
 % 3 až 5 klíčových slov (doporučeno), každé uzavřeno ve složených závorkách
@@ -145,10 +145,6 @@ Abstract.
 \include{analyza}
 \include{vyvojova dokumentacia}
 \include{uzivatelska dokumentacia}
-% \include{kap01}
-% \include{kap02}
-% \include{kap03}
-% \include{kap04}
 
 \include{zaver}
 
@@ -188,12 +184,26 @@ Implementácia aplikácie~(Visual Studio solution) sa nachádza\\v~priečinku~Se
 \section{Videonávod pre zákazníkov}
 \label{videonavod pre zakaznikov}
 
-Odkaz k~videonávodu pre~zákazníkov: \url{}.
+Odkaz k~videonávodu pre~zákazníkov: \url{https://youtube.com/playlist?list=PLOOA_udjNNG0LDXxXWlPfzJYYYjZZh74U}.
 
 \section{Videonávod pre administrátorov}
 \label{videonavod pre administratorov}
 
-Odkaz k~videonávodu pre~administrátorov: \url{}.
+Odkaz k~videonávodu pre~administrátorov: \url{https://youtube.com/playlist?list=PLOOA_udjNNG3960FNXB_eqGohI9mMkojy}.
+
+\section{Prehľad elektronických príloh}
+\label{prehlad elektronickych priloh}
+
+\dirtree{%
+.1 ..
+.2 README.txt~-- obsahuje email autora a~adresárovú štruktúru elektronickej prílohy.
+.2 Videonávody.
+.3 Videonávody pre zákazníkov~-- obsahuje videonávody pre~zákazníkov na~používanie aplikácie.
+.3 Videonávody pre administrátorov~-- obsahuje videonávody pre~administrátorov na používanie aplikácie.
+.2 ServIS~-- zdrojové kódy aplikácie.
+.3 ServISWebApp~-- projekt webovej aplikácie pre~interkaciu s~užívateľom.
+.3 ServISData~-- projekt pre prácu s databázou.
+}
 
 \openright
 \end{document}

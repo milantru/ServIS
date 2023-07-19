@@ -23,7 +23,7 @@ V~ľavej časti by mala byť zobrazená navigácia. V~navigácii by sa mali nach
 \section{Modálne potvrdzovacie okno}
 \label{modalne potvrdzovacie okno}
 
-\textbf{Spoločný pohľad:} \href{https://ux.stackexchange.com/questions/12045/what-is-a-modal-dialog-window}{Modálne okno} je vyskakovacie dialógové okno, ktoré núti užívateľa k~interakcii s~ním. Kým užívateľ nevykoná interakciu s~oknom, nemôže interagovať s~rodičovkou aplikáciou (rodičovským oknom).
+\textbf{Spoločný pohľad:} Modálne okno~\cite{modalne okno} je vyskakovacie dialógové okno, ktoré núti užívateľa k~interakcii s~ním. Kým užívateľ nevykoná interakciu s~oknom, nemôže interagovať s~rodičovkou aplikáciou (rodičovským oknom).
 
 V~následujúcich podkapitolách bude v~spojení s~mazaním položiek viackrát spomenuté modálne potvrdzovacie okno. Pre~jeho lepšiu predstavu viď~obr.~\ref{confirmation modal}.
 
@@ -38,7 +38,7 @@ Okno by malo obsahovať vo~vrchnej časti nadpis a~v~centre text oznamujúci akc
 \section{Sekcie Podmienky používania a Zásady ochrany osobných údajov}
 \label{gdpr}
 
-Z požiadaviek P6 (užívateľ sa môže zaregistrovvať do systému, a~tým poskytnuť systému svoje údaje), P3 a P8 (užívateľ poskytuje osobné informácie pri odosielaní dopytu), P4 a P5 (užívateľ ponúka sumy do~aukcie a~následne po~vyhodnotení aukcie môžu byť jeho údaje zverejnené v~rozposlaných emailoch) vieme, že systém má zhromažďovať a~pracovať s~užívateľskými údajmi. Preto by bolo vhodné systém pripraviť na splnenie \href{https://www.uoou.cz/obecne-narizeni-o-ochrane-osobnich-udaju-gdpr/ds-3938/p1=3938}{GDPR}. GDPR predstavuje regulácie na ochranu užívateľa pred~zneužitím jeho údajov.
+Z požiadaviek P6 (užívateľ sa môže zaregistrovvať do systému, a~tým poskytnuť systému svoje údaje), P3 a P8 (užívateľ poskytuje osobné informácie pri odosielaní dopytu), P4 a P5 (užívateľ ponúka sumy do~aukcie a~následne po~vyhodnotení aukcie môžu byť jeho údaje zverejnené v~rozposlaných emailoch) vieme, že systém má zhromažďovať a~pracovať s~užívateľskými údajmi. Preto by bolo vhodné systém pripraviť na splnenie GDPR~\cite{gdpr}. GDPR predstavuje regulácie na ochranu užívateľa pred~zneužitím jeho údajov.
 
 Pre splnenie GDPR by bolo dobré vyhradiť časti aplikácie, kde sa budú môcť vložiť texty ohľadom podmienok používania aplikácie a zásad ochrany osobných údajov vyhotovené právnickou osobou. Pre lepšiu predstavu týchto častí aplikácie viď obr. \ref{gdpr1} a \ref{gdpr2}.
 
@@ -618,7 +618,7 @@ V~hornej časti formulára by sa mal nachádzať nadpis~,,Moje údaje``. Formul�
 
 Všetky polia, až na~polia heslo a~znova heslo, by mali byť vyplnené užívateľovými údajmi. Ak by užívateľ začal písať do~poľa heslo alebo~znova heslo, namiesto písmen by sa mu mali zobrazovať hviezdičky. Pri~týchto poliach by mali byť ikonky, ktoré by kliknutím umožnili užívateľovi meniť medzi hviezdičkami a~písmenami v~poliach heslo a~znova heslo. Teda išlo by o~funkcionalitu zobraziť a~schovať heslo.
 
-Pod~formulárom by sa malo nachádzať tlačidlo~,,Uložiť`` pre~uloženie zmien. Ak by neboli vykonané žiadne zmeny, tak po~kliknutí na~tlačidlo~,,Uložiť`` by sa malo zobraziť vyskakovacie okno s~textom "Neboli vykonané žiadne zmeny." a~tlačidlom ,,OK``. Ak by užívateľ zinvalidoval nejaké z~polí (napr.~zanechá prázdne povinné pole), mala by sa zobraziť chybová správa pri~danom poli. Výnimkou sú polia heslo a~znova heslo~-- aj napriek tomu, že sú povinné, tak môžu ostať prázdne.
+Pod~formulárom by sa malo nachádzať tlačidlo~,,Uložiť`` pre~uloženie zmien. Ak by neboli vykonané žiadne zmeny, tak po~kliknutí na~tlačidlo~,,Uložiť`` by sa malo zobraziť vyskakovacie okno s~textom \uv{Neboli vykonané žiadne zmeny.} a~tlačidlom ,,OK``. Ak by užívateľ zinvalidoval nejaké z~polí (napr.~zanechá prázdne povinné pole), mala by sa zobraziť chybová správa pri~danom poli. Výnimkou sú polia heslo a~znova heslo~-- aj napriek tomu, že sú povinné, tak môžu ostať prázdne.
 
 Ak by si chcel užívateľ zmeniť heslo, musel by vyplniť obe polia, a~ak by obsah polí nebol rovnaký, tak by sa malo zobraziť vyskakovacie okno s~textom~\uv{Obsah políčok \'Nové heslo\' a~\'Znova heslo\' nie sú rovnaké.} a~tlačidlom ,,OK``. Alebo ak by si chcel užívateľ zmeniť heslo a~zadal by staré heslo, tak znova by sa malo zobraziť vyskakovacie okno s~textom~\uv{Nové heslo nemôže byť staré heslo.} a~tlačidlom~,,OK``. Po úspešnej zmene údajov by sa malo zobraziť vyskakovacie okno s~textom~\uv{Údaje úspešne zmenené.} a~tlačidlom ,,OK``.
 
