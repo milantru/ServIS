@@ -465,7 +465,6 @@ namespace ServISData
 
 			}
 
-			// return query.AsNoTracking().ToListAsync(); // TODO
 			await Task.CompletedTask;
 			return query.AsNoTracking().ToList();
 		}
@@ -743,7 +742,6 @@ namespace ServISData
 
 			await Task.CompletedTask;
 			return query.AsNoTracking().ToList();
-			//return await query.AsNoTracking().ToListAsync(); // TODO
 		}
 
 		public async Task<int> GetAdditionalEquipmentsCountAsync()
@@ -878,7 +876,6 @@ namespace ServISData
 				query = dataOperations.PerformDataOperations(query);
 			}
 
-			//return await query.AsNoTracking().ToListAsync(); // TODO
 			await Task.CompletedTask;
 			return query.AsNoTracking().ToList();
 		}

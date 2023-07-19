@@ -15,7 +15,6 @@ namespace ServISData.Models
 		[Required(ErrorMessage = "Toto pole je povinné.")]
 		public string Name { get; set; } = null!;
 
-		// TODO: Custom attribute NotUnset
 		public InputType InputType { get; set; } = InputType.Unset;
 
 		public ICollection<ExcavatorType> ExcavatorTypesWithThisProperty { get; set; } = null!;

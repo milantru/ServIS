@@ -11,7 +11,7 @@ namespace ServISData.Models
 		[Required, ValidateComplexType]
 		public AdditionalEquipment AdditionalEquipment { get; set; } = null!;
 
-		[Required] // TODO: maybe better attributes
+		[Required]
 		public byte[] Photo { get; set; } = null!;
 
 		public bool IsTitle { get; set; }

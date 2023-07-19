@@ -10,7 +10,7 @@ namespace ServISData.Models
 		[Required, ValidateComplexType]
 		public ExcavatorType ExcavatorType { get; set; } = null!;
 
-		[Required(ErrorMessage = "Nebola nahraná žiadna fotka.")] // TODO: maybe better attributes
+		[Required(ErrorMessage = "Nebola nahraná žiadna fotka.")]
 		public byte[] Photo { get; set; } = null!;
 
 		[Required(AllowEmptyStrings = true, ErrorMessage = "Toto pole je povinné.")]
