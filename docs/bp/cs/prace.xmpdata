@@ -1,7 +1,7 @@
 % Metadata k uložení do PDF, podrobnější popis viz dokumentace balíčku pdfx.
 
-\Author{Jméno Příjmení}
-\Title{Název práce}
-\Keywords{klíčová slova\sep další taková\sep ještě jiná}
-\Subject{Abstrakt práce}
+\Author{Milan Truchan}
+\Title{ServIS – webový systém pro firmy zabývající se opravami bagrů}
+\Keywords{Informačný systém\sep C#\sep .NET\sep Blazor Server\sep MySQL}
+\Subject{Cieľom tejto práce bolo vytvoriť softvérové dielo pre malé firmy zaoberajúce sa zemnými a výkopovými prácami, opravou a predajom bagrov, ktoré nemajú prístup k vhodnému softvérovému riešeniu pre svoju činnosť. Pri riešení práce sme vychádzali z konzultácií s majiteľom jednej z takýchto firiem. Vzniknutá webová aplikácia, napísaná pomocou frameworku Blazor Server, predstavuje riešenie problému. Je schopná zobraziť ponuku (bagre, prídavné zariadenia) a umožňuje užívateľom odosielať dopyt (v podobe emailov) na tieto ponuky. V aplikácii tiež existuje aukcia, kde sa môžu dražiť opravené bagre. Užívatelia si tiež môžu v aplikácií vytvoriť účet. Vymenované funkcionality môžu využívať prihlásení aj neprihlásení užívatelia. Bežní prihlásení užívatelia nemusia vyplňovať informácie o sebe vo formulároch pri dopytovaní sa na ponuku. Prihlásení administrátori majú možnosť spravovať stránku, t. j. pridávať nové, editovať a mazať existujúce ponuky, odpovedať na správy atď.}
 \Publisher{Univerzita Karlova}

@@ -11,23 +11,24 @@ V~tejto kapitole sa pozrieme na~implementáciu nášho~systému. Zameráme sa na
 
 Zmyslom projektu ServISData je správa databázových entít a~komunikácia s~databázou. Projekt ServISWebApp predstavuje rozhranie pre~užívateľov, a~zároveň obsahuje logiku nášho~systému. ServISWebApp využíva ServISData, aby sa dostal k dátam, ktoré potom môže užívateľom napr. zobrazovať. Navyše projekt ServISWebApp je rozdelený na dve časti~-- frontendová a backendová časť (rozdelenie bolo spomenuté v podkap. \ref{rozdelenie na frontendovu a backendovu cast}).
 
+\newpage
+
 \section{Adresárová štruktúra systému}
 
-V tejto podkapitole sa pozrieme na adresárovú štruktúru systému a~povieme si na~čo slúžia jednotlivé priečinky, resp.~súbory v~nich. Priečinky označené modrou farbou patria do~frontendovej časti a~priečinky označené červenou farbou patria do~backendovej časti projektu ServISWebApp.
-
-\newpage
+V tejto podkapitole sa pozrieme na adresárovú štruktúru systému a~povieme si na~čo slúžia jednotlivé priečinky, resp.~súbory v~nich. Priečinky označené \textcolor{blue}{modrou} farbou patria do~frontendovej časti a~priečinky označené \textcolor{red}{červenou} farbou patria do~backendovej časti projektu ServISWebApp.
+\\
 
 \dirtree{%
 .1 ServISWebApp.
 .2 Súbory v koreňovom priečinku projektu ServISWebapp~-- kód slúžiaci (zväčša) na~konfiguráciu a~spustenie programu.
 .2 \textcolor{red}{Auth}~-- triedy slúžiace na~autentifikáciu užívateľa.
 .2 \textcolor{red}{BackgroundServices}~-- triedy procesov bežiacich na pozadí.
-.2 \textcolor{blue}{Components}~-- komponenty využívané na stránkach (priečinok \texttt{Pages}).
+.2 \textcolor{blue}{Components}~-- komponenty využívané na stránkach z~prieč.~\texttt{Pages}.
 .3 \textcolor{blue}{Buttons}~-- komponenty reprezentujúce rôzne tlačidlá.
 .3 \textcolor{blue}{Forms}~-- komponenty reprezentujúce formuláre.
 .3 \textcolor{blue}{Managements}~-- obsahuje komponentu pre správu bagrov, prídavných zariadení atď..
 .2 \textcolor{blue}{CssProviders}~-- triedy zodpovedné za zmenu kaskádových štýlov vo formulároch.
-.2 \textcolor{blue}{Pages}~-- stránky zložené z~komponentov (priečinok \texttt{Components}).
+.2 \textcolor{blue}{Pages}~-- stránky zložené z~komponentov z~priečinku~\texttt{Components}.
 .3 \textcolor{blue}{Admin}~-- stránky určené výhradne pre~administrátorov.
 .2 \textcolor{red}{Shared}~-- pomocné triedy využívané z rôznych miest programu.
 .3 \textcolor{red}{Extensions}~-- obsahuje triedu s extension metódami.
@@ -77,9 +78,9 @@ Táto trieda poskytuje rôzne metódy pre~prácu s~emailami. Pomocou nej je mož
 
 Trieda \verb|TimerService| je abstraktnou triedou, ktorá zakrýva prácu s~triedou \verb|Timer|. Umožňuje svojím potomkom definovať čo sa má vykonávať a~v~akom intervale.
 
-Trieda \verb|EverySecondTimerService| je jedným z~potomkov triedy~\verb|TimerService|. Umožňuje svojím užívateľom (iným triedam) registrovať akciu, ktorá sa má vykonávať každú sekundu. V~aplikácii sa využíva pre~zobrazovanie odpočtu do~konca aukčných ponúk (dražieb).
+Trieda \verb|EverySecondTimerService| je potomkom triedy~\verb|TimerService|. Umožňuje svojím užívateľom (iným triedam) registrovať akciu, ktorá sa má vykonávať každú sekundu. V~aplikácii sa využíva pre~zobrazovanie odpočtu do~konca aukčných ponúk (dražieb).
 
-Trieda \verb|AuctionEvaluatorService| je ďalším z~potomkov triedy~\verb|TimerService|. Každú minútu skontroluje všetky aukčné ponuky a~tie, ktoré už skončili vyhodnotí (vyhodnocovanie už bolo opísané v~podkapitole~\ref{aukcia odpocet a vyhodnocovanie}).
+Trieda \verb|AuctionEvaluatorService| je ďalším potomkom triedy~\verb|TimerService|. Každú minútu skontroluje všetky aukčné ponuky a~tie, ktoré už skončili vyhodnotí (vyhodnocovanie už bolo opísané v~podkapitole~\ref{aukcia odpocet a vyhodnocovanie}).
 
 \section{Frontendová časť}
 
@@ -147,9 +148,9 @@ Obe stránky, stránka pre vytvorenie novej, ale aj stránka pre úpravu existuj
 
 Návrh tejto časti aplikácie bol opísaný v časti textu Ponuka (nových) bagrov (viď~\ref{ponuka novych bagrov}). Implementácia stránky sa nachádza v~súbore~\verb|Excavators.razor| a~obsahuje komponenty~\verb|AuthorizeView| (viď~\ref{zobrazovanie obsahu podla roly}) a~\verb|ExcavatorLister|. Pomocou rozhrania projektu ServISData (viď \ref{trieda servisapi a rozhranie iservisapi}) sa získajú objekty typu \verb|Excavator| reprezentujúce bagre a~predajú sa už spomínanej komponente \verb|ExcavatorLister| na~vylistovanie~-- pre každý bager sa zobrazí karta bagra (komponent \verb|ExcavatorCard|). V návrhu tejto časti aplikácie bolo tiež spomenuté, že sa majú vylistovať karty bagrov určitého typu, ktoré neboli určené iba pre~aukciu. Dosiahli sme toho pomocou tried \verb|DataOperations| a (jej vnorenej triedy) \verb|Configuration|, ktoré implementácia stránky taktiež obsahuje (tieto triedy boli spomenuté už skôr v časti~\ref{trieda dataoperations}).
 
-\subsection{Ponuka prídavných zariadení}
+\subsection{Stránka s ponukou prídavných zariadení}
 
-Návrh tejto stránky sa nachádza v časti textu Ponuka prídavných zariadení (viď \ref{ponuka pridavnych zariadeni}). Implementácia stránky sa nachádza v~súbore \verb|AdditionalEquipments.razor| a~obsahuje komponenty~\verb|AuthorizeView| (viď~\ref{zobrazovanie obsahu podla roly}) a~\verb|AdditionalEquipmentLister|. Komponent~\verb|AdditionalEquipmentLister| slúži na~vylistovanie kariet prídavných zariadení (komponenty \verb|AdditionalEquipmentCard|), dáta prídavných zariadeniach (reprezentované triedami \verb|AdditionalEquipment|) získava z~rozhrania projektu ServISData (viď \ref{trieda servisapi a rozhranie iservisapi})
+Návrh tejto stránky sa nachádza v časti textu Ponuka prídavných zariadení (viď \ref{ponuka pridavnych zariadeni}). Implementácia stránky sa nachádza v~súbore \linebreak\verb|AdditionalEquipments.razor| a~obsahuje komponenty~\verb|AuthorizeView| (viď~\ref{zobrazovanie obsahu podla roly}) a~\verb|AdditionalEquipmentLister|. Komponent \linebreak\verb|AdditionalEquipmentLister| slúži na~vylistovanie kariet prídavných zariadení (komponenty \verb|AdditionalEquipmentCard|), dáta prídavných zariadeniach (reprezentované triedami \verb|AdditionalEquipment|) získava z~rozhrania projektu ServISData (viď \ref{trieda servisapi a rozhranie iservisapi})
 
 \subsection{Stránka s~detailom bagra, prídavného zariadenia}
 
@@ -186,9 +187,9 @@ Návrh stránky Služby bol opísaný v~podkapitole~Splnenie P8 (viď~\ref{splne
 
 V podkapitole Splnenie P5, P7 a~správa predmetov (viď \ref{splnenie p5 p7 a sprava predmetov}) bola navrhnutá emailová schránka a~časť aplikácie pre~správu obsahu webu (administrátorská stránka). Implementácia administrátorskej stránky sa nachádza v~súbore~\verb|AdministratorPage.razor| a~využíva atribút~\verb|[Authorize]| (viď~ref{zobrazovanie obsahu podľa roly}), komponent \verb|TabControl| s komponentmi \verb|TabPage| (tvoria panel s kartami Správy, Náhradné diely atď., viď~vrchnú časť obr.~\ref{messages}). 
 
-Na karte Správy sa zobrazuje komponent \verb|Message|, ktorý v~sebe obsahuje komponenty \verb|ThreadsView| (pohľad s~vylistovanými konverzáciami, ktoré sú reprezentované komponentom \verb|ThreadRow|), \verb|ThreadView| (pohľad, ktorý sa zobrazí pri otvorení konverzácie, zobrazí správy v konverzácii reprezentované komponentmi typu \verb|Message|) a~\verb|MessageSettings| (pohľad, ktorý sa zobrazí pri prekliknutí do~časti s~nastaveniami správ, využíva rozhranie projektu ServISData, viď~\ref{trieda servisapi a rozhranie iservisapi} a~komponenty typu \verb|AutogeneratedMessageForm| pre~editáciu tvaru automaticky generovaných správ, ktoré sú v~kóde reprezentované triedou~\verb|AutogeneratedMessage|). Ďalej sa na~karte pre~získanie správ z~Gmailu využíva trieda~\verb|EmailManager| (viď \ref{trieda emailmanager}).
+Na karte Správy sa zobrazuje komponent \verb|Message|, ktorý v~sebe obsahuje komponenty \verb|ThreadsView| (pohľad s~vylistovanými konverzáciami, ktoré sú reprezentované komponentom \verb|ThreadRow|), \verb|ThreadView| (pohľad, ktorý sa zobrazí pri otvorení konverzácie, zobrazí správy v konverzácii reprezentované komponentmi typu \verb|Message|) a~\verb|MessageSettings| (pohľad, ktorý sa zobrazí pri prekliknutí do~časti s~nastaveniami správ, využíva rozhranie projektu ServISData, viď~\ref{trieda servisapi a rozhranie iservisapi} a~komponenty typu \verb|AutogeneratedMessageForm| pre~editáciu tvaru automaticky generovaných správ, ktoré sú v~kóde reprezentované triedou~\verb|AutogeneratedMessage|). Ďalej sa na~karte pre~získanie správ z~Gmailu využíva trieda \verb|EmailManager| (viď~\ref{trieda emailmanager}).
 
-Ostatné karty (Náhradné diely, Bager atď.) zobrazujú komponent~\verb|ItemsManagement|, ktorý predstavuje tabuľku opísanú v~časti \ref{karta nahradne diely}. \verb|ItemsManagement| tiež využíva rôzne komponenty na~zobrazenie formulára podľa toho, na akej karte sa užívateľ nachádza. Teraz prejdeme zbytok kariet a opíšeme si, aké komponenty využívajú:
+Ostatné karty (Náhradné diely, Bager atď.) zobrazujú komponent \verb|ItemsManagement|, ktorý predstavuje tabuľku opísanú v~časti \ref{karta nahradne diely}. \linebreak\verb|ItemsManagement| tiež využíva rôzne komponenty na~zobrazenie formulára podľa toho, na akej karte sa užívateľ nachádza. Teraz prejdeme zbytok kariet a~opíšeme si, aké komponenty využívajú:
 
 \begin{itemize}
 \item \textbf{Karta Náhradné diely}

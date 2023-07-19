@@ -62,13 +62,15 @@
   </rdf:Description> 
   <rdf:Description rdf:about="" xmlns:dc="http://purl.org/dc/elements/1.1/"> 
    <dc:format>application/pdf</dc:format> 
-   <dc:title><rdf:Alt><rdf:li xml:lang="x-default">Název práce</rdf:li></rdf:Alt></dc:title>
-   <dc:creator><rdf:Seq><rdf:li>Jméno Příjmení</rdf:li></rdf:Seq></dc:creator>
+   <dc:title><rdf:Alt><rdf:li xml:lang="x-default">ServIS – webový systém pro firmy zabývající se opravami bagrů</rdf:li></rdf:Alt></dc:title>
+   <dc:creator><rdf:Seq><rdf:li>Milan Truchan</rdf:li></rdf:Seq></dc:creator>
    <dc:publisher><rdf:Bag><rdf:li>Univerzita Karlova</rdf:li></rdf:Bag></dc:publisher>
-   <dc:description><rdf:Alt><rdf:li xml:lang="x-default">Abstrakt práce</rdf:li></rdf:Alt></dc:description>
-   <dc:subject><rdf:Bag><rdf:li>klíčová slova</rdf:li>
-     <rdf:li>další taková</rdf:li>
-     <rdf:li>ještě jiná</rdf:li></rdf:Bag></dc:subject>
+   <dc:description><rdf:Alt><rdf:li xml:lang="x-default">Cieľom tejto práce bolo vytvoriť softvérové dielo pre malé firmy zaoberajúce sa zemnými a výkopovými prácami, opravou a predajom bagrov, ktoré nemajú prístup k vhodnému softvérovému riešeniu pre svoju činnosť. Pri riešení práce sme vychádzali z konzultácií s majiteľom jednej z takýchto firiem. Vzniknutá webová aplikácia, napísaná pomocou frameworku Blazor Server, predstavuje riešenie problému. Je schopná zobraziť ponuku (bagre, prídavné zariadenia) a umožňuje užívateľom odosielať dopyt (v podobe emailov) na tieto ponuky. V aplikácii tiež existuje aukcia, kde sa môžu dražiť opravené bagre. Užívatelia si tiež môžu v aplikácií vytvoriť účet. Vymenované funkcionality môžu využívať prihlásení aj neprihlásení užívatelia. Bežní prihlásení užívatelia nemusia vyplňovať informácie o sebe vo formulároch pri dopytovaní sa na ponuku. Prihlásení administrátori majú možnosť spravovať stránku, t. j. pridávať nové, editovať a mazať existujúce ponuky, odpovedať na správy atď.</rdf:li></rdf:Alt></dc:description>
+   <dc:subject><rdf:Bag><rdf:li>Informačný systém</rdf:li>
+     <rdf:li>C#</rdf:li>
+     <rdf:li>.NET</rdf:li>
+     <rdf:li>Blazor Server</rdf:li>
+     <rdf:li>MySQL</rdf:li></rdf:Bag></dc:subject>
   </rdf:Description> 
   <rdf:Description rdf:about="" xmlns:prism="http://prismstandard.org/namespaces/basic/2.2/"> 
   </rdf:Description> 
@@ -80,15 +82,15 @@
   </rdf:Description> 
   <rdf:Description rdf:about="" xmlns:xmp="http://ns.adobe.com/xap/1.0/"> 
    <xmp:CreatorTool>LaTeX with hyperref</xmp:CreatorTool> 
-   <xmp:ModifyDate>2023-07-19T18:55:02+02:00</xmp:ModifyDate> 
-   <xmp:CreateDate>2023-07-19T18:55:02+02:00</xmp:CreateDate> 
-   <xmp:MetadataDate>2023-07-19T18:55:02+02:00</xmp:MetadataDate> 
+   <xmp:ModifyDate>2023-07-19T21:25:12+02:00</xmp:ModifyDate> 
+   <xmp:CreateDate>2023-07-19T21:25:12+02:00</xmp:CreateDate> 
+   <xmp:MetadataDate>2023-07-19T21:25:12+02:00</xmp:MetadataDate> 
   </rdf:Description> 
   <rdf:Description rdf:about="" xmlns:xmpRights = "http://ns.adobe.com/xap/1.0/rights/"> 
   </rdf:Description> 
   <rdf:Description rdf:about="" xmlns:xmpMM="http://ns.adobe.com/xap/1.0/mm/"> 
    <xmpMM:DocumentID>uuid:E471EDA9-0143-B4EC-2929-27CBFE26697B</xmpMM:DocumentID> 
-   <xmpMM:InstanceID>uuid:12E19E26-ED50-CA7A-1A3E-15AA7B8A379A</xmpMM:InstanceID> 
+   <xmpMM:InstanceID>uuid:E6CD3E29-1EE1-1047-BF55-5C06176128C3</xmpMM:InstanceID> 
   </rdf:Description> 
  </rdf:RDF> 
 </x:xmpmeta> 
