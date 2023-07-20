@@ -4,7 +4,7 @@ V~súčasnosti existujú malé firmy, ktoré fungujú ako dodávatelia rôznych 
 
 Spoločným problémom takýchto firiem býva, že ich ľudia nepoznajú. Preto by sa spomínaným firmám hodilo riešenie, ktoré by im umožnilo zviditeľniť ich ponuku produktov. Jednoduché riešenie v~podobe statických stránok v~tomto prípade nestačí, pretože by neumožnilo dynamicky meniť ponuku danej firmy. Použitie nejakého CMS systému~(z~ang. content management system), napr.~Word\-Press, takisto nie je optimálnym riešením, pretože vyžaduje znalosť platformy, ktorá nie je samozrejmesťou.
 
-My sme dostali ponuku na~tvorbu riešenia od~jednej z~takýchto firiem. Konkrétne ide o~firmu, ktorá sa zaoberá predajom a~opravou bagrov (ďalej už len klientská firma). Po~konzultácii s~majiteľom (ďalej už len klient) sme zistili, že klientksá firma ponúka služby v~podobe výkopových prác, predaja a~opravy bagrov, a~takisto predaja prídavných zariadení pre~bagre. Taktiež sme zistili, že doteraz fungovala komunikácia medzi klientskou firmou a~zákazníkmi prostredníctvom telefonátov, emailov alebo sa strany fyzicky stretli a~dohodli obchod. Klient od~nás vyžaduje riešenie, ktoré by spĺňalo požiadavky uvedené v~následujúcej podkapitole.
+My sme dostali ponuku na~tvorbu riešenia od~jednej z~takýchto firiem. Konkrétne ide o~firmu, ktorá sa zaoberá predajom a~opravou bagrov (ďalej už len klientská firma). Po~konzultácii s~majiteľom (ďalej už len klient) sme zistili, že\linebreak klientská firma ponúka služby v~podobe výkopových prác, predaja a~opravy ba\-grov, a~takisto predaja prídavných zariadení pre~bagre. Taktiež sme zistili, že doteraz fungovala komunikácia medzi klientskou firmou a~zákazníkmi prostredníctvom telefonátov, emailov alebo sa strany fyzicky stretli a~dohodli obchod. Klient od~nás vyžaduje riešenie, ktoré by spĺňalo požiadavky uvedené v~následujúcej podkapitole.
 
 \section{Požiadavky na systém}
 \label{poziadavky}
@@ -20,7 +20,7 @@ Jednou z~požiadaviek je, že softvér má rozlišovať zamestnancov firmy sprav
 \item \textbf{P2 Predstavenie ponuky zákazníkom}
 
 Ako už bolo spomenuté, klientská firma predáva bagre a~prídavné zariadenia pre~bagre. Klient preto chce, aby bol softvér schopný prezentovať ponuku firmy (bagre a~prídavné zariadenia), pričom hlavná ponuka je tvorená bagrami. Klient vyžaduje, aby po~príchode užívateľa na~domovskú (úvodnú) stránku sa zobrazila hlavná ponuka.
-
+\newpage
 \begin{itemize}
 \item \textbf{P2.1 Hlavná ponuka}
 
@@ -28,7 +28,7 @@ Hlavná ponuka predstavuje bagre určitého typu (t.~j.~určitej kombinácie zna
 
 \item \textbf{P2.2 Bager}
 
-Každý bager má obsahovať informácie: názov, značku, kategóriu, opis, fotky a~vlastnosti, pričom všetky okrem opisu sú povinné. Vlastnosti bagra sú určené kombináciou jeho značky a~kategórie (teda typom bagra, každý typ bagra môže mať rôzne vlastnosti, napr. jeden typ bagra by mohol mať vlastnosť ťažná sila, iný typ bagra by mohol mať vlasnosť šírka lyžice). Informácie o~bagri majú byť viditeľné pre~každého užívateľa, t.~j.~ako pre~bežného zákazníka, tak aj pre~administrátora. Navyše má ešte stroj obsahovať informáciu o~náhradných dieloch~-- táto informácia má byť viditeľná iba pre~administrátorov. Taktiež platí, že môžu existovať bagre, ktoré nepatria do~ponuky a~môžu byť využité výhradne iba v~aukcii (viac o~aukcii v~P4).
+Každý bager má obsahovať informácie: názov, značku, kategóriu, opis, fotky a~vlastnosti, pričom všetky okrem opisu sú povinné. Vlastnosti bagra sú určené kombináciou jeho značky a~kategórie (teda typom bagra, každý typ bagra môže mať rôzne vlastnosti, napr. jeden typ bagra by mohol mať vlastnosť ťažná sila, iný typ bagra by mohol mať vlasnosť šírka lyžice). Informácie o~bagri majú byť viditeľné pre~každého užívateľa, t.~j.~ako pre~bežného zákazníka, tak aj\linebreak pre~administrátora. Navyše má ešte stroj obsahovať informáciu o~náhradných dieloch~-- táto informácia má byť viditeľná iba\linebreak pre~administrátorov. Taktiež platí, že môžu existovať bagre, ktoré nepatria do~ponuky a~môžu byť využité výhradne iba v~aukcii (viac o~aukcii v~P4).
 
 \item \textbf{P2.3 Prídavné zariadenie}
 
@@ -36,19 +36,19 @@ Každé prídavné zariadenie má obsahovať informácie: názov, značka, kateg
 
 \item \textbf{P2.4 Správa bagrov, prídavných zariadení a hlavných ponúk}
 
-Aby mohol administrátor spravovať bagre, prídavné zariadenia ale takisto aj hlavné ponuky podľa potreby, tak je tiež nutné vytvoriť miesto, ktoré mu ich umožní pridávať, odstraňovať a~editovať.
+Aby mohol administrátor spravovať bagre, prídavné zariadenia,\linebreak ale~takisto aj hlavné ponuky podľa potreby, tak je tiež nutné vytvoriť miesto, ktoré mu ich systém umožní pridávať, odstraňovať a~editovať.
 \end{itemize}
 
 \item \textbf{P3 Posielanie dopytu}
 
-Takisto klient od~softvéru vyžaduje, aby umožnil zákazníkom objednať si daný produkt alebo službu prostredníctvom emailových správ. Bežnou praxou v~tomto odvetví je, že cena strojov sa dopredu neudáva. Zákazník najprv vyjadrí záujem (dopyt), prekonzultujú sa detaily medzi potenciálnym kupcom a~firmou, a~až potom prebehne obchod. Z~tohto dôvodu systém nebude fungovať na~princípe ako bežné internetové obchody (tým sa myslí pridávanie do~košíka s~následnou platbou), ale bude fungovať na~princípe posielania správ~(dopytov).
+Takisto klient od~softvéru vyžaduje, aby umožnil zákazníkom objednať si daný produkt alebo službu prostredníctvom emailových správ. Bežnou\linebreak praxou v~tomto odvetví je, že cena strojov sa dopredu neudáva. Zákazník najprv vyjadrí záujem (dopyt), prekonzultujú sa detaily medzi potenciálnym kupcom a~firmou, a~až potom prebehne obchod. Z~tohto dôvodu systém nebude fungovať na~princípe ako bežné internetové obchody (tým sa myslí pridávanie do~košíka s~následnou platbou), ale bude fungovať na~princípe posielania správ~(dopytov).
 
 \begin{itemize}
 \item \textbf{P3.1 Dopyt}
 
-Dopyt by mal v~sebe obsahovať informácie o~žiadanom predmete, údaje o~užívateľovi, a~tiež správu užívateľa. Uživateľskými údajmi sa myslí meno, priezvisko, email~-- tie sú povinné údaje. A~takisto telefónne číslo, mesto~-- tie sú nepovinné údaje.
+Dopyt by mal v~sebe obsahovať informácie o~žiadanom predmete, údaje o~užívateľovi, a~tiež správu užívateľa. Užívateľskými údajmi sa myslí meno, priezvisko, email~-- tie sú povinné údaje. A~takisto telefónne číslo, mesto~-- tie sú nepovinné údaje.
 \end{itemize}
-
+\newpage
 \item \textbf{P4 Aukcia}
 
 Keď sme v~predošlých podmienkách spomínali ponuku strojov a~prídavných zariadení, tak išlo o~nové produkty. No ako už bolo skôr spomenuté, klientská firma sa špecializuje aj na~opravu bagrov.
@@ -115,7 +115,7 @@ Takisto je nutné vytvoriť profil, kde si užívateľ môže svoje~údaje uprav
 
 \item \textbf{P7 Prístup k~súčiastkam strojov}
 
-Keď si zákazník zakúpi bager, tak po~nejakom čase má firma vykonať kontrolu tohto bagra. Ale predtým než zamestnanci pôjdu vykonať kontrolu si musia zistiť, aké súčiastky obsahuje daný bager. A~preto klient od~softvéru vyžaduje, aby umožňoval administrátorom zobraziť aké náhradné diely obsahuje konkrétny bager.
+Keď si zákazník zakúpi bager, tak po~nejakom čase má firma vykonať kontrolu tohto bagra. Ale predtým než pôjdu zamestnanci vykonať kontrolu si musia zistiť, aké súčiastky obsahuje daný bager. A~preto klient od~softvéru vyžaduje, aby umožňoval administrátorom zobraziť aké náhradné diely obsahuje konkrétny bager.
 
 \begin{itemize}
 \item \textbf{P7.1 Náhradný diel}

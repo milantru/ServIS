@@ -125,7 +125,7 @@ V prípade obmedzenia celej stránky využívame atribút~\texttt{[Authorize]}~\
 
 Za hlavné rozloženie stránky, ktoré bolo navrhnuté v~časti~Hlavné rozloženie aplikácie (viď~\ref{hlavne rozlozenie aplikacie}), je zodpovedný komponent~\verb|MainLayout|. V~rámci tohto komponentu sme využili komponent~\texttt{SfDialogProvider}~\cite{sfdialogprovider}, ktorý nám umožní využívať potvrdzovacie modálne okná (tie si opíšeme v~následujúcej časti textu, viď \ref{modalne potvrdzovacie okno2}). Okrem toho sa v~komponente~\verb|MainLayout| využíva komponent~\verb|NavMenu| (navigácia), a~ten v sebe obsahuje komponenty \verb|NavLink| (predstavujú odkazy v navigácii), \verb|AuthorizeView| (viď~\ref{zobrazovanie obsahu podla roly}) a~\verb|LoginPanel|.
 
-Komponent~\verb|LoginPanel| slúži v prípade neprihláseného užívateľa na~presmerovanie na stránky s formulármi pre prihlásenie alebo registráciu. V prípade prihláseného užívateľa slúži na~presmerovanie na~profil alebo~na~odhlásenie. Využíva preto komponent~\verb|AuthorizeView| (viď~\ref{zobrazovanie obsahu podla roly}) a~triedu \verb|CustomAuthenticationStateProvider| (viď~\ref{trieda customauthenticationstateprovider}).
+Komponent~\verb|LoginPanel| slúži v~prípade neprihláseného užívateľa na~presmerovanie na stránky s formulármi pre prihlásenie alebo registráciu. V~prípade prihláseného užívateľa slúži na~presmerovanie na~profil alebo~na~odhlásenie. Využíva preto komponent~\verb|AuthorizeView| (viď~\ref{zobrazovanie obsahu podla roly}) a~triedu \verb|CustomAuthenticationStateProvider| (viď~\ref{trieda customauthenticationstateprovider}).
 
 \subsection{Modálne potvrdzovacie okno}
 \label{modalne potvrdzovacie okno2}
@@ -138,7 +138,7 @@ V podkapitole Sekcie Podmienky používania a~Zásady ochrany osobných údajov 
 
 \subsection{Stránka s hlavnou ponukou (domovská stránka)}
 
-Implementáciu časti aplikácie s vylistovanými kartami hlavnej ponuky (slúži ako domovská stránka), ktorá bola navrhnutá v časti Hlavná ponuka (viď~\ref{hlavna ponuka}), môžeme nájsť v~súbore~\verb|Index.razor|. Stránka využíva komponenty \verb|AuthorizeView| (viď \ref{zobrazovanie obsahu podla roly}) a~\verb|MainCard| (tento komponent predstavuje kartu hlavnej ponuky). Kód tejto stránky využíva pre získanie dát o hlavných ponukách (reprezentované triedou \verb|MainOffer|) rozhranie (API) projektu ServISData (viď \ref{trieda servisapi a rozhranie iservisapi}).
+Implementáciu časti aplikácie s vylistovanými kartami hlavnej ponuky (slúži ako domovská stránka), ktorá bola navrhnutá v časti Hlavná ponuka (viď~\ref{hlavna ponuka}), môžeme nájsť v~súbore~\verb|Index.razor|. Stránka využíva komponenty \verb|AuthorizeView| (viď \ref{zobrazovanie obsahu podla roly}) a~\verb|MainCard| (tento komponent predstavuje kartu hlavnej ponuky). Kód tejto stránky využíva pre získanie dát o hlavných ponukách (reprezentované triedou \verb|MainOffer|) rozhranie (API) projektu ServISData (viď~\ref{trieda servisapi a rozhranie iservisapi}).
 
 \subsection{Stránka pre vytvorenie a úpravu hlavnej ponuky}
 
@@ -146,7 +146,7 @@ Obe stránky, stránka pre vytvorenie novej, ale aj stránka pre úpravu existuj
 
 \subsection{Stránka s ponukou (nových) bagrov}
 
-Návrh tejto časti aplikácie bol opísaný v časti textu Ponuka (nových) bagrov (viď~\ref{ponuka novych bagrov}). Implementácia stránky sa nachádza v~súbore~\verb|Excavators.razor| a~obsahuje komponenty~\verb|AuthorizeView| (viď~\ref{zobrazovanie obsahu podla roly}) a~\verb|ExcavatorLister|. Pomocou rozhrania projektu ServISData (viď \ref{trieda servisapi a rozhranie iservisapi}) sa získajú objekty typu \verb|Excavator| reprezentujúce bagre a~predajú sa už spomínanej komponente \verb|ExcavatorLister| na~vylistovanie~-- pre každý bager sa zobrazí karta bagra (komponent \verb|ExcavatorCard|). V návrhu tejto časti aplikácie bolo tiež spomenuté, že sa majú vylistovať karty bagrov určitého typu, ktoré neboli určené iba pre~aukciu. Dosiahli sme toho pomocou tried \verb|DataOperations| a (jej vnorenej triedy) \verb|Configuration|, ktoré implementácia stránky taktiež obsahuje (tieto triedy boli spomenuté už skôr v časti~\ref{trieda dataoperations}).
+Návrh tejto časti aplikácie bol opísaný v časti textu Ponuka (nových) bagrov (viď~\ref{ponuka novych bagrov}). Implementácia stránky sa nachádza v~súbore~\verb|Excavators.razor| a~obsahuje komponenty~\verb|AuthorizeView| (viď~\ref{zobrazovanie obsahu podla roly}) a~\verb|ExcavatorLister|. Pomocou rozhrania projektu ServISData (viď \ref{trieda servisapi a rozhranie iservisapi}) sa získajú objekty typu \verb|Excavator| reprezentujúce bagre a~predajú sa už spomínanej komponente \verb|ExcavatorLister| na~vylistovanie~-- pre každý bager sa zobrazí karta bagra (komponent \verb|ExcavatorCard|). V návrhu tejto časti aplikácie bolo tiež spomenuté, že sa majú vylistovať karty bagrov určitého typu, ktoré neboli určené iba pre~aukciu. Dosiahli sme toho pomocou tried \verb|DataOperations| a (jej vnorenej triedy) \verb|Configuration|, ktoré implementácia stránky taktiež obsahuje (tieto triedy boli spomenuté už skôr v~časti~\ref{trieda dataoperations}).
 
 \subsection{Stránka s ponukou prídavných zariadení}
 
@@ -154,7 +154,7 @@ Návrh tejto stránky sa nachádza v časti textu Ponuka prídavných zariadení
 
 \subsection{Stránka s~detailom bagra, prídavného zariadenia}
 
-Táto časť aplikácie bola navrhnutá v časti Detail bagra, prídavného zariadenia (viď \ref{detail bagra pridavneho zariadenia}). Implementáciu stránky s detailom bagra môžeme nájsť v~súbore~\verb|ExcavatorDetail.razor| a~implementáciu stránky s detailom prídavného zariadenia môžeme nájsť v~súbore \verb|AdditionalEquipmentDetail.razor|. Obidve implementácie využívajú komponenty~\verb|AuthorizeView| (viď~\ref{zobrazovanie obsahu podla roly}), \verb|PhotoSlider| (pre zobrazenie fotiek) a~\verb|DemandForm| (formulár, ktorého návrh bol opísaný v časti \ref{dopyt}). Komponent~\verb|DemandForm| využíva na~odoslanie správy (emailu) triedu \verb|EmailManager| (viď~\ref{trieda emailmanager}). Ďalej obe implementácie stránok čerpajú dáta na~zobrazenie z~rozhrania projektu ServISData (viď \ref{trieda servisapi a rozhranie iservisapi}). V~prípade stránky s~detailom bagra sa získa trieda \verb|Excavator| (obsahujúca dáta bagra) a~v~prípade stránky s~detailom prídavného zariadenia sa získa trieda \verb|AdditionalEquipment| (obsahujúca dáta prídavného zariadenia).
+Táto časť aplikácie bola navrhnutá v časti Detail bagra, prídavného zariadenia (viď \ref{detail bagra pridavneho zariadenia}). Implementáciu stránky s detailom bagra môžeme nájsť v~súbore~\verb|ExcavatorDetail.razor| a~implementáciu stránky s detailom prídavného zariadenia môžeme nájsť v~súbore \verb|AdditionalEquipmentDetail.razor|. Obidve implementácie využívajú komponenty~\verb|AuthorizeView| (viď~\ref{zobrazovanie obsahu podla roly}), \verb|PhotoSlider| (pre zobrazenie fotiek) a~\verb|DemandForm| (formulár, ktorého návrh bol opísaný v~časti \ref{dopyt}). Komponent~\verb|DemandForm| využíva na~odoslanie správy (emailu) triedu \verb|EmailManager| (viď~\ref{trieda emailmanager}). Ďalej obe implementácie stránok čerpajú dáta na~zobrazenie z~rozhrania projektu ServISData (viď \ref{trieda servisapi a rozhranie iservisapi}). V~prípade stránky s~detailom bagra sa získa trieda \verb|Excavator| (obsahujúca dáta bagra) a~v~prípade stránky s~detailom prídavného zariadenia sa získa trieda \verb|AdditionalEquipment| (obsahujúca dáta prídavného zariadenia).
 
 \subsection{Stránka pre~vytvorenie a~úpravu bagra}
 \label{stranka pre vytvorenie a upravu bagra}
@@ -185,7 +185,7 @@ Návrh stránky Služby bol opísaný v~podkapitole~Splnenie P8 (viď~\ref{splne
 
 \subsection{Stránka pre správu webu}
 
-V podkapitole Splnenie P5, P7 a~správa predmetov (viď \ref{splnenie p5 p7 a sprava predmetov}) bola navrhnutá emailová schránka a~časť aplikácie pre~správu obsahu webu (administrátorská stránka). Implementácia administrátorskej stránky sa nachádza v~súbore~\verb|AdministratorPage.razor| a~využíva atribút~\verb|[Authorize]| (viď~ref{zobrazovanie obsahu podľa roly}), komponent \verb|TabControl| s komponentmi \verb|TabPage| (tvoria panel s kartami Správy, Náhradné diely atď., viď~vrchnú časť obr.~\ref{messages}). 
+V podkapitole Splnenie P5, P7 a~správa predmetov (viď \ref{splnenie p5 p7 a sprava predmetov}) bola navrhnutá emailová schránka a~časť aplikácie pre~správu obsahu webu (administrátorská stránka). Implementácia administrátorskej stránky sa nachádza v~súbore~\verb|AdministratorPage.razor| a~využíva atribút~\verb|[Authorize]| (viď~\ref{zobrazovanie obsahu podla roly}), komponent \verb|TabControl| s komponentmi \verb|TabPage| (tvoria panel s kartami Správy, Náhradné diely atď., viď~vrchnú časť obr.~\ref{messages}). 
 
 Na karte Správy sa zobrazuje komponent \verb|Message|, ktorý v~sebe obsahuje komponenty \verb|ThreadsView| (pohľad s~vylistovanými konverzáciami, ktoré sú reprezentované komponentom \verb|ThreadRow|), \verb|ThreadView| (pohľad, ktorý sa zobrazí pri otvorení konverzácie, zobrazí správy v konverzácii reprezentované komponentmi typu \verb|Message|) a~\verb|MessageSettings| (pohľad, ktorý sa zobrazí pri prekliknutí do~časti s~nastaveniami správ, využíva rozhranie projektu ServISData, viď~\ref{trieda servisapi a rozhranie iservisapi} a~komponenty typu \verb|AutogeneratedMessageForm| pre~editáciu tvaru automaticky generovaných správ, ktoré sú v~kóde reprezentované triedou~\verb|AutogeneratedMessage|). Ďalej sa na~karte pre~získanie správ z~Gmailu využíva trieda \verb|EmailManager| (viď~\ref{trieda emailmanager}).
 
@@ -229,137 +229,3 @@ Táto časť aplikácie bola navrhnutá v~časti Registrácia (viď~\ref{registr
 \subsection{Stránka s profilom užívateľa}
 
 V časti Profil (viď~\ref{profil}) bola navrhnutá časť aplikácie s~profilom užívateľa, jej implementácia sa nachádza v~súbore~\verb|Profile.razor| a~obsahuje komponent~\verb|UserForm|, predstavujúci formulár s~informáciami o~užívateľovi, ktorý už bol opísaný v~predchádzajúcej časti textu (viď~\ref{stranka s registracnym formularom}). Takisto využíva triedu~\verb|CustomAuthenticationStateProvider| (viď~\ref{trieda customauthenticationstateprovider}) pre~získanie informácií o~užívateľovi, ktoré predá komponentu~\verb|UserForm| na~zobrazenie a~prípadnú editáciu.
-
-\iffalse
-
---
-
-KONIEC NOVEHO TEXTU
-
---
-
-Celá aplikácia je rozdelená do~dvoch projektov-~ServISData a~ServISWebApp.
-
-\section{ServISData}
-
-Zmyslom projektu ServISData je správa databázových entít a~komunikácia s~databázou. Teraz si prejdeme jednotlivé priečinky tohto projektu a~opíšeme si ich~obsah.
-
-\subsection{Koreňový priečinok projektu}
-
-Nachádza sa tu \verb|ServISDbContext| a~spolu s~ním i~\verb|ServISDbContextFactory|. Tieto triedy sú zodpovedné za~konfiguráciu databázy, a~tiež samotné pripojenie aplikácie k~databáze. Viac o~týchto triedach a~spôsobu ich použitia v~projekte nájdeme~\href{https://learn.microsoft.com/en-us/ef/core/dbcontext-configuration/\#using-a-dbcontext-factory-eg-for-blazor}{tu}.
-
-V~priečinku sa tiež nachádzajú triedy~\verb|AutogeneratedMessageForExtensions| a~\verb|InputTypeExtensions|. V~oboch prípadoch ide o~extension metódy umožňujúce získať metadáta z~atribútov, ktoré sme použili\\v~enumoch~\verb|AutogeneratedMessage.For| a~\verb|InputType|.
-
-Takisto sa v~priečinku nachádza už spomenutý~\verb|InputType|. Ide o~enum, ktorého hodnoty predstavujú možné typy hodnôt vlastností stroja.
-
-Ďalej sa tu nachádza trieda~\verb|ServISApi|. Tá slúži pre~komunikáciu s~databázou. Respektíve umožnuje iným projektom~(v~našom prípade ServISWebapp) modely ukladať, čítať, editovať a~mazať z~databázy.
-
-\subsection{Attributes}
-
-Priečinok obsahuje atribúty\footnote{\url{https://learn.microsoft.com/en-us/dotnet/csharp/advanced-topics/reflection-and-attributes/}}. Konkrétne ide\\o~\verb|AutogeneratedMessageDataAttribute| a~\verb|InputTypeLabelAttribute|.
-
-Prvý slúži na~nastavenie predvoleného predmetu a~textu automaticky generovaných správ, ale takisto aj na~nastavenie ich podporovaných tagov.
-
-Druhý slúži pre~uloženie užívateľsky prívetivejšieho názvu typu hodnoty vlastnosti stroja. Tieto názvy sa zobrazujú napríklad pri~vytváraní typu vlastnosti stroja.
-
-\subsection{DataOperations}
-\label{dataoperations}
-
-Priečinok obsahuje triedy, ktoré ich~užívateľom umožnia vykonávať rôzne operácie nad~dátami (filtrovanie, stránkovanie,\dots).
-
-\subsection{Interfaces}
-
-Priečinok obsahuje rozhrania~(ang.~interfaces).
-
-\verb|IServISApi| nás zbaví potreby upravovať kód využívajúci API projektu ServISData v~prípade, ak sa rozhodneme vymeniť \verb|ServISApi| za~nejakú inú implementáciu.
-
-\verb|IPhoto| nám umožní všeobecne pracovať s~fotkami aj napriek tomu, že pôjde o~fotky rôznych entít.
-
-\verb|IItem| nám dovolí písať všeobecný kód pre~prácu s~modelmi entít~(využíva sa napr.~pri~mazaní entít z~databázy; viď~metódu~\verb|DeleteItem| v~triede~\verb|ServISApi|).
-
-\subsection{Migrations}
-
-Tento priečinok bol vygenerovaný frameworkom~Entity~Framework~Core a~obsahuje vygenerovaný kód. Ide o~migrácie\footnote{\url{https://learn.microsoft.com/en-us/ef/core/managing-schemas/migrations/?tabs=dotnet-core-cli}}. Nad~migráciou môžeme rozmýšlať ako nad~commitom v~gitu. Po~aplikovaní migrácie dôjde k~zmene v~databáze~(napr.~sa pridá nový stĺpec do~nejakej z~tabuliek).
-
-\subsection{Models}
-\label{models}
-
-Priečinok obsahuje modely-~triedy reprezentujúce entity uložené v~databáze.
-
-Špeciálne sa zastavíme pri~triede~\verb|AutogeneratedMessage|\\a~enume~\verb|AutogeneratedMessage.For|. Platí, že každá hodnota enumu predstavuje druh automaticky generovanej správy.\\Napríklad \verb|AutogeneratedMessage.For.AutionWinner| predstavuje automaticky generovanú správu pre~víťaza aukcie. A~tiež platí, že pre~každú hodnotu tohto enumu existuje inštancia triedy~\verb|AutogeneratedMessage| uložená v~databáze.\\Pred\-vo\-le\-né hodnoty správ sa nachádzajú v~atribútoch hodnôt enumu a~administrátormi definované hodnoty sa ukladajú do~databázy.
-
-\section{ServISWebApp}
-
-Projekt ServISWebApp predstavuje rozhranie pre~užívateľov a~zároveň obsahuje logiku nášho~systému. Znova, ako v~predošlej podkapitole, si prejdeme jednotlivé priečinky tohto projektu a~opíšeme si ich~obsah.
-
-\subsection{Koreňový priečinok projektu}
-
-Priečinok obsahuje súbory~\_Imports.razor~(nachádzajú sa v~ňom \verb|using| direktívy aplikované pre~každý komponent v~projekte), App.razor~(koreňový komponent), appsettings.json~(ide o~konfiguráciu aplikácie, v~ktorej okrem iného vieme nastaviť emailovú adresu, ktorú systém využíva pre~odosielanie a~prijímanie emailov) a~Program.cs~(obsahuje kód zodpovedný za~spustenie celej aplikácie). Pre~viac informácií o~štruktúre Blazor projektu môže čítateľ kliknúť~\href{https://learn.microsoft.com/en-us/aspnet/core/blazor/project-structure?view=aspnetcore-7.0}{tu}.
-
-V~časti Models~\ref{models} bolo spomenuté, že pre~každú hodnotu\\enumu~\verb|AutogeneratedMessage.For| existuje inštancia triedy\\\verb|AutogeneratedMessage| uložená v~databáze. To zabezpečuje metóda\\\verb|StoreNewAutogeneratedMessagesAsync|, ktorá sa nachádza v~Program.cs.
-
-\subsection{Auth}
-
-Priečinok obsahuje triedy~zodpovedné za~prihlasovanie užívateľa a~hashovanie hesla.
-
-\subsection{BackgroundServices}
-
-V~tomto priečinku sa nachádzajú triedy~predstavujúce služby bežiace na~pozadí. Konkrétne ide o~službu zodpovednú za~vyhodnocovanie aukcie a~službu, ktorá každú sekundu vykoná akciu, ktorú si užívateľ triedy v~službe zaregistroval~(v~našom prípade ide o~prerenderovanie komponentov pri~odpočte).
-
-\subsection{Components}
-
-V~tomto priečinku sa nachádzajú komponenty využité v~aplikácii.
-
-Komponenty ktorých meno končí na~slovo~``Lister'', slúžia na~zobrazenie~(vylistovanie) nejakého obsahu. Väčšinou sú tým obsahom komponenty končiace na~slovo~``Card''.
-
-Ďalej sa tu nachádzajú komponenty začínajúce na~slovo~``Input''. Tieto komponenty spolu s~komponentom~\verb|ChecklistTable| slúžia na získavanie vstupu užívateľa.
-
-Komponenty~\verb|Message|, \verb|Messages|, \verb|ThreadRow|, \verb|ThreadView| a~\verb|ThreadsView| tvoria miesto pre manažovanie správ. Umožňujú adminovi čítať správy, a~takisto na~nich odpovedať. Navyše~\verb|MessageSettings| umožňuje adminovi meniť tvar automaticky generovaných správ.
-
-Komponent~\verb|CountdownDisplayer| sa využíva na~zobrazenie odpočtu do~konca aukcie.
-
-\verb|CustomDataAdaptor| sa využíva v~komponente~\verb|ItemsManagement| na~čítanie dát.
-
-\verb|LoginPanel| umožňuje neprihlásenému užívateľovi prístup k~prihlasovaciemu a~registračnému formuláru. Alebo v~prípade prihláseného užívateľa poskytuje možnosti prejsť na~profil a~odhlásiť sa.
-
-\verb|PhotoSlider| sa využíva na~zobrazovanie obrázkov~(môžeme ho vidieť napríklad na~stránke detailu ľubovoľného stroja).
-
-Komponent~\verb|TabControl| v~sebe obsahuje komponenty~\verb|TabPage|. Umožňujú užívateľom~(najmä adminom, pretože bežní zákaznici majú iba jeden tab) preklikávať sa medzi rôznymi časťami profilu.
-
-Ďalej sa tu nachádzajú priečinky~Buttons, Forms a~Managements.
-
-V~priečinku~Buttons sa nachádzajú komponenty reprezentujúce rôzne tlačidlá.
-
-Vo~Forms sa nachádzajú rôzne formuláre ktorými dokážeme vytvárať a~do~databázy ukladať inštancie modelov~(napr.~stroje, prídavné zariadenia,\dots). Ale takisto sa tam nachádza i~komponent \verb|DemandForm|, ktorý zákazníkom umožňuje odosielať dopyt.
-
-A~v~priečinku Managements sa nachádza komponent~\verb|ItemsManagement|. Tento komponent tvorí rozhranie pre~administrátorov na~správu entít~(napr.~strojov, náhradných dielov,\dots). Umožňuje adminom entity vytvárať, editovať a~mazať. Takisto im pri~prezeraní existujúcich entít umožňuje ich vyhľadávanie a~triedenie.
-
-\subsection{CssProviders}
-
-Triedy v~tomto priečinku sú zodpovedné za~zmenu css štýlov vo~formulároch pri~modifikovaní a~validácií políčok formuláru. O~triede~\verb|FieldCssClassProvider| sa čítateľ môže dozvedieť viac \href{https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.components.forms.fieldcssclassprovider?view=aspnetcore-7.0}{tu}.
-
-\subsection{Pages}
-
-V~tomto priečinku sa nachádzajú stránky a~priečinok~Admin, ktorý obsahuje stránky exkluzívne pre~administrátorov.
-
-\subsection{Resources}
-
-Tento priečinok obsahuje ``.resx'' súbory so~slovenskými prekladmi slov a~viet. Využívajú ich komponenty z~balíčku od~spoločnosti Syncfusion.
-
-\subsection{Shared}
-
-V~tomto priečinku sa nachádzajú triedy zdieľané (potenciálne) celým projektom.
-
-Triedy~\verb|Email| a~\verb|Thread| slúžia ako dátonosné alternatívy k~triedam balíčka MailKit. Môžeme nad~nimi rozmýšľať ako nad fasádami, ktoré zjednodušujú prístup k~dátam.
-
-\verb|EmailManager| pokrýva funkcionalitu práce s~emailami, napr.~ich posielanie a~prijímanie.
-
-\verb|MainLayout| a~\verb|NavMenu| sú štandardné Blazor komponenty. Prvý definuje rozloženie stránky a~druhý navigáciu.
-
-\verb|SyncfusionLocalizer| a~\verb|SyncfusionDataOperations| sú triedy, ktoré využívajú kód z~balíčka od~spoločnosti~Syncfusion. Prvá sa stará o~nastavenie lokalizácie užívateľského rozhrania~Syncfusion komponentov. Druhá vykonáva operácie nad~dátami~(napr.~vyhľadávanie, triedenie,\dots). Čítateľ môže byť v~tento moment mierne zmätený, pretože raz sme tu už podobnú triedu mali. Konkrétne v~časti DataOperations~(\ref{dataoperations}). Rozdiel je v~tom, že trieda spomenutá v~predošlej časti využíva na~konfiguráciu operácií našu vlastnú triedu\\\verb|MyDataOperations.Configuration|, kdežto \verb|SyncfusionDataOperations|\\využíva triedu~\verb|DataManagerRequest|, ktorá je takisto z~balíčka spoločnosti~Syncfusion.
-
-\verb|FileTools| združuje metódy pre~prácu so~súbormi. Konkrétne v~našom prípade ho využívame pre~prácu s~fotkami.
-
-Ostali nám už len trieda~\verb|AuctionSummary| a~trieda\\\verb|AutogeneratedMessageExtensions|, ktorá sa nachádza v priečinku Extensions. Obe triedy spolu úzko súvisia.\\\verb|AutogeneratedMessageExtensions| obsahuje extension metódy pre~triedu\\\verb|AutogeneratedMessage|. \verb|AutogeneratedMessage| obsahuje text (predmet a telo správy). V~texte sa nachádzajú tagy a~slúži ako šablóna. Metódy triedy\\\verb|AutogeneratedMessageExtensions| fungujú tak, že vezmú túto šablónu a~namiesto tagov dosadia skutočné dáta vzaté z~inštancií\\triedy~(príp.~tried)~\verb|AuctionSummary|.
-
-\fi

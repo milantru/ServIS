@@ -10,15 +10,15 @@ Skôr než začneme aplikáciu programovať, tak si musíme stanoviť ako bude v
 
 \begin{figure}[H]\centering
 \includegraphics[width=140mm]{../img/UI concept/layout}
-\caption{Návrh rozloženia aplikácie}
+\caption{Návrh rozloženia aplikácie.}
 \label{layout}
 \end{figure}
 
-V~ľavej časti by mala byť zobrazená navigácia. V~navigácii by sa mali nachádzať odkazy~,,Domov``, ,,Prídavné zariadenia``, ,,Po~repase a~GO``, ,,Služby``, ,,O~nás``, ,,Kontakt`` a~,,Kontakt``. Nad~navigáciou by sa mal nachádzať prihlasovací panel, o~ktorom si viac povieme v~podkapitole~\ref{splnenie p6}.
+V~ľavej časti by mala byť zobrazená navigácia. V~navigácii by sa mali nachádzať odkazy~,,Domov``, ,,Prídavné zariadenia``, ,,Po~repase a~GO``, ,,Služby``, ,,O~nás`` a~,,Kontakt``. Nad~navigáciou by sa mal nachádzať prihlasovací panel, o~ktorom si viac povieme v~podkapitole~\ref{splnenie p6}.
 
-Ďalej v~centre aplikácie by mal byť obsah (viď~obsahovú časť v~centre obr.~\ref{layout}), ktorý by sa mal meniť podľa toho v~akej časti aplikácie sa užívateľ nachádza. Všetky obrázky v~následujúcich podkapitolách (s~výnimkou grafov prechádzania medzi časťami aplikácie a~modálnym oknom, o~ktorom si povieme v~následujúcej podkapitole) budú predstavovať obsahovú časť ak sa explicitne nepovie inak.\\
+Ďalej v~centre aplikácie by mal byť obsah (viď~obsahovú časť v~centre obr.~\ref{layout}), ktorý by sa mal meniť podľa toho, v~akej časti aplikácie sa užívateľ nachádza. Všetky obrázky v~následujúcich podkapitolách (s~výnimkou grafov prechádzania medzi časťami aplikácie a~modálnym oknom, o~ktorom si povieme v~následujúcej podkapitole) budú predstavovať obsahovú časť ak sa explicitne nepovie inak.\\
 
-\textbf{Pohľad pre~administrátrov:} Bolo spomenuté, že v~navigácii by sa mali nachádzať odkazy~,,Domov``, ,,Prídavné zariadenia``, ,,Po~repase a~GO``, ,,Služby``, ,,O~nás``, ,,Kontakt`` a~,,Kontakt``. Okrem týchto odkazov by mal mať administrátor zobrazený aj odkaz~,,Správa webu``.
+\textbf{Pohľad pre~administrátrov:} Bolo spomenuté, že v~navigácii by sa mali nachádzať odkazy~,,Domov``, ,,Prídavné zariadenia``, ,,Po~repase a~GO``, ,,Služby``, ,,O~nás`` a~,,Kontakt``. Okrem týchto odkazov by mal mať administrátor zobrazený aj odkaz~,,Správa webu``.
 
 \section{Modálne potvrdzovacie okno}
 \label{modalne potvrdzovacie okno}
@@ -56,13 +56,13 @@ Pre splnenie GDPR by bolo dobré vyhradiť časti aplikácie, kde sa budú môc�
 
 V časti aplikácie s podmienkami používania by mal byť nadpis \uv{Podmienky používania}. V časti aplikácie so zásadami ochrany osobných údajov by mal byť nadpis \uv{Zásady ochrany osobných údajov}. V prípade oboch častí aplikácie platí, že pod názvom by sa mal nachádzať text vyhotovený právnickou osobou na danú tému.
 
-Na tieto časti aplikácie by sa malo odkazovať pri registrácii užívateľa, pri odosielaní dopytu z detaila bagra, detaila prídavného zariadenia alebo zo sekcie Služby, podobne pri ponúkaní sumy do aukcie z detailu aukčnej ponuky. Viac si o týchto častiach aplikácie povieme v následujúcom texte.
+Na tieto časti aplikácie by sa malo odkazovať pri registrácii užívateľa, pri~odosielaní dopytu z detaila bagra, detaila prídavného zariadenia alebo zo sekcie Služby, podobne pri ponúkaní sumy do aukcie z detailu aukčnej ponuky. Viac si o týchto častiach aplikácie povieme v následujúcom texte.
 
 Okrem toho by mal systém umožniť užívateľovi vymazať svoje dáta zo~systému, a~taktiež ich na~vyžiadanie exportovať. Toto sa splní v~časti aplikácie s~profilom užívateľa, ale~o~nej si povieme viac v~časti Profil (viď~\ref{profil}).
 
 \section{Splnenie P2 a P3}
 
-V~tejto podkapitole si prejdeme časti aplikácie splňujúce požiadavky P2 a~P3, t.~j.~predstavenie hlavnej ponuky, bagrov, prídavných zariadení, a~takisto si z~časti ukážeme ako môže administrátor jednotlivé položky vytvárať, upravovať a~vymazovať (z~časti preto, lebo v~prípade bagrov si neskôr ukážeme aj iný spôsob). Každá časť aplikácie, ktorú si spomenieme v tejto časti textu, a ktorú môžeme vidieť na obr. \ref{p2 p3 graph}, si opíšeme detailnejšie neskôr v následujúcoch častiach textu.
+V~tejto podkapitole si prejdeme časti aplikácie splňujúce požiadavky P2 a~P3, t.~j.~predstavenie hlavnej ponuky, bagrov, prídavných zariadení, a~takisto si z~časti ukážeme ako môže administrátor jednotlivé položky vytvárať, upravovať a~vymazovať (z~časti preto, lebo v~prípade bagrov si neskôr ukážeme aj iný spôsob). Každá časť aplikácie, ktorú si spomenieme v tejto časti textu, a ktorú môžeme vidieť na obr. \ref{p2 p3 graph}, si opíšeme detailnejšie neskôr v následujúcich častiach textu.
 
 \begin{figure}[H]\centering
 \includegraphics[width=140mm]{../img/UI concept/p2 p3 graph}
@@ -97,14 +97,14 @@ V~časti s~vylistovanými prídavnými zariadeniami (Ponuka prídavných zariade
 \label{main offer cards}
 \end{figure}
 
-Každá z~kariet by mala zobrazovať fotku reprezentujúcu danú ponuku (resp.~typ bagra, ktorý je určený kombináciou kategórie a~značky bagra ako bolo spomenuté v~požiadavke P2.1., viď~podkap.~\ref{poziadavky}). Ak užívateľ prejde kurzorom na~kartu, tak by sa mal namiesto fotky zobraziť text opisujúci danú ponuku. Každá karta by mala obsahovať tlačidlo~,,Zobraziť``, ktoré by malo užívateľa po~kliknutí presmerovať k~ponuke (nových) bagrov typu, ktorý prezentuje daná hlavná ponuka.
+Každá z~kariet by mala zobrazovať fotku reprezentujúcu danú ponuku (resp.~typ bagra, ktorý je určený kombináciou kategórie a~značky bagra ako bolo spomenuté v~požiadavke P2.1., viď~podkap.~\ref{poziadavky}). Ak užívateľ prejde kurzorom na~kartu, tak by sa mal namiesto fotky zobraziť text opisujúci danú ponuku. Každá karta by mala obsahovať tlačidlo~\uv{Zobraziť}, ktoré by malo užívateľa po~kliknutí presmerovať k~ponuke (nových) bagrov typu, ktorý prezentuje daná hlavná ponuka.
 
-\textbf{Pohľad pre~administrátorov:} Na~každej karte hlavnej ponuky by mali byť zobrazené tlačidlá ,,E`` a~,,X`` vo~vrchných rohoch kariet, a~takisto nad~vylistovanými kartami odkaz ,,Pridať novú ponuku``. Po~kliknutí na~tlačidlo ,,E`` nejakej z~hlavných ponúk by mal byť administrátor presmerovaný na~formulár vyplnený údajmi danej hlavnej ponuky, kde by mohol túto ponuku upravovať. Tlačidlo ,,X`` by malo slúžiť na~vymazanie danej hlavnej ponuky, po~kliknutí naň by sa malo zobraziť modálne potvrdzovacie okno s~nadpisom~,,Vymazať ponuku natrvalo`` a~textom \uv{Naozaj chcete túto ponuku vymazať natrvalo?}. Ďalej po~kliknutí na~odkaz ,,Pridať novú ponuku`` by mal byť administrátor presmerovaný na~prázdny formulár, kde bude môcť vytvoriť novú hlavnú ponuku.
-
+\textbf{Pohľad pre~administrátorov:} Na~každej karte hlavnej ponuky by mali byť zobrazené tlačidlá ,,E`` a~,,X`` vo~vrchných rohoch kariet, a~takisto nad~vylistovanými kartami odkaz ,,Pridať novú ponuku``. Po~kliknutí na~tlačidlo ,,E`` nejakej z~hlavných ponúk by mal byť administrátor presmerovaný na~formulár vyplnený údajmi danej hlavnej ponuky, kde by mohol túto ponuku upravovať. Tlačidlo ,,X`` by malo slúžiť na~vymazanie danej hlavnej ponuky, po~kliknutí naň by sa malo zobraziť modálne potvrdzovacie okno s~nadpisom~,,Vymazať ponuku natrvalo`` a~textom \uv{Naozaj chcete túto ponuku vymazať natrvalo?}. Ďalej po~kliknutí na~odkaz \uv{Pridať novú ponuku} by mal byť administrátor presmerovaný na~prázdny formulár, kde bude môcť vytvoriť novú hlavnú ponuku.
+\newpage
 \subsection{Vytvorenie novej a~úprava existujúcej hlavnej ponuky}
 \label{vytvorenie novej a uprava existujucej hlavnej ponuky}
 
-\textbf{Pohľad pre~administrátorov:} Ako bolo v~predošlej časti spomenuté, administrátor by mal byť schopný z~domovskej časti (časť aplikácie, kde majú byť vylistované hlavné ponuky) kliknutím na~odkaz ,,Pridať novú ponuku`` vytvoriť novú hlavnú ponuku a~kliknutím na~tlačidlo ,,E`` existujúcu hlavnú ponuku upravovať. Pre~lepšiu predstavu tejto časti viď~obr.~\ref{main offer form}.
+\textbf{Pohľad pre~administrátorov:} Ako bolo v~predošlej časti spomenuté,\linebreak administrátor by mal byť schopný z~domovskej časti (časť aplikácie, kde majú byť vylistované hlavné ponuky) kliknutím na~odkaz ,,Pridať novú ponuku`` vytvoriť novú hlavnú ponuku a~kliknutím na~tlačidlo ,,E`` existujúcu hlavnú ponuku upravovať. Pre~lepšiu predstavu tejto časti viď~obr.~\ref{main offer form}.
 
 \begin{figure}[H]\centering
 \includegraphics[width=140mm]{../img/UI concept/main offer form}
@@ -142,14 +142,14 @@ Každá z~kariet by mala mať v~pravom hornom rohu tlačidlo~,,X``, ktoré umož
 
 \begin{figure}[H]\centering
 \includegraphics[width=140mm]{../img/UI concept/additional equipment cards}
-\caption{Ponuka prídavných zariadení}
+\caption{Ponuka prídavných zariadení.}
 \label{additional equipment cards}
 \end{figure}
 
 Nad~kartami prídavných zariadení by sa mal nachádzať nadpis~,,Prídavné zariadenia``. Ďalej po~kliknutí na~nejakú z~kariet by mal byť užívateľ presmerovaný na~detail prídavného zariadenia.
 
-\textbf{Pohľad pre~administrátorov:} Vo~vrchnej časti by sa mal nachádzať odkaz~,,Pridať nové prídavné zariadenie``, ktorý by mal administrátora po~kliknutí presmerovať k~formuláru pre~vytvorenie nového prídavného zariadenia. Ďalj každá z~kariet by mala mať v~pravom hornom rohu tlačidlo~,,X``, ktoré by malo umožniť dané prídavné zariadenie vymazať. Po~kliknutí na~tlačidlo~,,X`` by sa malo zobraziť modálne potvrdzovacie okno s~nadpisom~,,Vymazať prídavné zariadenie natrvalo`` a~textom~\uv{Naozaj chcete toto prídavné zariadenie vymazať natrvalo?}.
-
+\textbf{Pohľad pre~administrátorov:} Vo~vrchnej časti by sa mal nachádzať odkaz~,,Pridať nové prídavné zariadenie``, ktorý by mal administrátora po~kliknutí presmerovať k~formuláru pre~vytvorenie nového prídavného zariadenia. Ďalej každá z~kariet by mala mať v~pravom hornom rohu tlačidlo~,,X``, ktoré by malo umožniť dané prídavné zariadenie vymazať. Po~kliknutí na~tlačidlo~,,X`` by sa malo zobraziť modálne potvrdzovacie okno s~nadpisom~,,Vymazať prídavné zariadenie natrvalo`` a~textom~\uv{Naozaj chcete toto prídavné zariadenie vymazať natrvalo?}.
+\newpage
 \subsection{Detail bagra, prídavného zariadenia}
 \label{detail bagra pridavneho zariadenia}
 
@@ -166,7 +166,7 @@ V~tejto časti by sa mali nachádzať fotky predmetu (klikaním na~tlačidlá š
 \textbf{Pohľad pre~zákazníkov:} V~tejto časti by sa malo nachádzať tlačidlo~,,Dopyt``. Po~kliknutí naň by sa mal zobraziť formulár, ktorým bude môcť užívateľ odoslať dopyt na~daný predmet. Po~opätovnom kliknutí na~tlačidlo by sa mal formulár zatvoriť.
 
 \textbf{Pohľad pre~administrátorov:} V~hornej časti by sa malo nachádzať tlačidlo~,,Upraviť``. Po~kliknutí naň by mal byť administrátor presmerovaný na~formulár vybraného bagra (resp.~prídavného zariadenia). Pomocou formulára by mal byť administrátor schopný daný bager (resp.~prídavné zariadenie) upravovať.
-
+\newpage
 \subsection{Dopyt}
 \label{dopyt}
 
@@ -182,7 +182,7 @@ Povinné pole správa.
 Povinné polia by mali byť označené hviezdičkou.
 
 Ďalej by mal formulár obsahovať tlačidlo~,,Odoslať``, ktoré by malo zákazníkovi umožniť odoslanie dopytu. Ak by boli po~kliknutí na~tlačidlo~,,Odoslať`` povinné údaje nevyplnené, tak by mala na~to aplikácia užívateľa upozorniť chybovými správami pri~jednotlivých poliach.
-
+\newpage
 \subsection{Vytvorenie nového a úprava existujúceho bagra}
 \label{vytvorenie noveho a uprava existujuceho bagra}
 
@@ -200,7 +200,7 @@ Obidve časti by mali obsahovať formulár umožňujúci vloženie viacerých fo
 
 Navyše po~vložení by sa mali fotky a~ich počet zobraziť vo~formulári. V~pravom hornom rohu každej zobrazenej fotky by sa malo nachádzať tlačidlo~,,X``, ktorým by mal byť administrátor schopný fotku odstrániť.
 
-Formulár by taktiež mal obsahovať tlačidlá ,,Uložiť`` (na~uloženie bagra) a~,,Reset`` (na~vyprázdenie formulára). Ak by boli po~kliknutí na~tlačidlo~,,Uložiť`` povinné údaje nevyplnené, tak by mal na~to systém administrátora upozorniť prostrednictvom chybových správ pri~jednotlivých poliach.
+Formulár by mal taktiež obsahovať tlačidlá ,,Uložiť`` (na~uloženie bagra) a~,,Reset`` (na~vyprázdenie formulára). Ak by boli po~kliknutí na~tlačidlo~,,Uložiť`` povinné údaje nevyplnené, tak by mal na~to systém administrátora upozorniť prostrednictvom chybových správ pri~jednotlivých poliach.
 
 Navyše nad~formulárom by mal byť v~prípade vytvárania nového bagra nadpis ,,Bagre~-- vytvorenie nového záznamu``. V~prípade úpravy existujúceho bagra by tam mal byť nadpis ,,Bagre~-- úprava existujúceho záznamu``.
 
@@ -209,7 +209,7 @@ Navyše nad~formulárom by mal byť v~prípade vytvárania nového bagra nadpis 
 \textbf{Pohľad pre~administrátorov:} V~predošlom texte bolo napísané, že administrátor by sa mal byť schopný dostať cez~karty hlavných ponúk k~ponuke (nových) bagrov a~cez nich k~detailu bagra, kde môže kliknutím na~tlačidlo~,,Upraviť`` upravovať daný bager. Ale ak by administrátor vytvoril bager typu, pre~ktorý neexistuje hlavná ponuka alebo~bager určený iba pre~aukciu, tak by sa bager nezobrazoval medzi ponukou (nových) bagrov.
 
 Preto by mala byť pre~takéto bagre (a~tiež pre~položky s~podobným problémom) vyhradená osobitná časť aplikácie, kde ich bude môcť administrátor spravovať (t.~j.~vytvárať, upravovať a~mazať). Viac o~tejto časti aplikácie v~podkapitole~\ref{splnenie p5 p7 a sprava predmetov}.
-
+\newpage
 \subsection{Vytvorenie nového a úprava existujúceho prídavného zariadenia}
 \label{vytvorenie noveho a uprava existujuceho pridavného zariadenia}
 
@@ -223,7 +223,7 @@ Preto by mala byť pre~takéto bagre (a~tiež pre~položky s~podobným problémo
 
 Podobne kliknutím na~tlačidlo~,,Upraviť``, ktoré by sa malo nachádzať v~časti s~detailom prídavného zariadenia, by mal byť administrátor presmerovaný do~časti aplikácie, kde by mal byť schopný upravovať dané prídavné zariadenie. Ako uvidíme v~následujúcom opise, obe časti aplikácie (časť pre~vytváranie a~časť pre~upravovanie prídavného zariadenia) sú si veľmi podobné.
 
-Obe časti by mali obsahovať formulár umožňujúci vloženie viacerých fotiek, vybranie kategórie bagrov (pre~ktoré je prídavné zariadenie určené), vybranie jeho kategórie, vybranie značky, a~takisto zadanie názvu a~popisu prídavného zariadenia. Okrem popisu sú všetky údaje povinné. Navyše po~vložení by sa mali fotky a~ich počet zobraziť vo~formulári. V~pravom hornom rohu každej zobrazenej fotky by sa malo nachádzať tlačidlo~,,X``, ktorým môže administrátor fotku odstrániť.
+Obe časti by mali obsahovať formulár umožňujúci vloženie viacerých fotiek, vybranie kategórie bagrov (pre~ktoré je prídavné zariadenie určené), vybranie jeho kategórie, vybranie značky, a~takisto zadanie názvu a~popisu prídavného zariadenia. Okrem popisu sú všetky údaje povinné. Navyše po~vložení by sa mali fotky a~ich počet zobraziť vo~formulári. V~pravom hornom rohu každej zobrazenej fotky by sa malo nachádzať tlačidlo~,,X``, ktorým by mohol administrátor fotku odstrániť.
 
 Formulár by mal taktiež obsahovať tlačidlá ,,Uložiť`` (na~uloženie prídavného zariadenia) a~,,Reset`` (na~vyprázdenie formulára). Ak by boli po~kliknutí na~tlačidlo~,,Uložiť`` povinné údaje nevyplnené, tak by mal na~to systém administrátora upozorniť prostrednictvom chybových správ pri~jednotlivých poliach.
 
@@ -296,7 +296,7 @@ Povinné pole pre~ponúkanú sumu.
 Povinné polia by mali byť označené hviezdičkou. Navyše má platiť, že prvá zákazníkom ponúknutá suma môže byť rovná počiatočnej sume, ale nasledujúce ponúkané sumy musia mať medzi sebou rozdiel aspoň 100~eur.
 
 Ďalej by mal formulár obsahovať tlačidlo~,,Ponúknuť``, ktoré by malo zákazníkovi umožniť ponúknutie sumy do~dražby daného bagra. Ak by boli po~kliknutí na~tlačidlo~,,Ponúknuť`` povinné údaje nevyplnené~alebo ak by boli ich hodnoty neplatné, tak by mala na~to aplikácia užívateľa upozorniť chybovými správami pri~jednotlivých poliach.
-
+\newpage
 \subsection{Vytvorenie novej a úprava existujúcej aukčnej ponuky}
 \label{vytvorenie novej a uprava existujucej aukcnej ponuky}
 
@@ -312,7 +312,7 @@ Podobne kliknutím na~tlačidlo~,,Upraviť``, ktoré by sa malo nachádzať v~č
 
 Časť aplikácie pre~vytváranie novej aukčnej ponuky, ale takisto aj časť pre~u\-pra\-vo\-va\-nie existujúcej aukčnej ponuky, by mali obsahovať formulár umožňujúci vloženie počiatočnej (vyvolávacej) ceny draženého bagra, dátumu konca dražby, popisu (napr.~aké časti boli v~bagri opravované), a~takisto by mal formulár obsahovať možnosť výberu bagra do~dražby. Údaj o~bagri je povinný, dátum konca dražby nesmie obsahovať dátum v~minulosti a~počiatočná cena nesmie byť záporná.
 
-Formulár by mal taktiež obsahovať tlačidlo~,,Reset`` na~vyprázdenie formulára. Okrem tlačidla~,,Reset`` by mal formulár obsahovať aj tlačidlo ,,Uložiť`` (na~uloženie aukčnej ponuky) ak sa vytvára nová aukčná ponuka alebo upravuje existujúca aukčná ponuka, ktorá je ešte stále aktívna (t.~j.~stále prebieha dražba). V~prípade, že by administrátor upravoval existujúcu aukčnú ponuku, ktorá už nie je aktívna, pretože stroj bol vydražený, tak by sa malo zobraziť tlačidlo~,,Uložiť a~spustiť odznova``. Toto správanie je vyžadované preto, lebo ak by výherca dražby z~nejakého dôvodu nesúhlasil s~prevzatím bagra, administrátor by mohol kliknutím na~tlačidlo~,,Uložiť a~spustiť odznova`` celú dražbu odštartovať odznova (teda ako novo vytvorenú, bez účastníkov a~ich ponúknutých súm). Ak by boli pri ukladaní povinné údaje nevyplnené~alebo by boli ich hodnoty neplatné, tak by mal na~to systém administrátora upozorniť prostrednictvom chybových správ pri~jednotlivých poliach.
+Formulár by mal taktiež obsahovať tlačidlo~,,Reset`` na~vyprázdenie formulára. Okrem tlačidla~,,Reset`` by mal formulár obsahovať aj tlačidlo ,,Uložiť`` (na~uloženie aukčnej ponuky) ak sa vytvára nová aukčná ponuka alebo upravuje existujúca aukčná ponuka, ktorá je ešte stále aktívna (t.~j.~stále prebieha dražba). V~prípade, že by administrátor upravoval existujúcu aukčnú ponuku, ktorá už nie je aktívna, pretože bager bol vydražený, tak by sa malo zobraziť tlačidlo~,,Uložiť a~spustiť odznova``. Toto správanie je vyžadované preto, lebo ak by výherca dražby z~nejakého dôvodu nesúhlasil s~prevzatím bagra, administrátor by mohol kliknutím na~tlačidlo~,,Uložiť a~spustiť odznova`` celú dražbu odštartovať odznova (teda ako novo vytvorenú, bez účastníkov a~ich ponúknutých súm). Ak by boli pri ukladaní povinné údaje nevyplnené~alebo by boli ich hodnoty neplatné, tak by mal na~to systém administrátora upozorniť prostrednictvom chybových správ pri~jednotlivých poliach.
 
 Navyše nad~formulárom by mal byť v~prípade vytvárania novej aukčnej ponuky nadpis ,,Aukčné ponuky~-- vytvorenie nového záznamu``. V~prípade úpravy existujúcej aukčnej ponuky by mal byť nadpis ,,Aukčné ponuky~-- úprava existujúceho záznamu``.
 
@@ -376,7 +376,7 @@ Sekcia~\uv{Kontakt} by mala obsahovať tabuľku s~kontaktom (telefónne číslo 
 \section{Splnenie P5, P7 a~správa predmetov}
 \label{splnenie p5 p7 a sprava predmetov}
 
-\textbf{Pohľad pre~administrátorov:} Po~kliknutí na~odkaz~,,Správa webu`` v~navigácii, ktorý by mal byť viditeľný iba pre~administrátorov, by mal byť administrátor presmerovaný do~sekcie Správa webu (viď~hranu~1 na~obr.~\ref{p5 p7 a sprava predmetov graph}). Tá by mala vyzerať následovne: v~hornej časti by sa mal nachádzať panel s~kartami, ktorými by sa mal byť administrátor schopný preklikávať (viď hrany 2 až 9 na obr. \ref{p5 p7 a sprava predmetov graph}), a~pod~panelom by sa mal nachádzať obsah podľa toho, na~akej karte sa administrátor nachádza.
+\textbf{Pohľad pre~administrátorov:} Po~kliknutí na~odkaz~,,Správa webu`` v~navigácii, ktorý by mal byť viditeľný iba pre~administrátorov, by mal byť\linebreak administrátor presmerovaný do~sekcie Správa webu (viď~hranu~1 na~obr.~\ref{p5 p7 a sprava predmetov graph}). Tá by mala vyzerať následovne: v~hornej časti by sa mal nachádzať panel s~kartami, ktorými by sa mal byť administrátor schopný preklikávať (viď hrany 2 až~9 na~obr.~\ref{p5 p7 a sprava predmetov graph}), a~pod~panelom by sa mal nachádzať obsah podľa toho, na~akej karte sa administrátor nachádza.
 
 \begin{figure}[H]\centering
 \includegraphics[width=140mm]{../img/UI concept/p5 p7 a sprava predmetov graph}
@@ -387,7 +387,7 @@ Sekcia~\uv{Kontakt} by mala obsahovať tabuľku s~kontaktom (telefónne číslo 
 Po príchode do~tejto časti by sa mala administrátorovi zobraziť prvá karta~-- ,,Správy`` (viď~hranu~2 na~obr.~\ref{p5 p7 a sprava predmetov graph}). Okrem tejto karty by sa mal byť administrátor schopný prekliknúť na karty: ,,Náhradné diely`` (hrana~3 na~obr.~\ref{p5 p7 a sprava predmetov graph}), ,,Bagre`` (hrana~4 na~obr.~\ref{p5 p7 a sprava predmetov graph}), ,,Typy bagrov`` (hrana~5 na~obr.~\ref{p5 p7 a sprava predmetov graph}), ,,Typy vlastností bagrov`` (hrana~6 na~obr.~\ref{p5 p7 a sprava predmetov graph}), ,,Kategórie a~značky bagrov`` (hrana~7 na~obr.~\ref{p5 p7 a sprava predmetov graph}), ,,Kategórie a~značky prídavných zariadení`` (hrana~8 na~obr.~\ref{p5 p7 a sprava predmetov graph}).
 
 Na~karte~,,Správy`` by mali byť vylistované konverzácie. Po~kliknutí na~nejakú z~konverzácií by sa mala administrátorovi zobraziť konverzácia (viď~hranu~9 na~obr.~\ref{p5 p7 a sprava predmetov graph}). Ak by bola konverzácia odoslaná z~našeho systému, malo by byť v~tejto konverzácii vložené prepojenie do~časti aplikácie z~ktorej bola správa odoslaná (viď~hranu~10 na~obr.~\ref{p5 p7 a sprava predmetov graph}). Mohla by to byť časť aplikácie s~detailom bagra, detailom prídavného zariadenia, detailom aukčnej ponuky alebo~sekcia Služby. Okrem toho by sa mal byť administrátor schopný dostať z~karty~,,Správy`` (pomocou tlačidla~,,Nastavenia``, ktoré by sa malo na~karte nachádzať) do~časti aplikácie s~nastaveniami automaticky generovaných správ (viď~hranu~11 na~obr.~\ref{p5 p7 a sprava predmetov graph}).
-
+\newpage
 \subsection{Karta Správy~-- schránka}
 \label{karta spravy schranka}
 
@@ -401,7 +401,7 @@ Na~karte~,,Správy`` by mali byť vylistované konverzácie. Po~kliknutí na~nej
 
 V~schránke by mali byť vylistované konverzácie (vlákna správ) zhora dole od~najnovšej po~najstrašiu. Každá takáto konverzácia by mala byť reprezentovaná riadkom, v~ktorom by malo byť uvedené meno odosielateľa, predmet a~text poslednej správy (resp.~jeho začiatok v~prípade dlhšieho textu), a~dátum poslednej správy (emailu v~konverzácii). Vedľa každého riadka konverzácie by malo byť začiarkovacie políčko, ktorým vieme konverzáciu označiť. Po~kliknutí na~nejaký z~riadkov by sa mala administrátorovi zobraziť vybraná konverzácia.
 
-Vylistované konverzácie by mali byť stránkované (max.~osem konverzácii na~stránku). Pod~vylistovanými konverzáciami by malo byť tlačidlo~\uv{<<}, ktoré by malo byť schopné presunúť administrátora na~prvú stranu vylistovaných konverzácií, tlačidlo~\uv{<}, ktoré by malo byť schopné presunúť administrátora o~jednu stranu dopredu a~tlačidlá~\uv{>}, \uv{>>}, ktoré by mali fungovať analogicky (lenže na~opačnú stranu). Ak by sa administrátor nachádzal na~prvej strane, tak tlačidlá \uv{<<} a \uv{<} by nemali byť aktívne (nemalo by sa na ne dať kliknúť). Podobne ak by sa administrátor nachádzal na~poslednej strane, tlačidlá \uv{>} a \uv{>>} by nemali byť aktívne.
+Vylistované konverzácie by mali byť stránkované (max.~osem konverzácii na~stránku). Pod~vylistovanými konverzáciami by malo byť tlačidlo~\uv{<<}, ktoré by malo byť schopné presunúť administrátora na~prvú stranu vylistovaných konverzácií, tlačidlo~\uv{<}, ktoré by malo byť schopné presunúť administrátora o~jednu stranu dopredu a~tlačidlá~\uv{>}, \uv{>>}, ktoré by mali fungovať analogicky (lenže na~opačnú stranu). Ak by sa administrátor nachádzal na~prvej strane, tak tlačidlá \uv{<<} a \uv{<} by nemali byť aktívne (nemalo by sa na ne dať kliknúť). Podobne ak by sa administrátor nachádzal na~poslednej strane, tlačidlá \uv{>} a~\uv{>>} by nemali byť aktívne.
 
 Nad~vylistovanými konverzáciami by mal byť nadpis~,,Správy`` a~tlačidlo~,,Nastavenia``, ktorým by sa mal byť administrátor schopný dostať do~časti aplikácie s~nastaveniami automaticky generovaých správ. Ďalej pod~nadpisom by malo byť začiarkovacie políčko, ktorým by mal byť administrátor schopný začiarknúť (označiť) všetky konverzácie na~aktuálnej strane. Okrem tohto začiarkovacieho políčka, by tam malo byť tlačidlo~,,Obnoviť`` a~ak by bola označená aspoň jedna konverzácia, tak potom by mali byť viditeľné aj tlačidlá~,,Vymazať`` a~,,Označiť ako prečítané`` alebo~,,Označiť ako neprečítané``.
 
@@ -440,11 +440,11 @@ Každá z~takýchto častí by mala obsahovať názov automaticky generovanej sp
 Tag by mal mať tvar ,,\#\{názov tagu\}``, kde názov tagu by mal obsahovať iba písmená a~znak ,,\_``. Pomocou tagov by mal byť administrátor schopný špecifikovať kde sa má v~texte (reps.~predmete) automaticky generovanej správy nachádzať konkrétna hodnota špecifikovaná tagom. Napr.~ak by sme použili vetu~,,Gratulujeme, vyhrali ste \#nazov\_stroja`` ako šablónu predmetu, tak email, ktorý by prišiel užívateľovi by mohol vyzerať takto:~,,Gratulujeme, vyhrali ste Stroj123`` (ak by bol názov výherného stroja ,,Stroj123``).
 
 Každá z~automaticky generovaných správ by mala mať predvolený text, ktorý by mal byť administrátor schopný prepísať pomocou šablón. Ak by neboli definované vlastné šablóny, mali by sa využívať predvolené, a~preto by sa mali v~spomínaných poliach pre~predmet a~text zobrazovať predvolené šablóny. Ak by boli predvolené šablóny prepísané a~neskôr vymazané, tak polia by sa mali znova napĺniť predvolenými hodnotami. Ďalej pod~poliami by sa mali nachádzať tlačidlá~,,Uložiť`` (pre~uloženie šablón) a~,,Reset`` (pre~navrátenie k~predvoleným hodnotám).
-
+\newpage
 \subsection{Karta Náhradné diely}
 \label{karta nahradne diely}
 
-\textbf{Pohľad pre~administrátorov:} Po prekliknutí na kartu \uv{Náhradné diely} v sekcii Správa webu by sa mala administrátorovi zobraziť časť aplikácie, kde by mal byť schopný spravovať (vytvárať, upravovať a mazať) náhradné diely. Pre lepšiu predstavu tejto časti viď obr. \ref{spare parts management}.
+\textbf{Pohľad pre~administrátorov:} Po prekliknutí na kartu \uv{Náhradné diely} v~sekcii Správa webu by sa mala administrátorovi zobraziť časť aplikácie, kde by mal byť schopný spravovať (vytvárať, upravovať a mazať) náhradné diely. Pre~lepšiu predstavu tejto časti viď obr. \ref{spare parts management}.
 
 \begin{figure}[H]\centering
 \includegraphics[width=140mm]{../img/UI concept/spare parts management}
@@ -471,16 +471,16 @@ Navyše záznamy v tabuľke by mali byť stránkované. Maximálny povolený po�
 \subsection{Karty Bagre, Typy bagrov, Typy vlastností bagrov}
 \label{karty bagre typy bagrov typy vlastnosti bagrov}
 
-\textbf{Pohľad pre~administrátorov:} Tak ako by sa mal byť administrátor schopný prekliknúť na kartu Náhradné diely, tak by sa mal byť schopný prekliknúť aj na karty Bagre, Typy bagrov alebo Typy vlastností bagrov. Všetky tieto karty by mali byť skoro totožné s kartou Náhradné diely, ktorá bola opísaná v časti \ref{karta nahradne diely}. Líšiť by sa mali len v~nadpise (ktorý by sa mal nachádzať nad tabuľkou), v~stĺpcoch tabuľky (pochopiteľne aj stĺpcami, ktoré nie sú určené pre vyhľadávanie), pričom tabuľka na každej karte by mala obsahovať stĺpec pre akcie rovnako ako bolo spomenuté v opise karty Náhradné diely (viď v časti \ref{karta nahradne diely}). Takisto by sa mali líšiť aj formulárom pre vytvorenie alebo~úpravu záznamu. Teraz si prejdeme jednotlivé karty a detailnejšie opíšeme zmeny oproti karte Náhradné diely.
+\textbf{Pohľad pre~administrátorov:} Tak ako by sa mal byť administrátor schopný prekliknúť na kartu Náhradné diely, tak by sa mal byť schopný prekliknúť aj na~karty Bagre, Typy bagrov alebo Typy vlastností bagrov. Všetky tieto karty by mali byť skoro totožné s kartou Náhradné diely, ktorá bola opísaná v časti \ref{karta nahradne diely}. Líšiť by sa mali len v~nadpise (ktorý by sa mal nachádzať nad tabuľkou), v~stĺpcoch tabuľky (pochopiteľne aj stĺpcami, ktoré nie sú určené pre vyhľadávanie), pričom tabuľka na každej karte by mala obsahovať stĺpec pre akcie rovnako ako bolo spomenuté v opise karty Náhradné diely (viď v časti \ref{karta nahradne diely}). Takisto by sa mali líšiť aj formulárom pre vytvorenie alebo~úpravu záznamu. Teraz si prejdeme jednotlivé karty a detailnejšie opíšeme zmeny oproti karte Náhradné diely.
 
 \begin{itemize}
 \item \textbf{Karta Bagre}
 
 Na~tejto karte by mal byť zobrazený nadpis~\uv{Správa bagrov} a~tabuľka obsahujúca stĺpce pre názov, kategóriu a značku bagra, a takisto údaj, či je bager určený iba pre aukciu. Nemalo by sa dať vyhľadávať podľa stĺpca, ktorý udáva, či je bager určený iba pre aukciu. Formulár pre vytvorenie, úpravu bagra by mal byť totožný s formulárom spomenutým v časti \ref{vytvorenie noveho a uprava existujuceho bagra} (formulár môžeme vidieť na~obr.~\ref{excavator form}, pričom nadpis nad formulárom by nemal byť súčasťou formulára).
-
+\newpage
 \item \textbf{Karta Typy bagrov}
 
-Táto karta by mala obsahovať nadpis~\uv{Správa typov bagrov} a tabuľku, ktorá by mala obsahovať stĺpce pre značku a kategóriu bagra, a taktiež počet bagrov daného typu. Nemalo by sa dať vyhľadávať podľa stĺpca pre počet bagrov. Pre lepšiu predstavu formulára pre vytvorenie, úpravu typu bagra viď~obr.~\ref{excavator type form}.
+Táto karta by mala obsahovať nadpis~\uv{Správa typov bagrov} a~tabuľku, ktorá by mala obsahovať stĺpce pre značku a kategóriu bagra, a~taktiež počet bagrov daného typu. Nemalo by sa dať vyhľadávať podľa stĺpca pre~počet bagrov. Pre lepšiu predstavu formulára pre vytvorenie, úpravu typu bagra viď~obr.~\ref{excavator type form}.
 
 \begin{figure}[H]\centering
 \includegraphics[width=140mm]{../img/UI concept/excavator type form}
@@ -533,7 +533,7 @@ Nad tabuľkou by sa mal nachádzať nadpis~\uv{Správa kategórií bagrov}. Tabu
 \end{figure}
 
 Formulár by mal obsahovať pole pre názov kategórie bagra (údaj je povinný). Ďalej by sa mali v spodnej časti formulára nachádzať tlačidlá \uv{Uložiť} (pre uloženie záznamu) a~\uv{Reset} (pre vyprázdenie formulára). Ak by bolo po~kliknutí na~tlačidlo \uv{Uložiť} pole prázdne, tak by na to mala aplikácia upozorniť odpovedajúcou chybovou správou.
-
+\newpage
 \item \textit{Správa značiek bagrov}
 
 Nad tabuľkou by sa mal nachádzať nadpis~\uv{Správa značiek bagrov}. V~tabuľke by mali byť stĺpce pre názov značky a~počet bagrov danej značky. Nemalo by sa dať vyhľadávať podľa počtu bagrov danej značky. Pre~lepšiu predstavu formulára pre vytvorenie, úpravu značky bagra viď~obr.~\ref{excavator brand form}.
@@ -568,7 +568,7 @@ Nad tabuľkou by sa mal nachádzať nadpis~\uv{Správa značiek prídavných zar
 V~tejto podkapitole si prejdeme časti aplikácie spĺňajúce požiadavku P6, t.~j.~umožnenie užívateľom registrovať a~prihlásiť sa do~systému (pričom administrátori sa majú prihlasovať rovnakým spôsobom ako bežní zákazníci), umožnenie zmeny údajov v~profile, zjednodušenie prihláseným užívateľom vypĺňanie formulárov (aby nemuseli zadávať svoje osobné údaje), umožnenie neprihláseným užívateľom posielať dopyty a~účastniť sa aukčných dražieb.
 
 V~častaiach~\ref{dopyt}, \ref{ponukanie sumy do drazby} a~\ref{splnenie p8} už bolo spomenuté, že aj prihlásení, aj neprihlásení užívatelia by mali byť schopní dopytovať sa na~bager, prídavné zariadenie, výkopovú službu alebo~takisto ponúkať sumy do~dražby (teda zapájať sa do~aukcie). Pričom prihláseným užívateľom by sa nemali zobrazovať polia s~osobnými údajmi (nemusia ich vypĺňať). Tým pádom sú požiadavky zjednodušenie vypĺňania formulárov prihlásenými užívateľmi, umožnenie posielania dopytov neprihláseným užívateľom a~umožnenie účasti v~aukcii neprihláseným užívateľom splnené.
-
+\newpage
 \subsection{Prihlasovací panel}
 
 \textbf{Spoločný pohľad:} V~ľavej časti aplikácie nad~navigáciou by sa mal nachádzať prihlasovací panel. Pre~lepšiu predstavu umiestnenia panela viď~obr~\ref{layout}) a~pre~lepšiu predstavu samotného panela, spolu s~prihlasovacím a~registračným formulárom, viď~obr.~\ref{auth}.
@@ -601,7 +601,7 @@ Formulár by mal vo vrchnej časti obsahovať nadpis \uv{Prihlásenie}, pod ním
 
 V hornej časti formulára by sa mal nachádzať nadpis \uv{Registrácia}. Formulár by mal obsahovař povinné polia prihlasovacie meno, heslo, znova heslo, meno, priezvisko, email a nepovinné polia telefónne číslo a mesto. Ak by užívateľ začal písať do~poľa heslo alebo~znova heslo, namiesto písmen by sa mu mali zobrazovať hviezdičky. Pri~týchto poliach by mali byť ikonky pre zobrazenie/schovanie hesla. Ak by užívateľ klikol na ikonku, namiesto hviezdičiek by sa mu mali zobraziť písmená (opätovným kliknutím opäť hviezdičky). Teda išlo by o~funkcionalitu zobraziť a~schovať heslo. Formulár by mal takisto obsahovať upozornenie, že registráciou užívateľ súhlasí s podmienkami a zásadami systému. Upozornenie by malo zároveň odkazovať na časti aplikácie s podmienkami používania a so zásadami ochrany osobných údajov, ktoré boli spomenuté v podkap. \ref{gdpr}. V spodnej časti formulára by sa malo nachádzať tlačidlo \uv{Registrovať}, ktorým by sa užívateľ mal byť schopný zaregistrovať do systému. Po úspešnej registrácii by mal byť užívateľ presmerovaný do sekcie Hlavná ponuka.
 
-Ak by po kliknutí na tlačidlo \uv{Registrovať} nebola hodnota nejakého z polí validná (napr. absencia hodnoty v povinnom poli), mala by sa pri takomto poli zobraziť vhodná chybová správa. Zároveň obsah políčok heslo a znova heslo by mal byť rovnaký. V prípade, že by rovnaký nebol a užívateľ by klikol na tlačidlo \uv{Registrovať}, tak by sa malo zobraziť vyskakovacie okno s~textom~\uv{Obsah políčok \'Heslo\' a \'Znova heslo\' nie sú rovnaké.} a~tlačidlom~,,OK``.
+Ak by po kliknutí na tlačidlo \uv{Registrovať} nebola hodnota nejakého z polí validná (napr. absencia hodnoty v povinnom poli), mala by sa pri takomto poli zobraziť vhodná chybová správa. Zároveň obsah políčok heslo a znova heslo by mal byť rovnaký. V prípade, že by rovnaký nebol a užívateľ by klikol na tlačidlo \uv{Registrovať}, tak by sa malo zobraziť vyskakovacie okno s~textom~\uv{Obsah políčok 'Heslo' a 'Znova heslo' nie sú rovnaké.} a~tlačidlom~,,OK``.
 
 \subsection{Profil}
 \label{profil}
@@ -620,6 +620,6 @@ Všetky polia, až na~polia heslo a~znova heslo, by mali byť vyplnené užívat
 
 Pod~formulárom by sa malo nachádzať tlačidlo~,,Uložiť`` pre~uloženie zmien. Ak by neboli vykonané žiadne zmeny, tak po~kliknutí na~tlačidlo~,,Uložiť`` by sa malo zobraziť vyskakovacie okno s~textom \uv{Neboli vykonané žiadne zmeny.} a~tlačidlom ,,OK``. Ak by užívateľ zinvalidoval nejaké z~polí (napr.~zanechá prázdne povinné pole), mala by sa zobraziť chybová správa pri~danom poli. Výnimkou sú polia heslo a~znova heslo~-- aj napriek tomu, že sú povinné, tak môžu ostať prázdne.
 
-Ak by si chcel užívateľ zmeniť heslo, musel by vyplniť obe polia, a~ak by obsah polí nebol rovnaký, tak by sa malo zobraziť vyskakovacie okno s~textom~\uv{Obsah políčok \'Nové heslo\' a~\'Znova heslo\' nie sú rovnaké.} a~tlačidlom ,,OK``. Alebo ak by si chcel užívateľ zmeniť heslo a~zadal by staré heslo, tak znova by sa malo zobraziť vyskakovacie okno s~textom~\uv{Nové heslo nemôže byť staré heslo.} a~tlačidlom~,,OK``. Po úspešnej zmene údajov by sa malo zobraziť vyskakovacie okno s~textom~\uv{Údaje úspešne zmenené.} a~tlačidlom ,,OK``.
+Ak by si chcel užívateľ zmeniť heslo, musel by vyplniť obe polia, a~ak by obsah polí nebol rovnaký, tak by sa malo zobraziť vyskakovacie okno s~textom~\uv{Obsah políčok 'Nové heslo' a~'Znova heslo' nie sú rovnaké.} a~tlačidlom ,,OK``. Alebo ak by si chcel užívateľ zmeniť heslo a~zadal by staré heslo, tak znova by sa malo zobraziť vyskakovacie okno s~textom~\uv{Nové heslo nemôže byť staré heslo.} a~tlačidlom~,,OK``. Po úspešnej zmene údajov by sa malo zobraziť vyskakovacie okno s~textom~\uv{Údaje úspešne zmenené.} a~tlačidlom ,,OK``.
 
 Okrem toho by sa mali v spodnej ľavej časti formulára nachádzať tlačidlá~\uv{Export dát} a~\uv{Zmazať účet}. Po~kliknutí na~tlačidlo~\uv{Export dát} by sa mali užívateľovi sťiahnuť údaje (v~textovej forme), ktoré má o ňom systém uložené. Po~kliknutí na~tlačidlo~\uv{Zmazať účet} by sa malo zobraziť modálne potvrdzovacie okno s~nadpisom~\uv{Vymazať svoj účet natrvalo} a~textom \uv{POZOR! Naozaj chcete vymazať svoj účet so všetkými svojimi dátami?}. Tieto obe tlačidlá by mali existovať z dôvodu prípravy na splnenie GPDR (spomenuté v podkap. \ref{gdpr}).
