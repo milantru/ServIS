@@ -5,4 +5,6 @@ The application should be able to show various company offers and enable users t
 The auction of the repaired excavators should also be part of the application.
 The mentioned features should be available for both registered and unregistered users. However the registered users will have some advantages (e.g. pre-filled forms).
 
+## Poster (in Slovak)
+
 ![Poster](./docs/Poster.png)
