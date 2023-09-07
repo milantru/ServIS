@@ -196,9 +196,9 @@
 
 		if (User.Username != currentUsername)
 		{
-			/* It's new user or existing user has changed username, so now we have to check 
-				* if the user is not picking someone elses username. The username must be unique 
-				* (because it's used for auth) */
+			/* It doesn't matter whether it's either a new user or just an existing user that has changed his/her username, 
+			 * we have to check if the user is not picking someone elses username. The username must be unique 
+			 * (because it's used for auth). */
 			var user = await api.GetUserAsync(User.Username);
 			if (user is not null)
 			{
