@@ -69,7 +69,10 @@ namespace ServISData
 				.AddUserSecrets("de01772f-834a-40d3-86af-a1dcae8ee4d4")
 				.Build();
 
-			return config.GetConnectionString("Default");
+			var connectionString = config.GetConnectionString("Default") ?? 
+				Environment.GetEnvironmentVariable("ConnectionStrings__Default");
+
+			return connectionString!;
 		}
 
         /// <summary>

@@ -1,0 +1,22 @@
+FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
+WORKDIR /app
+EXPOSE 80
+EXPOSE 443
+
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+WORKDIR /src
+COPY . .
+# RUN dotnet tool install --global dotnet-ef --version 6.0.6
+# ENV PATH="$PATH:/root/.dotnet/tools"
+# ARG CONNECTION_STRING
+# ENV ConnectionStrings__Default=$CONNECTION_STRING
+# RUN dotnet ef database update --project=ServISData
+RUN dotnet build -c Release -o /app/build
+
+FROM build AS publish
+RUN dotnet publish -c Release -o /app/publish "ServIS.sln"
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "ServISWebApp.dll"]

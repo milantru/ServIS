@@ -1,0 +1,29 @@
+volumes:
+  datafiles:
+
+services:
+  db:
+    image: mysql:8.0.3
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_ROOT_HOST: ${DB_ROOT_HOST}
+    volumes:
+      - datafiles:/var/lib/mysql
+    ports:
+      - "${DB_PORT}:3306"
+    restart: always
+
+  servisapp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        CONNECTION_STRING: "server=${DB_SERVER};port=${DB_PORT};user=${DB_USER};database=${DB_DATABASE};password=${DB_PASSWORD};SSL Mode=None"
+    depends_on:
+      - db
+    ports:
+      - "${APP_PORT}:80"
+    restart: always
+    environment:
+      - ConnectionStrings__Default=server=${DB_SERVER};port=${DB_PORT};user=${DB_USER};database=${DB_DATABASE};password=${DB_PASSWORD};SSL Mode=None
