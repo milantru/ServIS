@@ -6,11 +6,6 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY . .
-# RUN dotnet tool install --global dotnet-ef --version 6.0.6
-# ENV PATH="$PATH:/root/.dotnet/tools"
-# ARG CONNECTION_STRING
-# ENV ConnectionStrings__Default=$CONNECTION_STRING
-# RUN dotnet ef database update --project=ServISData
 RUN dotnet build -c Release -o /app/build
 
 FROM build AS publish
