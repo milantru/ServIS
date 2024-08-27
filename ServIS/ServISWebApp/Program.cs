@@ -109,7 +109,7 @@ internal class Program
         app.UseRequestLocalization("sk");
 
         // Register Syncfusion license
-        var syncfusionLicenceKey = builder.Configuration["SyncfusionLicenseKey"];
+        var syncfusionLicenceKey = builder.Configuration["SyncfusionLicenceKey"];
         SyncfusionLicenseProvider.RegisterLicense(syncfusionLicenceKey);
 
         // Apply migration
