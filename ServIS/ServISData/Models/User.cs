@@ -1,4 +1,5 @@
-﻿using ServISData.Interfaces;
+﻿using ServISData.Attributes;
+using ServISData.Interfaces;
 using System.ComponentModel.DataAnnotations;
 
 namespace ServISData.Models
@@ -22,7 +23,7 @@ namespace ServISData.Models
 		[Required(ErrorMessage = "Toto pole je povinné."), StringLength(35, ErrorMessage = "Max {1} znakov.")]
 		public string Surname { get; set; } = null!;
 
-		[Phone(ErrorMessage = "Telefónne číslo nie je validné.")]
+		[PhoneOptional(ErrorMessage = "Telefónne číslo nie je validné.")]
 		public string? PhoneNumber { get; set; }
 
 		[Required(ErrorMessage = "Toto pole je povinné."), EmailAddress(ErrorMessage = "Email nie je validný.")]
