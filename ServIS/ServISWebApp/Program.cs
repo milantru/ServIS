@@ -71,7 +71,19 @@ internal class Program
         builder.Services.AddDbContextFactory<ServISDbContext>(options =>
         {
             var connectionString = ServISDbContextFactory.GetConnectionString();
-            options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+
+			options.UseMySql(
+				connectionString,
+				new MySqlServerVersion(new Version(8, 0, 23)),
+				mysqlOptions =>
+				{
+					mysqlOptions.EnableRetryOnFailure(
+						maxRetryCount: 5,
+						maxRetryDelay: TimeSpan.FromSeconds(10),
+						errorNumbersToAdd: null
+					);
+				}
+			);
         });
         builder.Services.AddSingleton<IServISApi, ServISApi>();
         builder.Services.AddScoped<SfDialogService>();
