@@ -1,10 +1,12 @@
 ﻿@page "/prihlasovanie"
 
+@using ServISWebApp.Auth
+@using Microsoft.AspNetCore.Identity
 @inject IServISApi api
 @inject IJSRuntime js
 @inject AuthenticationStateProvider authStateProvider
 @inject NavigationManager navMan
-@using ServISWebApp.Auth
+@inject PasswordService passwordService
 
 @if (isAuthenticated.HasValue)
 {
@@ -73,10 +75,17 @@ else
 			return;
 		}
 
-		if (!PasswordHasher.AreCredentialsCorrect(user.Password, loginData.Password))
+		var passwordVerificationResult = passwordService.Verify(user, user.Password, loginData.Password);
+		if (passwordVerificationResult == PasswordVerificationResult.Failed)
 		{
 			await js.InvokeVoidAsync("alert", "Nesprávne heslo.");
 			return;
+		}
+
+		if (passwordVerificationResult == PasswordVerificationResult.SuccessRehashNeeded)
+		{
+			user.Password = passwordService.Hash(user, loginData.Password);
+			await api.SaveUserAsync(user);
 		}
 
 		var customAuthStateProvider = (CustomAuthenticationStateProvider)authStateProvider;

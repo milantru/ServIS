@@ -23,6 +23,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="10.0.9" />
     <PackageReference Include="Syncfusion.Blazor.Grid" Version="20.2.0.50" />
     <PackageReference Include="Syncfusion.Blazor.Notifications" Version="20.2.0.50" />
     <PackageReference Include="Syncfusion.Blazor.Popups" Version="20.2.0.50" />
