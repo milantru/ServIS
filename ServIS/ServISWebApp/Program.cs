@@ -68,7 +68,6 @@ internal class Program
 		builder.Logging.ClearProviders();
 		builder.Logging.AddConsole();
 		builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
-		builder.Services.AddScoped<PasswordService>();
 		builder.Services.AddScoped<ProtectedLocalStorage>();
 		builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
 		builder.Services.AddDbContextFactory<ServISDbContext>(options =>
@@ -138,7 +137,7 @@ internal class Program
 			var admin = await api.GetUserAsync("admin");
 			if (admin == null)
 			{
-				var passwordService = scope.ServiceProvider.GetRequiredService<PasswordService>();
+				var passwordService = scope.ServiceProvider.GetRequiredService<IPasswordHasher<User>>();
 				var newAdmin = new User
 				{
 					Username = builder.Configuration["Administrator:Username"]!,
@@ -147,7 +146,7 @@ internal class Program
 					Surname = builder.Configuration["Administrator:Surname"]!,
 					Email = builder.Configuration["Administrator:Email"]!
 				};
-				newAdmin.Password = passwordService.Hash(newAdmin, builder.Configuration["Administrator:Password"]!);
+				newAdmin.Password = passwordService.HashPassword(newAdmin, builder.Configuration["Administrator:Password"]!);
 				await api.SaveUserAsync(newAdmin);
 			}
 

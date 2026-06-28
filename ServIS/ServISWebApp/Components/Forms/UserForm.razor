@@ -8,7 +8,7 @@
 @inject AuthenticationStateProvider authStateProvider
 @inject Modals modals
 @inject NavigationManager navMan
-@inject PasswordService passwordService
+@inject IPasswordHasher<User> passwordHasher
 
 <div id="user-form" class="w-75 servis-border">
 	<h3>@(User.Id == 0 ? "Registrácia" : "Moje údaje")</h3>
@@ -188,7 +188,7 @@
 
 		if (!string.IsNullOrEmpty(PasswordField))
 		{
-			User.Password = passwordService.Hash(User, PasswordField);
+			User.Password = passwordHasher.HashPassword(User, PasswordField);
 
 			currentPassword = User.Password;
 			PasswordField = string.Empty;
@@ -234,7 +234,7 @@
 
 	private bool NewPasswordIsTheSameAsOld() =>
 		// existing user && typed something to password field && the thing he typed has the same hash as his current password
-		User.Id != 0 && User.Password != currentPassword && passwordService.Verify(User, currentPassword, PasswordField) != PasswordVerificationResult.Failed;
+		User.Id != 0 && User.Password != currentPassword && passwordHasher.VerifyHashedPassword(User, currentPassword, PasswordField) != PasswordVerificationResult.Failed;
 
 	private async Task LogoutAsync()
 	{

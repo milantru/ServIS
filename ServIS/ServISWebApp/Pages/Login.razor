@@ -6,7 +6,7 @@
 @inject IJSRuntime js
 @inject AuthenticationStateProvider authStateProvider
 @inject NavigationManager navMan
-@inject PasswordService passwordService
+@inject IPasswordHasher<User> passwordHasher
 
 @if (isAuthenticated.HasValue)
 {
@@ -75,7 +75,7 @@ else
 			return;
 		}
 
-		var passwordVerificationResult = passwordService.Verify(user, user.Password, loginData.Password);
+		var passwordVerificationResult = passwordHasher.VerifyHashedPassword(user, user.Password, loginData.Password);
 		if (passwordVerificationResult == PasswordVerificationResult.Failed)
 		{
 			await js.InvokeVoidAsync("alert", "Nesprávne heslo.");
@@ -84,7 +84,7 @@ else
 
 		if (passwordVerificationResult == PasswordVerificationResult.SuccessRehashNeeded)
 		{
-			user.Password = passwordService.Hash(user, loginData.Password);
+			user.Password = passwordHasher.HashPassword(user, loginData.Password);
 			await api.SaveUserAsync(user);
 		}
 
