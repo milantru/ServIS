@@ -856,7 +856,7 @@ namespace ServISWebApp.Shared
 			var allMail = imapClient.GetFolder(SpecialFolder.All);
 			await allMail.OpenAsync(FolderAccess.ReadOnly);
 
-			var gmailMessages = await allMail.FetchAsync(0, -1, defaultMessageSummaryItems);
+			var gmailMessages = await allMail.FetchAsync(0, 1, defaultMessageSummaryItems);
 
 			await allMail.CloseAsync();
 			await imapClient.DisconnectAsync(true);
